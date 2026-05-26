@@ -313,4 +313,16 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('filter-sidebar');
 		expect(split?.afterHtml).not.toContain('content-tab bohemcars-inventory-content');
 	});
+
+	it('can split the generated Listing Details 3 vehicle block without dropping related vehicles', () => {
+		const html = renderAuxeroTemplate('listing-details-3.html');
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-detail="true"');
+
+		expect(split?.beforeHtml).toContain('swiper-listing-details-navigation');
+		expect(split?.sectionHtml).toContain('listing-details--content');
+		expect(split?.sectionHtml).toContain('listing-details--sidebar');
+		expect(split?.afterHtml).toContain('You might also like');
+		expect(split?.afterHtml).not.toContain('data-bohemcars-detail="true"');
+	});
 });

@@ -266,6 +266,21 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 	await page.goto(`/inventory/${firstSlug}`);
 	const detailTitle = page.locator('.listing-details--content h2').first();
 
+	await expect(page.locator('.listing-details[data-bohemcars-detail="true"]')).toBeVisible();
+	await expect(page.locator('.listing-details--content')).toBeVisible();
+	await expect(page.locator('.listing-details--sidebar')).toBeVisible();
+	await expect(page.locator('.title-section .btn-line[data-bohemcars-compare]')).toContainText(
+		'Compare'
+	);
+	await expect(page.locator('.title-section .bohemcars-favorite')).toBeVisible();
+	await expect(page.locator('.swiper-listing-details-main .listing-details-item')).toHaveCount(7);
+	await expect(page.locator('.swiper-listing-details-thumbs .listing-details-thumb')).toHaveCount(
+		7
+	);
+	await expect(page.locator('.listing-details--content .menu-tab-style4 li')).toHaveCount(6);
+	await expect(page.locator('.listing-details--sidebar .menu-tab-style5 li')).toHaveCount(2);
+	await expect(page.locator('.car-overview-list-style2 > li')).toHaveCount(10);
+	await expect(page.locator('form.send-inquiry')).toBeVisible();
 	await expect(page.locator('.listing-details')).toContainText(firstTitle);
 	expect(await cssValue(detailTitle, 'color')).toBe('rgb(28, 28, 28)');
 	expect(await cssValue(detailTitle, 'font-size')).toBe('40px');

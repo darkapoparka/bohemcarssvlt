@@ -186,6 +186,13 @@ Inventory grid components:
 
 Vehicle detail 3 components:
 
+- `src/lib/components/detail/AuxeroVehicleDetail.svelte`
+- `src/lib/components/detail/AuxeroVehicleDetailGallery.svelte`
+- `src/lib/components/detail/AuxeroVehicleFeatureTabs.svelte`
+- `src/lib/components/detail/AuxeroVehicleDetailSidebar.svelte`
+- `src/lib/components/detail/AuxeroVehicleOverview.svelte`
+- `src/lib/components/detail/AuxeroVehicleDetailStaticContent.svelte`
+- `src/lib/components/detail/VehicleDetailTemplatePage.svelte`
 - `src/lib/components/detail/DetailThreeLayout.svelte`
 - `src/lib/components/detail/VehicleMediaSlider.svelte`
 - `src/lib/components/detail/FinancePanel.svelte`

@@ -467,7 +467,7 @@ The migration must not start by redesigning the site. The first success conditio
 
   Preserve the card internals and Auxero classes from `listing-grid3-columns.html`.
 
-- [ ] **Step 4: Render detail page from typed route data**
+- [x] **Step 4: Render detail page from typed route data**
 
   `src/routes/inventory/[slug]/+page.server.ts` should load one vehicle and throw 404 when missing:
 
@@ -487,7 +487,9 @@ The migration must not start by redesigning the site. The first success conditio
   };
   ```
 
-- [ ] **Step 5: Run Svelte autofixer on changed components**
+  Detail content checkpoint: `/inventory/[slug]` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`; the previous endpoint is preserved as `server.legacy.ts`. The route loads a real vehicle by slug, returns 404 for missing vehicles, splits the rendered Listing Details 3 document at `listing-details[data-bohemcars-detail]`, and renders the detail block through typed Auxero Svelte components.
+
+- [x] **Step 5: Run Svelte autofixer on changed components**
 
   ```bash
   npx @sveltejs/mcp svelte-autofixer src/routes/inventory/+page.svelte
@@ -497,7 +499,9 @@ The migration must not start by redesigning the site. The first success conditio
   npx @sveltejs/mcp svelte-autofixer src/lib/components/detail/DetailThreeLayout.svelte
   ```
 
-- [ ] **Step 6: Verify inventory and detail fidelity**
+  Current detail checkpoint autofixer targets were the new Auxero detail components: `AuxeroVehicleDetail.svelte`, `AuxeroVehicleDetailGallery.svelte`, `AuxeroVehicleFeatureTabs.svelte`, `AuxeroVehicleDetailSidebar.svelte`, `AuxeroVehicleOverview.svelte`, `AuxeroVehicleDetailStaticContent.svelte`, `VehicleDetailTemplatePage.svelte`, and the new route page.
+
+- [x] **Step 6: Verify inventory and detail fidelity**
 
   ```bash
   npm run check
@@ -507,7 +511,9 @@ The migration must not start by redesigning the site. The first success conditio
 
   Expected: inventory and detail still match template typography, card ratios, and route behavior.
 
-- [ ] **Step 7: Commit**
+  Detail checkpoint verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`. Browser DOM QA verified the Svelte detail block on desktop and mobile; Browser screenshot capture timed out, so Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-detail-content-svelte/`.
+
+- [x] **Step 7: Commit**
 
   ```bash
   git add src/routes/inventory src/lib/components/inventory src/lib/components/detail src/lib/server/inventory.ts src/routes/project1.e2e.ts
