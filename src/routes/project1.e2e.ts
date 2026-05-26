@@ -29,6 +29,26 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(page.locator('body')).toContainText('Canada-sourced vehicles with verified history');
 	await expect(page.locator('.search-cars__search')).toContainText('Show 42 Matches');
 	await expectBohemcarsShell(page);
+	const homeHeader = page.locator('.header-wrapper-style-4 .header-style-4');
+	await expect(homeHeader).toHaveCount(1);
+	await expect(homeHeader.locator('.header-top-bar')).toBeVisible();
+	await expect(homeHeader.locator('#menu-primary-menu > .menu-item')).toHaveCount(7);
+	await expect(homeHeader.locator('#menu-primary-menu > .current-menu-item')).toContainText('Home');
+	await expect(homeHeader.locator('.header-right.main-nav-wrapper')).toHaveCSS('display', 'grid');
+	await expect(homeHeader.locator('.logo img')).toHaveAttribute('alt', 'Bohemcars');
+	await expect(homeHeader.locator('.logo img')).toHaveAttribute('src', /bohemcars-logo/);
+	const homeHeaderLogoBox = await homeHeader.locator('.logo img').boundingBox();
+	expect(homeHeaderLogoBox?.height ?? 0).toBeGreaterThan(30);
+	expect(homeHeaderLogoBox?.height ?? 0).toBeLessThanOrEqual(58);
+	await expect(homeHeader.locator('#searchToggle')).toBeVisible();
+	await expect(homeHeader.locator('.header-action-icon[aria-label="Compare"]')).toHaveAttribute(
+		'href',
+		/^\.?\/compare$/
+	);
+	await expect(homeHeader.locator('.header-action-icon[aria-label="Wishlist"]')).toHaveAttribute(
+		'href',
+		/^\.?\/account\/favorites$/
+	);
 	await expect(page.getByRole('link', { name: 'Sign In' }).first()).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Add Listing' })).toHaveCount(0);
 	const homeHero = page.locator('.page-title-style-4');

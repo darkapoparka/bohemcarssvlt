@@ -61,6 +61,19 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('<!-- New Vehicles -->');
 	});
 
+	it('can split the Home 05 header before the hero handoff', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroBodySection(document.bodyHtml, '<!-- Header -->', '<!-- Header -->');
+
+		expect(split?.beforeHtml).toContain('<div id="wrapper">');
+		expect(split?.sectionHtml).toContain('header-wrapper-style-4');
+		expect(split?.sectionHtml).toContain('header-style-4');
+		expect(split?.sectionHtml).toContain('main-nav-wrapper');
+		expect(split?.afterHtml).toContain('<!-- page-title -->');
+		expect(split?.afterHtml).not.toContain('header-style-4');
+	});
+
 	it('can split the Browse By Type gallery after the brand strip slot', () => {
 		const html = renderAuxeroTemplate('home-05.html');
 		const document = splitAuxeroDocument(html!);

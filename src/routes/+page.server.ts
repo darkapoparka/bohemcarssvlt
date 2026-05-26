@@ -4,6 +4,7 @@ import {
 	homeFiveBrandCards,
 	homeFiveComparePairsFromVehicles,
 	homeFiveFooterData,
+	homeFiveHeaderData,
 	homeFiveHeroDataFromVehicles,
 	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
@@ -27,8 +28,13 @@ export const load: PageServerLoad = ({ request, url }) => {
 	}
 
 	const pageDocument = splitAuxeroDocument(html);
-	const heroSlot = splitAuxeroBodySection(
+	const headerSlot = splitAuxeroBodySection(
 		pageDocument.bodyHtml,
+		'<!-- Header -->',
+		'<!-- Header -->'
+	);
+	const heroSlot = splitAuxeroBodySection(
+		headerSlot?.afterHtml ?? pageDocument.bodyHtml,
 		'<!-- page-title -->',
 		'<!-- page-title -->'
 	);
@@ -92,6 +98,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 				: heroSlot.afterHtml
 			: '',
 		afterFooterHtml: footerSlot?.afterHtml ?? '',
+		afterHeaderHtml: headerSlot ? (heroSlot?.beforeHtml ?? '') : '',
 		afterNewsSectionHtml: footerSlot ? footerSlot.beforeHtml : (newsSectionSlot?.afterHtml ?? ''),
 		afterReviewsSectionHtml: newsSectionSlot
 			? newsSectionSlot.beforeHtml
@@ -105,11 +112,16 @@ export const load: PageServerLoad = ({ request, url }) => {
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
 		footer: footerSlot ? homeFiveFooterData : undefined,
+		header: headerSlot ? homeFiveHeaderData : undefined,
 		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
 		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {
 			...pageDocument,
-			bodyHtml: heroSlot?.beforeHtml ?? featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml
+			bodyHtml:
+				headerSlot?.beforeHtml ??
+				heroSlot?.beforeHtml ??
+				featuredVehiclesSlot?.beforeHtml ??
+				pageDocument.bodyHtml
 		},
 		reviews: reviewsSectionSlot ? homeFiveReviewItems : [],
 		typeCards: homeFiveTypeCards

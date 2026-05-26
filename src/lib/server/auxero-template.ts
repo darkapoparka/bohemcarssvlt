@@ -530,7 +530,9 @@ function injectLocalBehavior(
 		usesPublicHeader
 			? `
 	body.${pageClass} .mobile-hidden-header-button a[href="/admin/inventory/new"]:not(.open-modal),
-	body.${pageClass} .header-button-mobile a[href="/admin/inventory/new"]:not(.open-modal) {
+	body.${pageClass} .mobile-hidden-header-button a[href="./admin/inventory/new"]:not(.open-modal),
+	body.${pageClass} .header-button-mobile a[href="/admin/inventory/new"]:not(.open-modal),
+	body.${pageClass} .header-button-mobile a[href="./admin/inventory/new"]:not(.open-modal) {
 		display: none !important;
 	}
 	body.${pageClass} .mobile-hidden-header-button .bg-sign-in.open-modal,

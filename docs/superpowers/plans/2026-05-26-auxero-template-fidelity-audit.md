@@ -55,9 +55,9 @@
 - Modify if needed: `src/lib/server/auxero-template.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] Verify public header uses one white `Sign In` CTA, centered nav, and no public `Add Listing`.
+- [x] Verify public header uses one white `Sign In` CTA, centered nav, and no public `Add Listing`.
 - [ ] Verify account/admin headers still expose role-appropriate listing actions.
-- [ ] Keep logo dimensions aligned with header controls at desktop and mobile widths.
+- [x] Keep logo dimensions aligned with header controls at desktop and mobile widths.
 
 ### Task 5: Verification Loop
 
@@ -95,4 +95,5 @@
 - Home reviews checkpoint: `Client Reviews` now renders through `HomeFiveReviewsSection.svelte` with typed Home 05 review data shared with the raw adapter. Playwright fallback screenshots and DOM summary saved under `test-results/visual-contract/2026-05-26-home-reviews-section/` because the in-app Browser runtime again reported no available `iab` browser; desktop and mobile checks reported one initialized `swiper-testimonior` carousel, 6 testimonial slides, 30 star icons, 6 reviewer avatars, one `pagination-swiper-testimonior` wrapper, section order `budget -> reviews -> news`, and no console issues.
 - Home news checkpoint: `Bohemcars notes` now renders through `HomeFiveNewsSection.svelte` with typed Home 05 blog-card data. Browser screenshots and DOM summary saved under `test-results/visual-contract/2026-05-26-home-news-section/`; after the first Browser navigation call timed out but reached the loaded `Bohemcars` tab, desktop and mobile captures reported 1 `post-style-2` featured card, 2 `post-style-3` stacked cards, 3 post images, 3 `by Bohemcars` bylines, one news section, and section order `reviews -> news` with the footer still present.
 - Home footer checkpoint: Home 05 footer now renders through `HomeFiveFooter.svelte` with typed Bohemcars footer data while preserving the Auxero `footer`, `footer-top`, `form-footer`, collapse link columns, contact/social block, app badge row, divider, and `footer-bottom-links` structure. Browser screenshots and DOM summary saved under `test-results/visual-contract/2026-05-26-home-footer-section/`; desktop and mobile captures reported one footer, 2 collapse columns, 14 footer link items, newsletter input, 6 social icons, 3 legal links, phone/address text present, no `Aurexo` or `ThemeForest` footer text, and no duplicate raw footer.
+- Home header checkpoint: Home 05 public header now renders through `HomeFiveHeader.svelte` with typed Bohemcars header data while preserving the Auxero `header-wrapper-style-4`, topbar, logo slots, centered `main-nav-wrapper`, modal sign-in CTA, search toggle, compare/wishlist icons, mobile button, and hidden public Add Listing behavior. Browser screenshots and DOM summary saved under `test-results/visual-contract/2026-05-26-home-header-section/`; desktop and mobile captures reported one header, 7 nav items, active Home item, grid desktop nav, 52px desktop logo, visible Sign In/search/mobile menu controls, zero visible Add Listing links, and hero/featured/footer still present.
 - Repository publishing is tracked separately from the fidelity audit so this plan stays focused on visual regressions.

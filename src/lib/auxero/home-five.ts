@@ -1,4 +1,9 @@
-import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
+import {
+	bohemcarsAssets,
+	bohemcarsBrand,
+	bohemcarsContact,
+	mainNavigation
+} from '$lib/data/bohemcars';
 import type { BlogPost } from '$lib/data/blog';
 import type { Vehicle } from '$lib/data/vehicles';
 
@@ -53,6 +58,44 @@ export type HomeFiveFooterData = {
 	};
 	quickLinks: HomeFiveFooterLink[];
 	socialLinks: HomeFiveFooterSocial[];
+};
+
+export type HomeFiveHeaderSocial = {
+	href: string;
+	icon: 'chat' | 'facebook' | 'instagram' | 'telegram' | 'x' | 'youtube';
+	label: string;
+	target?: '_blank';
+};
+
+export type HomeFiveHeaderData = {
+	actionBadges: {
+		compare: number;
+		wishlist: number;
+	};
+	contact: {
+		addressHref: string;
+		addressLabel: string;
+		emailHref: string;
+		emailLabel: string;
+		phoneHref: string;
+		phoneLabel: string;
+	};
+	language: {
+		current: string;
+		options: string[];
+	};
+	logo: {
+		alt: string;
+		href: string;
+		mobileSrc: string;
+		src: string;
+	};
+	navigation: Array<{
+		active: boolean;
+		href: string;
+		label: string;
+	}>;
+	socialLinks: HomeFiveHeaderSocial[];
 };
 
 export type HomeFiveTypeCard = {
@@ -179,6 +222,42 @@ export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 		query: 'Tesla'
 	}
 ];
+
+export const homeFiveHeaderData: HomeFiveHeaderData = {
+	actionBadges: {
+		compare: 2,
+		wishlist: 2
+	},
+	contact: {
+		addressHref: '/contact',
+		addressLabel: bohemcarsContact.addressLabel,
+		emailHref: '/contact',
+		emailLabel: bohemcarsContact.emailLabel,
+		phoneHref: '/contact',
+		phoneLabel: bohemcarsContact.primaryPhoneLabel
+	},
+	language: {
+		current: 'English',
+		options: ['English', 'Bulgarian', 'German', 'French']
+	},
+	logo: {
+		alt: bohemcarsBrand.name,
+		href: '/',
+		mobileSrc: bohemcarsAssets.logoDark,
+		src: bohemcarsAssets.logoDark
+	},
+	navigation: mainNavigation.map((item) => ({
+		...item,
+		active: item.href === '/'
+	})),
+	socialLinks: [
+		{ href: '/reviews', icon: 'facebook', label: 'Reviews' },
+		{ href: '/blog', icon: 'youtube', label: 'Blog' },
+		{ href: '/services', icon: 'chat', label: 'Services' },
+		{ href: '/contact', icon: 'telegram', label: 'Contact' },
+		{ href: '/agents', icon: 'x', label: 'Consultants' }
+	]
+};
 
 export const homeFiveReviewItems: HomeFiveReview[] = [
 	{

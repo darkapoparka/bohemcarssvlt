@@ -323,6 +323,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Footer checkpoint: `src/lib/components/home/HomeFiveFooter.svelte` now renders the Home 05 footer from typed `HomeFiveFooterData`, preserving Auxero footer classes and column structure while replacing remaining template/footer contact and copyright data with Bohemcars values. The raw Home 05 tail now starts after the footer marker and still carries modals/scripts until their own migration pass.
 
+  Header checkpoint: `src/lib/components/home/HomeFiveHeader.svelte` now renders the Home 05 public header from typed `HomeFiveHeaderData`, preserving Auxero header/topbar/nav/action classes and script hooks while replacing the raw header fragment in the root page split. The raw Home 05 body shell now keeps only the preload and wrapper opening before the Svelte header, with modals/scripts still carried by the post-footer compatibility tail.
+
 - [x] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:
