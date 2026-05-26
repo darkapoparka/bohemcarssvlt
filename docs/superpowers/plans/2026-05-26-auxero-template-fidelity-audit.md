@@ -1,0 +1,84 @@
+# Auxero Template Fidelity Audit Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Restore Bohemcars pages to faithful Auxero template typography, spacing, cards, and section behavior while keeping Bohemcars data, routes, and forms.
+
+**Architecture:** Bohemcars renders raw Auxero HTML through server-side adapters in `src/lib/server`. Fixes should preserve the original template class structure first, then inject narrowly scoped CSS only where Bohemcars data requires it. Browser screenshots and DOM metrics compare `http://127.0.0.1:5173/*.html` template pages against `http://127.0.0.1:5199/*` Bohemcars routes.
+
+**Tech Stack:** SvelteKit server routes, TypeScript HTML adapters, Auxero static CSS/JS, Playwright visual checks, Vitest unit tests.
+
+---
+
+### Task 1: Vehicle Detail Typography And Layout
+
+**Files:**
+
+- Modify: `src/lib/server/auxero-listing-data.ts`
+- Modify if needed: `src/lib/server/auxero-template.ts`
+- Test: `src/routes/project1.e2e.ts`
+
+- [x] Capture `http://127.0.0.1:5173/listing-details-3.html` and `http://127.0.0.1:5199/inventory/21779200396408437` at desktop.
+- [x] Compare computed font family, font size, line height, color, and class names for the detail title, price, sidebar headings, overview values, and related cards.
+- [x] Fix the root cause in the detail data adapter or shared adapter so replaced Bohemcars markup keeps the template heading classes and text wrappers.
+- [x] Remove or narrow any global injected CSS that overrides detail typography away from the template.
+- [x] Add e2e assertions for the detail title class, price class, sidebar overview value class, and absence of obvious oversized/wrong-font detail text.
+
+### Task 2: Home 05 Section Fidelity
+
+**Files:**
+
+- Modify: `src/lib/server/auxero-home-data.ts`
+- Test: `src/routes/project1.e2e.ts`
+
+- [ ] Keep the fixed Home 05 brand strip at 12 template-style cards unless there is an explicit design decision to replace the whole section.
+- [ ] Keep Browse By Type on the template `card-37.jpg` through `card-42.jpg` gallery image family.
+- [ ] Verify featured cards, compare cards, reviews, news, and CTA sections keep the same visible structure as `home-05.html`.
+- [ ] Add e2e assertions for section card counts and key image families where prior regressions happened.
+
+### Task 3: Inventory Listing Fidelity
+
+**Files:**
+
+- Modify: `src/lib/server/auxero-listing-data.ts`
+- Modify if needed: `src/lib/server/auxero-template.ts`
+- Test: `src/routes/project1.e2e.ts`
+
+- [ ] Compare `listing-grid3-columns.html` with `/inventory` for card typography, badge size, meta spacing, price row, compare button, and view details link.
+- [ ] Keep Bohemcars dark inventory styling only if it still follows the template component proportions.
+- [ ] Add e2e assertions for card image ratio, title class, price class, and toolbar visibility.
+
+### Task 4: Header And Logo Regression Guard
+
+**Files:**
+
+- Modify if needed: `src/lib/server/auxero-template.ts`
+- Test: `src/routes/project1.e2e.ts`
+
+- [ ] Verify public header uses one white `Sign In` CTA, centered nav, and no public `Add Listing`.
+- [ ] Verify account/admin headers still expose role-appropriate listing actions.
+- [ ] Keep logo dimensions aligned with header controls at desktop and mobile widths.
+
+### Task 5: Verification Loop
+
+**Files:**
+
+- Test: `src/routes/project1.e2e.ts`
+- Test: `src/lib/server/auxero-template.spec.ts`
+
+- [ ] Run `npm run lint`.
+- [ ] Run `npm run check`.
+- [ ] Run `npm run test:unit -- --run`.
+- [ ] Run `npx playwright test src/routes/project1.e2e.ts`.
+- [ ] Save desktop and mobile screenshots for any page touched in the current pass.
+- [ ] Record remaining mismatches in this plan before moving to the next template.
+
+---
+
+## Current Pass Notes
+
+- Start with Task 1 because `/inventory/21779200396408437` is the reported broken page.
+- Detail typography root cause: broad CSS in `src/lib/server/auxero-template.ts` forced detail headings, sidebar values, and generic Bohemcars cards to white on an `is_light` page.
+- Detail typography fix: remove detail and generic card selectors from that broad dark-text override; keep the original template light typography.
+- Detail verification: title is `40px/48px Manrope` and `rgb(28, 28, 28)`, sidebar price is `rgb(28, 28, 28)`, overview label is `rgb(75, 75, 75)`.
+- Repository publishing is tracked separately from the fidelity audit so this plan stays focused on visual regressions.

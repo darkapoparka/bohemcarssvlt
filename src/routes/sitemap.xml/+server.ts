@@ -1,0 +1,59 @@
+import { posts } from '$lib/data/blog';
+import { bohemcarsBrand, bohemcarsFetchedAt } from '$lib/data/bohemcars';
+import { agents } from '$lib/data/agents';
+import { vehicles } from '$lib/data/vehicles';
+
+const baseUrl = `https://${bohemcarsBrand.domain}`;
+
+const staticRoutes = [
+	'/',
+	'/inventory',
+	'/inventory?view=4',
+	'/inventory?view=map',
+	'/compare',
+	'/agents',
+	'/services',
+	'/sell-your-car',
+	'/about',
+	'/reviews',
+	'/calculator',
+	'/faqs',
+	'/terms',
+	'/blog',
+	'/contact'
+];
+
+const escapeXml = (value: string) =>
+	value
+		.replaceAll('&', '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;')
+		.replaceAll("'", '&apos;');
+
+const routeUrl = (path: string) => `${baseUrl}${path}`;
+
+const urlEntry = (loc: string) => `<url>
+	<loc>${escapeXml(loc)}</loc>
+	<lastmod>${bohemcarsFetchedAt}</lastmod>
+</url>`;
+
+export function GET() {
+	const dynamicRoutes = [
+		...vehicles.map((vehicle) => `/inventory/${vehicle.slug}`),
+		...agents.map((agent) => `/agents/${agent.slug}`),
+		...posts.map((post) => `/blog/${post.slug}`)
+	];
+	const urls = [...staticRoutes, ...dynamicRoutes].map((path) => urlEntry(routeUrl(path)));
+	const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
+</urlset>`;
+
+	return new Response(xml, {
+		headers: {
+			'content-type': 'application/xml; charset=utf-8',
+			'cache-control': 'public, max-age=3600'
+		}
+	});
+}

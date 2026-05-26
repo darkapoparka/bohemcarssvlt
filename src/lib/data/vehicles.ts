@@ -1,0 +1,278 @@
+import { bohemcarsAssets, bohemcarsVehicles } from './bohemcars';
+
+export type VehicleCondition = 'New' | 'Used' | 'Certified';
+
+export type SortKey = 'template' | 'lowest' | 'highest' | 'newest' | 'mileage' | 'year';
+
+export interface Vehicle {
+	slug: string;
+	title: string;
+	brand: string;
+	model: string;
+	bodyType: string;
+	condition: VehicleCondition;
+	price: number;
+	priceLabel: string;
+	priceBgn: string;
+	monthly: number;
+	year: number;
+	mileage: number;
+	fuel: string;
+	displayFuel?: string;
+	transmission: string;
+	engine: string;
+	exterior: string;
+	interior: string;
+	location: string;
+	vin: string;
+	stockNumber: string;
+	tag?: string;
+	tagTone?: 'lime' | 'violet' | 'dark';
+	image: string;
+	images: string[];
+	gallery: string[];
+	dealerSlug: string;
+	agentSlug: string;
+	rating: number;
+	description: string;
+	features: string[];
+	sourceUrl: string;
+	isClientVehicle: boolean;
+}
+
+export interface InventoryFilters {
+	query?: string;
+	brand?: string;
+	bodyType?: string;
+	condition?: VehicleCondition | 'All';
+	maxPrice?: number;
+	minPrice?: number;
+	minYear?: number;
+	maxYear?: number;
+	minMileage?: number;
+	maxMileage?: number;
+	fuel?: string;
+	location?: string;
+	sourceId?: string;
+	status?: string;
+	transmission?: string;
+}
+
+const detailGalleryFallback = [
+	'/assets/images/inner-page/slide-listing-details-5.jpg',
+	'/assets/images/inner-page/slide-listing-details-6.jpg',
+	'/assets/images/inner-page/slide-listing-details-7.jpg',
+	'/assets/images/inner-page/slide-listing-details-8.jpg',
+	'/assets/images/inner-page/slide-listing-details-9.jpg',
+	'/assets/images/inner-page/slide-listing-details-10.jpg',
+	'/assets/images/inner-page/slide-listing-details-11.jpg'
+];
+
+const conditionForStatus = (status: string, isClientVehicle: boolean): VehicleCondition => {
+	if (isClientVehicle) return 'Certified';
+	if (status === 'New listing') return 'New';
+
+	return 'Used';
+};
+
+const knownBrokenImageIds = new Set(['21779200396408437', '11775058343987884']);
+const imageForVehicle = (vehicle: { id: string; image: string }) =>
+	knownBrokenImageIds.has(vehicle.id) ? bohemcarsAssets.hero : vehicle.image;
+
+export const vehicles: Vehicle[] = bohemcarsVehicles.map((vehicle, index) => ({
+	slug: vehicle.id,
+	title: vehicle.model,
+	brand: vehicle.make,
+	model: vehicle.model.replace(vehicle.make, '').trim() || vehicle.model,
+	bodyType: vehicle.body,
+	condition: conditionForStatus(vehicle.status, vehicle.isClientVehicle),
+	price: vehicle.priceEur,
+	priceLabel: vehicle.price,
+	priceBgn: vehicle.priceBgn,
+	monthly: Math.round(vehicle.priceEur / 72),
+	year: vehicle.year,
+	mileage: vehicle.mileageKm,
+	fuel: vehicle.fuel,
+	transmission: vehicle.transmission,
+	engine: [vehicle.displacement, vehicle.power].filter(Boolean).join(' / '),
+	exterior: vehicle.color,
+	interior: 'On request',
+	location: vehicle.location,
+	vin: vehicle.sourceId,
+	stockNumber: vehicle.sourceId,
+	tag: vehicle.status,
+	tagTone: vehicle.isClientVehicle ? 'dark' : index % 3 === 0 ? 'lime' : 'violet',
+	image: imageForVehicle(vehicle),
+	images: [imageForVehicle(vehicle)],
+	gallery: [imageForVehicle(vehicle), ...detailGalleryFallback],
+	dealerSlug: 'bohemcars-plovdiv',
+	agentSlug:
+		index % 3 === 0
+			? 'bohemcars-sales'
+			: index % 3 === 1
+				? 'bohemcars-import'
+				: 'bohemcars-inspection',
+	rating: 4.9,
+	description: vehicle.description,
+	features: vehicle.features.slice(0, 18),
+	sourceUrl: vehicle.sourceUrl,
+	isClientVehicle: vehicle.isClientVehicle
+}));
+
+export const bodyTypes = Array.from(new Set(vehicles.map((vehicle) => vehicle.bodyType)));
+export const brands = Array.from(new Set(vehicles.map((vehicle) => vehicle.brand))).sort();
+export const fuels = Array.from(new Set(vehicles.map((vehicle) => vehicle.fuel))).sort();
+
+export function getVehicleBySlug(slug: string) {
+	return vehicles.find((vehicle) => vehicle.slug === slug);
+}
+
+export function getRelatedVehicles(vehicle: Vehicle, limit = 4) {
+	const closeMatches = vehicles.filter(
+		(candidate) =>
+			candidate.slug !== vehicle.slug &&
+			(candidate.brand === vehicle.brand || candidate.bodyType === vehicle.bodyType)
+	);
+	const fallback = vehicles.filter(
+		(candidate) =>
+			candidate.slug !== vehicle.slug &&
+			!closeMatches.some((match) => match.slug === candidate.slug)
+	);
+
+	return [...closeMatches, ...fallback].slice(0, limit);
+}
+
+const normalizeFilterValue = (value?: string | number) =>
+	String(value ?? '')
+		.trim()
+		.toLowerCase();
+
+const isAllFilter = (value?: string) => {
+	const normalized = normalizeFilterValue(value);
+
+	return !normalized || normalized === 'all';
+};
+
+const hasNumberFilter = (value?: number): value is number =>
+	typeof value === 'number' && Number.isFinite(value);
+
+const containsFilterValue = (value: string | number | undefined, query: string) =>
+	normalizeFilterValue(value).includes(query);
+
+const matchesOption = (value: string, filter?: string) =>
+	isAllFilter(filter) || normalizeFilterValue(value) === normalizeFilterValue(filter);
+
+const vehicleSearchText = (vehicle: Vehicle) =>
+	[
+		vehicle.title,
+		vehicle.brand,
+		vehicle.model,
+		vehicle.year,
+		vehicle.bodyType,
+		vehicle.location,
+		vehicle.stockNumber,
+		vehicle.vin,
+		vehicle.fuel,
+		vehicle.displayFuel,
+		vehicle.transmission,
+		vehicle.condition,
+		vehicle.tag
+	]
+		.filter(Boolean)
+		.join(' ');
+
+const matchesStatusFilter = (vehicle: Vehicle, status?: string) => {
+	const filter = normalizeFilterValue(status);
+
+	if (!filter || filter === 'all') return true;
+	if (['client', 'client vehicle', 'client-vehicle', 'customer', 'submitted'].includes(filter)) {
+		return vehicle.isClientVehicle;
+	}
+	if (['new', 'new listing', 'new-listing', 'nova', 'нова обява'].includes(filter)) {
+		return vehicle.tag === 'New listing' || vehicle.condition === 'New';
+	}
+	if (['available', 'stock', 'in stock', 'in-stock'].includes(filter)) {
+		return vehicle.tag === 'Available' && !vehicle.isClientVehicle;
+	}
+	if (['imported', 'import', 'on request', 'on-request'].includes(filter)) {
+		return [vehicle.tag, vehicle.description, ...vehicle.features].some((value) => {
+			const normalized = normalizeFilterValue(value);
+
+			return (
+				normalized.includes('import') ||
+				normalized.includes('new import') ||
+				normalized.includes('нов внос') ||
+				normalized.includes('on request')
+			);
+		});
+	}
+
+	return [vehicle.tag, vehicle.condition].some((value) =>
+		normalizeFilterValue(value).includes(filter)
+	);
+};
+
+export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
+	const query = normalizeFilterValue(filters.query);
+	const location = normalizeFilterValue(filters.location);
+	const sourceId = normalizeFilterValue(filters.sourceId);
+	const minPrice = filters.minPrice;
+	const maxPrice = filters.maxPrice;
+	const minYear = filters.minYear;
+	const maxYear = filters.maxYear;
+	const minMileage = filters.minMileage;
+	const maxMileage = filters.maxMileage;
+
+	return source.filter((vehicle) => {
+		const matchesQuery = !query || containsFilterValue(vehicleSearchText(vehicle), query);
+		const matchesSourceId =
+			!sourceId ||
+			[vehicle.slug, vehicle.vin, vehicle.stockNumber, vehicle.sourceUrl].some((value) =>
+				containsFilterValue(value, sourceId)
+			);
+		const matchesBrand = matchesOption(vehicle.brand, filters.brand);
+		const matchesType = matchesOption(vehicle.bodyType, filters.bodyType);
+		const matchesCondition =
+			isAllFilter(filters.condition) ||
+			normalizeFilterValue(vehicle.condition) === normalizeFilterValue(filters.condition);
+		const matchesFuel = matchesOption(vehicle.fuel, filters.fuel);
+		const matchesTransmission = matchesOption(vehicle.transmission, filters.transmission);
+		const matchesLocation = !location || containsFilterValue(vehicle.location, location);
+		const matchesStatus = matchesStatusFilter(vehicle, filters.status);
+		const matchesPrice =
+			(!hasNumberFilter(minPrice) || vehicle.price >= minPrice) &&
+			(!hasNumberFilter(maxPrice) || vehicle.price <= maxPrice);
+		const matchesYear =
+			(!hasNumberFilter(minYear) || vehicle.year >= minYear) &&
+			(!hasNumberFilter(maxYear) || vehicle.year <= maxYear);
+		const matchesMileage =
+			(!hasNumberFilter(minMileage) || vehicle.mileage >= minMileage) &&
+			(!hasNumberFilter(maxMileage) || vehicle.mileage <= maxMileage);
+
+		return (
+			matchesQuery &&
+			matchesSourceId &&
+			matchesBrand &&
+			matchesType &&
+			matchesCondition &&
+			matchesFuel &&
+			matchesTransmission &&
+			matchesLocation &&
+			matchesStatus &&
+			matchesPrice &&
+			matchesYear &&
+			matchesMileage
+		);
+	});
+}
+
+export function sortVehicles(source: Vehicle[], sort: SortKey) {
+	const sorted = [...source];
+
+	if (sort === 'template') return sorted;
+	if (sort === 'highest') return sorted.sort((a, b) => b.price - a.price);
+	if (sort === 'newest' || sort === 'year') return sorted.sort((a, b) => b.year - a.year);
+	if (sort === 'mileage') return sorted.sort((a, b) => a.mileage - b.mileage);
+
+	return sorted.sort((a, b) => a.price - b.price);
+}

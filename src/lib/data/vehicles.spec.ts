@@ -1,0 +1,70 @@
+import { describe, expect, it } from 'vitest';
+import {
+	filterVehicles,
+	getRelatedVehicles,
+	getVehicleBySlug,
+	sortVehicles,
+	vehicles
+} from './vehicles';
+
+describe('vehicle data helpers', () => {
+	it('finds the first real Bohemcars listing by source id', () => {
+		expect(getVehicleBySlug('21764342419542174')?.title).toBe('BMW X5 40i M Sport Shadow Line');
+	});
+
+	it('filters by search, source id, location, status, gearbox, price, year, mileage, and facets', () => {
+		const vehicle = getVehicleBySlug('21764342419542174');
+		expect(vehicle).toBeDefined();
+
+		const result = filterVehicles(vehicles, {
+			bodyType: vehicle!.bodyType,
+			brand: vehicle!.brand,
+			condition: vehicle!.condition,
+			fuel: vehicle!.fuel,
+			location: vehicle!.location,
+			maxMileage: vehicle!.mileage + 1,
+			maxPrice: vehicle!.price + 1,
+			maxYear: vehicle!.year,
+			minMileage: Math.max(0, vehicle!.mileage - 1),
+			minPrice: vehicle!.price - 1,
+			minYear: vehicle!.year,
+			query: vehicle!.stockNumber,
+			sourceId: vehicle!.stockNumber,
+			status: 'new',
+			transmission: vehicle!.transmission
+		});
+
+		expect(result.map((vehicle) => vehicle.slug)).toEqual(['21764342419542174']);
+	});
+
+	it('matches available and client vehicle status filters', () => {
+		const available = filterVehicles(vehicles, { status: 'available' });
+		const clientVehicles = filterVehicles(vehicles, { status: 'client-vehicle' });
+
+		expect(available.length).toBeGreaterThan(0);
+		expect(available.every((vehicle) => vehicle.tag === 'Available')).toBe(true);
+		expect(clientVehicles.length).toBeGreaterThan(0);
+		expect(clientVehicles.every((vehicle) => vehicle.isClientVehicle)).toBe(true);
+	});
+
+	it('keeps keyword search focused on listing identity fields', () => {
+		const result = filterVehicles(vehicles, { query: 'Audi' });
+
+		expect(result).toHaveLength(9);
+		expect(result.every((vehicle) => vehicle.brand === 'Audi')).toBe(true);
+	});
+
+	it('sorts vehicles by lowest price', () => {
+		const sorted = sortVehicles(vehicles, 'lowest');
+		expect(sorted[0].price).toBeLessThanOrEqual(sorted[1].price);
+	});
+
+	it('returns related vehicles without including the source vehicle', () => {
+		const vehicle = getVehicleBySlug('21764342419542174');
+		expect(vehicle).toBeDefined();
+		const related = getRelatedVehicles(vehicle!, 4);
+
+		expect(related).toHaveLength(4);
+		expect(related.every((item) => item.slug !== vehicle!.slug)).toBe(true);
+	});
+});
