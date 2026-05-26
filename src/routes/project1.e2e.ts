@@ -392,6 +392,14 @@ test('planned public support routes render Bohemcars content and local forms', a
 		await expectBohemcarsShell(page);
 	}
 
+	await page.goto('/reviews');
+	const reviewsGrid = page.locator('[data-bohemcars-reviews-grid]');
+	await expect(reviewsGrid).toBeVisible();
+	await expect(reviewsGrid).toHaveClass(/grid-cols-3/);
+	await expect(reviewsGrid.locator('.testimonior-box')).toHaveCount(6);
+	await expect(reviewsGrid.locator('.testimonior--img')).toHaveCount(6);
+	await expect(reviewsGrid.locator('.h5.title').first()).toHaveText('Aleksandar Vytev');
+
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);
 	await expect(page.locator('.services-center-info')).toContainText('Contact Information');

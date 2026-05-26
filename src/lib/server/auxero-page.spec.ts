@@ -447,4 +447,21 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the reviews grid without dropping pagination or footer chrome', () => {
+		const html = renderAuxeroTemplate('clients-reviews.html', { routePath: 'reviews' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-reviews-grid',
+			'div'
+		);
+
+		expect(split?.beforeHtml).toContain('Client Reviews');
+		expect(split?.sectionHtml).toContain('testimonior-box');
+		expect(split?.sectionHtml).toContain('Aleksandar Vytev');
+		expect(split?.afterHtml).toContain('pagination__link active');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

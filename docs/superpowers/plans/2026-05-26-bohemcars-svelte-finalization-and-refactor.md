@@ -886,6 +886,33 @@ npm run build
 
 Browser DOM QA verified the sell-your-car page on desktop and mobile: 4 step boxes, one active step, one Svelte `calculate-form bohemcars-sell-form`, 4 `input-large` controls, footer chrome, Auxero sell-your-car body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-sell-your-car-form-svelte/`.
 
+### Task 7F: Migrate Reviews Grid
+
+**Checkpoint completed 2026-05-26:**
+
+- `/reviews` now uses `src/routes/reviews/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `clients-reviews.html` head, header, breadcrumb, page heading, pagination, footer, modal stack, body classes, testimonial card classes, star icon row, avatar sizing, and responsive grid classes.
+- The review grid is rendered by `src/lib/components/reviews/AuxeroReviewsGrid.svelte` and `AuxeroReviewCard.svelte` inside `ReviewsTemplatePage.svelte`, using typed `AuxeroReviewCard` data from `src/lib/auxero/reviews.ts`.
+- `src/lib/server/auxero-support-data.ts` now consumes the same shared review-card data for raw-template fallback output, keeping the compatibility adapter and Svelte route aligned.
+- `src/routes/project1.e2e.ts` now freezes the reviews contract: visible `data-bohemcars-reviews-grid`, 6 testimonial cards, 6 avatars, preserved 3-column grid class, and the first public review name.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated reviews grid can be split without dropping the page heading, pagination, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/reviews/AuxeroReviewCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/reviews/AuxeroReviewsGrid.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/reviews/ReviewsTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/reviews/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the reviews page on desktop and mobile: 6 testimonial cards, 30 star icons, 6 avatars, one pagination row, footer chrome, Auxero reviews body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-reviews-grid-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

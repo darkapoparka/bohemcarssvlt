@@ -1,4 +1,5 @@
 import { agents } from '$lib/data/agents';
+import { auxeroReviewCards, type AuxeroReviewCard } from '$lib/auxero/reviews';
 import {
 	bohemcarsAssets,
 	bohemcarsBrand,
@@ -13,12 +14,6 @@ type SupportFaq = {
 	answer: string;
 	question: string;
 	topic: string;
-};
-
-type SupportReview = {
-	name: string;
-	role: string;
-	text: string;
 };
 
 type SupportService = {
@@ -88,39 +83,6 @@ const serviceCards: SupportService[] = [
 			'Compare price, mileage, equipment, history, running costs, and import timing across several candidates.',
 		href: '/compare',
 		image: '/assets/bohemcars/cta/import-canada-banner-v2.png'
-	}
-];
-
-const supportReviews: SupportReview[] = [
-	{
-		name: 'Aleksandar Vytev',
-		role: 'Facebook recommendation',
-		text: 'The purchase and delivery process followed the plan that was explained before we started.'
-	},
-	{
-		name: 'Krasimir Georgiev',
-		role: 'Client vehicle handoff',
-		text: 'The car I bought through Bohemcars came exactly as discussed. I would choose them again.'
-	},
-	{
-		name: 'Zhivko Zaimov',
-		role: 'Canada import client',
-		text: 'Every step was explained clearly: photos before purchase, Carfax context, and no hidden fees.'
-	},
-	{
-		name: 'Asen Hristov',
-		role: 'Verified buyer',
-		text: 'What I ordered is what arrived. The important part was a vehicle without hidden issues.'
-	},
-	{
-		name: 'Stanislav Stefanov Kyumyurdzhiev',
-		role: 'Delivery review',
-		text: 'I received the vehicle within the agreed timing and without surprise charges.'
-	},
-	{
-		name: 'Bohemcars client',
-		role: 'Appointment viewing',
-		text: 'The documents, service context, and vehicle condition were ready when I came to view the car.'
 	}
 ];
 
@@ -314,26 +276,21 @@ const statsGrid = () => {
 	</div>`;
 };
 
-const reviewCard = (review: SupportReview, index: number) => {
-	const avatar =
-		bohemcarsConsultants[index % bohemcarsConsultants.length]?.image ?? agents[0]?.image;
-
-	return `<div class="testimonior-box">
+const reviewCard = (review: AuxeroReviewCard) => `<div class="testimonior-box">
 		<div class="flex items-center gap-4 mb-16">${stars()}</div>
 		<p class="testimonior-box--desc mb-16">${sentence(review.text)}</p>
 		<div class="testimonior-box--user">
-			<img class="testimonior--img" src="${escapeHtml(avatar)}" alt="${escapeHtml(review.name)}">
+			<img class="testimonior--img" src="${escapeHtml(review.avatar)}" alt="${escapeHtml(review.name)}">
 			<div class="testimonior-box--user-content">
 				<p class="h5 title">${escapeHtml(review.name)}</p>
 				<p class="desc">${escapeHtml(review.role)}</p>
 			</div>
 		</div>
 	</div>`;
-};
 
-const reviewsGrid = (limit = supportReviews.length) =>
-	`<div class="grid grid-cols-3 gap-y-38 gap-x-30 lg-grid-cols-2 md-grid-cols-1 mb-40">
-		${supportReviews.slice(0, limit).map(reviewCard).join('\n')}
+const reviewsGrid = (limit = auxeroReviewCards.length) =>
+	`<div class="grid grid-cols-3 gap-y-38 gap-x-30 lg-grid-cols-2 md-grid-cols-1 mb-40" data-bohemcars-reviews-grid>
+		${auxeroReviewCards.slice(0, limit).map(reviewCard).join('\n')}
 	</div>`;
 
 const faqToggle = (faq: SupportFaq, index: number, forceWhite = false) =>
@@ -714,9 +671,9 @@ const applyAboutData = (html: string) => {
 			</div>
 			<div class="swiper-container swiper-testimonior">
 				<div class="swiper-wrapper">
-					${supportReviews
+					${auxeroReviewCards
 						.slice(0, 4)
-						.map((review, index) => `<div class="swiper-slide">${reviewCard(review, index)}</div>`)
+						.map((review) => `<div class="swiper-slide">${reviewCard(review)}</div>`)
 						.join('\n')}
 				</div>
 				<div class="swiper-pagination pagination-dark pagination-style pagination-swiper-testimonior mt-35"></div>
