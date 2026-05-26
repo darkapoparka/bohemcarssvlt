@@ -98,6 +98,17 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeNewsSection.locator('img.post--img, .post--img img')).toHaveCount(3);
 	await expect(homeNewsSection.locator('span', { hasText: 'by Bohemcars' })).toHaveCount(3);
 	await expect(homeNewsSection.locator('.title-section a')).toHaveAttribute('href', /^\.?\/blog$/);
+	const homeFooter = page.locator('footer.footer');
+	await expect(homeFooter).toHaveCount(1);
+	await expect(homeFooter.locator('.footer-top')).toBeVisible();
+	await expect(homeFooter.locator('.form-footer #footer-email')).toBeVisible();
+	await expect(homeFooter.locator('.footer-links .collapse')).toHaveCount(2);
+	await expect(homeFooter.locator('.footer-links .widget-links li')).toHaveCount(14);
+	await expect(homeFooter.locator('.footer-contact')).toContainText('+359 893 588 680');
+	await expect(homeFooter.locator('.footer-contact')).toContainText('Plovdiv');
+	await expect(homeFooter.locator('.widget-socical li')).toHaveCount(6);
+	await expect(homeFooter.locator('.footer-bottom-links li')).toHaveCount(3);
+	await expect(homeFooter).not.toContainText('Aurexo');
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)

@@ -10,6 +10,7 @@
 	afterBudgetSectionHtml={data.afterBudgetSectionHtml}
 	afterCompareSectionHtml={data.afterCompareSectionHtml}
 	afterFeaturedVehiclesHtml={data.afterFeaturedVehiclesHtml}
+	afterFooterHtml={data.afterFooterHtml}
 	afterHeroHtml={data.afterHeroHtml}
 	afterNewsSectionHtml={data.afterNewsSectionHtml}
 	afterReviewsSectionHtml={data.afterReviewsSectionHtml}
@@ -18,6 +19,7 @@
 	budgetVehicles={data.budgetVehicles}
 	comparePairs={data.comparePairs}
 	featuredVehicles={data.featuredVehicles}
+	footer={data.footer}
 	hero={data.hero}
 	newsPosts={data.newsPosts}
 	pageDocument={data.pageDocument}

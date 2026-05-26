@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import {
 	homeFiveBrandCards,
 	homeFiveComparePairsFromVehicles,
+	homeFiveFooterData,
 	homeFiveHeroDataFromVehicles,
 	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
@@ -66,6 +67,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		'<!-- News & Reviews -->',
 		'<!-- /News & Reviews -->'
 	);
+	const footerSlot = splitAuxeroBodySection(
+		newsSectionSlot?.afterHtml ?? '',
+		'<!-- Footer -->',
+		'<!-- Footer -->'
+	);
 
 	return {
 		afterBrandStripHtml: typeGallerySlot
@@ -85,7 +91,8 @@ export const load: PageServerLoad = ({ request, url }) => {
 				? featuredVehiclesSlot.beforeHtml
 				: heroSlot.afterHtml
 			: '',
-		afterNewsSectionHtml: newsSectionSlot?.afterHtml ?? '',
+		afterFooterHtml: footerSlot?.afterHtml ?? '',
+		afterNewsSectionHtml: footerSlot ? footerSlot.beforeHtml : (newsSectionSlot?.afterHtml ?? ''),
 		afterReviewsSectionHtml: newsSectionSlot
 			? newsSectionSlot.beforeHtml
 			: (reviewsSectionSlot?.afterHtml ?? ''),
@@ -97,6 +104,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 9),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
+		footer: footerSlot ? homeFiveFooterData : undefined,
 		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
 		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {

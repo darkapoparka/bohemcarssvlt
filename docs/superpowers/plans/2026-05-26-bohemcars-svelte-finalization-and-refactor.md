@@ -321,6 +321,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   News checkpoint: `src/lib/components/home/HomeFiveNewsSection.svelte` now renders the Home 05 `Bohemcars notes` section from typed `HomeFiveNewsPost` rows derived from `$lib/data/blog`. The route now splits `<!-- News & Reviews -->` after the Svelte reviews band and preserves the Auxero `post-style-2` featured card, two `post-style-3` cards, post image ratios/classes, byline row, and footer handoff.
 
+  Footer checkpoint: `src/lib/components/home/HomeFiveFooter.svelte` now renders the Home 05 footer from typed `HomeFiveFooterData`, preserving Auxero footer classes and column structure while replacing remaining template/footer contact and copyright data with Bohemcars values. The raw Home 05 tail now starts after the footer marker and still carries modals/scripts until their own migration pass.
+
 - [x] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

@@ -1,4 +1,4 @@
-import { bohemcarsAssets, bohemcarsBrand } from '$lib/data/bohemcars';
+import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import type { BlogPost } from '$lib/data/blog';
 import type { Vehicle } from '$lib/data/vehicles';
 
@@ -22,6 +22,37 @@ export type HomeFiveNewsPost = {
 	image: string;
 	slug: string;
 	title: string;
+};
+
+export type HomeFiveFooterLink = {
+	href: string;
+	label: string;
+};
+
+export type HomeFiveFooterSocial = {
+	href: string;
+	icon: 'facebook' | 'x' | 'instagram' | 'youtube';
+	label: string;
+};
+
+export type HomeFiveFooterData = {
+	appLinks: Array<HomeFiveFooterLink & { image: string }>;
+	buyingLinks: HomeFiveFooterLink[];
+	contact: {
+		address: string;
+		phoneHref: string;
+		phoneLabel: string;
+	};
+	copyright: string;
+	hours: string[];
+	legalLinks: HomeFiveFooterLink[];
+	logo: {
+		alt: string;
+		href: string;
+		src: string;
+	};
+	quickLinks: HomeFiveFooterLink[];
+	socialLinks: HomeFiveFooterSocial[];
 };
 
 export type HomeFiveTypeCard = {
@@ -178,6 +209,64 @@ export const homeFiveNewsPostsFromPosts = (posts: BlogPost[]): HomeFiveNewsPost[
 		slug: post.slug,
 		title: post.title
 	}));
+
+export const homeFiveFooterData: HomeFiveFooterData = {
+	appLinks: [
+		{
+			href: '/contact',
+			image: '/assets/images/brand/app-store-dark.png',
+			label: 'Contact on mobile'
+		},
+		{
+			href: '/contact',
+			image: '/assets/images/brand/google-play-dark.png',
+			label: 'Message Bohemcars'
+		}
+	],
+	buyingLinks: [
+		{ href: '/services', label: 'Services' },
+		{ href: '/inventory', label: 'Find a Car' },
+		{ href: '/agents', label: 'Find a Consultant' },
+		{ href: '/inventory?view=map', label: 'Inventory Map' },
+		{ href: '/inventory?status=available', label: 'Verified Listings' },
+		{ href: '/calculator', label: 'Import Calculator' },
+		{ href: '/reviews', label: 'Client Reviews' }
+	],
+	contact: {
+		address: bohemcarsContact.addressLabel,
+		phoneHref: '/contact',
+		phoneLabel: bohemcarsContact.primaryPhoneLabel
+	},
+	copyright: `©2026 ${bohemcarsBrand.name}. All Rights Reserved.`,
+	hours: ['Monday-Friday 9:00 - 18:00', 'Weekend viewings by appointment'],
+	legalLinks: [
+		{ href: '/terms', label: 'Terms Of Services' },
+		{ href: '/terms', label: 'Privacy Policy' },
+		{ href: '/terms', label: 'Cookie Policy' }
+	],
+	logo: {
+		alt: bohemcarsBrand.name,
+		href: '/',
+		src: bohemcarsAssets.logoDark
+	},
+	quickLinks: [
+		{ href: '/about', label: 'About Us' },
+		{ href: '/inventory?view=4', label: 'Buying With Bohemcars' },
+		{ href: '/sell-your-car', label: 'Sell Your Car' },
+		{ href: '/services', label: 'Services' },
+		{ href: '/faqs', label: 'FAQ' },
+		{ href: '/blog', label: 'News' },
+		{ href: '/contact', label: 'Contact Bohemcars' }
+	],
+	socialLinks: [
+		{ href: '/contact', icon: 'facebook', label: 'Contact' },
+		{ href: '/blog', icon: 'youtube', label: 'Blog' },
+		{ href: '/reviews', icon: 'facebook', label: 'Reviews' },
+		{ href: '/services', icon: 'youtube', label: 'Services' },
+		{ href: '/agents', icon: 'x', label: 'Consultants' },
+		{ href: '/inventory', icon: 'instagram', label: 'Inventory' }
+	]
+};
 
 export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{ label: 'SUV', image: '/assets/images/card/card-37.jpg', bodyType: 'SUV' },

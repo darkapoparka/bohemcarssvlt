@@ -208,4 +208,49 @@ describe('splitAuxeroDocument', () => {
 		expect(newsSplit?.sectionHtml).toContain('post-style-3');
 		expect(newsSplit?.afterHtml).toContain('footer');
 	});
+
+	it('can split the footer after the news slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const brandSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- Explore Our Brands -->',
+			'<!-- /Explore Our Brands -->'
+		);
+		const typeSplit = splitAuxeroBodySection(
+			brandSplit!.afterHtml,
+			'<!-- Browse By Type -->',
+			'<!-- /Browse By Type -->'
+		);
+		const compareSplit = splitAuxeroBodySection(
+			typeSplit!.afterHtml,
+			'<!-- Compare Top Rated Vehicles -->',
+			'<!-- /Compare Top Rated Vehicles -->'
+		);
+		const budgetSplit = splitAuxeroBodySection(
+			compareSplit!.afterHtml,
+			'<!-- Used Cars by Budget -->',
+			'<!-- /Used Cars by Budget -->'
+		);
+		const reviewsSplit = splitAuxeroBodySection(
+			budgetSplit!.afterHtml,
+			'<!-- /Client Reviews -->',
+			'<!-- /Client Reviews -->'
+		);
+		const newsSplit = splitAuxeroBodySection(
+			reviewsSplit!.afterHtml,
+			'<!-- News & Reviews -->',
+			'<!-- /News & Reviews -->'
+		);
+		const footerSplit = splitAuxeroBodySection(
+			newsSplit!.afterHtml,
+			'<!-- Footer -->',
+			'<!-- Footer -->'
+		);
+
+		expect(footerSplit?.sectionHtml).toContain('footer-top');
+		expect(footerSplit?.sectionHtml).toContain('form-footer');
+		expect(footerSplit?.sectionHtml).toContain('footer-bottom-links');
+		expect(footerSplit?.afterHtml).toContain('LoginModal');
+	});
 });
