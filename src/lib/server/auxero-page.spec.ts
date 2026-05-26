@@ -387,4 +387,23 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the agent detail main content without dropping sidebar or footer chrome', () => {
+		const html = renderAuxeroTemplate('sale-agents-details.html', {
+			routePath: 'agents/bohemcars-import'
+		});
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(
+			document.bodyHtml,
+			'class="innerpage__content md-mb-30"'
+		);
+
+		expect(split?.beforeHtml).toContain('Bohemcars Consultants');
+		expect(split?.sectionHtml).toContain('Bohemcars Import');
+		expect(split?.sectionHtml).toContain('Verified Bohemcars Consultant');
+		expect(split?.sectionHtml).toContain('bohemcars-agent-inventory');
+		expect(split?.afterHtml).toContain('send-inquiry');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

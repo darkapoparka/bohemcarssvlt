@@ -785,6 +785,32 @@ npm run build
 
 Browser DOM QA verified the agents listing on desktop and mobile: 3 consultant cards, one active card, 3 social rows, 6 contact controls, preserved `grid-cols-4 sm-grid-cols-1 lg-grid-cols-2` grid classes, Auxero agents body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agents-listing-svelte/` after waiting for the agent card selector.
 
+### Task 7B: Migrate Agent Detail Page
+
+**Checkpoint completed 2026-05-26:**
+
+- `/agents/[slug]` now uses `src/routes/agents/[slug]/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `sale-agents-details.html` head, header, breadcrumb, location/sidebar card, inquiry form, footer, modal stack, body classes, profile image ratio, verification row, copy spacing, and one-column inventory list.
+- The detail profile/inventory block is rendered by `src/lib/components/agents/AgentDetailMainContent.svelte` inside `AgentDetailTemplatePage.svelte`, using typed `AuxeroAgentDetailContent` data from `src/lib/auxero/agent-detail.ts`.
+- The agent inventory cards reuse `src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte` with the existing `card-box card-box-style-9` list variant, keeping the template card structure and compare/detail affordances.
+- `src/routes/project1.e2e.ts` now freezes the agent detail contract: visible profile content, verification badge, 3 list cards, 3 compare controls, 3 detail links, and preserved `send-inquiry` sidebar form.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated agent detail main content can be split without dropping sidebar, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/agents/AgentDetailMainContent.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/agents/AgentDetailTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/agents/[slug]/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the agent detail page on desktop and mobile: one `.innerpage__content md-mb-30` profile block, 3 `card-box-style-9` inventory cards, 3 compare actions, 3 detail links, one preserved `form.send-inquiry`, footer chrome, Auxero agent detail body class, no console errors, and no mobile horizontal overflow. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agent-detail-svelte/` after waiting for the agent inventory selector.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

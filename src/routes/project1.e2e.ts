@@ -352,6 +352,25 @@ test('compare and consultants render branded buyer flows without login', async (
 	await expect(page.locator('body')).toContainText('Bohemcars Import');
 	await expect(page.locator('body')).toContainText('Verified Bohemcars Consultant');
 	await expect(page.locator('body')).not.toContainText('Mike Hanley');
+	const agentDetailContent = page.locator('.innerpage__content').first();
+	await expect(agentDetailContent).toBeVisible();
+	await expect(agentDetailContent.locator('img.w-full.mb-35.radius-16')).toBeVisible();
+	await expect(agentDetailContent.locator('.verify.mb-16')).toContainText(
+		'Verified Bohemcars Consultant'
+	);
+	await expect(agentDetailContent.locator('.bohemcars-agent-inventory')).toBeVisible();
+	await expect(
+		agentDetailContent.locator('.bohemcars-agent-inventory .card-box.card-box-style-9')
+	).toHaveCount(3);
+	await expect(
+		agentDetailContent.locator(
+			'.bohemcars-agent-inventory .compare-details[data-bohemcars-compare]'
+		)
+	).toHaveCount(3);
+	await expect(agentDetailContent.locator('.bohemcars-agent-inventory .view-details')).toHaveCount(
+		3
+	);
+	await expect(page.locator('form.send-inquiry').first()).toBeVisible();
 });
 
 test('planned public support routes render Bohemcars content and local forms', async ({ page }) => {
