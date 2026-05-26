@@ -394,7 +394,16 @@ test('planned public support routes render Bohemcars content and local forms', a
 
 	await page.goto('/contact');
 	await expect(page.locator('body')).toContainText('Reach Out to Bohemcars');
+	await expect(page.locator('.widget-gg-map iframe')).toBeVisible();
+	await expect(page.locator('.contact-page-info')).toContainText('Bohemcars Office');
+	const contactFormCard = page.locator('.contact-page-form').first();
+	await expect(contactFormCard).toBeVisible();
+	await expect(contactFormCard).toHaveClass(/radius-20/);
+	await expect(contactFormCard.locator('.h3')).toContainText('get in touch');
 	const contact = page.locator('form.bohemcars-contact-form');
+	await expect(contact).toBeVisible();
+	await expect(contact.locator('input.input-large')).toHaveCount(4);
+	await expect(contact.locator('textarea#message')).toBeVisible();
 	await contact.locator('#Firstname').fill('QA');
 	await contact.locator('#Lastname').fill('Contact');
 	await contact.locator('#SendInquiryemail').fill('qa@example.com');

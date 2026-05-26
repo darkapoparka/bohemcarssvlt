@@ -406,4 +406,17 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the contact form card without dropping map, info, or footer chrome', () => {
+		const html = renderAuxeroTemplate('contact-us.html', { routePath: 'contact' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'contact-page-form');
+
+		expect(split?.beforeHtml).toContain('widget-gg-map');
+		expect(split?.beforeHtml).toContain('contact-page-info');
+		expect(split?.sectionHtml).toContain('bohemcars-contact-form');
+		expect(split?.sectionHtml).toContain('Send Message');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

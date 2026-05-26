@@ -811,6 +811,31 @@ npm run build
 
 Browser DOM QA verified the agent detail page on desktop and mobile: one `.innerpage__content md-mb-30` profile block, 3 `card-box-style-9` inventory cards, 3 compare actions, 3 detail links, one preserved `form.send-inquiry`, footer chrome, Auxero agent detail body class, no console errors, and no mobile horizontal overflow. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agent-detail-svelte/` after waiting for the agent inventory selector.
 
+### Task 7C: Migrate Contact Form Card
+
+**Checkpoint completed 2026-05-26:**
+
+- `/contact` now uses `src/routes/contact/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `contact-us.html` head, header, map band, contact info card, footer, modal stack, body classes, section spacing, form-card classes, input classes, field ids/names, and local contact form runtime.
+- The contact form card is rendered by `src/lib/components/contact/ContactFormCard.svelte` inside `ContactTemplatePage.svelte`, using typed `AuxeroContactFormData` from `src/lib/auxero/contact.ts`.
+- `src/routes/project1.e2e.ts` now freezes the contact contract: map iframe, info card, `radius-20` form card, 4 Auxero inputs, message textarea, and successful local form status.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated contact form card can be split without dropping the map, info panel, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/contact/ContactFormCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/contact/ContactTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/contact/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the contact page on desktop and mobile: one Svelte `contact-page-form` card, 4 `input-large` controls, one message textarea, preserved `widget-gg-map` iframe, `contact-page-info`, footer chrome, Auxero contact body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-contact-form-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
