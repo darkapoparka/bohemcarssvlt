@@ -992,6 +992,31 @@ npm run build
 
 Browser DOM QA verified the blog listing page on desktop and mobile: one Svelte `data-bohemcars-blog-grid`, 3 `post-style-6` cards, 3 images, first detail link preserved, pagination and footer chrome, Auxero blog body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-blog-list-svelte/`.
 
+### Task 7J: Migrate Blog Detail Article Column
+
+**Checkpoint completed 2026-05-27:**
+
+- `/blog/[slug]` now uses `src/routes/blog/[slug]/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `blog-details-1.html` head, header, breadcrumb, hero banner, sidebar, related posts band, footer, modal stack, body classes, and local script tail.
+- The article column is rendered by `src/lib/components/blog/BlogDetailMainContent.svelte` inside `BlogDetailTemplatePage.svelte`, using typed `AuxeroBlogDetailContent` data from `src/lib/auxero/blog-detail.ts`.
+- `src/routes/project1.e2e.ts` freezes the detail contract: visible `innerpage__content`, post image, quote block, previous/next links, and the Bohemcars comment form success state.
+- `src/lib/server/auxero-page.spec.ts` guards that the generated blog detail article column can be split without dropping sidebar, related posts, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/blog/BlogDetailMainContent.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/blog/BlogDetailTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/blog/[slug]/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the blog detail page on desktop and mobile: one Svelte `innerpage__content md-mb-30` article column, one `innerpage__sidebar`, one post image, one quote block, 2 previous/next links, 2 related post cards, the Bohemcars comment form success state, preserved Auxero blog detail body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-blog-detail-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

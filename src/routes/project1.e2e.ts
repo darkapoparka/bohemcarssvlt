@@ -431,6 +431,24 @@ test('planned public support routes render Bohemcars content and local forms', a
 		/^\.?\/blog\/vnos-ot-kanada-proverka$/
 	);
 
+	await page.goto('/blog/vnos-ot-kanada-proverka');
+	const blogDetail = page.locator('.innerpage__content.md-mb-30');
+	await expect(blogDetail).toBeVisible();
+	await expect(blogDetail.locator('.post--img.radius-20')).toBeVisible();
+	await expect(blogDetail.locator('.quote')).toBeVisible();
+	await expect(blogDetail.locator('.blog-detail-recentpost a')).toHaveCount(2);
+	const blogCommentForm = blogDetail.locator('form.bohemcars-blog-comment-form');
+	await expect(blogCommentForm).toBeVisible();
+	await expect(blogCommentForm.locator('input.input-large')).toHaveCount(2);
+	await expect(blogCommentForm.locator('textarea.message')).toBeVisible();
+	await blogCommentForm.locator('input[name="name-review"]').fill('Proposal Reviewer');
+	await blogCommentForm.locator('input[name="email-comment"]').fill('reviewer@example.com');
+	await blogCommentForm.locator('textarea[name="comment"]').fill('Looks ready for review.');
+	await blogCommentForm.locator('button').click();
+	await expect(blogCommentForm.locator('.auxero-form-status')).toHaveText(
+		'Comment saved locally for Bohemcars review'
+	);
+
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);
 	await expect(page.locator('.services-center-info')).toContainText('Contact Information');

@@ -514,4 +514,22 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the blog detail article column without dropping sidebar or related posts', () => {
+		const html = renderAuxeroTemplate('blog-details-1.html', {
+			routePath: 'blog/vnos-ot-kanada-proverka'
+		});
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(
+			document.bodyHtml,
+			'class="innerpage__content md-mb-30"'
+		);
+
+		expect(split?.beforeHtml).toContain('blog-details-banner');
+		expect(split?.sectionHtml).toContain('bohemcars-blog-comment-form');
+		expect(split?.sectionHtml).toContain('Next Step');
+		expect(split?.afterHtml).toContain('innerpage__sidebar');
+		expect(split?.afterHtml).toContain('Related Posts');
+		expect(split?.afterHtml).toContain('footer');
+	});
 });
