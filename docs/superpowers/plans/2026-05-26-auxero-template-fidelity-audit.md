@@ -31,10 +31,10 @@
 - Modify: `src/lib/server/auxero-home-data.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] Keep the fixed Home 05 brand strip at 12 template-style cards unless there is an explicit design decision to replace the whole section.
-- [ ] Keep Browse By Type on the template `card-37.jpg` through `card-42.jpg` gallery image family.
+- [x] Keep the fixed Home 05 brand strip at 12 template-style cards unless there is an explicit design decision to replace the whole section.
+- [x] Keep Browse By Type on the template `card-37.jpg` through `card-42.jpg` gallery image family.
 - [ ] Verify featured cards, compare cards, reviews, news, and CTA sections keep the same visible structure as `home-05.html`.
-- [ ] Add e2e assertions for section card counts and key image families where prior regressions happened.
+- [x] Add e2e assertions for section card counts and key image families where prior regressions happened.
 
 ### Task 3: Inventory Listing Fidelity
 
@@ -46,7 +46,7 @@
 
 - [ ] Compare `listing-grid3-columns.html` with `/inventory` for card typography, badge size, meta spacing, price row, compare button, and view details link.
 - [ ] Keep Bohemcars dark inventory styling only if it still follows the template component proportions.
-- [ ] Add e2e assertions for card image ratio, title class, price class, and toolbar visibility.
+- [x] Add e2e assertions for card image ratio, title class, price class, and toolbar visibility.
 
 ### Task 4: Header And Logo Regression Guard
 
@@ -66,12 +66,12 @@
 - Test: `src/routes/project1.e2e.ts`
 - Test: `src/lib/server/auxero-template.spec.ts`
 
-- [ ] Run `npm run lint`.
-- [ ] Run `npm run check`.
-- [ ] Run `npm run test:unit -- --run`.
-- [ ] Run `npx playwright test src/routes/project1.e2e.ts`.
-- [ ] Save desktop and mobile screenshots for any page touched in the current pass.
-- [ ] Record remaining mismatches in this plan before moving to the next template.
+- [x] Run `npm run lint`.
+- [x] Run `npm run check`.
+- [x] Run `npm run test:unit -- --run`.
+- [x] Run `npx playwright test src/routes/project1.e2e.ts`.
+- [x] Save desktop and mobile screenshots for any page touched in the current pass.
+- [x] Record remaining mismatches in this plan before moving to the next template.
 
 ---
 
@@ -81,4 +81,8 @@
 - Detail typography root cause: broad CSS in `src/lib/server/auxero-template.ts` forced detail headings, sidebar values, and generic Bohemcars cards to white on an `is_light` page.
 - Detail typography fix: remove detail and generic card selectors from that broad dark-text override; keep the original template light typography.
 - Detail verification: title is `40px/48px Manrope` and `rgb(28, 28, 28)`, sidebar price is `rgb(28, 28, 28)`, overview label is `rgb(75, 75, 75)`.
+- Home 05 visual contract now has route-source documentation plus e2e guards for 12 brand cards, 6 type cards, the `card-37.jpg` type gallery family, and the template search widget.
+- Inventory grid contract now checks the first card image ratio remains within the Auxero 3-column card proportions.
+- Template contract types now lock `/`, inventory view variants, detail, agents, account, and admin route families to their selected Auxero source files.
+- Browser screenshots saved under `test-results/visual-contract/2026-05-26-checkpoint-1/` for Bohemcars home, inventory, and detail at desktop and mobile widths. The in-app Browser loaded the app routes but returned `ERR_BLOCKED_BY_CLIENT` for the raw local template reference server, so raw-template screenshot comparison remains covered by route-source mapping plus Playwright DOM/CSS assertions until a Browser-accessible template host is available.
 - Repository publishing is tracked separately from the fidelity audit so this plan stays focused on visual regressions.

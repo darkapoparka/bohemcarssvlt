@@ -1,4 +1,15 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
+
+async function cssValue(locator: Locator, property: string) {
+	return locator.evaluate((node, prop) => getComputedStyle(node).getPropertyValue(prop), property);
+}
+
+async function boxRatio(locator: Locator) {
+	const box = await locator.boundingBox();
+	if (!box) throw new Error('Expected element to have a box');
+
+	return Number((box.width / box.height).toFixed(2));
+}
 
 const expectBohemcarsShell = async (page: Page) => {
 	await expect(page.locator('body')).toContainText('Bohemcars');
@@ -23,14 +34,17 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(
 		page.locator('section', { hasText: 'Explore Our Brands' }).locator('.out-brand-2')
 	).toHaveCount(12);
+	await expect(page.locator('.out-brand-2')).toHaveCount(12);
 	await expect(
 		page.locator('section', { hasText: 'Browse By Type' }).locator('.brand-item-style-2')
 	).toHaveCount(6);
+	await expect(page.locator('.brand-item-style-2')).toHaveCount(6);
 	await expect(
 		page
 			.locator('section', { hasText: 'Browse By Type' })
-			.locator('img[src="/assets/images/card/card-37.jpg"]')
+			.locator('img[src*="/assets/images/card/card-37.jpg"]')
 	).toBeVisible();
+	await expect(page.locator('.search-cars, .search-form-widget').first()).toBeVisible();
 
 	const homeLinks = await page
 		.locator('a[href]')
@@ -72,6 +86,11 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 
 	await page.goto('/inventory');
 	const refreshedFirstCard = page.locator('[data-bohemcars-slug]').first();
+	const cardImageRatio = await boxRatio(refreshedFirstCard.locator('.card--img'));
+
+	expect(cardImageRatio).toBeGreaterThan(1.25);
+	expect(cardImageRatio).toBeLessThan(1.61);
+
 	await refreshedFirstCard.locator('.bohemcars-favorite, .heart').click();
 	await expect
 		.poll(async () =>
@@ -95,12 +114,11 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 	expect(firstSlug).toBeTruthy();
 
 	await page.goto(`/inventory/${firstSlug}`);
+	const detailTitle = page.locator('.listing-details--content h2').first();
+
 	await expect(page.locator('.listing-details')).toContainText(firstTitle);
-	await expect(page.locator('.listing-details--content h2').first()).toHaveCSS(
-		'color',
-		'rgb(28, 28, 28)'
-	);
-	await expect(page.locator('.listing-details--content h2').first()).toHaveCSS('font-size', '40px');
+	expect(await cssValue(detailTitle, 'color')).toBe('rgb(28, 28, 28)');
+	expect(await cssValue(detailTitle, 'font-size')).toBe('40px');
 	await expect(page.locator('.listing-details--sidebar-box .h4').first()).toHaveCSS(
 		'color',
 		'rgb(28, 28, 28)'

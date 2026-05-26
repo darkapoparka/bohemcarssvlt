@@ -64,7 +64,7 @@ The migration must not start by redesigning the site. The first success conditio
 - Create: `docs/template-contract/route-source-map.md`
 - Modify: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Create the route-source map document**
+- [x] **Step 1: Create the route-source map document**
 
   Create `docs/template-contract/route-source-map.md` with this exact route contract:
 
@@ -85,7 +85,7 @@ The migration must not start by redesigning the site. The first success conditio
   | `/admin/*`            | dashboard/account templates                               | Preserve dashboard shell and replace content with role-aware Bohemcars data.                                                              |
   ```
 
-- [ ] **Step 2: Add visual-contract test helpers**
+- [x] **Step 2: Add visual-contract test helpers**
 
   In `src/routes/project1.e2e.ts`, add helper functions near the top of the file:
 
@@ -110,7 +110,7 @@ The migration must not start by redesigning the site. The first success conditio
   import { expect, type Locator, test } from '@playwright/test';
   ```
 
-- [ ] **Step 3: Add Home 05 fidelity assertions**
+- [x] **Step 3: Add Home 05 fidelity assertions**
 
   Extend the homepage e2e test to assert:
 
@@ -121,7 +121,7 @@ The migration must not start by redesigning the site. The first success conditio
   await expect(page.locator('.search-cars, .search-form-widget').first()).toBeVisible();
   ```
 
-- [ ] **Step 4: Verify the contract tests**
+- [x] **Step 4: Verify the contract tests**
 
   Run:
 
@@ -146,7 +146,7 @@ The migration must not start by redesigning the site. The first success conditio
 - Create: `src/lib/auxero/fidelity.ts`
 - Test: `src/lib/auxero/template-map.spec.ts`
 
-- [ ] **Step 1: Write the failing route map test**
+- [x] **Step 1: Write the failing route map test**
 
   Create `src/lib/auxero/template-map.spec.ts`:
 
@@ -179,7 +179,7 @@ The migration must not start by redesigning the site. The first success conditio
 
   Expected: fail because `src/lib/auxero/template-map.ts` does not exist.
 
-- [ ] **Step 3: Implement the route map**
+- [x] **Step 3: Implement the route map**
 
   Create `src/lib/auxero/template-map.ts`:
 
@@ -226,7 +226,7 @@ The migration must not start by redesigning the site. The first success conditio
   }
   ```
 
-- [ ] **Step 4: Add fidelity constants**
+- [x] **Step 4: Add fidelity constants**
 
   Create `src/lib/auxero/fidelity.ts`:
 
