@@ -10,10 +10,15 @@
 	let { children } = $props();
 	const garage = new GarageState();
 	setGarageContext(garage);
+	let isAuxeroFullPage = $derived(Boolean(page.data.auxeroFullPage));
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<SiteHeader variant={page.url.pathname === '/' ? 'home' : 'light'} pathname={page.url.pathname} />
-{@render children()}
-<SiteFooter />
-<ScrollTop />
+{#if isAuxeroFullPage}
+	{@render children()}
+{:else}
+	<SiteHeader variant={page.url.pathname === '/' ? 'home' : 'light'} pathname={page.url.pathname} />
+	{@render children()}
+	<SiteFooter />
+	<ScrollTop />
+{/if}

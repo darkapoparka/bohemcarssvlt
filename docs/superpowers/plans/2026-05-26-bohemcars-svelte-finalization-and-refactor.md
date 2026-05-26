@@ -272,7 +272,7 @@ The migration must not start by redesigning the site. The first success conditio
 - Modify: `src/lib/data/bohemcars.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Capture the current Home 05 DOM contract**
+- [x] **Step 1: Capture the current Home 05 DOM contract**
 
   Run:
 
@@ -299,9 +299,11 @@ The migration must not start by redesigning the site. The first success conditio
   });
   ```
 
-- [ ] **Step 3: Convert the route from raw server response to Svelte page**
+- [x] **Step 3: Convert the route from raw server response to Svelte page**
 
   Rename `src/routes/+server.ts` to `src/routes/+server.legacy.ts` or remove it only after `+page.svelte` renders the homepage. The root route must not have both a conflicting `+server.ts` response and the intended `+page.svelte` page for normal browser navigation.
+
+  Current checkpoint: `src/routes/+server.ts` moved to `src/routes/root-server.legacy.ts`; `/` now renders through `+page.server.ts` and `+page.svelte` using a split, trusted Auxero Home 05 document. Section-by-section Svelte component replacement remains pending under the existing fidelity tests.
 
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
