@@ -1130,6 +1130,33 @@ npm run build
 
 Browser DOM QA verified `/account/messages`, `/admin/messages`, and `/admin/inquiries` on desktop and mobile: one Svelte `data-bohemcars-message-container` per page, preserved message contacts/header/body/action structure, seeded customer and admin inquiry content, no demo contact leakage, no console errors, and no page-level horizontal overflow. The in-app Browser screenshot command timed out on this dashboard view, so full-page Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-27-message-thread-svelte/`.
 
+### Task 7O: Migrate Account Listings And Admin Inventory Tables
+
+**Checkpoint completed 2026-05-27:**
+
+- `/account/listings` and `/admin/inventory` now use SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` routes with `csr = false`.
+- The pages preserve the Auxero dashboard shell, role-aware sidebar/header, search/sort controls, table header rhythm, cart item classes, pagination/footer region, modal stack, body classes, and local script tail.
+- The listings table is rendered by `AccountListingsTable.svelte` inside `AccountListingsTemplatePage.svelte`, using typed `AuxeroAccountListingsData` from `src/lib/auxero/account-listings.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes the same typed account listings data for Svelte routes and marks the raw fallback table with `data-bohemcars-account-listings` for safe splitting.
+- `src/routes/project1.e2e.ts` freezes the table contract: customer submission rows and action counts, admin inventory rows, seeded BMW X5 content, clean resolved admin edit paths without encoded slashes, and remove actions.
+- `src/lib/server/auxero-page.spec.ts` guards that customer listings and admin inventory tables can be split without dropping dashboard chrome, modals, or runtime script tail.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountListingsTable.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountListingsTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/listings/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/inventory/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified `/account/listings?role=customer` and `/admin/inventory?role=admin` on desktop and mobile: one Svelte `data-bohemcars-account-listings` table per page, 2 seeded customer submission rows in the clean browser state, 5 admin inventory rows, preserved 6-column headers, expected edit/message/remove action counts, clean admin edit hrefs with no `%2F` encoding, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-listings-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

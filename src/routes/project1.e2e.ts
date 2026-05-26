@@ -603,7 +603,20 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/account/listings?role=customer');
 	await expect(page.locator('body')).toContainText('My Listings');
-	await expect(page.locator('.bohemcars-account-listings')).toBeVisible();
+	const accountListings = page.locator('[data-bohemcars-account-listings]');
+	const accountSubmissionRows = accountListings.locator('.cart-item[data-bohemcars-submission-id]');
+	await expect(accountListings).toBeVisible();
+	await expect(accountListings).toHaveAttribute('data-bohemcars-submissions-table', 'true');
+	await expect.poll(async () => accountSubmissionRows.count()).toBeGreaterThan(1);
+	const accountSubmissionCount = await accountSubmissionRows.count();
+	await expect(accountListings).toContainText('Client BMW evaluation');
+	await expect(accountListings).toContainText('Trade-in review request');
+	await expect(accountListings.locator('a[href$="/sell-your-car"]')).toHaveCount(
+		accountSubmissionCount
+	);
+	await expect(accountListings.locator('a[href$="/account/messages"]')).toHaveCount(
+		accountSubmissionCount
+	);
 
 	await page.goto('/admin?role=admin');
 	await expect(page.locator('body')).toContainText('Admin Dashboard');
@@ -617,7 +630,20 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/admin/inventory?role=admin');
 	await expect(page.locator('body')).toContainText('Inventory Management');
-	await expect(page.locator('.bohemcars-account-listings')).toBeVisible();
+	const adminInventory = page.locator('[data-bohemcars-account-listings]');
+	await expect(adminInventory).toBeVisible();
+	await expect
+		.poll(async () => adminInventory.locator('.cart-item[data-bohemcars-slug]').count())
+		.toBeGreaterThan(0);
+	await expect(adminInventory).toContainText('BMW X5 40i M Sport Shadow Line');
+	const adminEditHref = await adminInventory
+		.locator('a.cart-item__edit[aria-label^="Edit "]')
+		.first()
+		.getAttribute('href');
+	const adminEditPath = new URL(adminEditHref ?? '', page.url()).pathname;
+	expect(adminEditPath).toMatch(/^\/admin\/inventory\/edit\/[^/]+$/);
+	expect(adminEditHref).not.toContain('%2F');
+	await expect(adminInventory.locator('.cart-item__remove.action').first()).toBeVisible();
 
 	await page.goto('/admin/inventory/new?role=admin');
 	await expect(page.locator('body')).toContainText('Add Bohemcars Listing');

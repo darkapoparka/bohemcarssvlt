@@ -438,6 +438,34 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('renderAccountFavorites');
 	});
 
+	it('can split the customer listings table without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('my-listings.html', { routePath: 'account/listings' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-account-listings');
+
+		expect(split?.beforeHtml).toContain('My Listings');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('data-bohemcars-submissions-table');
+		expect(split?.sectionHtml).toContain('Client BMW evaluation');
+		expect(split?.sectionHtml).toContain('Trade-in review request');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
+	it('can split the admin inventory table without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('my-listings.html', { routePath: 'admin/inventory' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-account-listings');
+
+		expect(split?.beforeHtml).toContain('Inventory Management');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('data-bohemcars-slug');
+		expect(split?.sectionHtml).toContain('BMW X5 40i M Sport Shadow Line');
+		expect(split?.sectionHtml).toContain('/admin/inventory/edit/');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the public agents grid without dropping page chrome', () => {
 		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'agents' });
 		const document = splitAuxeroDocument(html!);
