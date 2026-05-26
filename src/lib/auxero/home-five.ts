@@ -27,6 +27,23 @@ export type HomeFiveComparePair = {
 	right: HomeFiveCompareVehicle;
 };
 
+export type HomeFiveVehicleCardData = {
+	brand: string;
+	fuel: string;
+	highlightClass: 'bg-green' | 'bg-primary-2';
+	highlightText: string;
+	image: string;
+	monthlyLabel: string;
+	photoCount: number;
+	priceLabel: string;
+	slug: string;
+	title: string;
+	transmission: string;
+	transmissionIcon: 'auto.svg' | 'manual.svg';
+	year: number;
+	mileageLabel: string;
+};
+
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 	{ name: 'BMW', image: '/assets/images/brand/brand-1.png', count: '18 Vehicles', query: 'BMW' },
 	{
@@ -103,6 +120,31 @@ const compareVehicleFrom = (vehicle: Vehicle): HomeFiveCompareVehicle => ({
 	slug: vehicle.slug,
 	title: vehicle.title
 });
+
+const formatKm = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
+
+export const homeFiveVehicleCardFromVehicle = (
+	vehicle: Vehicle,
+	index: number
+): HomeFiveVehicleCardData => ({
+	brand: vehicle.brand,
+	fuel: vehicle.fuel,
+	highlightClass: index % 2 === 0 ? 'bg-primary-2' : 'bg-green',
+	highlightText: vehicle.tag ?? (vehicle.isClientVehicle ? 'Client vehicle' : 'Available'),
+	image: imageForHomeFiveVehicle(vehicle),
+	mileageLabel: formatKm(vehicle.mileage),
+	monthlyLabel: `${vehicle.monthly.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR/mo`,
+	photoCount: vehicle.images.length || 1,
+	priceLabel: vehicle.priceLabel,
+	slug: vehicle.slug,
+	title: vehicle.title,
+	transmission: vehicle.transmission,
+	transmissionIcon: vehicle.transmission === 'Manual' ? 'manual.svg' : 'auto.svg',
+	year: vehicle.year
+});
+
+export const homeFiveVehicleCardsFromVehicles = (vehicles: Vehicle[], limit: number) =>
+	vehicles.slice(0, limit).map(homeFiveVehicleCardFromVehicle);
 
 export function homeFiveComparePairsFromVehicles(vehicles: Vehicle[]): HomeFiveComparePair[] {
 	return [

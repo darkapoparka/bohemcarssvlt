@@ -311,6 +311,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Compare section checkpoint: `src/lib/components/home/HomeFiveCompareSection.svelte` now renders the Home 05 `Compare Top Rated Vehicles` section from typed `HomeFiveComparePair` data derived in `+page.server.ts`. The section keeps the template `card-box-style-4` structure, two comparison slides, four vehicle images, compare CTA styling, pagination wrapper, and surrounding `type -> compare -> budget` order.
 
+  Budget section checkpoint: `src/lib/components/home/HomeFiveBudgetSection.svelte` now renders the Home 05 `Bohemcars by Budget` section from typed `HomeFiveVehicleCardData` rows derived in `+page.server.ts`. `HomeFiveVehicleCard.svelte` preserves the template `card-box card-box-style-1` structure, highlight tags, image overlay meta, style2 specs row, price/finance row, compare action, and details link; the section keeps 5 budget tabs and 9 cards.
+
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

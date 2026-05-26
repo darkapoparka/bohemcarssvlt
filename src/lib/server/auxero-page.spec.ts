@@ -71,4 +71,34 @@ describe('splitAuxeroDocument', () => {
 		expect(compareSplit?.sectionHtml).toContain('card-box-style-4');
 		expect(compareSplit?.afterHtml).toContain('<!-- Used Cars by Budget -->');
 	});
+
+	it('can split the budget section after the compare slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const brandSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- Explore Our Brands -->',
+			'<!-- /Explore Our Brands -->'
+		);
+		const typeSplit = splitAuxeroBodySection(
+			brandSplit!.afterHtml,
+			'<!-- Browse By Type -->',
+			'<!-- /Browse By Type -->'
+		);
+		const compareSplit = splitAuxeroBodySection(
+			typeSplit!.afterHtml,
+			'<!-- Compare Top Rated Vehicles -->',
+			'<!-- /Compare Top Rated Vehicles -->'
+		);
+		const budgetSplit = splitAuxeroBodySection(
+			compareSplit!.afterHtml,
+			'<!-- Used Cars by Budget -->',
+			'<!-- /Used Cars by Budget -->'
+		);
+
+		expect(budgetSplit?.sectionHtml).toContain('Bohemcars by Budget');
+		expect(budgetSplit?.sectionHtml).toContain('grid grid-cols-3');
+		expect(budgetSplit?.afterHtml).toContain('Client Reviews');
+		expect(budgetSplit?.afterHtml).toContain('swiper-testimonior');
+	});
 });

@@ -50,6 +50,10 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeCompareSection.locator('.card-box-style-4')).toHaveCount(2);
 	await expect(homeCompareSection.locator('.image img.w-full')).toHaveCount(4);
 	await expect(homeCompareSection.locator('.btn.btn-small.btn-line-1.text-sm')).toHaveCount(2);
+	const homeBudgetSection = page.locator('section', { hasText: 'Bohemcars by Budget' });
+	await expect(homeBudgetSection.locator('.menu-tab-style2 .car-box')).toHaveCount(5);
+	await expect(homeBudgetSection.locator('.card-box-style-1')).toHaveCount(9);
+	await expect(homeBudgetSection.locator('ul.tag.style2')).toHaveCount(9);
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)
