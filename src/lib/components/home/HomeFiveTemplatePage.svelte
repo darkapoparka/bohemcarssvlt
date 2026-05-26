@@ -4,12 +4,14 @@
 	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
 	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
 	import HomeFiveHero from './HomeFiveHero.svelte';
+	import HomeFiveNewsSection from './HomeFiveNewsSection.svelte';
 	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
 	import type {
 		HomeFiveBrandCard,
 		HomeFiveComparePair,
 		HomeFiveHeroData,
+		HomeFiveNewsPost,
 		HomeFiveReview,
 		HomeFiveTypeCard,
 		HomeFiveVehicleCardData
@@ -22,6 +24,7 @@
 		afterCompareSectionHtml,
 		afterFeaturedVehiclesHtml,
 		afterHeroHtml,
+		afterNewsSectionHtml,
 		afterReviewsSectionHtml,
 		afterTypeGalleryHtml,
 		brandCards,
@@ -29,6 +32,7 @@
 		comparePairs,
 		featuredVehicles,
 		hero,
+		newsPosts,
 		pageDocument,
 		reviews,
 		typeCards
@@ -38,6 +42,7 @@
 		afterCompareSectionHtml: string;
 		afterFeaturedVehiclesHtml: string;
 		afterHeroHtml: string;
+		afterNewsSectionHtml: string;
 		afterReviewsSectionHtml: string;
 		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
@@ -45,6 +50,7 @@
 		comparePairs: HomeFiveComparePair[];
 		featuredVehicles: HomeFiveVehicleCardData[];
 		hero?: HomeFiveHeroData;
+		newsPosts: HomeFiveNewsPost[];
 		pageDocument: AuxeroPageDocument;
 		reviews: HomeFiveReview[];
 		typeCards: HomeFiveTypeCard[];
@@ -81,3 +87,6 @@
 <HomeFiveReviewsSection {reviews} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterReviewsSectionHtml}
+<HomeFiveNewsSection posts={newsPosts} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterNewsSectionHtml}

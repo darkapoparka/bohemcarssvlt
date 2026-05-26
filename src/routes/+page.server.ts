@@ -4,10 +4,12 @@ import {
 	homeFiveBrandCards,
 	homeFiveComparePairsFromVehicles,
 	homeFiveHeroDataFromVehicles,
+	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
 	homeFiveTypeCards,
 	homeFiveVehicleCardsFromVehicles
 } from '$lib/auxero/home-five';
+import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
 import { splitAuxeroBodySection, splitAuxeroDocument } from '$lib/server/auxero-page';
 import { renderAuxeroTemplate } from '$lib/server/auxero-template';
@@ -59,6 +61,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		'<!-- /Client Reviews -->',
 		'<!-- /Client Reviews -->'
 	);
+	const newsSectionSlot = splitAuxeroBodySection(
+		reviewsSectionSlot?.afterHtml ?? '',
+		'<!-- News & Reviews -->',
+		'<!-- /News & Reviews -->'
+	);
 
 	return {
 		afterBrandStripHtml: typeGallerySlot
@@ -78,7 +85,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 				? featuredVehiclesSlot.beforeHtml
 				: heroSlot.afterHtml
 			: '',
-		afterReviewsSectionHtml: reviewsSectionSlot?.afterHtml ?? '',
+		afterNewsSectionHtml: newsSectionSlot?.afterHtml ?? '',
+		afterReviewsSectionHtml: newsSectionSlot
+			? newsSectionSlot.beforeHtml
+			: (reviewsSectionSlot?.afterHtml ?? ''),
 		afterTypeGalleryHtml: compareSectionSlot
 			? compareSectionSlot.beforeHtml
 			: (typeGallerySlot?.afterHtml ?? ''),
@@ -88,6 +98,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
 		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
+		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {
 			...pageDocument,
 			bodyHtml: heroSlot?.beforeHtml ?? featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml

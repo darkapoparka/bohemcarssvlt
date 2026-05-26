@@ -1,4 +1,5 @@
 import { bohemcarsAssets, bohemcarsBrand } from '$lib/data/bohemcars';
+import type { BlogPost } from '$lib/data/blog';
 import type { Vehicle } from '$lib/data/vehicles';
 
 export type HomeFiveBrandCard = {
@@ -13,6 +14,14 @@ export type HomeFiveReview = {
 	name: string;
 	role: string;
 	text: string;
+};
+
+export type HomeFiveNewsPost = {
+	category: string;
+	date: string;
+	image: string;
+	slug: string;
+	title: string;
 };
 
 export type HomeFiveTypeCard = {
@@ -160,6 +169,15 @@ export const homeFiveReviewItems: HomeFiveReview[] = [
 		text: 'I sent the car details and received clear feedback on pricing, documents, and the best way to present the vehicle.'
 	}
 ];
+
+export const homeFiveNewsPostsFromPosts = (posts: BlogPost[]): HomeFiveNewsPost[] =>
+	posts.slice(0, 3).map((post) => ({
+		category: post.category,
+		date: post.date,
+		image: post.image,
+		slug: post.slug,
+		title: post.title
+	}));
 
 export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{ label: 'SUV', image: '/assets/images/card/card-37.jpg', bodyType: 'SUV' },

@@ -319,6 +319,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Reviews checkpoint: `src/lib/components/home/HomeFiveReviewsSection.svelte` now renders the Home 05 `Client Reviews` carousel from typed `HomeFiveReview` rows in `$lib/auxero/home-five.ts`. The split intentionally follows the post-processed Home 05 closing-comment markers, preserving the Auxero `swiper-testimonior`, `testimonior-box`, star icon, avatar, and pagination structure while keeping the section order `budget -> reviews -> news`.
 
+  News checkpoint: `src/lib/components/home/HomeFiveNewsSection.svelte` now renders the Home 05 `Bohemcars notes` section from typed `HomeFiveNewsPost` rows derived from `$lib/data/blog`. The route now splits `<!-- News & Reviews -->` after the Svelte reviews band and preserves the Auxero `post-style-2` featured card, two `post-style-3` cards, post image ratios/classes, byline row, and footer handoff.
+
 - [x] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

@@ -168,4 +168,44 @@ describe('splitAuxeroDocument', () => {
 		expect(reviewsSplit?.sectionHtml).toContain('swiper-testimonior');
 		expect(reviewsSplit?.afterHtml).toContain('<!-- News & Reviews -->');
 	});
+
+	it('can split the news section after the reviews slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const brandSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- Explore Our Brands -->',
+			'<!-- /Explore Our Brands -->'
+		);
+		const typeSplit = splitAuxeroBodySection(
+			brandSplit!.afterHtml,
+			'<!-- Browse By Type -->',
+			'<!-- /Browse By Type -->'
+		);
+		const compareSplit = splitAuxeroBodySection(
+			typeSplit!.afterHtml,
+			'<!-- Compare Top Rated Vehicles -->',
+			'<!-- /Compare Top Rated Vehicles -->'
+		);
+		const budgetSplit = splitAuxeroBodySection(
+			compareSplit!.afterHtml,
+			'<!-- Used Cars by Budget -->',
+			'<!-- /Used Cars by Budget -->'
+		);
+		const reviewsSplit = splitAuxeroBodySection(
+			budgetSplit!.afterHtml,
+			'<!-- /Client Reviews -->',
+			'<!-- /Client Reviews -->'
+		);
+		const newsSplit = splitAuxeroBodySection(
+			reviewsSplit!.afterHtml,
+			'<!-- News & Reviews -->',
+			'<!-- /News & Reviews -->'
+		);
+
+		expect(newsSplit?.sectionHtml).toContain('Bohemcars notes');
+		expect(newsSplit?.sectionHtml).toContain('post-style-2');
+		expect(newsSplit?.sectionHtml).toContain('post-style-3');
+		expect(newsSplit?.afterHtml).toContain('footer');
+	});
 });

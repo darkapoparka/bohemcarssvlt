@@ -92,6 +92,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		'href',
 		/^\.?\/reviews$/
 	);
+	const homeNewsSection = page.locator('section', { hasText: 'Bohemcars notes' });
+	await expect(homeNewsSection.locator('.post-style-2')).toHaveCount(1);
+	await expect(homeNewsSection.locator('.post-style-3')).toHaveCount(2);
+	await expect(homeNewsSection.locator('img.post--img, .post--img img')).toHaveCount(3);
+	await expect(homeNewsSection.locator('span', { hasText: 'by Bohemcars' })).toHaveCount(3);
+	await expect(homeNewsSection.locator('.title-section a')).toHaveAttribute('href', /^\.?\/blog$/);
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)

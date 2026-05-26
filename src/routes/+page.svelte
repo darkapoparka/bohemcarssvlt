@@ -11,6 +11,7 @@
 	afterCompareSectionHtml={data.afterCompareSectionHtml}
 	afterFeaturedVehiclesHtml={data.afterFeaturedVehiclesHtml}
 	afterHeroHtml={data.afterHeroHtml}
+	afterNewsSectionHtml={data.afterNewsSectionHtml}
 	afterReviewsSectionHtml={data.afterReviewsSectionHtml}
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
 	brandCards={data.brandCards}
@@ -18,6 +19,7 @@
 	comparePairs={data.comparePairs}
 	featuredVehicles={data.featuredVehicles}
 	hero={data.hero}
+	newsPosts={data.newsPosts}
 	pageDocument={data.pageDocument}
 	reviews={data.reviews}
 	typeCards={data.typeCards}
