@@ -861,6 +861,31 @@ npm run build
 
 Browser DOM QA verified the services page on desktop and mobile: 6 service boxes, one `services-center-info` panel, one Svelte `services-center-form` card, 5 `input-large` controls, one select with 6 options, footer chrome, Auxero services body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-services-form-svelte/`.
 
+### Task 7E: Migrate Sell Your Car Form
+
+**Checkpoint completed 2026-05-26:**
+
+- `/sell-your-car` now uses `src/routes/sell-your-car/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `sell-your-car.html` head, header, breadcrumb, hero copy, tab strip, how-it-works steps, why-choose card, CTA band, FAQ, footer, modal stack, body classes, form-card classes, input classes, field ids/names, and local sell-car form runtime.
+- The sell-car intake form is rendered by `src/lib/components/sell-your-car/SellCarForm.svelte` inside `SellYourCarTemplatePage.svelte`, using typed `AuxeroSellCarFormData` from `src/lib/auxero/sell-your-car.ts`.
+- `src/routes/project1.e2e.ts` now freezes the sell-your-car contract: 4 step boxes, one active step, visible `calculate-form bohemcars-sell-form`, 4 Auxero inputs, and successful local form status.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated sell-your-car form can be split without dropping the tab strip, follow-up sections, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/sell-your-car/SellCarForm.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/sell-your-car/SellYourCarTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/sell-your-car/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the sell-your-car page on desktop and mobile: 4 step boxes, one active step, one Svelte `calculate-form bohemcars-sell-form`, 4 `input-large` controls, footer chrome, Auxero sell-your-car body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-sell-your-car-form-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

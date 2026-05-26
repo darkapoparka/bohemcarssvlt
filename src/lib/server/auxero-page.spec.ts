@@ -433,4 +433,18 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the sell-your-car intake form without dropping tabs or follow-up sections', () => {
+		const html = renderAuxeroTemplate('sell-your-car.html', { routePath: 'sell-your-car' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'bohemcars-sell-form', 'form');
+
+		expect(split?.beforeHtml).toContain('Sell Your Car With Bohemcars');
+		expect(split?.beforeHtml).toContain('menu-tab-style7');
+		expect(split?.sectionHtml).toContain('calculate-form bohemcars-sell-form');
+		expect(split?.sectionHtml).toContain('Request Review');
+		expect(split?.afterHtml).toContain('How It Works');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

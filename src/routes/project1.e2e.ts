@@ -404,6 +404,22 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(serviceForm.locator('select.select-style-2')).toBeVisible();
 	await expect(serviceForm.locator('button')).toContainText('Schedule Service');
 
+	await page.goto('/sell-your-car');
+	await expect(page.locator('.sell-your-car-box')).toHaveCount(4);
+	await expect(page.locator('.sell-your-car-box.active-step')).toHaveCount(1);
+	const sellForm = page.locator('form.bohemcars-sell-form');
+	await expect(sellForm).toBeVisible();
+	await expect(sellForm).toHaveClass(/calculate-form/);
+	await expect(sellForm.locator('input.input-large')).toHaveCount(4);
+	await sellForm.locator('#sellVIN').fill('2T2ZZMCA1KC123456');
+	await sellForm.locator('#sellMileage').fill('89000');
+	await sellForm.locator('#sellPrice').fill('32000');
+	await sellForm.locator('#sellPhone').fill('893588680');
+	await sellForm.locator('button').click();
+	await expect(sellForm.locator('.auxero-form-status')).toHaveText(
+		'Sell-your-car request prepared locally for Bohemcars'
+	);
+
 	await page.goto('/contact');
 	await expect(page.locator('body')).toContainText('Reach Out to Bohemcars');
 	await expect(page.locator('.widget-gg-map iframe')).toBeVisible();
