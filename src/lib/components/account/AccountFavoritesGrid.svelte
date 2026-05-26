@@ -1,0 +1,23 @@
+<script lang="ts">
+	import type { AuxeroFavoriteVehicleCard as AuxeroFavoriteVehicleCardData } from '$lib/auxero/favorites';
+	import AuxeroFavoriteVehicleCard from './AuxeroFavoriteVehicleCard.svelte';
+
+	let { cards }: { cards: AuxeroFavoriteVehicleCardData[] } = $props();
+</script>
+
+<div
+	class="lg-grid-cols-2 md-grid-cols-1 mb-30 grid grid-cols-3 gap-x-23 gap-y-30"
+	data-bohemcars-favorites-grid
+	data-bohemcars-favorites-count={cards.length}
+>
+	{#each cards as card (card.slug)}
+		<AuxeroFavoriteVehicleCard {card} />
+	{:else}
+		<div class="dashboard-box bg-white" data-bohemcars-favorites-empty="true">
+			<p class="h4 mb-8">No saved Bohemcars vehicles yet</p>
+			<p class="text-secondary">
+				Use the heart action on inventory cards to build your saved list.
+			</p>
+		</div>
+	{/each}
+</div>

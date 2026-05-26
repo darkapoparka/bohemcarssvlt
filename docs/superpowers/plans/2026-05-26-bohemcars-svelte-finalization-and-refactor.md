@@ -545,6 +545,33 @@ npm run build
 
 Browser DOM QA verified one visible compare table, 4 columns, 12 rows, header/footer visibility, Auxero body class, and no console errors. Browser screenshot capture timed out on the Auxero page, so Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-compare-content-svelte/`.
 
+### Task 4B: Migrate Account Favorites Page
+
+**Checkpoint completed 2026-05-26:**
+
+- `/account/favorites` now uses `src/routes/account/favorites/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page still renders the Auxero `my-favorites.html` head, dashboard sidebar, account header, active menu item, pagination, modal stack, body classes, and script tail from the source template.
+- The visible favorites grid is rendered by `src/lib/components/account/AccountFavoritesGrid.svelte` and `src/lib/components/account/AuxeroFavoriteVehicleCard.svelte` from typed `AuxeroFavoriteVehicleCard` data in `src/lib/auxero/favorites.ts`.
+- `src/lib/server/garage.ts` now exposes favorite vehicles from the account garage state for route server loads without moving visual formatting into server-only code.
+- `src/routes/project1.e2e.ts` now freezes the favorites page contract: visible Auxero 3-column grid, 3 saved cards, active dashboard menu item, active heart state, tag rows, compare actions, title/price classes, and detail links.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated `my-favorites.html` grid can be split without dropping dashboard chrome, pagination, modal markup, or the runtime favorites hook.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AuxeroFavoriteVehicleCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountFavoritesGrid.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountFavoritesTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/favorites/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the account favorites route on desktop and mobile: 3 `card-box-style-1` favorites, 3 active hearts, 3 compare controls, `data-bohemcars-favorites-count="3"`, active Favorites sidebar item, Auxero dashboard body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-account-favorites-svelte/` after waiting for the favorites card selector.
+
 ### Task 5: Normalize Data And Server Boundaries
 
 **Files:**

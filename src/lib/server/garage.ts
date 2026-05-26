@@ -7,6 +7,7 @@ export type BohemcarsGarageState = {
 };
 
 type GaragePatch = Partial<BohemcarsGarageState>;
+type GarageVehicle = (typeof vehicles)[number];
 
 const vehicleSlugs = new Set(vehicles.map((vehicle) => vehicle.slug));
 const garageByAccount = new Map<string, BohemcarsGarageState>();
@@ -51,3 +52,8 @@ export const updateBohemcarsGarageState = (session: BohemcarsSession, patch: Gar
 
 	return cloneGarageState(next);
 };
+
+export const getBohemcarsFavoriteVehicles = (session: BohemcarsSession) =>
+	getBohemcarsGarageState(session)
+		.favorites.map((slug) => vehicles.find((vehicle) => vehicle.slug === slug))
+		.filter((vehicle): vehicle is GarageVehicle => Boolean(vehicle));

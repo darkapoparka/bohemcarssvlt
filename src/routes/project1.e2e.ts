@@ -386,7 +386,30 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expectBohemcarsShell(page);
 
 	await page.goto('/account/favorites?role=customer');
-	await expect(page.locator('[data-bohemcars-favorites-grid]')).toBeVisible();
+	const favoritesGrid = page.locator('[data-bohemcars-favorites-grid]');
+	await expect(favoritesGrid).toBeVisible();
+	await expect(favoritesGrid).toHaveAttribute('data-bohemcars-favorites-count', '3');
+	await expect(favoritesGrid).toHaveClass(/grid-cols-3/);
+	await expect(
+		page.locator('.dashboard-menu-item.active[data-bohemcars-menu-item="favorites"]')
+	).toBeVisible();
+	await expect(
+		favoritesGrid.locator('.card-box.card-box-style-1[data-bohemcars-slug]')
+	).toHaveCount(3);
+	await expect(favoritesGrid.locator('.bohemcars-favorite.is-active')).toHaveCount(3);
+	await expect(favoritesGrid.locator('.tag.mb-10')).toHaveCount(3);
+	await expect(favoritesGrid.locator('.compare-details[data-bohemcars-compare]')).toHaveCount(3);
+	await expect(favoritesGrid.locator('.card-box__title').first()).toHaveClass(/h6/);
+	await expect(favoritesGrid.locator('.card-box__price').first()).toHaveClass(/h6/);
+	const firstFavoriteSlug = await favoritesGrid
+		.locator('[data-bohemcars-slug]')
+		.first()
+		.getAttribute('data-bohemcars-slug');
+	expect(firstFavoriteSlug).toBeTruthy();
+	await expect(favoritesGrid.locator('.view-details').first()).toHaveAttribute(
+		'href',
+		new RegExp(`/inventory/${firstFavoriteSlug}$`)
+	);
 	await expect(page.locator('body')).toContainText('BMW X5 40i M Sport Shadow Line');
 
 	await page.goto('/account/compare?role=customer');

@@ -343,4 +343,18 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('CompareModal');
 	});
+
+	it('can split the generated account favorites grid without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('my-favorites.html', { routePath: 'account/favorites' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-favorites-grid');
+
+		expect(split?.beforeHtml).toContain('My Favorites');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('data-bohemcars-favorites-grid');
+		expect(split?.sectionHtml).toContain('card-box-style-1');
+		expect(split?.afterHtml).toContain('pagination justify-center');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('renderAccountFavorites');
+	});
 });
