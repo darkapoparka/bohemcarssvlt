@@ -496,6 +496,23 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
+	it('can split the FAQ accordions without dropping the page shell', () => {
+		const html = renderAuxeroTemplate('faqs.html', { routePath: 'faqs' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-faqs',
+			'section'
+		);
+
+		expect(split?.sectionHtml).toContain('Frequently Asked Questions');
+		expect(split?.sectionHtml).toContain('Bohemcars Support');
+		expect(split?.sectionHtml).toContain('Import And Buying');
+		expect(split?.sectionHtml).toContain('flat-accordion');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
+
 	it('can split the blog listing grid without dropping pagination or footer chrome', () => {
 		const html = renderAuxeroTemplate('blog-grid-style-1.html', { routePath: 'blog' });
 		const document = splitAuxeroDocument(html!);

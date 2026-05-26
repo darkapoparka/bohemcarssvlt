@@ -1017,6 +1017,33 @@ npm run build
 
 Browser DOM QA verified the blog detail page on desktop and mobile: one Svelte `innerpage__content md-mb-30` article column, one `innerpage__sidebar`, one post image, one quote block, 2 previous/next links, 2 related post cards, the Bohemcars comment form success state, preserved Auxero blog detail body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-blog-detail-svelte/`.
 
+### Task 7K: Migrate FAQ Accordions
+
+**Checkpoint completed 2026-05-27:**
+
+- `/faqs` now uses `src/routes/faqs/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `faqs.html` head, header, breadcrumb, footer, modal stack, body classes, and local script tail.
+- The FAQ accordion section is rendered by `src/lib/components/faqs/FaqsContent.svelte`, `FaqAccordion.svelte`, and `FaqAccordionItem.svelte`, using typed FAQ groups from `src/lib/auxero/faqs.ts`.
+- `src/routes/project1.e2e.ts` freezes the FAQ contract: visible `data-bohemcars-faqs` section, 4 accordion groups, 12 FAQ toggles, 4 active toggles, and the public group headings.
+- `src/lib/server/auxero-page.spec.ts` guards that the generated FAQ section can be split without dropping footer or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/faqs/FaqAccordionItem.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/faqs/FaqAccordion.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/faqs/FaqsContent.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/faqs/FaqsTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/faqs/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the FAQ page on desktop and mobile: one Svelte `data-bohemcars-faqs` section, 4 accordions, 12 toggles, 4 active toggles/titles, preserved Auxero FAQ body class, footer/modal chrome, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-faqs-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

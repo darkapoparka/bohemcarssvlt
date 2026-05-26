@@ -420,6 +420,16 @@ test('planned public support routes render Bohemcars content and local forms', a
 		'Do not submit sensitive payment details'
 	);
 
+	await page.goto('/faqs');
+	const faqsContent = page.locator('[data-bohemcars-faqs]');
+	await expect(faqsContent).toBeVisible();
+	await expect(faqsContent.locator('.flat-accordion')).toHaveCount(4);
+	await expect(faqsContent.locator('.flat-toggle')).toHaveCount(12);
+	await expect(faqsContent.locator('.flat-toggle.active')).toHaveCount(4);
+	await expect(faqsContent.locator('.toggle-title.active')).toHaveCount(4);
+	await expect(faqsContent).toContainText('Import And Buying');
+	await expect(faqsContent).toContainText('Selling And Appointments');
+
 	await page.goto('/blog');
 	const blogGrid = page.locator('[data-bohemcars-blog-grid]');
 	await expect(blogGrid).toBeVisible();

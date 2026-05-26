@@ -4,6 +4,7 @@ import {
 	formatEur,
 	type AuxeroCalculatorField
 } from '$lib/auxero/calculator';
+import { auxeroFaqGroups, supportFaqs, type AuxeroFaq } from '$lib/auxero/faqs';
 import { auxeroReviewCards, type AuxeroReviewCard } from '$lib/auxero/reviews';
 import { auxeroTermsSections } from '$lib/auxero/terms';
 import {
@@ -15,12 +16,6 @@ import {
 import { getPostBySlug, posts, type BlogPost } from '$lib/data/blog';
 import { brands, vehicles } from '$lib/data/vehicles';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
-
-type SupportFaq = {
-	answer: string;
-	question: string;
-	topic: string;
-};
 
 type SupportService = {
 	description: string;
@@ -83,63 +78,6 @@ const serviceCards: SupportService[] = [
 			'Compare price, mileage, equipment, history, running costs, and import timing across several candidates.',
 		href: '/compare',
 		image: '/assets/bohemcars/cta/import-canada-banner-v2.png'
-	}
-];
-
-const supportFaqs: SupportFaq[] = [
-	{
-		topic: 'Import',
-		question: 'Why import a vehicle from Canada?',
-		answer:
-			'Canada can offer well-equipped vehicles with traceable history and competitive pricing. Bohemcars still checks the specific car, records, mileage, photos, and estimated landed cost before recommending a decision.'
-	},
-	{
-		topic: 'Timing',
-		question: 'How long does import usually take?',
-		answer:
-			'Typical timing can be around 6 to 10 weeks, depending on vehicle selection, transport, customs steps, documents, and preparation for registration.'
-	},
-	{
-		topic: 'Checks',
-		question: 'What does Bohemcars check before purchase?',
-		answer:
-			'The team reviews history, mileage, origin, seller context, service information, available reports, photos, documents, and known model-specific requirements.'
-	},
-	{
-		topic: 'Costs',
-		question: 'How is the final cost formed?',
-		answer:
-			'The estimate normally combines vehicle price, transport, customs duty, VAT, documents, technical preparation, registration steps, and any service work needed before handoff.'
-	},
-	{
-		topic: 'Documents',
-		question: 'What documents will I receive?',
-		answer:
-			'Documents depend on the exact vehicle and transaction. Bohemcars confirms the purchase, transport, customs, and registration paperwork available before handoff.'
-	},
-	{
-		topic: 'Warranty',
-		question: 'Do imported vehicles include warranty?',
-		answer:
-			'Warranty is not assumed automatically. If a vehicle has remaining factory coverage or dealer support, that must be confirmed for the specific vehicle before purchase.'
-	},
-	{
-		topic: 'Selling',
-		question: 'Can Bohemcars help sell my vehicle?',
-		answer:
-			'Yes. Send VIN, mileage, photos, service history, condition, documents, and your expected price. Bohemcars can advise on a direct offer, client listing, or sale assistance.'
-	},
-	{
-		topic: 'Viewing',
-		question: 'Do I need an appointment?',
-		answer:
-			'Yes. Viewings are arranged by appointment so the vehicle, documents, and consultant context are prepared before you arrive.'
-	},
-	{
-		topic: 'Compare',
-		question: 'Can Bohemcars compare several models?',
-		answer:
-			'Yes. Send the vehicles, budget, timing, and priorities. The team can compare equipment, history, running costs, availability, and import complexity.'
 	}
 ];
 
@@ -237,7 +175,7 @@ const reviewsGrid = (limit = auxeroReviewCards.length) =>
 		${auxeroReviewCards.slice(0, limit).map(reviewCard).join('\n')}
 	</div>`;
 
-const faqToggle = (faq: SupportFaq, index: number, forceWhite = false) =>
+const faqToggle = (faq: AuxeroFaq, index: number, forceWhite = false) =>
 	`<div class="flat-toggle ${forceWhite ? 'bg-white' : ''} ${index === 0 ? 'active' : ''}">
 		<div class="toggle-title ${index === 0 ? 'active' : ''}">
 			<p class="h5 title">${escapeHtml(faq.question)}</p>
@@ -252,7 +190,7 @@ const faqToggle = (faq: SupportFaq, index: number, forceWhite = false) =>
 		</div>
 	</div>`;
 
-const faqAccordion = (items: SupportFaq[], forceWhite = false) =>
+const faqAccordion = (items: AuxeroFaq[], forceWhite = false) =>
 	`<div class="flat-accordion flex flex-col gap-18 max-width-930 wow fadeIn" data-wow-delay=".3s">
 		${items.map((faq, index) => faqToggle(faq, index, forceWhite)).join('\n')}
 	</div>`;
@@ -670,28 +608,14 @@ const applyReviewsData = (html: string) => {
 };
 
 const applyFaqData = (html: string) => {
-	const grouped = [
-		{
-			title: 'Import And Buying',
-			items: supportFaqs.filter((faq) => ['Import', 'Timing', 'Checks'].includes(faq.topic))
-		},
-		{
-			title: 'Costs And Documents',
-			items: supportFaqs.filter((faq) => ['Costs', 'Documents', 'Warranty'].includes(faq.topic))
-		},
-		{
-			title: 'Selling And Appointments',
-			items: supportFaqs.filter((faq) => ['Selling', 'Viewing', 'Compare'].includes(faq.topic))
-		}
-	];
-	const body = `<section class="bg-white pb-84">
+	const body = `<section class="bg-white pb-84" data-bohemcars-faqs>
 	<div class="container mb-60">
 		<h2>Frequently Asked Questions</h2>
 		<div class="tf-spacing-style3"></div>
 		<p class="h3 mb-20 text-center capitalize">Bohemcars Support</p>
 		<div class="max-width-850 mx-auto w-full">${faqAccordion(supportFaqs.slice(0, 3), true)}</div>
 	</div>
-	${grouped
+	${auxeroFaqGroups
 		.map(
 			(group) => `<div class="container mb-60">
 				<p class="h3 mb-20 text-center capitalize">${escapeHtml(group.title)}</p>
