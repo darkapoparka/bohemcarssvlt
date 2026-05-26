@@ -359,6 +359,34 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('CompareModal');
 	});
 
+	it('can split the account dashboard recent box without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('dashboard.html', { routePath: 'account' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-dashboard-recent');
+
+		expect(split?.beforeHtml).toContain('Account Dashboard');
+		expect(split?.beforeHtml).toContain('data-bohemcars-dashboard-stat="submissions"');
+		expect(split?.sectionHtml).toContain('Recent Messages');
+		expect(split?.sectionHtml).toContain('Bohemcars Sales');
+		expect(split?.sectionHtml).not.toContain('Great Experience!');
+		expect(split?.afterHtml).toContain('LoginModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
+	it('can split the admin dashboard recent box without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('dashboard.html', { routePath: 'admin' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-dashboard-recent');
+
+		expect(split?.beforeHtml).toContain('Admin Dashboard');
+		expect(split?.beforeHtml).toContain('data-bohemcars-dashboard-stat="inventory"');
+		expect(split?.sectionHtml).toContain('Recent Inquiries');
+		expect(split?.sectionHtml).toContain('Canada import lead');
+		expect(split?.sectionHtml).not.toContain('Great Experience!');
+		expect(split?.afterHtml).toContain('LoginModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the generated account favorites grid without dropping dashboard chrome', () => {
 		const html = renderAuxeroTemplate('my-favorites.html', { routePath: 'account/favorites' });
 		const document = splitAuxeroDocument(html!);

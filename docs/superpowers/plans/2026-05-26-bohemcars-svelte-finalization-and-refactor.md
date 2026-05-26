@@ -1075,6 +1075,33 @@ npm run build
 
 Browser DOM QA verified the about page on desktop and mobile: one Svelte `data-bohemcars-about` block, one intro main image, one intro sub-image, 4 review boxes, 4 counter items, 3 consultant cards, preserved Auxero about body class, footer/modal chrome, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-about-svelte/`.
 
+### Task 7M: Migrate Dashboard Recent Activity Boxes
+
+**Checkpoint completed 2026-05-27:**
+
+- `/account` and `/admin` now use SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` routes with `csr = false`.
+- The pages preserve the Auxero dashboard sidebar, header, stat cards, chart, listing/submission tables, modal stack, body classes, and local script tail.
+- The recent dashboard activity box is rendered by `DashboardRecentBox.svelte` inside `DashboardRecentTemplatePage.svelte`, using typed `AuxeroDashboardRecentData` from `src/lib/auxero/dashboard.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes the same typed recent data for the Svelte routes and marks the raw fallback recent box with `data-bohemcars-dashboard-recent`.
+- `src/routes/project1.e2e.ts` freezes the dashboard contract: customer recent messages, admin recent inquiries, real Bohemcars activity content, and no leaked demo review copy like `Great Experience!`.
+- `src/lib/server/auxero-page.spec.ts` guards that both account and admin dashboard recent boxes can be split without dropping dashboard chrome, modals, or runtime script tail.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/DashboardRecentBox.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/DashboardRecentTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the account and admin dashboard roots on desktop and mobile: one Svelte `data-bohemcars-dashboard-recent` box per page, customer recent messages, admin recent inquiries, preserved dashboard stat cards and listing tables, preserved dashboard body class, no demo review copy, no console errors, and no page-level mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-dashboard-recent-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

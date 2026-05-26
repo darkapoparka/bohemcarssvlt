@@ -1,4 +1,5 @@
 import { agents } from '$lib/data/agents';
+import type { AuxeroDashboardRecentData } from '$lib/auxero/dashboard';
 import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
@@ -174,6 +175,20 @@ const replaceFirstDivAfter = (
 	if (markerIndex < 0) return html;
 
 	const start = html.indexOf(blockStart, markerIndex);
+
+	return replaceDivBlock(html, start, replacement);
+};
+
+const replaceDivContaining = (
+	html: string,
+	marker: string,
+	blockStart: string,
+	replacement: string
+) => {
+	const markerIndex = html.indexOf(marker);
+	if (markerIndex < 0) return html;
+
+	const start = html.lastIndexOf(blockStart, markerIndex);
 
 	return replaceDivBlock(html, start, replacement);
 };
@@ -794,7 +809,7 @@ const userManagementNotes = () => `<div class="dashboard-box bg-white bohemcars-
 	</div>
 </div>`;
 
-const recentInquiriesBox = (context: AccountContext) => {
+const dashboardRecentData = (context: AccountContext): AuxeroDashboardRecentData => {
 	const heading = context.isAdmin ? 'Recent Inquiries' : 'Recent Messages';
 	const items: RecentDashboardItem[] = context.isAdmin
 		? listInquiriesForRole('admin')
@@ -819,20 +834,36 @@ const recentInquiriesBox = (context: AccountContext) => {
 						: message.threadId
 				}));
 
-	return `<div class="dashboard-box bg-white bohemcars-inquiries-box">
-	<p class="h4 mb-20">${heading}</p>
+	return {
+		heading,
+		items: items.map((item, index) => ({
+			avatar: accountAvatarByRole[item.avatarRole],
+			body: item.body,
+			dateLabel: formatDashboardDate(item.date, `May ${20 + index}, 2026`),
+			id: `${item.name}-${item.title}-${index}`,
+			name: item.name,
+			title: item.title
+		}))
+	};
+};
+
+const recentInquiriesBox = (context: AccountContext) => {
+	const data = dashboardRecentData(context);
+
+	return `<div class="dashboard-box bg-white bohemcars-inquiries-box" data-bohemcars-dashboard-recent>
+	<p class="h4 mb-20">${data.heading}</p>
 	<div class="comments">
-		${items
+		${data.items
 			.map(
-				(item, index) => `<div class="comment-box">
+				(item) => `<div class="comment-box">
 			<div class="comment-box__header gap-12 mb-24">
 				<div class="comment-box__avatar">
-					<img src="${accountAvatarByRole[item.avatarRole]}" alt="${escapeHtml(item.name)}">
+					<img src="${escapeHtml(item.avatar)}" alt="${escapeHtml(item.name)}">
 				</div>
 				<div>
 					<div class="text-secondary gap-4 pt-4">
 						<p class="h5 mb-4">${escapeHtml(item.name)}</p>
-						<p class="text-secondary text-sm">${escapeHtml(formatDashboardDate(item.date, `May ${20 + index}, 2026`))}</p>
+						<p class="text-secondary text-sm">${escapeHtml(item.dateLabel)}</p>
 					</div>
 				</div>
 			</div>
@@ -1031,10 +1062,10 @@ const applyDashboardData = (
 		'<div class="cart-wrapper">',
 		context.isAdmin ? cartWrapper(vehicles.slice(0, 5), context) : submissionCartWrapper(context)
 	);
-	next = replaceFirstDivAfter(
+	next = replaceDivContaining(
 		next,
 		context.isAdmin ? 'Recent Inquiries' : 'Recent Messages',
-		'<div class="dashboard-box bg-white">',
+		'<div class="dashboard-box bg-white',
 		recentInquiriesBox(context)
 	);
 
@@ -1347,6 +1378,11 @@ export const applyAccountTemplateData = (
 
 	return html;
 };
+
+export const getAuxeroDashboardRecentData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {}
+) => dashboardRecentData(accountContext(templateFile, options));
 
 export const isAccountTemplate = (templateFile: string) =>
 	[

@@ -533,6 +533,12 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	).toBeVisible();
 	await expect(page.locator('body')).not.toContainText('/admin/inventory/new?role=customer');
 	await expectBohemcarsShell(page);
+	const accountRecent = page.locator('[data-bohemcars-dashboard-recent]');
+	await expect(accountRecent).toBeVisible();
+	await expect(accountRecent).toContainText('Recent Messages');
+	await expect.poll(async () => accountRecent.locator('.comment-box').count()).toBeGreaterThan(0);
+	await expect(accountRecent).toContainText('Bohemcars Sales');
+	await expect(page.locator('body')).not.toContainText('Great Experience!');
 
 	await page.goto('/account/favorites?role=customer');
 	const favoritesGrid = page.locator('[data-bohemcars-favorites-grid]');
@@ -586,6 +592,12 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await page.goto('/admin?role=admin');
 	await expect(page.locator('body')).toContainText('Admin Dashboard');
 	await expect(page.locator('body')).toContainText('Bohemcars Inventory');
+	const adminRecent = page.locator('[data-bohemcars-dashboard-recent]');
+	await expect(adminRecent).toBeVisible();
+	await expect(adminRecent).toContainText('Recent Inquiries');
+	await expect(adminRecent.locator('.comment-box')).toHaveCount(3);
+	await expect(adminRecent).toContainText('Canada import lead');
+	await expect(page.locator('body')).not.toContainText('Great Experience!');
 
 	await page.goto('/admin/inventory?role=admin');
 	await expect(page.locator('body')).toContainText('Inventory Management');
