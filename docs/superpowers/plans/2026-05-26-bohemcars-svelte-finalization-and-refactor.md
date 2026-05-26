@@ -965,6 +965,33 @@ npm run build
 
 Browser DOM QA verified the terms page on desktop and mobile: one Svelte `data-bohemcars-terms` content block, 6 nav links, 6 content sections, preserved `term-page` class, footer chrome, Auxero terms body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-terms-content-svelte/`.
 
+### Task 7I: Migrate Blog Listing Grid
+
+**Checkpoint completed 2026-05-27:**
+
+- `/blog` now uses `src/routes/blog/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `blog-grid-style-1.html` head, header, breadcrumb, page heading, `post-style-6` cards, image wrappers, metadata row, pagination, footer, modal stack, body classes, and local script tail.
+- The blog grid is rendered by `src/lib/components/blog/BlogListGrid.svelte` and `BlogListCard.svelte` inside `BlogTemplatePage.svelte`, using existing typed `BlogPost` data from `src/lib/data/blog.ts`.
+- `src/lib/server/auxero-support-data.ts` now marks the generated raw blog grid with `data-bohemcars-blog-grid` for safe route splitting while preserving fallback markup.
+- `src/routes/project1.e2e.ts` now freezes the blog listing contract: visible `data-bohemcars-blog-grid`, 3 `post-style-6` cards, 3 post images, preserved 3-column grid class, and the first detail link.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated blog grid can be split without dropping the page heading, pagination, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/blog/BlogListCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/blog/BlogListGrid.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/blog/BlogTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/blog/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the blog listing page on desktop and mobile: one Svelte `data-bohemcars-blog-grid`, 3 `post-style-6` cards, 3 images, first detail link preserved, pagination and footer chrome, Auxero blog body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-blog-list-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

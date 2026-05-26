@@ -420,6 +420,17 @@ test('planned public support routes render Bohemcars content and local forms', a
 		'Do not submit sensitive payment details'
 	);
 
+	await page.goto('/blog');
+	const blogGrid = page.locator('[data-bohemcars-blog-grid]');
+	await expect(blogGrid).toBeVisible();
+	await expect(blogGrid).toHaveClass(/grid-cols-3/);
+	await expect(blogGrid.locator('.post-style-6')).toHaveCount(3);
+	await expect(blogGrid.locator('.post--img')).toHaveCount(3);
+	await expect(blogGrid.locator('.post-style-6').first()).toHaveAttribute(
+		'href',
+		/^\.?\/blog\/vnos-ot-kanada-proverka$/
+	);
+
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);
 	await expect(page.locator('.services-center-info')).toContainText('Contact Information');

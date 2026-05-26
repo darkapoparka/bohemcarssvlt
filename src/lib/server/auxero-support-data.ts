@@ -831,7 +831,7 @@ const applyBlogListData = (html: string) => {
 	<div class="container"><h2>Bohemcars Blog</h2></div>
 	<div class="tf-spacing-style3"></div>
 	<div class="container">
-		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30 mb-40">
+		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30 mb-40" data-bohemcars-blog-grid>
 			${posts.map(blogCard).join('\n')}
 		</div>
 		<ul class="pagination justify-center">
