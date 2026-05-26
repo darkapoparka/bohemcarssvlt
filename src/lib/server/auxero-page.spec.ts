@@ -47,4 +47,28 @@ describe('splitAuxeroDocument', () => {
 		expect(typeSplit?.sectionHtml).toContain('card-37.jpg');
 		expect(typeSplit?.afterHtml).toContain('<!-- Compare Top Rated Vehicles -->');
 	});
+
+	it('can split the compare section after the type gallery slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const brandSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- Explore Our Brands -->',
+			'<!-- /Explore Our Brands -->'
+		);
+		const typeSplit = splitAuxeroBodySection(
+			brandSplit!.afterHtml,
+			'<!-- Browse By Type -->',
+			'<!-- /Browse By Type -->'
+		);
+		const compareSplit = splitAuxeroBodySection(
+			typeSplit!.afterHtml,
+			'<!-- Compare Top Rated Vehicles -->',
+			'<!-- /Compare Top Rated Vehicles -->'
+		);
+
+		expect(compareSplit?.sectionHtml).toContain('Compare Top Rated Vehicles');
+		expect(compareSplit?.sectionHtml).toContain('card-box-style-4');
+		expect(compareSplit?.afterHtml).toContain('<!-- Used Cars by Budget -->');
+	});
 });

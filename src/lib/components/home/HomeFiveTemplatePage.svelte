@@ -1,19 +1,28 @@
 <script lang="ts">
 	import HomeFiveBrandStrip from './HomeFiveBrandStrip.svelte';
+	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
-	import type { HomeFiveBrandCard, HomeFiveTypeCard } from '$lib/auxero/home-five';
+	import type {
+		HomeFiveBrandCard,
+		HomeFiveComparePair,
+		HomeFiveTypeCard
+	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 
 	let {
 		afterBrandStripHtml,
+		afterCompareSectionHtml,
 		afterTypeGalleryHtml,
 		brandCards,
+		comparePairs,
 		pageDocument,
 		typeCards
 	}: {
 		afterBrandStripHtml: string;
+		afterCompareSectionHtml: string;
 		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
+		comparePairs: HomeFiveComparePair[];
 		pageDocument: AuxeroPageDocument;
 		typeCards: HomeFiveTypeCard[];
 	} = $props();
@@ -34,3 +43,6 @@
 <HomeFiveTypeGallery cards={typeCards} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterTypeGalleryHtml}
+<HomeFiveCompareSection pairs={comparePairs} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterCompareSectionHtml}

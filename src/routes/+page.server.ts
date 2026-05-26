@@ -1,6 +1,11 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { homeFiveBrandCards, homeFiveTypeCards } from '$lib/auxero/home-five';
+import {
+	homeFiveBrandCards,
+	homeFiveComparePairsFromVehicles,
+	homeFiveTypeCards
+} from '$lib/auxero/home-five';
+import { vehicles } from '$lib/data/vehicles';
 import { splitAuxeroBodySection, splitAuxeroDocument } from '$lib/server/auxero-page';
 import { renderAuxeroTemplate } from '$lib/server/auxero-template';
 
@@ -26,14 +31,23 @@ export const load: PageServerLoad = ({ request, url }) => {
 		'<!-- Browse By Type -->',
 		'<!-- /Browse By Type -->'
 	);
+	const compareSectionSlot = splitAuxeroBodySection(
+		typeGallerySlot?.afterHtml ?? '',
+		'<!-- Compare Top Rated Vehicles -->',
+		'<!-- /Compare Top Rated Vehicles -->'
+	);
 
 	return {
 		afterBrandStripHtml: typeGallerySlot
 			? typeGallerySlot.beforeHtml
 			: (brandStripSlot?.afterHtml ?? ''),
-		afterTypeGalleryHtml: typeGallerySlot?.afterHtml ?? '',
+		afterCompareSectionHtml: compareSectionSlot?.afterHtml ?? '',
+		afterTypeGalleryHtml: compareSectionSlot
+			? compareSectionSlot.beforeHtml
+			: (typeGallerySlot?.afterHtml ?? ''),
 		auxeroFullPage: true,
 		brandCards: homeFiveBrandCards,
+		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		pageDocument: {
 			...pageDocument,
 			bodyHtml: brandStripSlot?.beforeHtml ?? pageDocument.bodyHtml

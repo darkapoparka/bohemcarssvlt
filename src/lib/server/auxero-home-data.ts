@@ -4,7 +4,8 @@ import { posts } from '$lib/data/blog';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
 	homeFiveBrandCards as home05BrandCards,
-	homeFiveTypeCards as home05TypeCards
+	homeFiveTypeCards as home05TypeCards,
+	imageForHomeFiveVehicle as imageForVehicle
 } from '$lib/auxero/home-five';
 
 const escapeHtml = (value: string | number) =>
@@ -75,11 +76,6 @@ const reviewItems = [
 		text: 'I sent the car details and received clear feedback on pricing, documents, and the best way to present the vehicle.'
 	}
 ] as const;
-
-const brokenHomeImageSlugs = new Set(['21779200396408437']);
-
-const imageForVehicle = (vehicle: Vehicle) =>
-	brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image;
 
 const replaceSectionByComment = (
 	html: string,

@@ -44,6 +44,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 			.locator('section', { hasText: 'Browse By Type' })
 			.locator('img[src*="/assets/images/card/card-37.jpg"]')
 	).toBeVisible();
+	const homeCompareSection = page.locator('section', {
+		hasText: 'Compare Top Rated Vehicles'
+	});
+	await expect(homeCompareSection.locator('.card-box-style-4')).toHaveCount(2);
+	await expect(homeCompareSection.locator('.image img.w-full')).toHaveCount(4);
+	await expect(homeCompareSection.locator('.btn.btn-small.btn-line-1.text-sm')).toHaveCount(2);
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)

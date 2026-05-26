@@ -1,3 +1,6 @@
+import { bohemcarsAssets } from '$lib/data/bohemcars';
+import type { Vehicle } from '$lib/data/vehicles';
+
 export type HomeFiveBrandCard = {
 	count: string;
 	image: string;
@@ -9,6 +12,19 @@ export type HomeFiveTypeCard = {
 	bodyType: string;
 	image: string;
 	label: string;
+};
+
+export type HomeFiveCompareVehicle = {
+	brand: string;
+	image: string;
+	priceLabel: string;
+	slug: string;
+	title: string;
+};
+
+export type HomeFiveComparePair = {
+	left: HomeFiveCompareVehicle;
+	right: HomeFiveCompareVehicle;
 };
 
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
@@ -74,3 +90,28 @@ export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
 	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
 ];
+
+const brokenHomeImageSlugs = new Set(['21779200396408437']);
+
+export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
+	brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image;
+
+const compareVehicleFrom = (vehicle: Vehicle): HomeFiveCompareVehicle => ({
+	brand: vehicle.brand,
+	image: imageForHomeFiveVehicle(vehicle),
+	priceLabel: vehicle.priceLabel,
+	slug: vehicle.slug,
+	title: vehicle.title
+});
+
+export function homeFiveComparePairsFromVehicles(vehicles: Vehicle[]): HomeFiveComparePair[] {
+	return [
+		[vehicles[0], vehicles[1]],
+		[vehicles[2], vehicles[3]]
+	]
+		.filter((pair): pair is [Vehicle, Vehicle] => Boolean(pair[0] && pair[1]))
+		.map(([left, right]) => ({
+			left: compareVehicleFrom(left),
+			right: compareVehicleFrom(right)
+		}));
+}

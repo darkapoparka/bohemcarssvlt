@@ -309,6 +309,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Browse By Type checkpoint: `src/lib/components/home/HomeFiveTypeGallery.svelte` now renders the Home 05 type gallery from shared `homeFiveTypeCards` data while preserving the template dark band, horizontal gallery structure, `card-37.jpg` through `card-42.jpg` image family, active second card, and white 20px CTA arrow. The page shell also guards against swallowing template scripts by emitting a real closing body-class script tag, with Playwright coverage for local jQuery initialization.
 
+  Compare section checkpoint: `src/lib/components/home/HomeFiveCompareSection.svelte` now renders the Home 05 `Compare Top Rated Vehicles` section from typed `HomeFiveComparePair` data derived in `+page.server.ts`. The section keeps the template `card-box-style-4` structure, two comparison slides, four vehicle images, compare CTA styling, pagination wrapper, and surrounding `type -> compare -> budget` order.
+
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

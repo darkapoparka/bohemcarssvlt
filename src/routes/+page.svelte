@@ -7,8 +7,10 @@
 
 <HomeFiveTemplatePage
 	afterBrandStripHtml={data.afterBrandStripHtml}
+	afterCompareSectionHtml={data.afterCompareSectionHtml}
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
 	brandCards={data.brandCards}
+	comparePairs={data.comparePairs}
 	pageDocument={data.pageDocument}
 	typeCards={data.typeCards}
 />
