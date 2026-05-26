@@ -315,7 +315,9 @@ The migration must not start by redesigning the site. The first success conditio
 
   Featured vehicles checkpoint: `src/lib/components/home/HomeFiveFeaturedVehicles.svelte` now renders the Home 05 `New Vehicles` carousel from typed `HomeFiveVehicleCardData` rows and reuses `HomeFiveVehicleCard.svelte` without the budget `style2` spec row. The route keeps Home 05 server-rendered with `src/routes/+page.ts` `csr = false` so Auxero's Swiper scripts initialize the final carousel DOM instead of being undone by hydration; Playwright now guards the desktop carousel density in addition to the 6 cards, pagination, and CTA contract.
 
-- [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
+  Hero/search checkpoint: `src/lib/components/home/HomeFiveHero.svelte` now renders the Home 05 `page-title-style-4` hero, Swiper background slides, synced text slides, tab row, primary search filters, advanced filter panel, and feature checks from typed `HomeFiveHeroData`. The route splits the exact `<!-- page-title -->` block before `New Vehicles`, preserving the Auxero first-viewport class structure while moving hero/search data shaping into `$lib/auxero/home-five.ts`.
+
+- [x] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:
 
@@ -361,7 +363,7 @@ The migration must not start by redesigning the site. The first success conditio
 
   Keep class names aligned with the real `home-05.html` section when implementing; the snippet defines the runes/event pattern, not a redesign.
 
-- [ ] **Step 5: Run Svelte autofixer**
+- [x] **Step 5: Run Svelte autofixer**
 
   ```bash
   npx @sveltejs/mcp svelte-autofixer src/lib/components/home/HomeFiveHero.svelte
@@ -370,7 +372,7 @@ The migration must not start by redesigning the site. The first success conditio
 
   Expected: no Svelte 5 syntax issues.
 
-- [ ] **Step 6: Verify visual fidelity**
+- [x] **Step 6: Verify visual fidelity**
 
   Run:
 

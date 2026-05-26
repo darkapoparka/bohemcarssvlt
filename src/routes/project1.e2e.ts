@@ -31,6 +31,19 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expectBohemcarsShell(page);
 	await expect(page.getByRole('link', { name: 'Sign In' }).first()).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Add Listing' })).toHaveCount(0);
+	const homeHero = page.locator('.page-title-style-4');
+	await expect(homeHero.locator('.swiper-btn.navigation-prev')).toHaveCount(1);
+	await expect(homeHero.locator('.swiper-btn.navigation-next')).toHaveCount(1);
+	await expect(homeHero.locator('.page-title--slider.sw-single')).toBeVisible();
+	await expect(homeHero.locator('.sw-single-thumb .search-cars__title')).toHaveCount(4);
+	await expect(homeHero.locator('.menu-tab-style1 li')).toHaveCount(3);
+	await expect(
+		homeHero.locator('.search-cars__filters > .search-cars__select-wrapper')
+	).toHaveCount(4);
+	await expect(homeHero.locator('.search-cars__advanced .search-cars__select-wrapper')).toHaveCount(
+		3
+	);
+	await expect(homeHero.locator('.search-cars__features-grid .form-group')).toHaveCount(8);
 	const homeFeaturedSection = page.locator('section', { hasText: 'new Bohemcars vehicles' });
 	await expect(homeFeaturedSection.locator('.swiper-card-5')).toBeVisible();
 	await expect(homeFeaturedSection.locator('.swiper-slide .card-box-style-1')).toHaveCount(6);

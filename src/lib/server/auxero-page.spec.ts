@@ -45,6 +45,22 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('<!-- Explore Our Brands -->');
 	});
 
+	it('can split the Home 05 hero/search block before New Vehicles', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- page-title -->',
+			'<!-- page-title -->'
+		);
+
+		expect(split?.beforeHtml).toContain('header-style-4');
+		expect(split?.sectionHtml).toContain('page-title-style-4');
+		expect(split?.sectionHtml).toContain('page-title--slider');
+		expect(split?.sectionHtml).toContain('search-cars__filters');
+		expect(split?.afterHtml).toContain('<!-- New Vehicles -->');
+	});
+
 	it('can split the Browse By Type gallery after the brand strip slot', () => {
 		const html = renderAuxeroTemplate('home-05.html');
 		const document = splitAuxeroDocument(html!);

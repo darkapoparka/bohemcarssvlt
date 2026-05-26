@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import {
 	homeFiveBrandCards,
 	homeFiveComparePairsFromVehicles,
+	homeFiveHeroDataFromVehicles,
 	homeFiveTypeCards,
 	homeFiveVehicleCardsFromVehicles
 } from '$lib/auxero/home-five';
@@ -22,8 +23,13 @@ export const load: PageServerLoad = ({ request, url }) => {
 	}
 
 	const pageDocument = splitAuxeroDocument(html);
-	const featuredVehiclesSlot = splitAuxeroBodySection(
+	const heroSlot = splitAuxeroBodySection(
 		pageDocument.bodyHtml,
+		'<!-- page-title -->',
+		'<!-- page-title -->'
+	);
+	const featuredVehiclesSlot = splitAuxeroBodySection(
+		heroSlot?.afterHtml ?? pageDocument.bodyHtml,
 		'<!-- New Vehicles -->',
 		'<!-- /New Vehicles -->'
 	);
@@ -59,6 +65,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterFeaturedVehiclesHtml: brandStripSlot
 			? brandStripSlot.beforeHtml
 			: (featuredVehiclesSlot?.afterHtml ?? ''),
+		afterHeroHtml: heroSlot
+			? featuredVehiclesSlot
+				? featuredVehiclesSlot.beforeHtml
+				: heroSlot.afterHtml
+			: '',
 		afterTypeGalleryHtml: compareSectionSlot
 			? compareSectionSlot.beforeHtml
 			: (typeGallerySlot?.afterHtml ?? ''),
@@ -67,9 +78,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 9),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
+		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
 		pageDocument: {
 			...pageDocument,
-			bodyHtml: featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml
+			bodyHtml: heroSlot?.beforeHtml ?? featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml
 		},
 		typeCards: homeFiveTypeCards
 	};

@@ -1,4 +1,4 @@
-import { bohemcarsAssets } from '$lib/data/bohemcars';
+import { bohemcarsAssets, bohemcarsBrand } from '$lib/data/bohemcars';
 import type { Vehicle } from '$lib/data/vehicles';
 
 export type HomeFiveBrandCard = {
@@ -42,6 +42,40 @@ export type HomeFiveVehicleCardData = {
 	transmissionIcon: 'auto.svg' | 'manual.svg';
 	year: number;
 	mileageLabel: string;
+};
+
+export type HomeFiveHeroSelect = {
+	defaultLabel: string;
+	id: string;
+	name: string;
+	options: string[];
+	title: string;
+};
+
+export type HomeFiveHeroTextSlide = {
+	ctaHref: '/inventory';
+	ctaLabel: string;
+	id: string;
+	subtitle: string;
+};
+
+export type HomeFiveHeroTab = {
+	active: boolean;
+	label: string;
+};
+
+export type HomeFiveHeroData = {
+	advancedFilters: HomeFiveHeroSelect[];
+	backgroundImages: string[];
+	features: string[];
+	primaryFilters: HomeFiveHeroSelect[];
+	tabs: HomeFiveHeroTab[];
+	textSlides: HomeFiveHeroTextSlide[];
+	totalMatches: number;
+	yearRange: {
+		max: number;
+		min: number;
+	};
 };
 
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
@@ -107,6 +141,93 @@ export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
 	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
 ];
+
+const uniqueSortedValues = (items: string[]) =>
+	Array.from(new Set(items.filter(Boolean))).sort((left, right) => left.localeCompare(right));
+
+export function homeFiveHeroDataFromVehicles(vehicles: Vehicle[]): HomeFiveHeroData {
+	const textSlides: HomeFiveHeroTextSlide[] = Array.from({ length: 4 }, (_, index) => ({
+		ctaHref: '/inventory',
+		ctaLabel: 'View Inventory',
+		id: `home-five-hero-slide-${index + 1}`,
+		subtitle: `${bohemcarsBrand.tagline} and clear appointment support.`
+	}));
+
+	return {
+		advancedFilters: [
+			{
+				defaultLabel: 'All Fuel Types',
+				id: 'Home05FuelSelectToggle',
+				name: 'fuel',
+				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.fuel)),
+				title: 'Fuel Type'
+			},
+			{
+				defaultLabel: 'All Transmissions',
+				id: 'Home05TransmissionSelectToggle',
+				name: 'transmission',
+				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.transmission)),
+				title: 'Transmission'
+			},
+			{
+				defaultLabel: 'All Statuses',
+				id: 'Home05StatusSelectToggle',
+				name: 'status',
+				options: ['New listing', 'Available', 'Client vehicle'],
+				title: 'Status'
+			}
+		],
+		backgroundImages: bohemcarsAssets.homeHeroSlides.filter(Boolean),
+		features: [
+			'Verified source listing',
+			'History review',
+			'Mileage review',
+			'Document trail',
+			'Canada import support',
+			'Registration readiness',
+			'Viewing by appointment',
+			'Client vehicle intake'
+		],
+		primaryFilters: [
+			{
+				defaultLabel: 'All Brand',
+				id: 'Home05BrandSelectToggle',
+				name: 'brand',
+				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.brand)),
+				title: 'Select Brand'
+			},
+			{
+				defaultLabel: 'All Model',
+				id: 'Home05ModelSelectToggle',
+				name: 'q',
+				options: vehicles.map((vehicle) => vehicle.model).slice(0, 8),
+				title: 'Select Model'
+			},
+			{
+				defaultLabel: 'All Body Types',
+				id: 'Home05BodySelectToggle',
+				name: 'bodyType',
+				options: Array.from(new Set(vehicles.map((vehicle) => vehicle.bodyType).filter(Boolean))),
+				title: 'Body Type'
+			},
+			{
+				defaultLabel: 'All Price',
+				id: 'Home05MaxPriceSelectToggle',
+				name: 'maxPrice',
+				options: ['30 000 EUR', '50 000 EUR', '80 000 EUR', '120 000 EUR'],
+				title: 'Max Price'
+			}
+		],
+		tabs: [
+			{ active: true, label: 'All Vehicles' },
+			{ active: false, label: 'New Listings' },
+			{ active: false, label: 'Client Vehicles' }
+		],
+		textSlides,
+		totalMatches: vehicles.length,
+		yearRange: { min: 2015, max: 2026 }
+	};
+}
 
 const brokenHomeImageSlugs = new Set(['21779200396408437']);
 

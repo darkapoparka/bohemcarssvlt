@@ -3,10 +3,12 @@
 	import HomeFiveBudgetSection from './HomeFiveBudgetSection.svelte';
 	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
 	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
+	import HomeFiveHero from './HomeFiveHero.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
 	import type {
 		HomeFiveBrandCard,
 		HomeFiveComparePair,
+		HomeFiveHeroData,
 		HomeFiveTypeCard,
 		HomeFiveVehicleCardData
 	} from '$lib/auxero/home-five';
@@ -17,11 +19,13 @@
 		afterBudgetSectionHtml,
 		afterCompareSectionHtml,
 		afterFeaturedVehiclesHtml,
+		afterHeroHtml,
 		afterTypeGalleryHtml,
 		brandCards,
 		budgetVehicles,
 		comparePairs,
 		featuredVehicles,
+		hero,
 		pageDocument,
 		typeCards
 	}: {
@@ -29,11 +33,13 @@
 		afterBudgetSectionHtml: string;
 		afterCompareSectionHtml: string;
 		afterFeaturedVehiclesHtml: string;
+		afterHeroHtml: string;
 		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
 		budgetVehicles: HomeFiveVehicleCardData[];
 		comparePairs: HomeFiveComparePair[];
 		featuredVehicles: HomeFiveVehicleCardData[];
+		hero?: HomeFiveHeroData;
 		pageDocument: AuxeroPageDocument;
 		typeCards: HomeFiveTypeCard[];
 	} = $props();
@@ -48,6 +54,9 @@
 {@html bodyClassScript}
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html pageDocument.bodyHtml}
+<HomeFiveHero {hero} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterHeroHtml}
 <HomeFiveFeaturedVehicles vehicles={featuredVehicles} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterFeaturedVehiclesHtml}
