@@ -22,8 +22,13 @@ export const load: PageServerLoad = ({ request, url }) => {
 	}
 
 	const pageDocument = splitAuxeroDocument(html);
-	const brandStripSlot = splitAuxeroBodySection(
+	const featuredVehiclesSlot = splitAuxeroBodySection(
 		pageDocument.bodyHtml,
+		'<!-- New Vehicles -->',
+		'<!-- /New Vehicles -->'
+	);
+	const brandStripSlot = splitAuxeroBodySection(
+		featuredVehiclesSlot?.afterHtml ?? pageDocument.bodyHtml,
 		'<!-- Explore Our Brands -->',
 		'<!-- /Explore Our Brands -->'
 	);
@@ -51,6 +56,9 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterCompareSectionHtml: budgetSectionSlot
 			? budgetSectionSlot.beforeHtml
 			: (compareSectionSlot?.afterHtml ?? ''),
+		afterFeaturedVehiclesHtml: brandStripSlot
+			? brandStripSlot.beforeHtml
+			: (featuredVehiclesSlot?.afterHtml ?? ''),
 		afterTypeGalleryHtml: compareSectionSlot
 			? compareSectionSlot.beforeHtml
 			: (typeGallerySlot?.afterHtml ?? ''),
@@ -58,9 +66,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 		brandCards: homeFiveBrandCards,
 		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 9),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
+		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
 		pageDocument: {
 			...pageDocument,
-			bodyHtml: brandStripSlot?.beforeHtml ?? pageDocument.bodyHtml
+			bodyHtml: featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml
 		},
 		typeCards: homeFiveTypeCards
 	};

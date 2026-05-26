@@ -9,10 +9,12 @@
 	afterBrandStripHtml={data.afterBrandStripHtml}
 	afterBudgetSectionHtml={data.afterBudgetSectionHtml}
 	afterCompareSectionHtml={data.afterCompareSectionHtml}
+	afterFeaturedVehiclesHtml={data.afterFeaturedVehiclesHtml}
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
 	brandCards={data.brandCards}
 	budgetVehicles={data.budgetVehicles}
 	comparePairs={data.comparePairs}
+	featuredVehicles={data.featuredVehicles}
 	pageDocument={data.pageDocument}
 	typeCards={data.typeCards}
 />

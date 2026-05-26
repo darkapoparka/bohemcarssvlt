@@ -29,6 +29,22 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('<!-- Browse By Type -->');
 	});
 
+	it('can split the New Vehicles carousel before the brand strip slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- New Vehicles -->',
+			'<!-- /New Vehicles -->'
+		);
+
+		expect(split?.beforeHtml).toContain('Browse, Compare, Drive');
+		expect(split?.sectionHtml).toContain('new Bohemcars vehicles');
+		expect(split?.sectionHtml).toContain('swiper-card-5');
+		expect(split?.sectionHtml).toContain('pagination-swiper-card-5');
+		expect(split?.afterHtml).toContain('<!-- Explore Our Brands -->');
+	});
+
 	it('can split the Browse By Type gallery after the brand strip slot', () => {
 		const html = renderAuxeroTemplate('home-05.html');
 		const document = splitAuxeroDocument(html!);

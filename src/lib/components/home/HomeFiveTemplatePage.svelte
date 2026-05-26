@@ -2,6 +2,7 @@
 	import HomeFiveBrandStrip from './HomeFiveBrandStrip.svelte';
 	import HomeFiveBudgetSection from './HomeFiveBudgetSection.svelte';
 	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
+	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
 	import type {
 		HomeFiveBrandCard,
@@ -15,20 +16,24 @@
 		afterBrandStripHtml,
 		afterBudgetSectionHtml,
 		afterCompareSectionHtml,
+		afterFeaturedVehiclesHtml,
 		afterTypeGalleryHtml,
 		brandCards,
 		budgetVehicles,
 		comparePairs,
+		featuredVehicles,
 		pageDocument,
 		typeCards
 	}: {
 		afterBrandStripHtml: string;
 		afterBudgetSectionHtml: string;
 		afterCompareSectionHtml: string;
+		afterFeaturedVehiclesHtml: string;
 		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
 		budgetVehicles: HomeFiveVehicleCardData[];
 		comparePairs: HomeFiveComparePair[];
+		featuredVehicles: HomeFiveVehicleCardData[];
 		pageDocument: AuxeroPageDocument;
 		typeCards: HomeFiveTypeCard[];
 	} = $props();
@@ -43,6 +48,9 @@
 {@html bodyClassScript}
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html pageDocument.bodyHtml}
+<HomeFiveFeaturedVehicles vehicles={featuredVehicles} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterFeaturedVehiclesHtml}
 <HomeFiveBrandStrip cards={brandCards} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterBrandStripHtml}

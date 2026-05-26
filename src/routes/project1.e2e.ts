@@ -31,6 +31,21 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expectBohemcarsShell(page);
 	await expect(page.getByRole('link', { name: 'Sign In' }).first()).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Add Listing' })).toHaveCount(0);
+	const homeFeaturedSection = page.locator('section', { hasText: 'new Bohemcars vehicles' });
+	await expect(homeFeaturedSection.locator('.swiper-card-5')).toBeVisible();
+	await expect(homeFeaturedSection.locator('.swiper-slide .card-box-style-1')).toHaveCount(6);
+	await expect(homeFeaturedSection.locator('ul.tag.style2')).toHaveCount(0);
+	await expect(homeFeaturedSection.locator('.pagination-swiper-card-5')).toHaveCount(1);
+	const featuredCarouselDensity = await homeFeaturedSection
+		.locator('.swiper-card-5')
+		.evaluate((carousel) => {
+			const carouselBox = carousel.getBoundingClientRect();
+			const firstSlide = carousel.querySelector('.swiper-slide');
+			const firstSlideBox = firstSlide?.getBoundingClientRect();
+
+			return firstSlideBox ? carouselBox.width / firstSlideBox.width : 0;
+		});
+	expect(featuredCarouselDensity).toBeGreaterThan(2.5);
 	await expect(
 		page.locator('section', { hasText: 'Explore Our Brands' }).locator('.out-brand-2')
 	).toHaveCount(12);

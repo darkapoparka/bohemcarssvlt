@@ -313,6 +313,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Budget section checkpoint: `src/lib/components/home/HomeFiveBudgetSection.svelte` now renders the Home 05 `Bohemcars by Budget` section from typed `HomeFiveVehicleCardData` rows derived in `+page.server.ts`. `HomeFiveVehicleCard.svelte` preserves the template `card-box card-box-style-1` structure, highlight tags, image overlay meta, style2 specs row, price/finance row, compare action, and details link; the section keeps 5 budget tabs and 9 cards.
 
+  Featured vehicles checkpoint: `src/lib/components/home/HomeFiveFeaturedVehicles.svelte` now renders the Home 05 `New Vehicles` carousel from typed `HomeFiveVehicleCardData` rows and reuses `HomeFiveVehicleCard.svelte` without the budget `style2` spec row. The route keeps Home 05 server-rendered with `src/routes/+page.ts` `csr = false` so Auxero's Swiper scripts initialize the final carousel DOM instead of being undone by hydration; Playwright now guards the desktop carousel density in addition to the 6 cards, pagination, and CTA contract.
+
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:
