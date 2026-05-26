@@ -9,6 +9,10 @@ import type {
 	AuxeroMessageContact,
 	AuxeroMessageThreadData
 } from '$lib/auxero/messages';
+import type {
+	AuxeroUserManagementData,
+	AuxeroUserManagementRow
+} from '$lib/auxero/user-management';
 import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
@@ -784,6 +788,37 @@ const userRows = (): UserRow[] =>
 		status: user.context
 	}));
 
+const userManagementRows = (): AuxeroUserManagementRow[] =>
+	userRows().map((user) => ({
+		actions: [
+			{
+				ariaLabel: `Message ${user.name}`,
+				icon: '/assets/images/dashboard/Messages.svg',
+				kind: 'message',
+				label: 'Message'
+			},
+			{
+				ariaLabel: `Review ${user.name}`,
+				icon: '/assets/images/dashboard/MyReviews.svg',
+				kind: 'review',
+				label: 'Review'
+			}
+		],
+		columns: [user.email, user.role, user.status, user.state],
+		description: user.status,
+		id: user.id,
+		image: accountAvatarByRole[user.avatarRole],
+		kind: user.kind,
+		name: user.name,
+		role: user.role
+	}));
+
+const userManagementData = (context: AccountContext): AuxeroUserManagementData => ({
+	footerText: 'Role-aware prototype accounts and lead contacts managed by Bohemcars.',
+	headers: ['User', 'Email', 'Role', 'Context', 'Status', 'Action'],
+	rows: context.isAdmin ? userManagementRows() : []
+});
+
 const userManagementStats =
 	() => `<div class="grid grid-cols-4 xl-grid-cols-2 sm-grid-cols-1 gap-30 mb-30">
 	${[
@@ -826,7 +861,8 @@ const userManagementStats =
 		.join('\n')}
 </div>`;
 
-const userManagementTable = () => `<div class="cart-wrapper bohemcars-users-table">
+const userManagementTable =
+	() => `<div class="cart-wrapper bohemcars-users-table" data-bohemcars-users-table>
 	<div class="cart-header">
 		<div class="font-weight-600">User</div>
 		<div class="font-weight-600">Email</div>
@@ -1575,6 +1611,11 @@ export const getAuxeroAccountListingsData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
 ) => accountListingsData(accountContext(templateFile, options));
+
+export const getAuxeroUserManagementData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {}
+) => userManagementData(accountContext(templateFile, options));
 
 export const isAccountTemplate = (templateFile: string) =>
 	[

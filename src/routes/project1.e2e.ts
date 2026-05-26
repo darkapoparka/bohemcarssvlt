@@ -680,8 +680,19 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/admin/users?role=admin');
 	await expect(page.locator('body')).toContainText('User Management');
-	await expect(page.locator('.bohemcars-users-table')).toBeVisible();
-	await expect(page.locator('body')).toContainText('customer@bohemcars.local');
+	const adminUsers = page.locator('[data-bohemcars-users-table]');
+	await expect(adminUsers).toBeVisible();
+	await expect(adminUsers.locator('.cart-header > div')).toHaveCount(6);
+	await expect
+		.poll(async () => adminUsers.locator('.cart-item[data-bohemcars-user-id]').count())
+		.toBeGreaterThan(2);
+	const adminUserCount = await adminUsers.locator('.cart-item[data-bohemcars-user-id]').count();
+	await expect(adminUsers.locator('[data-bohemcars-user-role="admin"]')).toBeVisible();
+	await expect(adminUsers).toContainText('customer@bohemcars.local');
+	await expect(adminUsers).toContainText('Canada import lead');
+	await expect(adminUsers.locator('a[href*="/admin/messages"]')).toHaveCount(adminUserCount);
+	await expect(adminUsers.locator('a[href*="/admin/inquiries"]')).toHaveCount(adminUserCount);
+	await expect(page.locator('.bohemcars-users-box')).toContainText('Role Access Notes');
 
 	const forbidden = await page.goto('/admin?role=customer');
 	expect(forbidden?.status()).toBe(403);

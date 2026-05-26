@@ -466,6 +466,21 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
 	});
 
+	it('can split the admin users table without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('dashboard.html', { routePath: 'admin/users' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-users-table');
+
+		expect(split?.beforeHtml).toContain('User Management');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('data-bohemcars-user-role="admin"');
+		expect(split?.sectionHtml).toContain('customer@bohemcars.local');
+		expect(split?.sectionHtml).toContain('Canada import lead');
+		expect(split?.afterHtml).toContain('Role Access Notes');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the public agents grid without dropping page chrome', () => {
 		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'agents' });
 		const document = splitAuxeroDocument(html!);

@@ -1157,6 +1157,32 @@ npm run build
 
 Browser DOM QA verified `/account/listings?role=customer` and `/admin/inventory?role=admin` on desktop and mobile: one Svelte `data-bohemcars-account-listings` table per page, 2 seeded customer submission rows in the clean browser state, 5 admin inventory rows, preserved 6-column headers, expected edit/message/remove action counts, clean admin edit hrefs with no `%2F` encoding, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-listings-svelte/`.
 
+### Task 7P: Migrate Admin Users Table
+
+**Checkpoint completed 2026-05-27:**
+
+- `/admin/users` now uses SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero dashboard shell, role-aware sidebar/header, user management stats, cart table classes, role access notes, modal stack, body classes, and local script tail.
+- The user table is rendered by `UserManagementTable.svelte` inside `UserManagementTemplatePage.svelte`, using typed `AuxeroUserManagementData` from `src/lib/auxero/user-management.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes typed user management data and marks the raw fallback table with `data-bohemcars-users-table` for safe splitting.
+- `src/routes/project1.e2e.ts` freezes the users table contract: visible Svelte table, 6-column header, admin/lead rows, seeded customer email and Canada import lead content, one message and review action per row, and preserved role notes.
+- `src/lib/server/auxero-page.spec.ts` guards that the admin users table can be split without dropping dashboard chrome, role notes, modals, or runtime script tail.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/UserManagementTable.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/UserManagementTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/users/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified `/admin/users?role=admin` on desktop and mobile: one Svelte `data-bohemcars-users-table`, 6 user rows, 1 admin row, 3 lead rows, preserved 6-column headers, 6 message links, 6 inquiry/review links, role notes present, seeded customer and Canada import lead content, no `%2F` encoded links, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-users-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
