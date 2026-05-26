@@ -52,3 +52,48 @@ export function splitAuxeroBodySection(bodyHtml: string, startComment: string, e
 		sectionHtml: bodyHtml.slice(start, afterStart)
 	};
 }
+
+const findClosingTagIndex = (html: string, openTagIndex: number, tagName: string) => {
+	const pattern = new RegExp(`<\\/?${tagName}\\b[^>]*>`, 'gi');
+	pattern.lastIndex = openTagIndex;
+	let depth = 0;
+	let match: RegExpExecArray | null;
+
+	while ((match = pattern.exec(html))) {
+		if (match[0].startsWith(`</${tagName}`)) {
+			depth -= 1;
+		} else {
+			depth += 1;
+		}
+
+		if (depth === 0) return match.index + match[0].length;
+	}
+
+	return -1;
+};
+
+export function splitAuxeroDivBlockByMarker(bodyHtml: string, marker: string) {
+	const markerIndex = bodyHtml.indexOf(marker);
+
+	if (markerIndex < 0) {
+		return undefined;
+	}
+
+	const start = bodyHtml.lastIndexOf('<div', markerIndex);
+
+	if (start < 0) {
+		return undefined;
+	}
+
+	const end = findClosingTagIndex(bodyHtml, start, 'div');
+
+	if (end < 0) {
+		return undefined;
+	}
+
+	return {
+		afterHtml: bodyHtml.slice(end),
+		beforeHtml: bodyHtml.slice(0, start),
+		sectionHtml: bodyHtml.slice(start, end)
+	};
+}

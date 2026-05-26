@@ -174,6 +174,8 @@ Homepage 05 components:
 
 Inventory grid components:
 
+- `src/lib/components/inventory/AuxeroInventoryContent.svelte`
+- `src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte`
 - `src/lib/components/inventory/InventoryToolbar.svelte`
 - `src/lib/components/inventory/InventoryGrid.svelte`
 - `src/lib/components/inventory/InventoryViewToggle.svelte`

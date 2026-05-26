@@ -28,7 +28,7 @@ export type AuxeroRenderOptions = {
 	view?: InventoryView | string;
 };
 
-type InventoryState = {
+export type InventoryState = {
 	filters: InventoryFilters;
 	searchParams: URLSearchParams;
 	selected: Vehicle[];
@@ -133,7 +133,7 @@ export const viewForInventoryTemplate = (
 	return '3';
 };
 
-const getInventoryState = (
+export const getInventoryState = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
 ): InventoryState => {

@@ -422,6 +422,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Assert the current raw-template inventory page has visible filter button, sort select, three-card rhythm, image ratio, title, price, compare button, and details link.
 
+  Inventory content checkpoint: `/inventory` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`, replacing only the generated inventory content block with `AuxeroInventoryContent.svelte` and `AuxeroInventoryVehicleCard.svelte`. The previous endpoint is kept as `server.legacy.ts` for reference. The test now guards the 3-column, dense 4-column, and half-map view contracts before the rest of the inventory page is migrated.
+
 - [ ] **Step 2: Move inventory filtering into typed server load**
 
   `src/routes/inventory/+page.server.ts` should return serializable data:

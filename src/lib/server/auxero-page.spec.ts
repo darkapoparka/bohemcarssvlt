@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { renderAuxeroTemplate } from './auxero-template';
-import { splitAuxeroBodySection, splitAuxeroDocument } from './auxero-page';
+import {
+	splitAuxeroBodySection,
+	splitAuxeroDivBlockByMarker,
+	splitAuxeroDocument
+} from './auxero-page';
 
 describe('splitAuxeroDocument', () => {
 	it('extracts the Home 05 head, body class, and body markup for Svelte pages', () => {
@@ -296,5 +300,17 @@ describe('splitAuxeroDocument', () => {
 		expect(modalSplit?.afterHtml).toContain('progress-wrap');
 		expect(modalSplit?.afterHtml).toContain('/assets/js/jquery.min.js');
 		expect(modalSplit?.afterHtml).not.toContain('<div id="LoginModal"');
+	});
+
+	it('can split a generated inventory content div without dropping toolbar or filter markup', () => {
+		const html = renderAuxeroTemplate('listing-grid3-columns.html');
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'bohemcars-inventory-content');
+
+		expect(split?.beforeHtml).toContain('bohemcars-inventory-toolbar-row');
+		expect(split?.sectionHtml).toContain('content-tab bohemcars-inventory-content');
+		expect(split?.sectionHtml).toContain('card-box-style-1');
+		expect(split?.afterHtml).toContain('filter-sidebar');
+		expect(split?.afterHtml).not.toContain('content-tab bohemcars-inventory-content');
 	});
 });

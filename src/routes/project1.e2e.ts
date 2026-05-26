@@ -193,11 +193,54 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 
 	await page.goto('/inventory');
 	const refreshedFirstCard = page.locator('[data-bohemcars-slug]').first();
+	const refreshedFirstSlug = await refreshedFirstCard.getAttribute('data-bohemcars-slug');
 	const cardImageRatio = await boxRatio(refreshedFirstCard.locator('.card--img'));
 
 	expect(cardImageRatio).toBeGreaterThan(1.25);
 	expect(cardImageRatio).toBeLessThan(1.61);
+	await expect(page.locator('.bohemcars-inventory-toolbar-row')).toBeVisible();
+	await expect(page.locator('.bohemcars-view-toggle .item-menu')).toHaveCount(3);
+	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
+		'aria-label',
+		'Comfortable 3 grid'
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-content > .content-inner.active > div.grid')
+	).toHaveClass(/grid-cols-3/);
+	await expect(refreshedFirstCard).toHaveClass(/card-box-style-1/);
+	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveClass(/h6/);
+	await expect(refreshedFirstCard.locator('.card-box__price')).toHaveClass(/h6/);
+	await expect(refreshedFirstCard.locator('.compare-details')).toContainText('Compare');
+	await expect(refreshedFirstCard.locator('.view-details')).toHaveAttribute(
+		'href',
+		new RegExp(`/inventory/${refreshedFirstSlug}$`)
+	);
 
+	await page.goto('/inventory?view=4');
+	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
+		'aria-label',
+		'Dense 4 grid'
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-content > .content-inner.active > div.grid')
+	).toHaveClass(/grid-cols-4/);
+	await expect(
+		page.locator('.bohemcars-inventory-content .card-box-style-1').first()
+	).toBeVisible();
+
+	await page.goto('/inventory?view=map');
+	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
+		'aria-label',
+		'Half map'
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-content .card-box-style-9').first()
+	).toBeVisible();
+	await expect(page.locator('.bohemcars-map-fallback')).toContainText(
+		'Exact vehicle viewing location'
+	);
+
+	await page.goto('/inventory');
 	await refreshedFirstCard.locator('.bohemcars-favorite, .heart').click();
 	await expect
 		.poll(async () =>
