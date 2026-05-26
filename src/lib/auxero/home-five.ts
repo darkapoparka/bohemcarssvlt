@@ -5,6 +5,12 @@ export type HomeFiveBrandCard = {
 	query: string;
 };
 
+export type HomeFiveTypeCard = {
+	bodyType: string;
+	image: string;
+	label: string;
+};
+
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 	{ name: 'BMW', image: '/assets/images/brand/brand-1.png', count: '18 Vehicles', query: 'BMW' },
 	{
@@ -58,4 +64,13 @@ export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 		count: '27 Vehicles',
 		query: 'Tesla'
 	}
+];
+
+export const homeFiveTypeCards: HomeFiveTypeCard[] = [
+	{ label: 'SUV', image: '/assets/images/card/card-37.jpg', bodyType: 'SUV' },
+	{ label: 'SUV', image: '/assets/images/card/card-38.jpg', bodyType: 'SUV' },
+	{ label: 'Pickup Truck', image: '/assets/images/card/card-39.jpg', bodyType: 'Pickup Truck' },
+	{ label: 'Sedan', image: '/assets/images/card/card-40.jpg', bodyType: 'Sedan' },
+	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
+	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
 ];

@@ -307,6 +307,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Brand strip checkpoint: `src/lib/components/home/HomeFiveBrandStrip.svelte` now renders the Home 05 `Explore Our Brands` section from shared `homeFiveBrandCards` data. The rest of the page still streams through trusted Auxero fragments until each section is replaced under visual tests.
 
+  Browse By Type checkpoint: `src/lib/components/home/HomeFiveTypeGallery.svelte` now renders the Home 05 type gallery from shared `homeFiveTypeCards` data while preserving the template dark band, horizontal gallery structure, `card-37.jpg` through `card-42.jpg` image family, active second card, and white 20px CTA arrow. The page shell also guards against swallowing template scripts by emitting a real closing body-class script tag, with Playwright coverage for local jQuery initialization.
+
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

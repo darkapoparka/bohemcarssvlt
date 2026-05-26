@@ -2,7 +2,10 @@ import { agents } from '$lib/data/agents';
 import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import { posts } from '$lib/data/blog';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
-import { homeFiveBrandCards as home05BrandCards } from '$lib/auxero/home-five';
+import {
+	homeFiveBrandCards as home05BrandCards,
+	homeFiveTypeCards as home05TypeCards
+} from '$lib/auxero/home-five';
 
 const escapeHtml = (value: string | number) =>
 	String(value)
@@ -51,15 +54,6 @@ const brandImages: Record<string, string> = {
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png',
 	Ford: '/assets/bohemcars/brands/ford.png'
 };
-
-const home05TypeCards = [
-	{ label: 'SUV', image: '/assets/images/card/card-37.jpg', bodyType: 'SUV' },
-	{ label: 'SUV', image: '/assets/images/card/card-38.jpg', bodyType: 'SUV' },
-	{ label: 'Pickup Truck', image: '/assets/images/card/card-39.jpg', bodyType: 'Pickup Truck' },
-	{ label: 'Sedan', image: '/assets/images/card/card-40.jpg', bodyType: 'Sedan' },
-	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
-	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
-] as const;
 
 const reviewItems = [
 	{

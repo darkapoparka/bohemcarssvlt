@@ -44,6 +44,14 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 			.locator('section', { hasText: 'Browse By Type' })
 			.locator('img[src*="/assets/images/card/card-37.jpg"]')
 	).toBeVisible();
+	await expect
+		.poll(() =>
+			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)
+		)
+		.toBe('function');
+	await expect
+		.poll(() => page.evaluate(() => document.scripts[0]?.textContent ?? ''))
+		.not.toContain('<\\/script>');
 	await expect(page.locator('.search-cars, .search-form-widget').first()).toBeVisible();
 
 	const homeLinks = await page

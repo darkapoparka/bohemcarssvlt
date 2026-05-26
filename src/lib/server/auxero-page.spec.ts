@@ -28,4 +28,23 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.sectionHtml).toContain('out-brand-2');
 		expect(split?.afterHtml).toContain('<!-- Browse By Type -->');
 	});
+
+	it('can split the Browse By Type gallery after the brand strip slot', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const brandSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- Explore Our Brands -->',
+			'<!-- /Explore Our Brands -->'
+		);
+		const typeSplit = splitAuxeroBodySection(
+			brandSplit!.afterHtml,
+			'<!-- Browse By Type -->',
+			'<!-- /Browse By Type -->'
+		);
+
+		expect(typeSplit?.sectionHtml).toContain('Browse By Type');
+		expect(typeSplit?.sectionHtml).toContain('card-37.jpg');
+		expect(typeSplit?.afterHtml).toContain('<!-- Compare Top Rated Vehicles -->');
+	});
 });
