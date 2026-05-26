@@ -583,7 +583,23 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/account/messages?role=customer');
 	await expect(page.locator('body')).toContainText('Messages');
-	await expect(page.locator('body')).toContainText('Bohemcars Sales');
+	const accountMessages = page.locator('[data-bohemcars-message-container]');
+	await expect(accountMessages).toBeVisible();
+	await expect(accountMessages.locator('.message-sidebar')).toBeVisible();
+	await expect(accountMessages.locator('.message-chat')).toBeVisible();
+	await expect
+		.poll(async () => accountMessages.locator('.message-contact').count())
+		.toBeGreaterThan(0);
+	await expect(accountMessages.locator('.message-chat__header')).toHaveCount(1);
+	await expect(accountMessages.locator('.message-chat__body')).toHaveCount(1);
+	await expect
+		.poll(async () => accountMessages.locator('.message-item').count())
+		.toBeGreaterThan(1);
+	await expect(accountMessages.locator('.message__action')).toBeVisible();
+	await expect(accountMessages).toContainText('Bohemcars Sales');
+	await expect(accountMessages).toContainText('Please send appointment options');
+	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
+	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
 	await page.goto('/account/listings?role=customer');
 	await expect(page.locator('body')).toContainText('My Listings');
@@ -609,11 +625,28 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/admin/inquiries?role=agent');
 	await expect(page.locator('body')).toContainText('Inquiries & Messages');
-	await expect(page.locator('body')).toContainText('Canada import lead');
+	const agentInquiries = page.locator('[data-bohemcars-message-container]');
+	await expect(agentInquiries).toBeVisible();
+	await expect
+		.poll(async () => agentInquiries.locator('.message-contact').count())
+		.toBeGreaterThan(0);
+	await expect(agentInquiries).toContainText('Canada import lead');
+	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 
 	await page.goto('/admin/messages?role=admin');
 	await expect(page.locator('body')).toContainText('Inquiries & Messages');
-	await expect(page.locator('body')).toContainText('Bohemcars follow-up is ready');
+	const adminMessages = page.locator('[data-bohemcars-message-container]');
+	await expect(adminMessages).toBeVisible();
+	await expect
+		.poll(async () => adminMessages.locator('.message-contact').count())
+		.toBeGreaterThan(0);
+	await expect(adminMessages.locator('.message-chat__header')).toHaveCount(1);
+	await expect(adminMessages.locator('.message-chat__body')).toHaveCount(1);
+	await expect.poll(async () => adminMessages.locator('.message-item').count()).toBeGreaterThan(1);
+	await expect(adminMessages).toContainText('Canada import lead');
+	await expect(adminMessages).toContainText('Customer asked for source history');
+	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
+	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
 	await page.goto('/admin/agents?role=admin');
 	await expect(page.locator('body')).toContainText('Bohemcars Agent Management');

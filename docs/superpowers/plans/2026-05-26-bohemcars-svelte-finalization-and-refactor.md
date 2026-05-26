@@ -1102,6 +1102,34 @@ npm run build
 
 Browser DOM QA verified the account and admin dashboard roots on desktop and mobile: one Svelte `data-bohemcars-dashboard-recent` box per page, customer recent messages, admin recent inquiries, preserved dashboard stat cards and listing tables, preserved dashboard body class, no demo review copy, no console errors, and no page-level mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-dashboard-recent-svelte/`.
 
+### Task 7N: Migrate Account/Admin Message Threads
+
+**Checkpoint completed 2026-05-27:**
+
+- `/account/messages`, `/admin/messages`, and `/admin/inquiries` now use SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` routes with `csr = false`.
+- The pages preserve the Auxero dashboard shell, role-aware sidebar/header, message search, contacts column, chat header, message bubbles, dropdown controls, message input/action row, modal stack, body classes, and local script tail.
+- The message container is rendered by `MessageThreadContainer.svelte` inside `MessageTemplatePage.svelte`, using typed `AuxeroMessageThreadData` from `src/lib/auxero/messages.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes the same typed message data for Svelte routes and replaces the whole raw message container with `data-bohemcars-message-container`, preventing the previous partial-adapter leak of demo contacts.
+- `src/routes/project1.e2e.ts` freezes the message contract: visible Svelte message containers, sidebar/chat regions, seeded Bohemcars sales and inquiry content, and no raw `data-contact="john"` or `Bohemcars follow-up is ready` demo text.
+- `src/lib/server/auxero-page.spec.ts` and `src/lib/server/auxero-template.spec.ts` guard that account/admin message containers can be split without dropping dashboard chrome, modals, or runtime script tail.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/MessageThreadContainer.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/MessageTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/messages/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/messages/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/inquiries/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified `/account/messages`, `/admin/messages`, and `/admin/inquiries` on desktop and mobile: one Svelte `data-bohemcars-message-container` per page, preserved message contacts/header/body/action structure, seeded customer and admin inquiry content, no demo contact leakage, no console errors, and no page-level horizontal overflow. The in-app Browser screenshot command timed out on this dashboard view, so full-page Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-27-message-thread-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

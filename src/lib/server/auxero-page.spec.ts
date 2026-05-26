@@ -387,6 +387,43 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
 	});
 
+	it('can split the account messages container without keeping template demo contacts', () => {
+		const html = renderAuxeroTemplate('message.html', { routePath: 'account/messages' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-message-container'
+		);
+
+		expect(split?.beforeHtml).toContain('Messages');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('message-container');
+		expect(split?.sectionHtml).toContain('Bohemcars Sales');
+		expect(split?.sectionHtml).toContain('Please send appointment options');
+		expect(split?.sectionHtml).not.toContain('data-contact="john"');
+		expect(split?.sectionHtml).not.toContain('Bohemcars follow-up is ready');
+		expect(split?.afterHtml).toContain('LoginModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
+	it('can split the admin messages container without keeping template demo contacts', () => {
+		const html = renderAuxeroTemplate('message.html', { routePath: 'admin/messages' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-message-container'
+		);
+
+		expect(split?.beforeHtml).toContain('Inquiries & Messages');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('Canada import lead');
+		expect(split?.sectionHtml).toContain('Customer asked for source history');
+		expect(split?.sectionHtml).not.toContain('data-contact="john"');
+		expect(split?.sectionHtml).not.toContain('Bohemcars follow-up is ready');
+		expect(split?.afterHtml).toContain('LoginModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the generated account favorites grid without dropping dashboard chrome', () => {
 		const html = renderAuxeroTemplate('my-favorites.html', { routePath: 'account/favorites' });
 		const document = splitAuxeroDocument(html!);

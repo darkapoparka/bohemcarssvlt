@@ -534,14 +534,18 @@ describe('Auxero template Bohemcars adapter', () => {
 		const customerHtml = renderAuxeroTemplate('message.html', { routePath: 'account/messages' });
 
 		expect(html).toContain('Inquiries & Messages');
-		expect(html).toContain('Bohemcars Inspection');
 		expect(html).toContain('Canada import lead');
+		expect(html).toContain('Customer asked for source history');
+		expect(html).toContain('data-bohemcars-message-container');
 		expect(html).toContain(bohemcarsContact.emailLabel);
+		expect(customerHtml).toContain('data-bohemcars-message-container');
 		expect(customerHtml).toContain('Bohemcars Sales');
 		expect(customerHtml).toContain('Please send appointment options');
 		expect(html).not.toContain('Marvin McKinney');
 		expect(html).not.toContain('John Smith');
 		expect(html).not.toContain('grew-sra@gmail.com');
+		expect(html).not.toContain('data-contact="john"');
+		expect(customerHtml).not.toContain('data-contact="john"');
 	});
 
 	it('keeps agent admin navigation scoped to allowed lead and message surfaces', () => {
