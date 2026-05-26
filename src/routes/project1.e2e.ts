@@ -392,6 +392,20 @@ test('planned public support routes render Bohemcars content and local forms', a
 		await expectBohemcarsShell(page);
 	}
 
+	await page.goto('/about');
+	const aboutContent = page.locator('[data-bohemcars-about]');
+	await expect(aboutContent).toBeVisible();
+	await expect(aboutContent.locator('.about-box .main-img')).toBeVisible();
+	await expect(aboutContent.locator('.about-box .sub-img img')).toBeVisible();
+	await expect(aboutContent.locator('.swiper-testimonior .testimonior-box')).toHaveCount(4);
+	await expect(aboutContent.locator('.why-choose-us.style2.style3')).toBeVisible();
+	await expect(aboutContent.locator('.counter-spacing .box-couter-item')).toHaveCount(4);
+	await expect(aboutContent.locator('.sale-agent-box')).toHaveCount(3);
+	await expect(aboutContent.locator('.sale-agent-title').first()).toHaveAttribute(
+		'href',
+		/^\.?\/agents\/bohemcars-sales$/
+	);
+
 	await page.goto('/reviews');
 	const reviewsGrid = page.locator('[data-bohemcars-reviews-grid]');
 	await expect(reviewsGrid).toBeVisible();

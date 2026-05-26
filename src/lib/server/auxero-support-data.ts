@@ -1,4 +1,5 @@
 import { agents } from '$lib/data/agents';
+import { auxeroAboutContent } from '$lib/auxero/about';
 import {
 	auxeroCalculatorData,
 	formatEur,
@@ -504,27 +505,23 @@ const applyServicesData = (html: string) => {
 };
 
 const applyAboutData = (html: string) => {
-	const body = `<section class="pb-100">
+	const body = `<div data-bohemcars-about><section class="pb-100">
 	<div class="container">
-		<h2>About Bohemcars</h2>
+		<h2>${escapeHtml(auxeroAboutContent.intro.title)}</h2>
 		<div class="tf-spacing-style3"></div>
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="about-box">
-					<img class="main-img radius-16 wow fadeIn" data-wow-delay="0.1s" src="${escapeHtml(bohemcarsAssets.hero)}" alt="Bohemcars showroom">
-					<div class="sub-img wow fadeInUp" data-wow-delay="0.2s"><img src="/assets/bohemcars/proof-studio-import-handoff.png" alt="Bohemcars handoff"></div>
+					<img class="main-img radius-16 wow fadeIn" data-wow-delay="0.1s" src="${escapeHtml(auxeroAboutContent.assets.hero)}" alt="${escapeHtml(auxeroAboutContent.intro.mainImageAlt)}">
+					<div class="sub-img wow fadeInUp" data-wow-delay="0.2s"><img src="${escapeHtml(auxeroAboutContent.intro.subImage)}" alt="${escapeHtml(auxeroAboutContent.intro.subImageAlt)}"></div>
 				</div>
 			</div>
 			<div class="col-lg-6">
 				<div class="about-content">
-					<h2 class="font-weight-600 mb-20">Canada-sourced vehicles, checked before the decision</h2>
-					<p class="text-secondary h7 line-height-28 mb-32">Bohemcars helps buyers and sellers work through vehicle history, import context, documents, appointments, and realistic landed-cost expectations.</p>
+					<h2 class="font-weight-600 mb-20">${escapeHtml(auxeroAboutContent.intro.heading)}</h2>
+					<p class="text-secondary h7 line-height-28 mb-32">${escapeHtml(auxeroAboutContent.intro.description)}</p>
 					<ul class="flex flex-col gap-24 mb-32">
-						${[
-							'Canada import and document experience',
-							'Transparent estimates and vehicle-specific review',
-							'Prepared handoff with appointment-based support'
-						]
+						${auxeroAboutContent.intro.checklist
 							.map(
 								(item) => `<li class="flex gap-4">
 									<img class="w-24 h-24" src="/assets/icons/check.svg" alt="check">
@@ -535,9 +532,9 @@ const applyAboutData = (html: string) => {
 					</ul>
 					<div class="flex gap-28 items-center">
 						<a href="/contact" class="btn btn-primary btn-large font-weight-600">Contact Bohemcars</a>
-						<a href="${bohemcarsContact.primaryPhoneHref}" class="flex gap-16">
+						<a href="${auxeroAboutContent.contact.primaryPhoneHref}" class="flex gap-16">
 							<img src="/assets/icons/PhoneCall-3.svg" alt="PhoneCall">
-							<div class="mt2"><span class="text-sm text-secondary">Have any question?</span><p class="h4">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</p></div>
+							<div class="mt2"><span class="text-sm text-secondary">Have any question?</span><p class="h4">${escapeHtml(auxeroAboutContent.contact.primaryPhoneLabel)}</p></div>
 						</a>
 					</div>
 				</div>
@@ -564,18 +561,13 @@ const applyAboutData = (html: string) => {
 	</section>
 </section>
 <section class="py-100 background-light">
-	<div class="container">
-		<div class="why-choose-us style2 style3">
-			<div class="wow fadeIn" data-wow-delay="0.1s"><img class="move5" src="/assets/bohemcars/cta/import-canada-banner.png" alt="Why choose Bohemcars"></div>
+		<div class="container">
+			<div class="why-choose-us style2 style3">
+			<div class="wow fadeIn" data-wow-delay="0.1s"><img class="move5" src="${escapeHtml(auxeroAboutContent.why.image)}" alt="${escapeHtml(auxeroAboutContent.why.imageAlt)}"></div>
 			<div class="wow fadeIn" data-wow-delay="0.2s">
-				<h2 class="mb-12">Why Choose Bohemcars?</h2>
-				<p class="text-muted mb-20">The work is practical: verify the vehicle, understand the cost, prepare the documents, and keep the client decision calm.</p>
-				${checkList([
-					'Verified origin and document review',
-					'Clear landed-cost estimates',
-					'Vehicle-specific service and registration context',
-					'Consultants who handle import, inspection, and sales questions'
-				])}
+				<h2 class="mb-12">${escapeHtml(auxeroAboutContent.why.heading)}</h2>
+				<p class="text-muted mb-20">${escapeHtml(auxeroAboutContent.why.description)}</p>
+				${checkList(auxeroAboutContent.why.checklist)}
 				<a href="/services" class="btn btn-primary btn-large font-weight-600 max-w-min">Explore Services</a>
 			</div>
 		</div>
@@ -586,7 +578,7 @@ const applyAboutData = (html: string) => {
 <section>
 	<h2 class="mb-40 text-center">Bohemcars Consultants</h2>
 	<div class="container">${consultantGrid()}</div>
-</section>`;
+</section></div>`;
 
 	return replaceBodyAfterBreadcrumb(html, body);
 };

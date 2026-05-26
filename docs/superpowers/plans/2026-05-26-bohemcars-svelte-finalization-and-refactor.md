@@ -1044,6 +1044,37 @@ npm run build
 
 Browser DOM QA verified the FAQ page on desktop and mobile: one Svelte `data-bohemcars-faqs` section, 4 accordions, 12 toggles, 4 active toggles/titles, preserved Auxero FAQ body class, footer/modal chrome, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-faqs-svelte/`.
 
+### Task 7L: Migrate About Page Content
+
+**Checkpoint completed 2026-05-27:**
+
+- `/about` now uses `src/routes/about/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `about-us.html` head, header, breadcrumb, intro split, testimonial carousel structure, why-choose card, counter row, consultant card grid, footer, modal stack, body classes, and local script tail.
+- The about content is rendered by focused Svelte components in `src/lib/components/about/`, using typed data from `src/lib/auxero/about.ts`.
+- `src/routes/project1.e2e.ts` freezes the about contract: visible `data-bohemcars-about`, intro images, 4 testimonial cards, why-choose block, 4 counters, 3 consultant cards, and the first consultant detail link.
+- `src/lib/server/auxero-page.spec.ts` guards that the generated about block can be split without dropping footer or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutIntroSection.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutReviewsSection.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutChecklist.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutStatsGrid.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutWhyChooseSection.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutConsultantsSection.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutContent.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/about/AboutTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/about/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the about page on desktop and mobile: one Svelte `data-bohemcars-about` block, one intro main image, one intro sub-image, 4 review boxes, 4 counter items, 3 consultant cards, preserved Auxero about body class, footer/modal chrome, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-about-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

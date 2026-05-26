@@ -513,6 +513,19 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
+	it('can split the about content without dropping footer or modal chrome', () => {
+		const html = renderAuxeroTemplate('about-us.html', { routePath: 'about' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-about', 'div');
+
+		expect(split?.sectionHtml).toContain('About Bohemcars');
+		expect(split?.sectionHtml).toContain('Client Reviews');
+		expect(split?.sectionHtml).toContain('Why Choose Bohemcars?');
+		expect(split?.sectionHtml).toContain('Bohemcars Consultants');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
+
 	it('can split the blog listing grid without dropping pagination or footer chrome', () => {
 		const html = renderAuxeroTemplate('blog-grid-style-1.html', { routePath: 'blog' });
 		const document = splitAuxeroDocument(html!);
