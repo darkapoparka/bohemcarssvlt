@@ -13,6 +13,7 @@
 	afterFooterHtml={data.afterFooterHtml}
 	afterHeaderHtml={data.afterHeaderHtml}
 	afterHeroHtml={data.afterHeroHtml}
+	afterModalsHtml={data.afterModalsHtml}
 	afterNewsSectionHtml={data.afterNewsSectionHtml}
 	afterReviewsSectionHtml={data.afterReviewsSectionHtml}
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
@@ -23,6 +24,7 @@
 	footer={data.footer}
 	header={data.header}
 	hero={data.hero}
+	modals={data.modals}
 	newsPosts={data.newsPosts}
 	pageDocument={data.pageDocument}
 	reviews={data.reviews}

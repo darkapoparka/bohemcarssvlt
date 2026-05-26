@@ -98,6 +98,36 @@ export type HomeFiveHeaderData = {
 	socialLinks: HomeFiveHeaderSocial[];
 };
 
+export type HomeFiveModalVehicle = {
+	engine: string;
+	exterior: string;
+	fuel: string;
+	image: string;
+	interior: string;
+	location: string;
+	mileageLabel: string;
+	slug: string;
+	stockNumber: string;
+	title: string;
+	transmission: string;
+	vin: string;
+	year: number;
+};
+
+export type HomeFiveModalsData = {
+	cardCompare: {
+		left: HomeFiveModalVehicle;
+		right: HomeFiveModalVehicle;
+		rows: Array<{
+			icon: string;
+			label: string;
+			left: string | number;
+			right: string | number;
+		}>;
+	};
+	comparePreview: HomeFiveModalVehicle[];
+};
+
 export type HomeFiveTypeCard = {
 	bodyType: string;
 	image: string;
@@ -480,6 +510,82 @@ export const homeFiveVehicleCardFromVehicle = (
 
 export const homeFiveVehicleCardsFromVehicles = (vehicles: Vehicle[], limit: number) =>
 	vehicles.slice(0, limit).map(homeFiveVehicleCardFromVehicle);
+
+const modalVehicleFromVehicle = (vehicle: Vehicle): HomeFiveModalVehicle => ({
+	engine: vehicle.engine,
+	exterior: vehicle.exterior,
+	fuel: vehicle.fuel,
+	image: imageForHomeFiveVehicle(vehicle),
+	interior: vehicle.interior,
+	location: vehicle.location,
+	mileageLabel: formatKm(vehicle.mileage),
+	slug: vehicle.slug,
+	stockNumber: vehicle.stockNumber,
+	title: vehicle.title,
+	transmission: vehicle.transmission,
+	vin: vehicle.vin,
+	year: vehicle.year
+});
+
+export function homeFiveModalsDataFromVehicles(
+	vehicles: Vehicle[]
+): HomeFiveModalsData | undefined {
+	const [left, right, ...rest] = vehicles;
+
+	if (!left || !right) {
+		return undefined;
+	}
+
+	const modalLeft = modalVehicleFromVehicle(left);
+	const modalRight = modalVehicleFromVehicle(right);
+
+	return {
+		cardCompare: {
+			left: modalLeft,
+			right: modalRight,
+			rows: [
+				{
+					icon: 'mileage.svg',
+					label: 'Mileage',
+					left: modalLeft.mileageLabel,
+					right: modalRight.mileageLabel
+				},
+				{ icon: 'years.svg', label: 'Years', left: modalLeft.year, right: modalRight.year },
+				{ icon: 'fuel.svg', label: 'Fuel', left: modalLeft.fuel, right: modalRight.fuel },
+				{ icon: 'color.svg', label: 'Color', left: modalLeft.exterior, right: modalRight.exterior },
+				{
+					icon: 'location.svg',
+					label: 'Location',
+					left: modalLeft.location,
+					right: modalRight.location
+				},
+				{
+					icon: 'interior.svg',
+					label: 'Interior',
+					left: modalLeft.interior,
+					right: modalRight.interior
+				},
+				{ icon: 'engine.svg', label: 'Engine', left: modalLeft.engine, right: modalRight.engine },
+				{
+					icon: 'transmission.svg',
+					label: 'Transmission',
+					left: modalLeft.transmission,
+					right: modalRight.transmission
+				},
+				{ icon: 'VIN.svg', label: 'VIN', left: modalLeft.vin, right: modalRight.vin },
+				{
+					icon: 'QrCode.svg',
+					label: 'Stock Number',
+					left: modalLeft.stockNumber,
+					right: modalRight.stockNumber
+				}
+			]
+		},
+		comparePreview: [left, right, ...rest]
+			.slice(0, 3)
+			.map((vehicle) => modalVehicleFromVehicle(vehicle))
+	};
+}
 
 export function homeFiveComparePairsFromVehicles(vehicles: Vehicle[]): HomeFiveComparePair[] {
 	return [

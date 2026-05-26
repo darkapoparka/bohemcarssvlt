@@ -170,6 +170,7 @@ Homepage 05 components:
 - `src/lib/components/home/BrandStrip.svelte`
 - `src/lib/components/home/BrowseByType.svelte`
 - `src/lib/components/home/ReviewsBand.svelte`
+- `src/lib/components/home/HomeFiveModals.svelte`
 
 Inventory grid components:
 

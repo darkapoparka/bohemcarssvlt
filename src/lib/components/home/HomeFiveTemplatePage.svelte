@@ -6,6 +6,7 @@
 	import HomeFiveFooter from './HomeFiveFooter.svelte';
 	import HomeFiveHeader from './HomeFiveHeader.svelte';
 	import HomeFiveHero from './HomeFiveHero.svelte';
+	import HomeFiveModals from './HomeFiveModals.svelte';
 	import HomeFiveNewsSection from './HomeFiveNewsSection.svelte';
 	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
@@ -15,6 +16,7 @@
 		HomeFiveFooterData,
 		HomeFiveHeaderData,
 		HomeFiveHeroData,
+		HomeFiveModalsData,
 		HomeFiveNewsPost,
 		HomeFiveReview,
 		HomeFiveTypeCard,
@@ -30,6 +32,7 @@
 		afterFooterHtml,
 		afterHeaderHtml,
 		afterHeroHtml,
+		afterModalsHtml,
 		afterNewsSectionHtml,
 		afterReviewsSectionHtml,
 		afterTypeGalleryHtml,
@@ -40,6 +43,7 @@
 		footer,
 		header,
 		hero,
+		modals,
 		newsPosts,
 		pageDocument,
 		reviews,
@@ -52,6 +56,7 @@
 		afterFooterHtml: string;
 		afterHeaderHtml: string;
 		afterHeroHtml: string;
+		afterModalsHtml: string;
 		afterNewsSectionHtml: string;
 		afterReviewsSectionHtml: string;
 		afterTypeGalleryHtml: string;
@@ -62,6 +67,7 @@
 		footer?: HomeFiveFooterData;
 		header?: HomeFiveHeaderData;
 		hero?: HomeFiveHeroData;
+		modals?: HomeFiveModalsData;
 		newsPosts: HomeFiveNewsPost[];
 		pageDocument: AuxeroPageDocument;
 		reviews: HomeFiveReview[];
@@ -108,3 +114,6 @@
 <HomeFiveFooter {footer} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterFooterHtml}
+<HomeFiveModals {modals} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterModalsHtml}

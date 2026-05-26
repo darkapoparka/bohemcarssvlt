@@ -266,4 +266,35 @@ describe('splitAuxeroDocument', () => {
 		expect(footerSplit?.sectionHtml).toContain('footer-bottom-links');
 		expect(footerSplit?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the Home 05 modal stack before the script tail', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const newsSplit = splitAuxeroBodySection(
+			document.bodyHtml,
+			'<!-- News & Reviews -->',
+			'<!-- /News & Reviews -->'
+		);
+		const footerSplit = splitAuxeroBodySection(
+			newsSplit!.afterHtml,
+			'<!-- Footer -->',
+			'<!-- Footer -->'
+		);
+		const modalSplit = splitAuxeroBodySection(
+			footerSplit!.afterHtml,
+			'<!-- Modal -->',
+			'<!-- /CompareModal -->'
+		);
+
+		expect(modalSplit?.sectionHtml).toContain('CardModal');
+		expect(modalSplit?.sectionHtml).toContain('LoginModal');
+		expect(modalSplit?.sectionHtml).toContain('SearchModal');
+		expect(modalSplit?.sectionHtml).toContain('SignUpModal');
+		expect(modalSplit?.sectionHtml).toContain('CompareModal');
+		expect(modalSplit?.beforeHtml).toContain('</div>');
+		expect(modalSplit?.beforeHtml).not.toContain('<div id="LoginModal"');
+		expect(modalSplit?.afterHtml).toContain('progress-wrap');
+		expect(modalSplit?.afterHtml).toContain('/assets/js/jquery.min.js');
+		expect(modalSplit?.afterHtml).not.toContain('<div id="LoginModal"');
+	});
 });

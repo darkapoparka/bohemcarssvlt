@@ -6,6 +6,7 @@ import {
 	homeFiveFooterData,
 	homeFiveHeaderData,
 	homeFiveHeroDataFromVehicles,
+	homeFiveModalsDataFromVehicles,
 	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
 	homeFiveTypeCards,
@@ -78,6 +79,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		'<!-- Footer -->',
 		'<!-- Footer -->'
 	);
+	const modalSlot = splitAuxeroBodySection(
+		footerSlot?.afterHtml ?? '',
+		'<!-- Modal -->',
+		'<!-- /CompareModal -->'
+	);
 
 	return {
 		afterBrandStripHtml: typeGallerySlot
@@ -97,7 +103,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 				? featuredVehiclesSlot.beforeHtml
 				: heroSlot.afterHtml
 			: '',
-		afterFooterHtml: footerSlot?.afterHtml ?? '',
+		afterFooterHtml: modalSlot ? modalSlot.beforeHtml : (footerSlot?.afterHtml ?? ''),
 		afterHeaderHtml: headerSlot ? (heroSlot?.beforeHtml ?? '') : '',
 		afterNewsSectionHtml: footerSlot ? footerSlot.beforeHtml : (newsSectionSlot?.afterHtml ?? ''),
 		afterReviewsSectionHtml: newsSectionSlot
@@ -106,6 +112,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterTypeGalleryHtml: compareSectionSlot
 			? compareSectionSlot.beforeHtml
 			: (typeGallerySlot?.afterHtml ?? ''),
+		afterModalsHtml: modalSlot?.afterHtml ?? '',
 		auxeroFullPage: true,
 		brandCards: homeFiveBrandCards,
 		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 9),
@@ -114,6 +121,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		footer: footerSlot ? homeFiveFooterData : undefined,
 		header: headerSlot ? homeFiveHeaderData : undefined,
 		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
+		modals: modalSlot ? homeFiveModalsDataFromVehicles(vehicles) : undefined,
 		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {
 			...pageDocument,

@@ -129,6 +129,20 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeFooter.locator('.widget-socical li')).toHaveCount(6);
 	await expect(homeFooter.locator('.footer-bottom-links li')).toHaveCount(3);
 	await expect(homeFooter).not.toContainText('Aurexo');
+	await expect(page.locator('#CardModal')).toHaveCount(1);
+	await expect(page.locator('#LoginModal form')).toHaveCount(1);
+	await expect(page.locator('#ForgotPasswordModal form')).toHaveCount(1);
+	await expect(page.locator('#SignUpModal form')).toHaveCount(1);
+	await expect(page.locator('#SearchModal .search-modal__form')).toHaveAttribute(
+		'action',
+		'/inventory'
+	);
+	await expect(page.locator('#SearchModal .search-modal__input')).toHaveAttribute('name', 'q');
+	await expect(page.locator('#CompareModal')).toHaveCount(1);
+	await expect(page.locator('#CompareModal .compare-item')).toHaveCount(3);
+	await expect(page.locator('#LoginModal')).not.toContainText('Username:');
+	await expect(page.locator('#LoginModal')).not.toContainText('Password: demo');
+	await expect(page.locator('#LoginModal')).toContainText('Use your Bohemcars account credentials');
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)
