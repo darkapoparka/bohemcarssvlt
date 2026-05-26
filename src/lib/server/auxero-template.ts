@@ -973,8 +973,15 @@ function injectLocalBehavior(
 			return [];
 		}
 	};
-	const writeList = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+	const writeList = (key, value) => {
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch (_error) {
+			// Some embedded browser contexts disable localStorage; API state can still render.
+		}
+	};
 	const hasStoredSession = () => readList(sessionKey).length > 0;
+	const isAccountComparePage = () => window.location.pathname === '/account/compare';
 	const shouldUseAccountGarageApi = () =>
 		Boolean(prototypeRole) ||
 		hasStoredSession() ||
@@ -1016,11 +1023,15 @@ function injectLocalBehavior(
 	'</tr>';
 	const buildCompareRows = (selected) => '<tr><td></td>' + selected.map(compareTopCell).join('') + '</tr>' +
 		compareRows.map((row) => compareRowHtml(row, selected)).join('');
-	const renderCompareTables = () => {
+	const renderCompareTables = (compareList) => {
 		const tables = document.querySelectorAll('[data-bohemcars-compare-table]');
 		if (!tables.length) return;
 
-		const stored = readList(compareKey).filter((slug) => vehicleBySlug[slug]);
+		const stored = (Array.isArray(compareList) ? compareList : readList(compareKey)).filter(
+			(slug) => vehicleBySlug[slug]
+		);
+		if (!stored.length && isAccountComparePage()) return;
+
 		const fallback = runtimeData.vehicles.slice(0, 4).map((vehicle) => vehicle.slug);
 		const selected = (stored.length ? stored : fallback)
 			.slice(0, 4)
@@ -1046,11 +1057,13 @@ function injectLocalBehavior(
 				'<div class="flex justify-between"><p class="compare-details btn btn-small open-modal" data-modal-id="#CompareModal" data-bohemcars-compare="' + escapeText(vehicle.slug) + '" role="button" tabindex="0">Compare</p><a href="/inventory/' + encodeURIComponent(vehicle.slug) + '" class="view-details">View details <img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt="view details"></a></div>' +
 			'</div></div>';
 	};
-	const renderAccountFavorites = () => {
+	const renderAccountFavorites = (favoritesList) => {
 		const grids = document.querySelectorAll('[data-bohemcars-favorites-grid]');
 		if (!grids.length) return;
 
-		const stored = readList(favoriteKey).filter((slug) => vehicleBySlug[slug]);
+		const stored = (Array.isArray(favoritesList) ? favoritesList : readList(favoriteKey)).filter(
+			(slug) => vehicleBySlug[slug]
+		);
 		if (!stored.length) return;
 
 		const selected = stored.slice(0, 6).map((slug) => vehicleBySlug[slug]).filter(Boolean);
@@ -1179,10 +1192,14 @@ function injectLocalBehavior(
 			);
 			const body = response.ok ? await response.json() : undefined;
 			const garage = body?.data;
+			const nextCompare = Array.isArray(garage?.compare) ? garage.compare : readList(compareKey);
+			const nextFavorites = Array.isArray(garage?.favorites)
+				? garage.favorites
+				: readList(favoriteKey);
 
-			if (Array.isArray(garage?.compare)) writeList(compareKey, garage.compare);
-			if (Array.isArray(garage?.favorites)) writeList(favoriteKey, garage.favorites);
-			updateGarageState();
+			if (Array.isArray(garage?.compare)) writeList(compareKey, nextCompare);
+			if (Array.isArray(garage?.favorites)) writeList(favoriteKey, nextFavorites);
+			updateGarageState({ compare: nextCompare, favorites: nextFavorites });
 		} catch (_error) {
 			// LocalStorage-only garage state remains available when the API is unavailable.
 		}
@@ -1231,9 +1248,9 @@ function injectLocalBehavior(
 			}
 		});
 	};
-	const updateGarageState = () => {
-		const favorites = readList(favoriteKey);
-		const compare = readList(compareKey);
+	const updateGarageState = (garage) => {
+		const favorites = Array.isArray(garage?.favorites) ? garage.favorites : readList(favoriteKey);
+		const compare = Array.isArray(garage?.compare) ? garage.compare : readList(compareKey);
 		document.querySelectorAll('[data-bohemcars-slug]').forEach((card) => {
 			const slug = card.getAttribute('data-bohemcars-slug');
 			const favorite = card.querySelector('.bohemcars-favorite, .heart');
@@ -1248,8 +1265,8 @@ function injectLocalBehavior(
 		document.querySelectorAll('[aria-label="Wishlist"]').forEach((link) => {
 			link.setAttribute('data-badge', String(favorites.length));
 		});
-		renderCompareTables();
-		renderAccountFavorites();
+		renderCompareTables(compare);
+		renderAccountFavorites(favorites);
 		prepareVehicleImages();
 	};
 	const mainNav = document.getElementById('menu-primary-menu');

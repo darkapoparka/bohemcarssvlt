@@ -414,9 +414,17 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/account/compare?role=customer');
 	await expect(page.locator('body')).toContainText('Compare Bohemcars Vehicles Side-by-Side');
-	await expect(
-		page.locator('[data-bohemcars-compare-table]').filter({ visible: true }).first()
-	).toBeVisible();
+	const accountCompareTable = page
+		.locator('[data-bohemcars-compare-table]')
+		.filter({ visible: true })
+		.first();
+	await expect(accountCompareTable).toBeVisible();
+	await expect(accountCompareTable).toHaveClass(/card-details--table/);
+	await expect(accountCompareTable).toHaveClass(/bohemcars-compare-table/);
+	await expect(accountCompareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(2);
+	await expect(accountCompareTable.locator('tr')).toHaveCount(12);
+	await expect(accountCompareTable.locator('[data-bohemcars-compare-remove]')).toHaveCount(2);
+	await expect(accountCompareTable.locator('tr', { hasText: 'Mileage:' })).toBeVisible();
 
 	await page.goto('/account/messages?role=customer');
 	await expect(page.locator('body')).toContainText('Messages');

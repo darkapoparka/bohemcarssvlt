@@ -344,6 +344,21 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('CompareModal');
 	});
 
+	it('can split the account compare table from saved garage state', () => {
+		const html = renderAuxeroTemplate('compare.html', { routePath: 'account/compare' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-compare-table',
+			'table'
+		);
+
+		expect(split?.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(split?.sectionHtml).toContain('data-bohemcars-compare-table');
+		expect(split?.sectionHtml).toContain('data-bohemcars-compare-column');
+		expect(split?.afterHtml).toContain('CompareModal');
+	});
+
 	it('can split the generated account favorites grid without dropping dashboard chrome', () => {
 		const html = renderAuxeroTemplate('my-favorites.html', { routePath: 'account/favorites' });
 		const document = splitAuxeroDocument(html!);

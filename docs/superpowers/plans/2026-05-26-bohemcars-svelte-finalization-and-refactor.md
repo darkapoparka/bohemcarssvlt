@@ -572,6 +572,30 @@ npm run build
 
 Browser DOM QA verified the account favorites route on desktop and mobile: 3 `card-box-style-1` favorites, 3 active hearts, 3 compare controls, `data-bohemcars-favorites-count="3"`, active Favorites sidebar item, Auxero dashboard body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-account-favorites-svelte/` after waiting for the favorites card selector.
 
+### Task 4C: Migrate Account Compare Page
+
+**Checkpoint completed 2026-05-26:**
+
+- `/account/compare` now uses `src/routes/account/compare/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page reuses `CompareTemplatePage.svelte` and `AuxeroCompareTable.svelte`, but resolves the account session before selecting the saved garage compare vehicles.
+- The page still renders the Auxero `compare.html` head, public compare header/footer, modal stack, body classes, table classes, and responsive horizontal table behavior from the source template.
+- `src/routes/project1.e2e.ts` now freezes the account compare contract: visible Auxero compare table, 2 saved account columns, 12 rows, 2 remove controls, and Mileage row presence.
+- `src/lib/server/auxero-page.spec.ts` now guards that the account compare table can be split from `compare.html` without dropping the page chrome or modal stack.
+- The Auxero runtime now preserves the server-rendered account compare table when no stored compare list exists, so account pages do not get repainted with the public four-car fallback in storage-limited contexts.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/routes/account/compare/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the account compare route on desktop and mobile: 2 visible saved-compare columns, 12 table rows, 2 remove controls, the `card-details--table bohemcars-compare-table` classes, Auxero compare body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-account-compare-svelte/` after waiting for the compare table selector.
+
 ### Task 5: Normalize Data And Server Boundaries
 
 **Files:**
