@@ -5,6 +5,7 @@ import {
 	type AuxeroCalculatorField
 } from '$lib/auxero/calculator';
 import { auxeroReviewCards, type AuxeroReviewCard } from '$lib/auxero/reviews';
+import { auxeroTermsSections } from '$lib/auxero/terms';
 import {
 	bohemcarsAssets,
 	bohemcarsBrand,
@@ -25,12 +26,6 @@ type SupportService = {
 	description: string;
 	href: string;
 	image: string;
-	title: string;
-};
-
-type TermsSection = {
-	body: string[];
-	id: string;
 	title: string;
 };
 
@@ -145,57 +140,6 @@ const supportFaqs: SupportFaq[] = [
 		question: 'Can Bohemcars compare several models?',
 		answer:
 			'Yes. Send the vehicles, budget, timing, and priorities. The team can compare equipment, history, running costs, availability, and import complexity.'
-	}
-];
-
-const termsSections: TermsSection[] = [
-	{
-		id: 'section1',
-		title: '1. Vehicle Information',
-		body: [
-			'Bohemcars presents vehicle information from available listings, client submissions, supplier details, photos, reports, and internal review notes.',
-			'Availability, mileage, equipment, condition, pricing, and documents must be confirmed for the exact vehicle before purchase or reservation.'
-		]
-	},
-	{
-		id: 'section2',
-		title: '2. Import Process',
-		body: [
-			'Import timing depends on vehicle selection, transport, customs steps, document readiness, technical preparation, and external partners.',
-			'Estimated timelines are guidance only until a specific vehicle and transport path are confirmed.'
-		]
-	},
-	{
-		id: 'section3',
-		title: '3. Costs And Calculator',
-		body: [
-			'Calculator results are estimates for orientation. Final landed cost can change with exchange rates, duty, VAT, transport, port handling, registration steps, and vehicle-specific preparation.',
-			'A written breakdown for the exact vehicle should be reviewed before any payment decision.'
-		]
-	},
-	{
-		id: 'section4',
-		title: '4. Appointments And Test Drives',
-		body: [
-			'Vehicle viewings are arranged by appointment so Bohemcars can prepare the car, documents, and relevant context.',
-			'Any test drive or inspection must respect local rules, vehicle status, insurance conditions, and team availability.'
-		]
-	},
-	{
-		id: 'section5',
-		title: '5. Client Vehicles',
-		body: [
-			'Client vehicles are reviewed from information supplied by the owner, including VIN, photos, mileage, service history, condition, and documents.',
-			'Bohemcars may request additional information before advising on price, publication, direct offer, or sale assistance.'
-		]
-	},
-	{
-		id: 'section6',
-		title: '6. Contact And Data',
-		body: [
-			'Messages submitted through the website are used to respond to vehicle, import, appointment, and sale requests.',
-			'Do not submit sensitive payment details through public website forms. Confirm official payment instructions directly with Bohemcars before sending funds.'
-		]
 	}
 ];
 
@@ -761,12 +705,12 @@ const applyFaqData = (html: string) => {
 };
 
 const applyTermsData = (html: string) => {
-	const nav = termsSections
+	const nav = auxeroTermsSections
 		.map(
 			(section) => `<li><a href="#${escapeHtml(section.id)}">${escapeHtml(section.title)}</a></li>`
 		)
 		.join('\n');
-	const sections = termsSections
+	const sections = auxeroTermsSections
 		.map(
 			(section) => `<div class="section" id="${escapeHtml(section.id)}">
 				<p class="h4 mb-12 capitalize">${escapeHtml(section.title)}</p>
@@ -780,7 +724,7 @@ const applyTermsData = (html: string) => {
 	<div class="container">
 		<h2 class="capitalize">Bohemcars Terms Of Use</h2>
 		<div class="tf-spacing-style3"></div>
-		<div class="term-page" id="scrollContainer">
+		<div class="term-page" id="scrollContainer" data-bohemcars-terms>
 			<div class="term-page--nav-container">
 				<ul class="term-page--nav" id="sidebarSticky">${nav}</ul>
 			</div>

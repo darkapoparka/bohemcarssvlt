@@ -482,4 +482,17 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the terms content without dropping the page shell', () => {
+		const html = renderAuxeroTemplate('terms.html', { routePath: 'terms' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-terms', 'div');
+
+		expect(split?.beforeHtml).toContain('Bohemcars Terms Of Use');
+		expect(split?.sectionHtml).toContain('term-page--nav');
+		expect(split?.sectionHtml).toContain('1. Vehicle Information');
+		expect(split?.sectionHtml).toContain('6. Contact And Data');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

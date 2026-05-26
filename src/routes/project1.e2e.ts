@@ -410,6 +410,16 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(calculator.locator('[data-bohemcars-calc-output="price"]')).toHaveText('30 000 EUR');
 	await expect(calculator.locator('[data-bohemcars-calc-output="total"]')).toHaveText('45 240 EUR');
 
+	await page.goto('/terms');
+	const termsContent = page.locator('[data-bohemcars-terms]');
+	await expect(termsContent).toBeVisible();
+	await expect(termsContent.locator('.term-page--nav a')).toHaveCount(6);
+	await expect(termsContent.locator('.content .section')).toHaveCount(6);
+	await expect(termsContent.locator('#section1 .h4')).toHaveText('1. Vehicle Information');
+	await expect(termsContent.locator('#section6')).toContainText(
+		'Do not submit sensitive payment details'
+	);
+
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);
 	await expect(page.locator('.services-center-info')).toContainText('Contact Information');

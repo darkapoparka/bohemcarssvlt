@@ -939,6 +939,32 @@ npm run build
 
 Browser DOM QA verified the calculator page on desktop and mobile: one Svelte `data-bohemcars-calculator` estimator grid, 5 inputs, 7 outputs, live total update from `38 640 EUR` to `45 240 EUR`, preserved budget and FAQ follow-up sections, footer chrome, Auxero calculator body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-calculator-estimator-svelte/`.
 
+### Task 7H: Migrate Terms Content
+
+**Checkpoint completed 2026-05-27:**
+
+- `/terms` now uses `src/routes/terms/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `terms.html` head, header, breadcrumb, page heading, `term-page` wrapper, sticky nav classes, content section classes, footer, modal stack, body classes, and local script tail.
+- The terms block is rendered by `src/lib/components/terms/TermsContent.svelte` inside `TermsTemplatePage.svelte`, using typed `AuxeroTermsSection` data from `src/lib/auxero/terms.ts`.
+- `src/lib/server/auxero-support-data.ts` now consumes the same shared terms sections for raw-template fallback output, keeping the compatibility adapter and Svelte route aligned.
+- `src/routes/project1.e2e.ts` now freezes the terms contract: visible `data-bohemcars-terms`, 6 sticky-nav links, 6 content sections, first section heading, and final payment-safety copy.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated terms content can be split without dropping the page heading, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/terms/TermsContent.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/terms/TermsTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/terms/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the terms page on desktop and mobile: one Svelte `data-bohemcars-terms` content block, 6 nav links, 6 content sections, preserved `term-page` class, footer chrome, Auxero terms body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-terms-content-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
