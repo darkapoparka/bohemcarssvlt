@@ -3,7 +3,8 @@ import { renderAuxeroTemplate } from './auxero-template';
 import {
 	splitAuxeroBodySection,
 	splitAuxeroDivBlockByMarker,
-	splitAuxeroDocument
+	splitAuxeroDocument,
+	splitAuxeroElementBlockByMarker
 } from './auxero-page';
 
 describe('splitAuxeroDocument', () => {
@@ -324,5 +325,22 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.sectionHtml).toContain('listing-details--sidebar');
 		expect(split?.afterHtml).toContain('You might also like');
 		expect(split?.afterHtml).not.toContain('data-bohemcars-detail="true"');
+	});
+
+	it('can split the generated compare table without dropping Auxero page chrome', () => {
+		const html = renderAuxeroTemplate('compare.html', { routePath: 'compare' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-compare-table',
+			'table'
+		);
+
+		expect(split?.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(split?.beforeHtml).not.toContain('data-bohemcars-compare-table');
+		expect(split?.sectionHtml).toContain('card-details--table');
+		expect(split?.sectionHtml).toContain('data-bohemcars-compare-table');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('CompareModal');
 	});
 });

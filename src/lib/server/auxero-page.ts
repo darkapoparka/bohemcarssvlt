@@ -72,20 +72,20 @@ const findClosingTagIndex = (html: string, openTagIndex: number, tagName: string
 	return -1;
 };
 
-export function splitAuxeroDivBlockByMarker(bodyHtml: string, marker: string) {
+export function splitAuxeroElementBlockByMarker(bodyHtml: string, marker: string, tagName: string) {
 	const markerIndex = bodyHtml.indexOf(marker);
 
 	if (markerIndex < 0) {
 		return undefined;
 	}
 
-	const start = bodyHtml.lastIndexOf('<div', markerIndex);
+	const start = bodyHtml.lastIndexOf(`<${tagName}`, markerIndex);
 
 	if (start < 0) {
 		return undefined;
 	}
 
-	const end = findClosingTagIndex(bodyHtml, start, 'div');
+	const end = findClosingTagIndex(bodyHtml, start, tagName);
 
 	if (end < 0) {
 		return undefined;
@@ -96,4 +96,8 @@ export function splitAuxeroDivBlockByMarker(bodyHtml: string, marker: string) {
 		beforeHtml: bodyHtml.slice(0, start),
 		sectionHtml: bodyHtml.slice(start, end)
 	};
+}
+
+export function splitAuxeroDivBlockByMarker(bodyHtml: string, marker: string) {
+	return splitAuxeroElementBlockByMarker(bodyHtml, marker, 'div');
 }

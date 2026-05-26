@@ -30,3 +30,4 @@ playwright-report
 # Local audit artifacts
 *.audit.png
 tmp-vite*.log
+.tmp-dev-*.log

@@ -520,6 +520,31 @@ The migration must not start by redesigning the site. The first success conditio
   git commit -m "refactor: migrate inventory and detail to svelte"
   ```
 
+### Task 4A: Migrate Compare Page
+
+**Checkpoint completed 2026-05-26:**
+
+- `/compare` now uses `src/routes/compare/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page still renders the Auxero `compare.html` head, header, footer, modal stack, scripts, spacing, table classes, and responsive horizontal table behavior from the source template.
+- The visible comparison table is rendered by `src/lib/components/compare/AuxeroCompareTable.svelte` from typed `AuxeroCompareVehicle` data in `src/lib/auxero/compare.ts`.
+- `src/lib/server/auxero-page.ts` now has a generic element splitter so non-`div` Auxero slots, including compare tables, can be migrated safely.
+- `src/routes/project1.e2e.ts` now freezes the compare table contract: visible Auxero table classes, 4 default columns, 12 rows, image/title cell structure, remove controls, and key spec rows.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/compare/AuxeroCompareTable.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/compare/CompareTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/compare/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified one visible compare table, 4 columns, 12 rows, header/footer visibility, Auxero body class, and no console errors. Browser screenshot capture timed out on the Auxero page, so Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-compare-content-svelte/`.
+
 ### Task 5: Normalize Data And Server Boundaries
 
 **Files:**

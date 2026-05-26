@@ -311,9 +311,23 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 test('compare and consultants render branded buyer flows without login', async ({ page }) => {
 	await page.goto('/compare');
 	await expect(page.locator('body')).toContainText('Compare Bohemcars Vehicles Side-by-Side');
+	const compareTable = page
+		.locator('[data-bohemcars-compare-table]')
+		.filter({ visible: true })
+		.first();
+	await expect(compareTable).toBeVisible();
+	await expect(compareTable).toHaveClass(/card-details--table/);
+	await expect(compareTable).toHaveClass(/bohemcars-compare-table/);
+	await expect(compareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(4);
+	await expect(compareTable.locator('tr')).toHaveCount(12);
+	await expect(compareTable.locator('tr').first().locator('.h4.text-center').first()).toBeVisible();
 	await expect(
-		page.locator('[data-bohemcars-compare-table]').filter({ visible: true }).first()
+		compareTable.locator('tr').first().locator('img.mb-10.radius-16.image').first()
 	).toBeVisible();
+	await expect(compareTable.locator('[data-bohemcars-compare-remove]')).toHaveCount(4);
+	for (const rowLabel of ['Mileage:', 'Years:', 'Fuel:', 'Source ID:', 'Stock Number:', 'Price:']) {
+		await expect(compareTable.locator('tr', { hasText: rowLabel })).toBeVisible();
+	}
 	await expect(page.locator('body')).toContainText('Source ID');
 	await expectBohemcarsShell(page);
 

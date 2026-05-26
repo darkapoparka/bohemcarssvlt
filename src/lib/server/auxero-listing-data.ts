@@ -521,7 +521,7 @@ export const getAuxeroListingRuntimeData = () => ({
 	}))
 });
 
-const compareVehicles = (options: AuxeroRenderOptions = {}) => {
+export const getCompareVehicles = (options: AuxeroRenderOptions = {}) => {
 	const params = new URLSearchParams(options.searchParams);
 	const ids = getParam(params, 'ids', 'compare')
 		?.split(',')
@@ -643,7 +643,7 @@ const compareTable = (
 </table>`;
 
 export const applyCompareData = (html: string, options: AuxeroRenderOptions = {}) => {
-	const selected = compareVehicles(options);
+	const selected = getCompareVehicles(options);
 	const table = compareTable(selected);
 
 	return replaceDemoVehicleCopy(
