@@ -1,4 +1,9 @@
 import { agents } from '$lib/data/agents';
+import {
+	auxeroCalculatorData,
+	formatEur,
+	type AuxeroCalculatorField
+} from '$lib/auxero/calculator';
 import { auxeroReviewCards, type AuxeroReviewCard } from '$lib/auxero/reviews';
 import {
 	bohemcarsAssets,
@@ -222,11 +227,6 @@ const escapeHtml = (value: string | number) =>
 		.replaceAll("'", '&#39;');
 
 const sentence = (value: string) => escapeHtml(value).replaceAll('\n', '<br>');
-
-const formatEur = (value: number) =>
-	`${Math.round(value)
-		.toLocaleString('fr-FR')
-		.replace(/\u202f/g, ' ')} EUR`;
 
 const stars = () =>
 	Array.from({ length: 5 })
@@ -792,25 +792,11 @@ const applyTermsData = (html: string) => {
 	return replaceBodyAfterBreadcrumb(html, body);
 };
 
-const calculatorInitial = {
-	price: 25000,
-	transport: 3200,
-	dutyRate: 10,
-	vatRate: 20,
-	prep: 1800
-};
-
-const calculatorTotals = () => {
-	const duty = calculatorInitial.price * (calculatorInitial.dutyRate / 100);
-	const vatBase = calculatorInitial.price + calculatorInitial.transport + duty;
-	const vat = vatBase * (calculatorInitial.vatRate / 100);
-	const total = vatBase + vat + calculatorInitial.prep;
-
-	return { duty, total, vat };
-};
+const calculatorField = (field: AuxeroCalculatorField) =>
+	`<div><p class="mb-8">${escapeHtml(field.label)}${field.mutedLabel ? ` <span class="text-muted">${escapeHtml(field.mutedLabel)}</span>` : ''}</p><input class="${field.active ? 'active ' : ''}input-large" name="${escapeHtml(field.name)}" type="number" value="${field.value}" min="${field.min}" step="${field.step}" data-bohemcars-calc-input="${escapeHtml(field.key)}"></div>`;
 
 const applyCalculatorData = (html: string) => {
-	const totals = calculatorTotals();
+	const calculator = auxeroCalculatorData;
 	const budgetLinks = [
 		['Ready Stock', 'Under 20k EUR', 'highest-price'],
 		['Canada Import', 'Under 30k EUR', 'best-match'],
@@ -828,30 +814,27 @@ const applyCalculatorData = (html: string) => {
 				<p class="h3 mb-28">Calculate Estimated Landed Cost</p>
 				<form action="#" class="calculate-form" novalidate>
 					<div class="grid grid-cols-1 gap-15">
-						<div><p class="mb-8">Vehicle Price</p><input class="active input-large" name="price" type="number" value="${calculatorInitial.price}" min="0" step="100" data-bohemcars-calc-input="price"></div>
-						<div><p class="mb-8">Transport And Port Costs</p><input class="input-large" name="transport" type="number" value="${calculatorInitial.transport}" min="0" step="100" data-bohemcars-calc-input="transport"></div>
-						<div><p class="mb-8">Customs Duty <span class="text-muted">(%)</span></p><input class="input-large" name="dutyRate" type="number" value="${calculatorInitial.dutyRate}" min="0" step="0.1" data-bohemcars-calc-input="dutyRate"></div>
-						<div><p class="mb-8">VAT <span class="text-muted">(%)</span></p><input class="input-large" name="vatRate" type="number" value="${calculatorInitial.vatRate}" min="0" step="0.1" data-bohemcars-calc-input="vatRate"></div>
-						<div><p class="mb-8">Preparation And Registration</p><input class="input-large" name="prep" type="number" value="${calculatorInitial.prep}" min="0" step="100" data-bohemcars-calc-input="prep"></div>
+						${calculator.fields.map(calculatorField).join('\n')}
 					</div>
 				</form>
 			</div>
 			<div class="border-box">
-				<p class="h3 mb-8">Estimated Landed Cost*</p>
-				<p class="mb-10"><span class="text-56 font-weight-600" data-bohemcars-calc-output="total">${formatEur(totals.total)}</span></p>
-				<p class="h5 mb-28 capitalize">before vehicle-specific confirmation</p>
+				<p class="h3 mb-8">${escapeHtml(calculator.title)}</p>
+				<p class="mb-10"><span class="text-56 font-weight-600" data-bohemcars-calc-output="total">${formatEur(calculator.total)}</span></p>
+				<p class="h5 mb-28 capitalize">${escapeHtml(calculator.totalNote)}</p>
 				<div class="divider mb-28 w-full"></div>
-				<p class="h4 mb-20">Cost Summary</p>
+				<p class="h4 mb-20">${escapeHtml(calculator.subtitle)}</p>
 				<div class="flex flex-col gap-18 mb-28">
-					<p class="flex justify-between gap-8"><span class="h7 text-secondary">Vehicle Price</span><span class="h7" data-bohemcars-calc-output="price">${formatEur(calculatorInitial.price)}</span></p>
-					<p class="flex justify-between gap-8"><span class="h7 text-secondary">Transport</span><span class="h7" data-bohemcars-calc-output="transport">${formatEur(calculatorInitial.transport)}</span></p>
-					<p class="flex justify-between gap-8"><span class="h7 text-secondary">Customs Duty</span><span class="h7" data-bohemcars-calc-output="duty">${formatEur(totals.duty)}</span></p>
-					<p class="flex justify-between gap-8"><span class="h7 text-secondary">VAT</span><span class="h7" data-bohemcars-calc-output="vat">${formatEur(totals.vat)}</span></p>
-					<p class="flex justify-between gap-8"><span class="h7 text-secondary">Preparation And Registration</span><span class="h7" data-bohemcars-calc-output="prep">${formatEur(calculatorInitial.prep)}</span></p>
+					${calculator.summaryRows
+						.map(
+							(row) =>
+								`<p class="flex justify-between gap-8"><span class="h7 text-secondary">${escapeHtml(row.label)}</span><span class="h7" data-bohemcars-calc-output="${escapeHtml(row.key)}">${formatEur(row.value)}</span></p>`
+						)
+						.join('\n')}
 				</div>
 				<div class="divider mb-28 w-full"></div>
-				<div class="flex justify-between gap-8 mb-16"><p class="h4">Estimated Total</p><p class="h4" data-bohemcars-calc-output="totalSmall">${formatEur(totals.total)}</p></div>
-				<a href="/contact" class="btn btn-primary btn-large font-weight-600 w-full">Request Exact Estimate</a>
+				<div class="flex justify-between gap-8 mb-16"><p class="h4">Estimated Total</p><p class="h4" data-bohemcars-calc-output="totalSmall">${formatEur(calculator.total)}</p></div>
+				<a href="${escapeHtml(calculator.ctaHref)}" class="btn btn-primary btn-large font-weight-600 w-full">${escapeHtml(calculator.ctaLabel)}</a>
 			</div>
 		</div>
 	</div>

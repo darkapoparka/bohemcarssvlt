@@ -400,6 +400,16 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(reviewsGrid.locator('.testimonior--img')).toHaveCount(6);
 	await expect(reviewsGrid.locator('.h5.title').first()).toHaveText('Aleksandar Vytev');
 
+	await page.goto('/calculator');
+	const calculator = page.locator('[data-bohemcars-calculator]');
+	await expect(calculator).toBeVisible();
+	await expect(calculator).toHaveClass(/grid-cols-2/);
+	await expect(calculator.locator('[data-bohemcars-calc-input]')).toHaveCount(5);
+	await expect(calculator.locator('[data-bohemcars-calc-output="total"]')).toHaveText('38 640 EUR');
+	await calculator.locator('[data-bohemcars-calc-input="price"]').fill('30000');
+	await expect(calculator.locator('[data-bohemcars-calc-output="price"]')).toHaveText('30 000 EUR');
+	await expect(calculator.locator('[data-bohemcars-calc-output="total"]')).toHaveText('45 240 EUR');
+
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);
 	await expect(page.locator('.services-center-info')).toContainText('Contact Information');

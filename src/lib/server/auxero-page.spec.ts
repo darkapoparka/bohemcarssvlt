@@ -464,4 +464,22 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the calculator estimator without dropping budget or FAQ sections', () => {
+		const html = renderAuxeroTemplate('calculator.html', { routePath: 'calculator' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-calculator',
+			'div'
+		);
+
+		expect(split?.beforeHtml).toContain('Import Cost Calculator');
+		expect(split?.sectionHtml).toContain('Calculate Estimated Landed Cost');
+		expect(split?.sectionHtml).toContain('data-bohemcars-calc-output="total"');
+		expect(split?.afterHtml).toContain('Browse By Budget');
+		expect(split?.afterHtml).toContain('Calculator FAQ');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

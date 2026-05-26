@@ -913,6 +913,32 @@ npm run build
 
 Browser DOM QA verified the reviews page on desktop and mobile: 6 testimonial cards, 30 star icons, 6 avatars, one pagination row, footer chrome, Auxero reviews body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-reviews-grid-svelte/`.
 
+### Task 7G: Migrate Calculator Estimator
+
+**Checkpoint completed 2026-05-27:**
+
+- `/calculator` now uses `src/routes/calculator/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `calculator.html` head, header, breadcrumb, page heading, calculator grid classes, input classes, summary card, budget cards, FAQ band, footer, modal stack, body classes, and local calculator runtime hooks.
+- The estimator grid is rendered by `src/lib/components/calculator/CalculatorEstimator.svelte` inside `CalculatorTemplatePage.svelte`, using typed `AuxeroCalculatorData` from `src/lib/auxero/calculator.ts`.
+- `src/lib/server/auxero-support-data.ts` now consumes the same calculator data/formatting helpers for raw-template fallback output, keeping the compatibility adapter and Svelte route aligned.
+- `src/routes/project1.e2e.ts` now freezes the calculator contract: visible `data-bohemcars-calculator`, 5 calculator inputs, initial total `38 640 EUR`, and live price recalculation to `45 240 EUR`.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated calculator estimator can be split without dropping the budget cards, calculator FAQ, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/calculator/CalculatorEstimator.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/calculator/CalculatorTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/calculator/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the calculator page on desktop and mobile: one Svelte `data-bohemcars-calculator` estimator grid, 5 inputs, 7 outputs, live total update from `38 640 EUR` to `45 240 EUR`, preserved budget and FAQ follow-up sections, footer chrome, Auxero calculator body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-calculator-estimator-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
