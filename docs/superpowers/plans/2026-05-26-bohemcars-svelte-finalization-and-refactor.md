@@ -305,6 +305,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Current checkpoint: `src/routes/+server.ts` moved to `src/routes/root-server.legacy.ts`; `/` now renders through `+page.server.ts` and `+page.svelte` using a split, trusted Auxero Home 05 document. Section-by-section Svelte component replacement remains pending under the existing fidelity tests.
 
+  Brand strip checkpoint: `src/lib/components/home/HomeFiveBrandStrip.svelte` now renders the Home 05 `Explore Our Brands` section from shared `homeFiveBrandCards` data. The rest of the page still streams through trusted Auxero fragments until each section is replaced under visual tests.
+
 - [ ] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:

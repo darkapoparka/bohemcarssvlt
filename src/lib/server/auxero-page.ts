@@ -35,3 +35,20 @@ export function splitAuxeroDocument(html: string): AuxeroPageDocument {
 		headHtml: head.content
 	};
 }
+
+export function splitAuxeroBodySection(bodyHtml: string, startComment: string, endComment: string) {
+	const start = bodyHtml.indexOf(startComment);
+	const end = bodyHtml.indexOf(endComment, start + startComment.length);
+
+	if (start < 0 || end < 0) {
+		return undefined;
+	}
+
+	const afterStart = end + endComment.length;
+
+	return {
+		afterHtml: bodyHtml.slice(afterStart),
+		beforeHtml: bodyHtml.slice(0, start),
+		sectionHtml: bodyHtml.slice(start, afterStart)
+	};
+}

@@ -5,4 +5,8 @@
 	let { data }: PageProps = $props();
 </script>
 
-<HomeFiveTemplatePage pageDocument={data.pageDocument} />
+<HomeFiveTemplatePage
+	afterBrandStripHtml={data.afterBrandStripHtml}
+	brandCards={data.brandCards}
+	pageDocument={data.pageDocument}
+/>
