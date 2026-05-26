@@ -419,4 +419,18 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
+
+	it('can split the services form card without dropping service sections or footer chrome', () => {
+		const html = renderAuxeroTemplate('services-center.html', { routePath: 'services' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'services-center-form');
+
+		expect(split?.beforeHtml).toContain('Bohemcars Services Center');
+		expect(split?.beforeHtml).toContain('Featured Services');
+		expect(split?.beforeHtml).toContain('services-center-info');
+		expect(split?.sectionHtml).toContain('bohemcars-service-form');
+		expect(split?.sectionHtml).toContain('Schedule Service');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

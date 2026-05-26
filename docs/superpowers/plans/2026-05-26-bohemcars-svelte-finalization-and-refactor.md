@@ -836,6 +836,31 @@ npm run build
 
 Browser DOM QA verified the contact page on desktop and mobile: one Svelte `contact-page-form` card, 4 `input-large` controls, one message textarea, preserved `widget-gg-map` iframe, `contact-page-info`, footer chrome, Auxero contact body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-contact-form-svelte/`.
 
+### Task 7D: Migrate Services Form Card
+
+**Checkpoint completed 2026-05-26:**
+
+- `/services` now uses `src/routes/services/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `services-center.html` head, header, breadcrumb, service overview, featured service grid, parallax contact band, contact info panel, footer, modal stack, body classes, form-card classes, input/select classes, and local service form runtime.
+- The schedule-service form card is rendered by `src/lib/components/services/ServiceFormCard.svelte` inside `ServicesTemplatePage.svelte`, using typed `AuxeroServiceFormData` from `src/lib/auxero/services.ts`.
+- `src/routes/project1.e2e.ts` now freezes the services contract: 6 service boxes, `services-center-info`, `radius-20` form card, 5 Auxero inputs, one `select-style-2` control, and the schedule submit button.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated services form card can be split without dropping service sections, contact info, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/services/ServiceFormCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/services/ServicesTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/services/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the services page on desktop and mobile: 6 service boxes, one `services-center-info` panel, one Svelte `services-center-form` card, 5 `input-large` controls, one select with 6 options, footer chrome, Auxero services body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-services-form-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

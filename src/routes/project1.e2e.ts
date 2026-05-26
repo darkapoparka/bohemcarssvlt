@@ -392,6 +392,18 @@ test('planned public support routes render Bohemcars content and local forms', a
 		await expectBohemcarsShell(page);
 	}
 
+	await page.goto('/services');
+	await expect(page.locator('.service-box')).toHaveCount(6);
+	await expect(page.locator('.services-center-info')).toContainText('Contact Information');
+	const serviceFormCard = page.locator('.services-center-form').first();
+	await expect(serviceFormCard).toBeVisible();
+	await expect(serviceFormCard).toHaveClass(/radius-20/);
+	const serviceForm = serviceFormCard.locator('form.bohemcars-service-form');
+	await expect(serviceForm).toBeVisible();
+	await expect(serviceForm.locator('input.input-large')).toHaveCount(5);
+	await expect(serviceForm.locator('select.select-style-2')).toBeVisible();
+	await expect(serviceForm.locator('button')).toContainText('Schedule Service');
+
 	await page.goto('/contact');
 	await expect(page.locator('body')).toContainText('Reach Out to Bohemcars');
 	await expect(page.locator('.widget-gg-map iframe')).toBeVisible();
