@@ -335,6 +335,18 @@ test('compare and consultants render branded buyer flows without login', async (
 	await expect(page.locator('body')).toContainText('Bohemcars Consultants');
 	await expect(page.locator('body')).toContainText('Bohemcars Sales');
 	await expect(page.locator('body')).not.toContainText('Robert Fox');
+	const agentsGrid = page.locator('[data-bohemcars-agent-management="false"]').first();
+	await expect(agentsGrid).toBeVisible();
+	await expect(agentsGrid).toHaveClass(/grid-cols-4/);
+	await expect(agentsGrid.locator('.sale-agent-box')).toHaveCount(3);
+	await expect(agentsGrid.locator('.sale-agent-box.active')).toHaveCount(1);
+	await expect(agentsGrid.locator('.sale-agent-title')).toHaveCount(3);
+	await expect(agentsGrid.locator('.sale-agent-social')).toHaveCount(3);
+	await expect(agentsGrid.locator('.contact li')).toHaveCount(6);
+	await expect(agentsGrid.locator('.sale-agent-title').first()).toHaveAttribute(
+		'href',
+		/\/agents\/bohemcars-sales$/
+	);
 
 	await page.goto('/agents/bohemcars-import');
 	await expect(page.locator('body')).toContainText('Bohemcars Import');

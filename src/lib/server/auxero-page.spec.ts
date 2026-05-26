@@ -372,4 +372,19 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('CardModal');
 		expect(split?.afterHtml).toContain('renderAccountFavorites');
 	});
+
+	it('can split the public agents grid without dropping page chrome', () => {
+		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'agents' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-agent-management="false"'
+		);
+
+		expect(split?.beforeHtml).toContain('Bohemcars Consultants');
+		expect(split?.sectionHtml).toContain('bohemcars-agent-grid');
+		expect(split?.sectionHtml).toContain('sale-agent-box');
+		expect(split?.afterHtml).toContain('footer');
+		expect(split?.afterHtml).toContain('LoginModal');
+	});
 });

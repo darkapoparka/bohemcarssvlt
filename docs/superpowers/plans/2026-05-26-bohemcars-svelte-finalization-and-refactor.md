@@ -759,6 +759,32 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
   git commit -m "refactor: migrate secondary routes to svelte"
   ```
 
+### Task 7A: Migrate Agents Listing Page
+
+**Checkpoint completed 2026-05-26:**
+
+- `/agents` now uses `src/routes/agents/+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The page preserves the Auxero `sale-agents.html` head, header, breadcrumb, section heading, footer, modal stack, body classes, grid classes, card structures, image ratios, social controls, and contact controls.
+- The visible consultant grid is rendered by `src/lib/components/agents/AuxeroAgentsGrid.svelte` and `src/lib/components/agents/AuxeroAgentCard.svelte` from typed `AuxeroAgentCard` data in `src/lib/auxero/agents.ts`.
+- `src/routes/project1.e2e.ts` now freezes the agents listing contract: visible public agent grid, 3 `sale-agent-box` cards, one active card, 3 title links, 3 social rows, 6 contact controls, and the Bohemcars sales route link.
+- `src/lib/server/auxero-page.spec.ts` now guards that the generated public agents grid can be split without dropping page chrome, footer, or modal markup.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/agents/AuxeroAgentCard.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/agents/AuxeroAgentsGrid.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/agents/AgentsTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/agents/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser DOM QA verified the agents listing on desktop and mobile: 3 consultant cards, one active card, 3 social rows, 6 contact controls, preserved `grid-cols-4 sm-grid-cols-1 lg-grid-cols-2` grid classes, Auxero agents body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agents-listing-svelte/` after waiting for the agent card selector.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
