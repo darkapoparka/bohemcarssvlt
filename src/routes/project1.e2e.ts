@@ -82,6 +82,16 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeBudgetSection.locator('.menu-tab-style2 .car-box')).toHaveCount(5);
 	await expect(homeBudgetSection.locator('.card-box-style-1')).toHaveCount(9);
 	await expect(homeBudgetSection.locator('ul.tag.style2')).toHaveCount(9);
+	const homeReviewsSection = page.locator('section', { hasText: 'Client Reviews' });
+	await expect(homeReviewsSection.locator('.swiper-testimonior')).toBeVisible();
+	await expect(homeReviewsSection.locator('.swiper-slide .testimonior-box')).toHaveCount(6);
+	await expect(homeReviewsSection.locator('img[src="/assets/icons/star.svg"]')).toHaveCount(30);
+	await expect(homeReviewsSection.locator('.testimonior--img')).toHaveCount(6);
+	await expect(homeReviewsSection.locator('.pagination-swiper-testimonior')).toHaveCount(1);
+	await expect(homeReviewsSection.getByRole('link', { name: 'View All' })).toHaveAttribute(
+		'href',
+		/^\.?\/reviews$/
+	);
 	await expect
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)

@@ -4,6 +4,7 @@ import { posts } from '$lib/data/blog';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
 	homeFiveBrandCards as home05BrandCards,
+	homeFiveReviewItems as reviewItems,
 	homeFiveTypeCards as home05TypeCards,
 	imageForHomeFiveVehicle as imageForVehicle
 } from '$lib/auxero/home-five';
@@ -55,27 +56,6 @@ const brandImages: Record<string, string> = {
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png',
 	Ford: '/assets/bohemcars/brands/ford.png'
 };
-
-const reviewItems = [
-	{
-		name: 'Aleksandar Vytev',
-		role: 'Bohemcars client',
-		avatar: '/assets/images/avatar/avatar-1.png',
-		text: 'The team explained the vehicle history, transport, and registration steps before I committed. The handoff felt calm and transparent.'
-	},
-	{
-		name: 'Krasimir Georgiev',
-		role: 'Import client',
-		avatar: '/assets/images/avatar/avatar-2.png',
-		text: 'Bohemcars kept the conversation practical: photos, documents, mileage, and the costs that matter before delivery.'
-	},
-	{
-		name: 'Iliyan Petrov',
-		role: 'Client vehicle seller',
-		avatar: '/assets/images/avatar/avatar-3.png',
-		text: 'I sent the car details and received clear feedback on pricing, documents, and the best way to present the vehicle.'
-	}
-] as const;
 
 const replaceSectionByComment = (
 	html: string,

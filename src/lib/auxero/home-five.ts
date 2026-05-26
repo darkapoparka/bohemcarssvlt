@@ -8,6 +8,13 @@ export type HomeFiveBrandCard = {
 	query: string;
 };
 
+export type HomeFiveReview = {
+	avatar: string;
+	name: string;
+	role: string;
+	text: string;
+};
+
 export type HomeFiveTypeCard = {
 	bodyType: string;
 	image: string;
@@ -130,6 +137,27 @@ export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 		image: '/assets/images/brand/brand-12.png',
 		count: '27 Vehicles',
 		query: 'Tesla'
+	}
+];
+
+export const homeFiveReviewItems: HomeFiveReview[] = [
+	{
+		name: 'Aleksandar Vytev',
+		role: 'Bohemcars client',
+		avatar: '/assets/images/avatar/avatar-1.png',
+		text: 'The team explained the vehicle history, transport, and registration steps before I committed. The handoff felt calm and transparent.'
+	},
+	{
+		name: 'Krasimir Georgiev',
+		role: 'Import client',
+		avatar: '/assets/images/avatar/avatar-2.png',
+		text: 'Bohemcars kept the conversation practical: photos, documents, mileage, and the costs that matter before delivery.'
+	},
+	{
+		name: 'Iliyan Petrov',
+		role: 'Client vehicle seller',
+		avatar: '/assets/images/avatar/avatar-3.png',
+		text: 'I sent the car details and received clear feedback on pricing, documents, and the best way to present the vehicle.'
 	}
 ];
 

@@ -4,6 +4,7 @@ import {
 	homeFiveBrandCards,
 	homeFiveComparePairsFromVehicles,
 	homeFiveHeroDataFromVehicles,
+	homeFiveReviewItems,
 	homeFiveTypeCards,
 	homeFiveVehicleCardsFromVehicles
 } from '$lib/auxero/home-five';
@@ -53,12 +54,19 @@ export const load: PageServerLoad = ({ request, url }) => {
 		'<!-- Used Cars by Budget -->',
 		'<!-- /Used Cars by Budget -->'
 	);
+	const reviewsSectionSlot = splitAuxeroBodySection(
+		budgetSectionSlot?.afterHtml ?? '',
+		'<!-- /Client Reviews -->',
+		'<!-- /Client Reviews -->'
+	);
 
 	return {
 		afterBrandStripHtml: typeGallerySlot
 			? typeGallerySlot.beforeHtml
 			: (brandStripSlot?.afterHtml ?? ''),
-		afterBudgetSectionHtml: budgetSectionSlot?.afterHtml ?? '',
+		afterBudgetSectionHtml: reviewsSectionSlot
+			? reviewsSectionSlot.beforeHtml
+			: (budgetSectionSlot?.afterHtml ?? ''),
 		afterCompareSectionHtml: budgetSectionSlot
 			? budgetSectionSlot.beforeHtml
 			: (compareSectionSlot?.afterHtml ?? ''),
@@ -70,6 +78,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 				? featuredVehiclesSlot.beforeHtml
 				: heroSlot.afterHtml
 			: '',
+		afterReviewsSectionHtml: reviewsSectionSlot?.afterHtml ?? '',
 		afterTypeGalleryHtml: compareSectionSlot
 			? compareSectionSlot.beforeHtml
 			: (typeGallerySlot?.afterHtml ?? ''),
@@ -83,6 +92,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			...pageDocument,
 			bodyHtml: heroSlot?.beforeHtml ?? featuredVehiclesSlot?.beforeHtml ?? pageDocument.bodyHtml
 		},
+		reviews: reviewsSectionSlot ? homeFiveReviewItems : [],
 		typeCards: homeFiveTypeCards
 	};
 };

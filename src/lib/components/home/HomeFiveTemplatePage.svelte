@@ -4,11 +4,13 @@
 	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
 	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
 	import HomeFiveHero from './HomeFiveHero.svelte';
+	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
 	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
 	import type {
 		HomeFiveBrandCard,
 		HomeFiveComparePair,
 		HomeFiveHeroData,
+		HomeFiveReview,
 		HomeFiveTypeCard,
 		HomeFiveVehicleCardData
 	} from '$lib/auxero/home-five';
@@ -20,6 +22,7 @@
 		afterCompareSectionHtml,
 		afterFeaturedVehiclesHtml,
 		afterHeroHtml,
+		afterReviewsSectionHtml,
 		afterTypeGalleryHtml,
 		brandCards,
 		budgetVehicles,
@@ -27,6 +30,7 @@
 		featuredVehicles,
 		hero,
 		pageDocument,
+		reviews,
 		typeCards
 	}: {
 		afterBrandStripHtml: string;
@@ -34,6 +38,7 @@
 		afterCompareSectionHtml: string;
 		afterFeaturedVehiclesHtml: string;
 		afterHeroHtml: string;
+		afterReviewsSectionHtml: string;
 		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
 		budgetVehicles: HomeFiveVehicleCardData[];
@@ -41,6 +46,7 @@
 		featuredVehicles: HomeFiveVehicleCardData[];
 		hero?: HomeFiveHeroData;
 		pageDocument: AuxeroPageDocument;
+		reviews: HomeFiveReview[];
 		typeCards: HomeFiveTypeCard[];
 	} = $props();
 	let bodyClassScript = $derived(
@@ -72,3 +78,6 @@
 <HomeFiveBudgetSection vehicles={budgetVehicles} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterBudgetSectionHtml}
+<HomeFiveReviewsSection {reviews} />
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+{@html afterReviewsSectionHtml}

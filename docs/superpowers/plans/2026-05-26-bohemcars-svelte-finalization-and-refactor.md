@@ -317,6 +317,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Hero/search checkpoint: `src/lib/components/home/HomeFiveHero.svelte` now renders the Home 05 `page-title-style-4` hero, Swiper background slides, synced text slides, tab row, primary search filters, advanced filter panel, and feature checks from typed `HomeFiveHeroData`. The route splits the exact `<!-- page-title -->` block before `New Vehicles`, preserving the Auxero first-viewport class structure while moving hero/search data shaping into `$lib/auxero/home-five.ts`.
 
+  Reviews checkpoint: `src/lib/components/home/HomeFiveReviewsSection.svelte` now renders the Home 05 `Client Reviews` carousel from typed `HomeFiveReview` rows in `$lib/auxero/home-five.ts`. The split intentionally follows the post-processed Home 05 closing-comment markers, preserving the Auxero `swiper-testimonior`, `testimonior-box`, star icon, avatar, and pagination structure while keeping the section order `budget -> reviews -> news`.
+
 - [x] **Step 4: Build `HomeFiveHero.svelte` with template classes**
 
   Implement with Svelte 5 props and keyed slides:
