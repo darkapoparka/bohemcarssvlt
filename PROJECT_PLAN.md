@@ -156,33 +156,32 @@ Use these filter/sort controls:
 
 Shared layout:
 
-- `src/lib/components/layout/SiteHeader.svelte`
-- `src/lib/components/layout/SiteFooter.svelte`
-- `src/lib/components/layout/Breadcrumbs.svelte`
-- `src/lib/components/layout/ScrollTop.svelte`
+- `src/lib/components/layout/AuxeroPageShell.svelte`
+- `src/lib/components/layout/SiteHeader.svelte` for non-Auxero fallback surfaces only.
+- `src/lib/components/layout/SiteFooter.svelte` for non-Auxero fallback surfaces only.
+- `src/lib/components/layout/ScrollTop.svelte` for non-Auxero fallback surfaces only.
 
 Homepage 05 components:
 
+- `src/lib/components/home/HomeFiveTemplatePage.svelte`
+- `src/lib/components/home/HomeFiveHeader.svelte`
 - `src/lib/components/home/HomeFiveHero.svelte`
-- `src/lib/components/home/HeroSearchBar.svelte`
-- `src/lib/components/home/VehicleCategoryRail.svelte`
-- `src/lib/components/home/FeaturedInventory.svelte`
-- `src/lib/components/home/BrandStrip.svelte`
-- `src/lib/components/home/BrowseByType.svelte`
-- `src/lib/components/home/ReviewsBand.svelte`
+- `src/lib/components/home/HomeFiveFeaturedVehicles.svelte`
+- `src/lib/components/home/HomeFiveBrandStrip.svelte`
+- `src/lib/components/home/HomeFiveTypeGallery.svelte`
+- `src/lib/components/home/HomeFiveCompareSection.svelte`
+- `src/lib/components/home/HomeFiveBudgetSection.svelte`
+- `src/lib/components/home/HomeFiveReviewsSection.svelte`
+- `src/lib/components/home/HomeFiveNewsSection.svelte`
+- `src/lib/components/home/HomeFiveFooter.svelte`
 - `src/lib/components/home/HomeFiveModals.svelte`
+- `src/lib/components/home/HomeFiveVehicleCard.svelte`
 
 Inventory grid components:
 
+- `src/lib/components/inventory/InventoryTemplatePage.svelte`
 - `src/lib/components/inventory/AuxeroInventoryContent.svelte`
 - `src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte`
-- `src/lib/components/inventory/InventoryToolbar.svelte`
-- `src/lib/components/inventory/InventoryGrid.svelte`
-- `src/lib/components/inventory/InventoryViewToggle.svelte`
-- `src/lib/components/inventory/InventoryMapView.svelte`
-- `src/lib/components/inventory/VehicleCard.svelte`
-- `src/lib/components/inventory/FilterDrawer.svelte`
-- `src/lib/components/inventory/SortSelect.svelte`
 
 Vehicle detail 3 components:
 
@@ -193,12 +192,6 @@ Vehicle detail 3 components:
 - `src/lib/components/detail/AuxeroVehicleOverview.svelte`
 - `src/lib/components/detail/AuxeroVehicleDetailStaticContent.svelte`
 - `src/lib/components/detail/VehicleDetailTemplatePage.svelte`
-- `src/lib/components/detail/DetailThreeLayout.svelte`
-- `src/lib/components/detail/VehicleMediaSlider.svelte`
-- `src/lib/components/detail/FinancePanel.svelte`
-- `src/lib/components/detail/OverviewSpecs.svelte`
-- `src/lib/components/detail/DealerContactCard.svelte`
-- `src/lib/components/detail/RelatedVehicles.svelte`
 
 Account/admin/agent components:
 

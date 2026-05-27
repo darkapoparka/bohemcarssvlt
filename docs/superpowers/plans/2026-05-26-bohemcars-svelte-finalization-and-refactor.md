@@ -264,11 +264,18 @@ The migration must not start by redesigning the site. The first success conditio
 
 - Create: `src/routes/+page.server.ts`
 - Create: `src/routes/+page.svelte`
-- Modify: `src/routes/+server.ts`
+- Create or modify: `src/lib/components/home/HomeFiveTemplatePage.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveHeader.svelte`
 - Create or modify: `src/lib/components/home/HomeFiveHero.svelte`
-- Create or modify: `src/lib/components/home/HomeFiveSearch.svelte`
-- Create or modify: `src/lib/components/home/BrowseByType.svelte`
-- Modify: `src/lib/components/home/BrandStrip.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveFeaturedVehicles.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveBrandStrip.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveTypeGallery.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveCompareSection.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveBudgetSection.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveReviewsSection.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveNewsSection.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveFooter.svelte`
+- Create or modify: `src/lib/components/home/HomeFiveModals.svelte`
 - Modify: `src/lib/data/bohemcars.ts`
 - Test: `src/routes/project1.e2e.ts`
 
@@ -411,13 +418,16 @@ The migration must not start by redesigning the site. The first success conditio
 - Create: `src/routes/inventory/+page.svelte`
 - Create: `src/routes/inventory/[slug]/+page.server.ts`
 - Create: `src/routes/inventory/[slug]/+page.svelte`
-- Modify: `src/lib/components/inventory/InventoryToolbar.svelte`
-- Modify: `src/lib/components/inventory/InventoryGrid.svelte`
-- Modify: `src/lib/components/inventory/VehicleCard.svelte`
-- Modify: `src/lib/components/detail/DetailThreeLayout.svelte`
-- Modify: `src/lib/components/detail/VehicleMediaSlider.svelte`
-- Modify: `src/lib/components/detail/FinancePanel.svelte`
-- Modify: `src/lib/components/detail/OverviewSpecs.svelte`
+- Modify: `src/lib/components/inventory/InventoryTemplatePage.svelte`
+- Modify: `src/lib/components/inventory/AuxeroInventoryContent.svelte`
+- Modify: `src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte`
+- Modify: `src/lib/components/detail/VehicleDetailTemplatePage.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleDetail.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleDetailGallery.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleFeatureTabs.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleDetailSidebar.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleOverview.svelte`
+- Modify: `src/lib/components/detail/AuxeroVehicleDetailStaticContent.svelte`
 - Test: `src/routes/project1.e2e.ts`
 
 - [ ] **Step 1: Add failing inventory card assertions before migration**
@@ -446,28 +456,11 @@ The migration must not start by redesigning the site. The first success conditio
   };
   ```
 
-- [ ] **Step 3: Render inventory with keyed vehicle cards**
+- [x] **Step 3: Render inventory with keyed Auxero vehicle cards**
 
-  `InventoryGrid.svelte` should render:
+  Current checkpoint: `InventoryTemplatePage.svelte` uses `AuxeroPageShell`, `AuxeroInventoryContent.svelte`, and keyed `AuxeroInventoryVehicleCard.svelte` cards derived from typed inventory data while preserving the Auxero `listing-grid3-columns.html`, dense-grid, and map-view DOM contracts.
 
-  ```svelte
-  <script lang="ts">
-  	import VehicleCard from './VehicleCard.svelte';
-  	import type { Vehicle } from '$lib/types/vehicle';
-
-  	let { vehicles }: { vehicles: Vehicle[] } = $props();
-  </script>
-
-  <div class="row">
-  	{#each vehicles as vehicle (vehicle.slug)}
-  		<div class="col-xl-4 col-md-6">
-  			<VehicleCard {vehicle} />
-  		</div>
-  	{/each}
-  </div>
-  ```
-
-  Preserve the card internals and Auxero classes from `listing-grid3-columns.html`.
+  Preserve the card internals and Auxero classes from `listing-grid3-columns.html`; do not reintroduce the removed custom `InventoryGrid.svelte` or `VehicleCard.svelte` components.
 
 - [x] **Step 4: Render detail page from typed route data**
 
@@ -496,9 +489,9 @@ The migration must not start by redesigning the site. The first success conditio
   ```bash
   npx @sveltejs/mcp svelte-autofixer src/routes/inventory/+page.svelte
   npx @sveltejs/mcp svelte-autofixer src/routes/inventory/[slug]/+page.svelte
-  npx @sveltejs/mcp svelte-autofixer src/lib/components/inventory/InventoryGrid.svelte
-  npx @sveltejs/mcp svelte-autofixer src/lib/components/inventory/VehicleCard.svelte
-  npx @sveltejs/mcp svelte-autofixer src/lib/components/detail/DetailThreeLayout.svelte
+  npx @sveltejs/mcp svelte-autofixer src/lib/components/inventory/InventoryTemplatePage.svelte
+  npx @sveltejs/mcp svelte-autofixer src/lib/components/inventory/AuxeroInventoryContent.svelte
+  npx @sveltejs/mcp svelte-autofixer src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte
   ```
 
   Current detail checkpoint autofixer targets were the new Auxero detail components: `AuxeroVehicleDetail.svelte`, `AuxeroVehicleDetailGallery.svelte`, `AuxeroVehicleFeatureTabs.svelte`, `AuxeroVehicleDetailSidebar.svelte`, `AuxeroVehicleOverview.svelte`, `AuxeroVehicleDetailStaticContent.svelte`, `VehicleDetailTemplatePage.svelte`, and the new route page.
@@ -822,6 +815,13 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Updated the route-source contract so `/admin/agents` maps to `sale-agents.html` instead of the generic dashboard family.
 - Verification passed with Svelte autofixer on the touched agent components and route page, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Browser smoke screenshots for `/admin/agents?role=admin` at desktop and mobile were saved under `test-results/visual-contract/2026-05-27-admin-agents-svelte-route/`; `report.json` recorded 3 cards, 3 status rows, 3 lead links, 3 message links, no console errors, no page errors, and no horizontal overflow.
+
+**Unused pre-Auxero component cleanup checkpoint completed 2026-05-27:**
+
+- Removed unused custom Svelte components from the older non-Auxero/Home 09 direction so future work cannot accidentally reintroduce bespoke cards, zooming vehicle images, or custom home/detail layouts outside the selected Auxero source pages.
+- Updated `PROJECT_PLAN.md` so the component inventory reflects the actual Home 05, inventory, and detail components that remain in the SvelteKit architecture.
+- Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser DOM QA covered `/`, `/inventory`, `/inventory/21764342419542174`, and `/agents` with no console errors; desktop/mobile screenshots were saved under `test-results/visual-contract/2026-05-27-unused-component-cleanup/`.
 
 ### Task 7A: Migrate Agents Listing Page
 
