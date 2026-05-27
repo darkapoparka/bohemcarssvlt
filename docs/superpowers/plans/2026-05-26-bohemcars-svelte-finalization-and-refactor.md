@@ -1212,6 +1212,33 @@ npm run build
 
 Browser QA verified `/account/profile?role=customer` and `/account/password?role=customer` on desktop and mobile: correct form markers, active menu states, customer field values, visible profile avatar/poster/map, empty password fields, no `Lorem ipsum`, no `themesflat@gmail.com`, no `themesflat@2026`, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-profile-password-svelte/`.
 
+### Task 7R: Migrate Admin Add And Edit Listing Forms
+
+**Checkpoint completed 2026-05-27:**
+
+- `/admin/inventory/new` and `/admin/inventory/edit/[id]` now use SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The pages preserve the Auxero dashboard shell, title/action bar, role-aware sidebar/header, active Add Listing menu state, Gallery, Car Details, Features, Car Price, Location, Video, Attachments section order, modal stack, body classes, and local script tail.
+- The form is rendered by `AccountListingForm.svelte` inside `AccountListingFormTemplatePage.svelte`, using typed shared data from `src/lib/auxero/account-listing-form.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes typed add/edit listing form data and marks the raw fallback form with `data-bohemcars-add-listing-form` for safe splitting.
+- `src/routes/project1.e2e.ts` freezes the admin form contract: visible Svelte form, create and clone-static modes, hidden source id on static edits, 7 dashboard boxes, 7 gallery items, 25 feature checks, map iframe, action buttons, and draft-save status.
+- A focused debugging pass fixed the root cause where the exported form-data wrapper dropped `options`, causing edit pages to keep the raw Edit heading while the Svelte form fell back to create mode.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountListingForm.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountListingFormTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/inventory/new/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/admin/inventory/edit/[id]/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit/21764342419542174?role=admin` on desktop and mobile: correct form markers and modes, active Add Listing menu, 7 dashboard boxes, 7 gallery items, 25 feature checks, 2 local action buttons, visible map iframe, no `Lorem ipsum`, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-listing-form-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**

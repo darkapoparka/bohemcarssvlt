@@ -17,6 +17,15 @@ import type {
 	AuxeroAccountPasswordFormData,
 	AuxeroAccountProfileFormData
 } from '$lib/auxero/account-forms';
+import type {
+	AuxeroAccountListingFormData,
+	AuxeroListingFormDetailField,
+	AuxeroListingFormFeatureGroup,
+	AuxeroListingFormHiddenField,
+	AuxeroListingFormImage,
+	AuxeroListingFormMode,
+	AuxeroListingFormOption
+} from '$lib/auxero/account-listing-form';
 import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
@@ -1339,6 +1348,322 @@ const passwordFormData = (context: AccountContext): AuxeroAccountPasswordFormDat
 	role: context.session.role
 });
 
+const listingFormGalleryImages: AuxeroListingFormImage[] = [
+	{
+		alt: 'Gallery 1',
+		src: '/assets/images/inner-page/slide-listing-details-6.jpg'
+	},
+	{
+		alt: 'Gallery 2',
+		src: '/assets/images/inner-page/slide-listing-details-5.jpg'
+	},
+	{
+		alt: 'Gallery 3',
+		src: '/assets/images/inner-page/slide-listing-details-7.jpg'
+	},
+	{
+		alt: 'Gallery 4',
+		src: '/assets/images/inner-page/slide-listing-details-8.jpg'
+	},
+	{
+		alt: 'Gallery 5',
+		src: '/assets/images/inner-page/slide-listing-details-9.jpg'
+	},
+	{
+		alt: 'Gallery 6',
+		src: '/assets/images/inner-page/slide-listing-details-10.jpg'
+	},
+	{
+		alt: 'Gallery 6',
+		src: '/assets/images/inner-page/slide-listing-details-11.jpg'
+	}
+];
+
+const listingFormOptions = (name: string): AuxeroListingFormOption[] =>
+	['FWD', 'RWD', 'AWD'].map((value, index) => ({
+		label: `${name} ${index + 1}`,
+		value
+	}));
+
+const listingFormMapOptions = (address: string): AuxeroListingFormOption[] => [
+	{ checked: true, label: address, value: address },
+	{ label: `${address} 2`, value: 'RWD' },
+	{ label: `${address} 3`, value: 'AWD' }
+];
+
+const listingInput = (
+	wrapperClass: string,
+	label: string,
+	id: string,
+	name: string,
+	placeholder: string,
+	value = ''
+): AuxeroListingFormDetailField => ({
+	id,
+	label,
+	name,
+	placeholder,
+	required: true,
+	type: 'input',
+	value,
+	wrapperClass
+});
+
+const listingDropdown = (
+	wrapperClass: string,
+	label: string,
+	id: string,
+	name: string,
+	options: AuxeroListingFormOption[] = listingFormOptions(label)
+): AuxeroListingFormDetailField => ({
+	id,
+	label,
+	name,
+	options,
+	type: 'dropdown',
+	wrapperClass
+});
+
+const listingFormFeatureGroups: AuxeroListingFormFeatureGroup[] = [
+	{
+		features: [
+			{ checked: true, id: 'Front', label: 'A/C: Front' },
+			{ checked: true, id: 'BackupCamera', label: 'Backup Camera' },
+			{ checked: true, id: 'CruiseControl', label: 'Cruise Control' },
+			{ id: 'Navigation', label: 'Navigation' },
+			{ id: 'PowerLocks', label: 'Power Locks' }
+		],
+		title: 'Request Price Label'
+	},
+	{
+		features: [
+			{ id: 'Audiosystem', label: 'Audio system' },
+			{ id: 'Touchscreendisplay', label: 'Touchscreen display' },
+			{ id: 'GPSnavigation', label: 'GPS navigation' },
+			{ id: 'Phoneconnectivity', label: 'Phone connectivity' },
+			{ id: 'IncarWiFi', label: 'In-car Wi-Fi' }
+		],
+		title: 'Entertainment'
+	},
+	{
+		features: [
+			{ id: 'Antilockbrakesystem', label: 'Anti-lock brake system' },
+			{ id: 'Electronicstability', label: 'Electronic stability control' },
+			{ id: 'Brakeassist', label: 'Brake assist' },
+			{ id: 'Airbags', label: 'Airbags' },
+			{ id: 'monitoringBlind', label: 'Blind spot monitoring' }
+		],
+		title: 'Safety'
+	},
+	{
+		features: [
+			{ id: 'Premiumleather', label: 'Premium leather seats' },
+			{ id: 'Woodtrim', label: 'Wood trim' },
+			{ id: 'Minibar', label: 'Mini bar' },
+			{ id: 'ventilation', label: 'Rear seat ventilation' },
+			{ id: 'Infotainment', label: 'Infotainment screen' }
+		],
+		title: 'Interior'
+	},
+	{
+		features: [
+			{ id: 'Chromeplatedgrill', label: 'Chrome-plated grill' },
+			{ id: 'Smartheadlight', label: 'Smart headlight cluster' },
+			{ id: 'Premiumwheels', label: 'Premium wheels' },
+			{ id: 'characterBody', label: 'Body character lines' },
+			{ id: 'Highqualitypaint', label: 'High-quality paint' }
+		],
+		title: 'Exterior'
+	}
+];
+
+const addListingFormData = (
+	context: AccountContext,
+	options: AuxeroRenderOptions = {}
+): AuxeroAccountListingFormData => {
+	const editListingId = editListingIdFromRoute(options.routePath);
+	const editListing = context.isAdmin
+		? listInventoryForAdmin().find(
+				(listing) =>
+					listing.id === editListingId ||
+					listing.slug === editListingId ||
+					listing.routePath.endsWith(`/${editListingId}`)
+			)
+		: undefined;
+	const editVehicle = editListing
+		? vehicles.find(
+				(candidate) =>
+					candidate.slug === editListing.slug ||
+					candidate.slug === editListing.id ||
+					editListing.routePath.endsWith(`/${candidate.slug}`)
+			)
+		: undefined;
+	const vehicle = vehicles[0];
+	const title = editListing?.title ?? vehicle.title;
+	const priceLabel = editListing?.priceLabel ?? vehicle.priceLabel;
+	const vin = editListing?.vin ?? vehicle.stockNumber;
+	const mileage = editListing?.mileage ?? km(vehicle.mileage);
+	const engine = editVehicle?.engine ?? vehicle.engine;
+	const color = editVehicle?.exterior ?? vehicle.exterior;
+	const sourceUrl = editVehicle?.sourceUrl ?? vehicle.sourceUrl;
+	const address = editVehicle?.location ?? bohemcarsContact.addressLabel;
+	const mode: AuxeroListingFormMode =
+		editListing?.source === 'admin-listing'
+			? 'edit'
+			: editListing?.source === 'static-vehicle'
+				? 'clone-static'
+				: 'create';
+	const hiddenFields: AuxeroListingFormHiddenField[] = [
+		{ name: 'actorRole', value: context.session.role },
+		{ name: 'role', value: context.session.role },
+		{
+			name: 'routePath',
+			value: options.routePath ?? (context.isAdmin ? '/admin/inventory/new' : '/sell-your-car')
+		},
+		{ name: 'status', value: editListing?.status ?? 'draft' },
+		...(editListing?.source === 'admin-listing'
+			? [{ name: 'listingId', value: editListing.id }]
+			: []),
+		...(editListing?.source === 'static-vehicle'
+			? [{ name: 'sourceId', value: editListing.id }]
+			: [])
+	];
+
+	return {
+		address,
+		attachments: [
+			{ icon: '/assets/icons/pdf.svg', label: 'Information', type: 'PDF' },
+			{ icon: '/assets/icons/doc.svg', label: 'Information', type: 'Doc' }
+		],
+		detailFields: [
+			listingInput('padding-0 col-span-4', 'Car Title', 'title', 'title', 'Car Title*', title),
+			listingDropdown('lg-col-span-2 padding-0 sm-col-span-4', 'Model', 'Model', 'model'),
+			listingDropdown('lg-col-span-2 padding-0 sm-col-span-4', 'Type', 'Type', 'type'),
+			listingInput('lg-col-span-2 padding-0 sm-col-span-4', 'Years', 'Years', 'Years', 'Year'),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Condition',
+				'Condition',
+				'Condition*',
+				'Condition or status'
+			),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Stock Number',
+				'Enternumber',
+				'Enternumber',
+				priceLabel,
+				priceLabel
+			),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'VIN Number',
+				'EnterVIN',
+				'EnterVIN',
+				vin,
+				vin
+			),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Mileage',
+				'mileage',
+				'mileage',
+				mileage,
+				mileage
+			),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Transmission',
+				'Transmission',
+				'Transmission'
+			),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Driver Type',
+				'DriverType',
+				'DriverType',
+				listingFormOptions('DriverType')
+			),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Engine Size',
+				'Enterengine',
+				'Enterengine',
+				engine || 'Engine on request',
+				engine || 'Engine on request'
+			),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Cylinders',
+				'Cylinders',
+				'Cylinders'
+			),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Fuel Type',
+				'FuelType',
+				'FuelType',
+				listingFormOptions('FuelType')
+			),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Doors',
+				'Doors',
+				'FuelType',
+				listingFormOptions('FuelType')
+			),
+			listingInput(
+				'lg-col-span-2 padding-0 sm-col-span-4',
+				'Color',
+				'Color',
+				'Color',
+				color,
+				color
+			),
+			listingDropdown('lg-col-span-2 padding-0 sm-col-span-4', 'Seats', 'Seats', 'Seats'),
+			listingDropdown(
+				'lg-col-span-2 padding-0 sm-col-span-4 sm-col-span-4',
+				'City MPG',
+				'CityMPG',
+				'CityMPG',
+				listingFormOptions('CityMPG')
+			),
+			{
+				id: 'Doorstextarea',
+				label: 'Doors',
+				name: 'Doorstextarea',
+				placeholder: 'Vehicle description and inspection notes',
+				required: true,
+				rows: 5,
+				type: 'textarea',
+				value: '',
+				wrapperClass: 'padding-0 col-span-4'
+			}
+		],
+		featureGroups: listingFormFeatureGroups,
+		galleryImages: listingFormGalleryImages,
+		hiddenFields,
+		locationOptions: listingFormMapOptions(address),
+		mapEmbedUrl: profileMapEmbedUrl,
+		mode,
+		previewImage: {
+			alt: 'Car Preview',
+			src: '/assets/images/inner-page/slide-listing-details-5.jpg'
+		},
+		priceLabel,
+		sourceUrl
+	};
+};
+
+const listingFormFieldValue = (form: AuxeroAccountListingFormData, id: string) => {
+	const field = form.detailFields.find(
+		(candidate): candidate is Extract<AuxeroListingFormDetailField, { value: string }> =>
+			candidate.id === id && candidate.type !== 'dropdown'
+	);
+
+	return field?.value ?? '';
+};
+
 const applyDashboardData = (
 	html: string,
 	templateFile: string,
@@ -1536,54 +1861,20 @@ const applyAddListingData = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const context = accountContext(templateFile, options);
-	const editListingId = editListingIdFromRoute(options.routePath);
-	const editListing = context.isAdmin
-		? listInventoryForAdmin().find(
-				(listing) =>
-					listing.id === editListingId ||
-					listing.slug === editListingId ||
-					listing.routePath.endsWith(`/${editListingId}`)
-			)
-		: undefined;
-	const editVehicle = editListing
-		? vehicles.find(
-				(candidate) =>
-					candidate.slug === editListing.slug ||
-					candidate.slug === editListing.id ||
-					editListing.routePath.endsWith(`/${candidate.slug}`)
-			)
-		: undefined;
-	const vehicle = vehicles[0];
-	const title = editListing?.title ?? vehicle.title;
-	const priceLabel = editListing?.priceLabel ?? vehicle.priceLabel;
-	const vin = editListing?.vin ?? vehicle.stockNumber;
-	const mileage = editListing?.mileage ?? km(vehicle.mileage);
-	const engine = editVehicle?.engine ?? vehicle.engine;
-	const color = editVehicle?.exterior ?? vehicle.exterior;
-	const sourceUrl = editVehicle?.sourceUrl ?? vehicle.sourceUrl;
-	const location = editVehicle?.location ?? bohemcarsContact.addressLabel;
-	const adminHeading = editListing ? 'Edit Bohemcars Listing' : 'Add Bohemcars Listing';
+	const form = addListingFormData(context, options);
+	const title = listingFormFieldValue(form, 'title');
+	const vin = listingFormFieldValue(form, 'EnterVIN');
+	const mileage = listingFormFieldValue(form, 'mileage');
+	const engine = listingFormFieldValue(form, 'Enterengine');
+	const color = listingFormFieldValue(form, 'Color');
+	const adminHeading = form.mode === 'create' ? 'Add Bohemcars Listing' : 'Edit Bohemcars Listing';
 	const pageHeading = context.isAdmin ? adminHeading : 'Submit Your Vehicle';
-	const formMode =
-		editListing?.source === 'admin-listing'
-			? 'edit'
-			: editListing?.source === 'static-vehicle'
-				? 'clone-static'
-				: 'create';
-	const hiddenFields = [
-		hiddenInput('actorRole', context.session.role),
-		hiddenInput('role', context.session.role),
-		hiddenInput(
-			'routePath',
-			options.routePath ?? (context.isAdmin ? '/admin/inventory/new' : '/sell-your-car')
-		),
-		hiddenInput('status', editListing?.status ?? 'draft'),
-		editListing?.source === 'admin-listing' ? hiddenInput('listingId', editListing.id) : '',
-		editListing?.source === 'static-vehicle' ? hiddenInput('sourceId', editListing.id) : ''
-	].join('\n');
+	const hiddenFields = form.hiddenFields
+		.map((field) => hiddenInput(field.name, field.value))
+		.join('\n');
 	let next = applyAccountShell(html, templateFile, options)
 		.replaceAll('Add Listings', pageHeading)
-		.replaceAll('Save & Preview', editListing ? 'Save Draft Changes' : 'Save Draft')
+		.replaceAll('Save & Preview', form.mode === 'edit' ? 'Save Draft Changes' : 'Save Draft')
 		.replaceAll('List Now', context.isAdmin ? 'Publish Locally' : 'Submit Draft')
 		.replace(
 			'<a href="#" class="btn btn-line-1 px-24 btn-large font-weight-600">',
@@ -1596,7 +1887,7 @@ const applyAddListingData = (
 		.replaceAll('value="Audi A6 Avant E-Tron"', `value="${escapeHtml(title)}"`)
 		.replaceAll('placeholder="Years"', 'placeholder="Year"')
 		.replaceAll('placeholder="Condition"', 'placeholder="Condition or status"')
-		.replaceAll('placeholder="Enter number"', `placeholder="${escapeHtml(priceLabel)}"`)
+		.replaceAll('placeholder="Enter number"', `placeholder="${escapeHtml(form.priceLabel)}"`)
 		.replaceAll('placeholder="Enter VIN"', `placeholder="${escapeHtml(vin)}"`)
 		.replaceAll('placeholder="Enter mileage"', `placeholder="${escapeHtml(mileage)}"`)
 		.replaceAll(
@@ -1605,31 +1896,40 @@ const applyAddListingData = (
 		)
 		.replaceAll('placeholder="Enter color"', `placeholder="${escapeHtml(color)}"`)
 		.replaceAll('Price ($)*', 'Price (EUR)*')
-		.replaceAll('placeholder="e.g.1000"', `placeholder="${escapeHtml(priceLabel)}"`)
+		.replaceAll('placeholder="e.g.1000"', `placeholder="${escapeHtml(form.priceLabel)}"`)
 		.replaceAll(
 			'placeholder="6205 Peachtree Dunwoody Rd, Atlanta, GA 30328"',
-			`placeholder="${escapeHtml(location)}"`
+			`placeholder="${escapeHtml(form.address)}"`
 		)
 		.replaceAll(
 			'value="6205 Peachtree Dunwoody Rd, Atlanta, GA 30328"',
-			`value="${escapeHtml(location)}"`
+			`value="${escapeHtml(form.address)}"`
 		)
-		.replaceAll('placeholder="Your url"', `placeholder="${escapeHtml(sourceUrl)}"`);
+		.replaceAll('placeholder="Your url"', `placeholder="${escapeHtml(form.sourceUrl)}"`)
+		.replaceAll(
+			'placeholder="Lorem ipsum dolor sit amet, "',
+			'placeholder="Vehicle description and inspection notes"'
+		);
 
 	next = setInputValueByName(next, 'title', title);
-	next = setInputValueByName(next, 'Enternumber', priceLabel);
+	next = setInputValueByName(next, 'Enternumber', form.priceLabel);
 	next = setInputValueByName(next, 'EnterVIN', vin);
 	next = setInputValueByName(next, 'mileage', mileage);
 	next = setInputValueByName(next, 'Enterengine', engine || 'Engine on request');
 	next = setInputValueByName(next, 'Color', color);
-	next = setInputValueByName(next, 'PriceListing', priceLabel);
-	next = setInputValueByName(next, 'Yoururl', sourceUrl);
+	next = setInputValueByName(next, 'PriceListing', form.priceLabel);
+	next = setInputValueByName(next, 'Yoururl', form.sourceUrl);
 
-	next = addClassToFirstFormAfter(next, pageHeading, 'bohemcars-add-listing-form');
+	next = addClassToFirstFormAfter(
+		next,
+		pageHeading,
+		'bohemcars-add-listing-form',
+		` data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-add-listing-form`
+	);
 
 	next = next.replace(
-		'<form action="#" class="bohemcars-add-listing-form" novalidate>',
-		`<form action="#" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${formMode}">\n${hiddenFields}`
+		`<form action="#" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-add-listing-form>`,
+		`<form action="#" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-add-listing-form>\n${hiddenFields}`
 	);
 
 	return replaceDashboardDemoText(next);
@@ -1711,6 +2011,11 @@ export const getAuxeroAccountPasswordFormData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
 ) => passwordFormData(accountContext(templateFile, options));
+
+export const getAuxeroAccountListingFormData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {}
+) => addListingFormData(accountContext(templateFile, options), options);
 
 export const isAccountTemplate = (templateFile: string) =>
 	[

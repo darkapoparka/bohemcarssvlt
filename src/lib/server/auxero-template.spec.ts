@@ -648,6 +648,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(password).toContain('data-bohemcars-password-form');
 		expect(password).not.toContain('themesflat@2026');
 		expect(addListing).toContain('bohemcars-add-listing-form');
+		expect(addListing).toContain('data-bohemcars-add-listing-form');
 		expect(addListing).toContain('data-bohemcars-form-target=".bohemcars-add-listing-form"');
 		expect(addListing).toContain('data-bohemcars-submit-form="true"');
 		expect(addListing).toContain('data-bohemcars-listing-status="draft"');
@@ -656,7 +657,9 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(addListing).toContain("'/api/inventory/listings'");
 		expect(addListing).toContain('Add Bohemcars Listing');
 		expect(addListing).toContain(vehicles[0].title);
+		expect(addListing).toContain('Vehicle description and inspection notes');
 		expect(addListing).not.toContain('6205 Peachtree Dunwoody Rd');
+		expect(addListing).not.toContain('Lorem ipsum');
 	});
 
 	it('renders admin inventory edit forms from the same preserved Auxero add-listing layout', () => {
@@ -673,6 +676,7 @@ describe('Auxero template Bohemcars adapter', () => {
 
 		expect(html).toContain('Edit Bohemcars Listing');
 		expect(html).toContain('data-bohemcars-admin-listing-mode="edit"');
+		expect(html).toContain('data-bohemcars-add-listing-form');
 		expect(html).toContain(`name="listingId" value="${listing.id}"`);
 		expect(html).toContain('value="Bohemcars Managed Edit Draft"');
 		expect(html).toContain('value="44 000 EUR"');

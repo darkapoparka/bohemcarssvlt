@@ -688,9 +688,43 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	expect(adminEditHref).not.toContain('%2F');
 	await expect(adminInventory.locator('.cart-item__remove.action').first()).toBeVisible();
 
+	await page.goto(`${adminEditPath}?role=admin`);
+	await expect(page.locator('body')).toContainText('Edit Bohemcars Listing');
+	const adminEditForm = page.locator('[data-bohemcars-add-listing-form]');
+	await expect(adminEditForm).toBeVisible();
+	await expect(adminEditForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'clone-static');
+	await expect(adminEditForm.locator('input[name="sourceId"]')).toHaveCount(1);
+	await expect(adminEditForm.locator('#carPreviewImage')).toBeVisible();
+	await expect(adminEditForm.locator('.car-gallery-upload__item')).toHaveCount(7);
+	await expect(adminEditForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
+	await expect(adminEditForm.locator('#EnterVIN')).not.toHaveValue('');
+	await expect(adminEditForm.locator('#PriceListing2')).not.toHaveValue('');
+	await expect(adminEditForm.locator('#Doorstextarea')).toHaveAttribute(
+		'placeholder',
+		'Vehicle description and inspection notes'
+	);
+	await expect(adminEditForm).toContainText('Features');
+	await expect(adminEditForm.locator('.form-group')).toHaveCount(25);
+	await expect(page.locator('body')).not.toContainText('Lorem ipsum');
+
 	await page.goto('/admin/inventory/new?role=admin');
 	await expect(page.locator('body')).toContainText('Add Bohemcars Listing');
-	await expect(page.locator('form.bohemcars-add-listing-form')).toBeVisible();
+	const adminNewForm = page.locator('[data-bohemcars-add-listing-form]');
+	await expect(adminNewForm).toBeVisible();
+	await expect(adminNewForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'create');
+	await expect(adminNewForm.locator('input[name="actorRole"]')).toHaveValue('admin');
+	await expect(adminNewForm.locator('#carPreviewImage')).toBeVisible();
+	await expect(adminNewForm.locator('.car-gallery-upload__item')).toHaveCount(7);
+	await expect(adminNewForm.locator('.dashboard-box')).toHaveCount(7);
+	await expect(adminNewForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
+	await expect(adminNewForm.locator('#EnterVIN')).not.toHaveValue('');
+	await expect(adminNewForm.locator('#PriceListing2')).not.toHaveValue('');
+	await expect(adminNewForm.locator('.widget-gg-map iframe')).toBeVisible();
+	await expect(page.locator('.bohemcars-local-form-action')).toHaveCount(2);
+	await page.locator('[data-bohemcars-listing-status="draft"]').click();
+	await expect(adminNewForm.locator('.auxero-form-status')).toHaveText(
+		'Listing draft saved locally for Bohemcars review'
+	);
 
 	await page.goto('/admin/inquiries?role=agent');
 	await expect(page.locator('body')).toContainText('Inquiries & Messages');

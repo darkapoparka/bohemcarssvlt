@@ -523,6 +523,55 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
 	});
 
+	it('can split the admin add-listing form without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('add-listings-2.html', {
+			routePath: 'admin/inventory/new'
+		});
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-add-listing-form',
+			'form'
+		);
+
+		expect(split?.beforeHtml).toContain('Add Bohemcars Listing');
+		expect(split?.beforeHtml).toContain('bohemcars-local-form-action');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('bohemcars-add-listing-form');
+		expect(split?.sectionHtml).toContain('data-bohemcars-admin-listing-mode="create"');
+		expect(split?.sectionHtml).toContain('name="actorRole" value="admin"');
+		expect(split?.sectionHtml).toContain('Gallery');
+		expect(split?.sectionHtml).toContain('Car Details');
+		expect(split?.sectionHtml).toContain('Features');
+		expect(split?.sectionHtml).toContain('Car Price');
+		expect(split?.sectionHtml).toContain('Attachments');
+		expect(split?.sectionHtml).toContain('Vehicle description and inspection notes');
+		expect(split?.sectionHtml).not.toContain('Lorem ipsum');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
+	it('can split the admin edit-listing form without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('add-listings-2.html', {
+			routePath: 'admin/inventory/edit/21779200396408437'
+		});
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-add-listing-form',
+			'form'
+		);
+
+		expect(split?.beforeHtml).toContain('Edit Bohemcars Listing');
+		expect(split?.beforeHtml).toContain('Save Draft');
+		expect(split?.sectionHtml).toContain('data-bohemcars-admin-listing-mode="clone-static"');
+		expect(split?.sectionHtml).toContain('name="sourceId" value="21779200396408437"');
+		expect(split?.sectionHtml).toContain('name="actorRole" value="admin"');
+		expect(split?.sectionHtml).toContain('Vehicle description and inspection notes');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the public agents grid without dropping page chrome', () => {
 		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'agents' });
 		const document = splitAuxeroDocument(html!);
