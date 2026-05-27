@@ -200,6 +200,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 test('inventory supports branded cards, saved favorites, compare, and view toggles', async ({
 	page
 }) => {
+	await page.setViewportSize({ width: 1440, height: 1000 });
 	await page.goto('/inventory');
 
 	await expect(page.getByRole('heading', { name: 'Bohemcars Inventory' })).toBeVisible();
@@ -225,10 +226,18 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await page.goto('/inventory');
 	const refreshedFirstCard = page.locator('[data-bohemcars-slug]').first();
 	const refreshedFirstSlug = await refreshedFirstCard.getAttribute('data-bohemcars-slug');
+	const inventoryContainerBox = await page
+		.locator('section.pb-100 > .container')
+		.first()
+		.boundingBox();
+	expect(inventoryContainerBox?.width ?? 0).toBeGreaterThan(1400);
+	const refreshedFirstCardBox = await refreshedFirstCard.boundingBox();
+	expect(refreshedFirstCardBox?.width ?? 0).toBeGreaterThan(430);
+	expect(refreshedFirstCardBox?.width ?? 0).toBeLessThan(470);
 	const cardImageRatio = await boxRatio(refreshedFirstCard.locator('.card--img'));
 
-	expect(cardImageRatio).toBeGreaterThan(1.25);
-	expect(cardImageRatio).toBeLessThan(1.61);
+	expect(cardImageRatio).toBeGreaterThan(1.31);
+	expect(cardImageRatio).toBeLessThan(1.35);
 	await expect(page.locator('.bohemcars-inventory-toolbar-row')).toBeVisible();
 	await expect(page.locator('.bohemcars-view-toggle .item-menu')).toHaveCount(3);
 	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
@@ -240,8 +249,19 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	).toHaveClass(/grid-cols-3/);
 	await expect(refreshedFirstCard).toHaveClass(/card-box-style-1/);
 	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveClass(/h6/);
+	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveCSS('font-size', '18px');
+	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveCSS('line-height', '25.92px');
 	await expect(refreshedFirstCard.locator('.card-box__price')).toHaveClass(/h6/);
+	await expect(refreshedFirstCard.locator('.card-box__price')).toHaveCSS('font-size', '20px');
+	await expect(refreshedFirstCard.locator('.tag.style2.mb-10')).toHaveCSS('font-size', '16px');
 	await expect(refreshedFirstCard.locator('.compare-details')).toContainText('Compare');
+	await expect(refreshedFirstCard.locator('.compare-details')).toHaveCSS('border-radius', '12px');
+	await refreshedFirstCard.locator('.compare-details').hover();
+	await expect(refreshedFirstCard.locator('.compare-details')).toHaveCSS(
+		'background-color',
+		'rgb(28, 28, 28)'
+	);
+	await expect(refreshedFirstCard.locator('.card--img')).toHaveCSS('transform', 'none');
 	await expect(refreshedFirstCard.locator('.view-details')).toHaveAttribute(
 		'href',
 		new RegExp(`/inventory/${refreshedFirstSlug}$`)
@@ -566,9 +586,17 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('body')).toContainText('Account Dashboard');
 	await expect(page.locator('body')).toContainText('My Favorites');
 	await expect(
-		page.locator('a[href="/sell-your-car"]', { hasText: 'Submit Vehicle' })
+		page.locator('.dashboard-menu-item[href="/sell-your-car"]', { hasText: 'Submit Vehicle' })
 	).toBeVisible();
 	await expect(page.locator('body')).not.toContainText('/admin/inventory/new?role=customer');
+	const accountHeaderCta = page
+		.locator('.header .mobile-hidden-header-button a.btn')
+		.filter({ hasText: 'Submit Vehicle' });
+	await expect(accountHeaderCta).toHaveCount(1);
+	await expect(accountHeaderCta).toHaveAttribute('href', '/sell-your-car');
+	await expect(
+		page.locator('.header .mobile-hidden-header-button a.btn').filter({ hasText: 'Add Listing' })
+	).toHaveCount(0);
 	await expectBohemcarsShell(page);
 	const accountRecent = page.locator('[data-bohemcars-dashboard-recent]');
 	await expect(accountRecent).toBeVisible();
@@ -701,6 +729,11 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await page.goto('/admin?role=admin');
 	await expect(page.locator('body')).toContainText('Admin Dashboard');
 	await expect(page.locator('body')).toContainText('Bohemcars Inventory');
+	const adminHeaderCta = page
+		.locator('.header .mobile-hidden-header-button a.btn')
+		.filter({ hasText: 'Add Listing' });
+	await expect(adminHeaderCta).toHaveCount(1);
+	await expect(adminHeaderCta).toHaveAttribute('href', '/admin/inventory/new');
 	const adminRecent = page.locator('[data-bohemcars-dashboard-recent]');
 	await expect(adminRecent).toBeVisible();
 	await expect(adminRecent).toContainText('Recent Inquiries');
@@ -765,6 +798,11 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/admin/inquiries?role=agent');
 	await expect(page.locator('body')).toContainText('Inquiries & Messages');
+	const agentHeaderCta = page
+		.locator('.header .mobile-hidden-header-button a.btn')
+		.filter({ hasText: 'Inquiries' });
+	await expect(agentHeaderCta).toHaveCount(1);
+	await expect(agentHeaderCta).toHaveAttribute('href', '/admin/inquiries?role=agent');
 	const agentInquiries = page.locator('[data-bohemcars-message-container]');
 	await expect(agentInquiries).toBeVisible();
 	await expect

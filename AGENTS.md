@@ -11,6 +11,8 @@ visually faithful before adding any product-specific refinements.
   controls, use the `car-box` / `menu-tab-style2` pattern with a soft grey fill on hover or active.
 - Do not add global `.btn` overrides. Buttons must use Auxero's template classes, sizing, radius,
   typography, and built-in fill animation unless a route-scoped product reason is documented.
+- Do not add global `.container` overrides. Auxero's container width is part of the template grid
+  rhythm; scope any non-template container sizing to non-Auxero wrappers.
 - Keep hover effects calm: background fill, subtle icon color changes, and existing Auxero button
   fills are acceptable; lift-up transforms, glows, scale, zoom, large shadows, and decorative motion
   are not.

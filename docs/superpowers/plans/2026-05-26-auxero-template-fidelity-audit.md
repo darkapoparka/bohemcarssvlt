@@ -33,7 +33,7 @@
 
 - [x] Keep the fixed Home 05 brand strip at 12 template-style cards unless there is an explicit design decision to replace the whole section.
 - [x] Keep Browse By Type on the template `card-37.jpg` through `card-42.jpg` gallery image family.
-- [ ] Verify featured cards, compare cards, reviews, news, and CTA sections keep the same visible structure as `home-05.html`.
+- [x] Verify featured cards, compare cards, reviews, news, and CTA sections keep the same visible structure as `home-05.html`.
 - [x] Add e2e assertions for section card counts and key image families where prior regressions happened.
 
 ### Task 3: Inventory Listing Fidelity
@@ -44,8 +44,8 @@
 - Modify if needed: `src/lib/server/auxero-template.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] Compare `listing-grid3-columns.html` with `/inventory` for card typography, badge size, meta spacing, price row, compare button, and view details link.
-- [ ] Keep Bohemcars dark inventory styling only if it still follows the template component proportions.
+- [x] Compare `listing-grid3-columns.html` with `/inventory` for card typography, badge size, meta spacing, price row, compare button, and view details link.
+- [x] Keep Bohemcars dark inventory styling only if it still follows the template component proportions.
 - [x] Add e2e assertions for card image ratio, title class, price class, and toolbar visibility.
 
 ### Task 4: Header And Logo Regression Guard
@@ -56,7 +56,7 @@
 - Test: `src/routes/project1.e2e.ts`
 
 - [x] Verify public header uses one white `Sign In` CTA, centered nav, and no public `Add Listing`.
-- [ ] Verify account/admin headers still expose role-appropriate listing actions.
+- [x] Verify account/admin headers still expose role-appropriate listing actions.
 - [x] Keep logo dimensions aligned with header controls at desktop and mobile widths.
 
 ### Task 5: Verification Loop
@@ -120,4 +120,5 @@
 - Account forms checkpoint: `/account/profile` and `/account/password` now render through SvelteKit pages with `AccountProfileForm.svelte` and `AccountPasswordForm.svelte` replacing only the Auxero form blocks while preserving the raw dashboard shell, active sidebar menu, account header, card panels, field classes, modal stack, body classes, and script tail. Browser QA reported correct customer profile/password values, visible avatar/poster/map on profile, empty password fields, no `Lorem ipsum`, no ThemeForest demo credentials, no console errors, and no desktop/mobile horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-profile-password-svelte/`.
 - Admin listing form checkpoint: `/admin/inventory/new` and `/admin/inventory/edit/[id]` now render through SvelteKit pages with `AccountListingForm.svelte` replacing only the Auxero add-listing form block while preserving the raw title/action bar, dashboard shell, active Add Listing menu, Gallery, Car Details, Features, Car Price, Location, Video, Attachments section order, modal stack, body classes, and script tail. Browser QA reported create and clone-static modes, 7 dashboard boxes, 7 gallery items, 25 feature checks, 2 local action buttons, visible map iframe, no `Lorem ipsum`, no console errors, and no desktop/mobile horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-listing-form-svelte/`.
 - Final proposal readiness checkpoint: README, route-source map, QA checklist, sitemap coverage, and visible-copy guardrails were updated for the proposal handoff. Browser QA swept `/`, `/inventory`, `/inventory/21779200396408437`, `/compare`, `/agents`, `/sell-your-car`, `/contact`, `/account?role=customer`, and `/admin?role=admin`, reporting no console errors, no visible demo/template leaks, and no horizontal overflow. Desktop/mobile screenshot matrix saved under `test-results/visual-contract/2026-05-27-final-proposal-readiness/`.
+- Container/header fidelity checkpoint: Removed the broad global `.container` sizing override so Auxero full-page routes use the template 1440px container rhythm again. `/inventory` desktop now renders 450px cards with 4:3 image boxes, matching the normalized `listing-grid3-columns.html` reference typography (`18px` title, `20px` price) and card proportions. Account dashboard header actions are now role-aware: customer shows `Submit Vehicle` to `/sell-your-car`, admin shows `Add Listing` to `/admin/inventory/new`, and agent shows `Inquiries` to `/admin/inquiries?role=agent`. Browser screenshots and DOM summary were saved under `test-results/visual-contract/2026-05-27-container-header-cta/`.
 - Repository publishing is tracked separately from the fidelity audit so this plan stays focused on visual regressions.

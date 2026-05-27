@@ -483,7 +483,13 @@ const replaceAccountDropdown = (html: string, context: AccountContext) =>
 	);
 
 const applyRoleScopedAccountChrome = (html: string, context: AccountContext) => {
-	if (!context.isAdmin || context.session.role !== 'agent') return html;
+	if (!context.isAdmin) {
+		return html
+			.replaceAll('href="/admin/inventory/new"', 'href="/sell-your-car"')
+			.replaceAll('Add Listing', 'Submit Vehicle');
+	}
+
+	if (context.session.role !== 'agent') return html;
 
 	return html
 		.replaceAll('href="/admin/inventory/new"', 'href="/admin/inquiries?role=agent"')
