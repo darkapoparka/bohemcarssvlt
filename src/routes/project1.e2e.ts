@@ -66,6 +66,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeHero.locator('.search-cars__features-grid .form-group')).toHaveCount(8);
 	const homeFeaturedSection = page.locator('[data-bohemcars-home-vehicles]');
 	await expect(homeFeaturedSection.locator('h2')).toHaveText('Bohemcars Vehicles');
+	await expect(homeFeaturedSection.locator('.bohemcars-featured-vehicles__title a')).toHaveCount(0);
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(4);
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toContainText('SUV');
 	const featuredPillRows = await homeFeaturedSection
@@ -81,6 +82,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	const featuredCard = homeFeaturedSection.locator('.card-box-style-1').first();
 	await featuredCard.hover();
 	await expect(featuredCard.locator('.card--img')).toHaveCSS('transform', 'none');
+	await expect(featuredCard.locator('.compare-details')).toHaveCSS(
+		'background-color',
+		'rgb(238, 240, 236)'
+	);
+	await expect(featuredCard.locator('.compare-details')).toHaveCSS('color', 'rgb(28, 28, 28)');
+	await expect(featuredCard.locator('.card-box__price')).toHaveCSS('color', 'rgb(28, 28, 28)');
 	const featuredCarouselDensity = await homeFeaturedSection
 		.locator('.swiper-card-5')
 		.evaluate((carousel) => {
