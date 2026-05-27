@@ -13,6 +13,10 @@ import type {
 	AuxeroUserManagementData,
 	AuxeroUserManagementRow
 } from '$lib/auxero/user-management';
+import type {
+	AuxeroAccountPasswordFormData,
+	AuxeroAccountProfileFormData
+} from '$lib/auxero/account-forms';
 import { bohemcarsAssets, bohemcarsBrand, bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
@@ -198,13 +202,18 @@ const replaceDivContaining = (
 	return replaceDivBlock(html, start, replacement);
 };
 
-const addClassToFirstFormAfter = (html: string, marker: string, className: string) => {
+const addClassToFirstFormAfter = (
+	html: string,
+	marker: string,
+	className: string,
+	attributes = ''
+) => {
 	const markerIndex = html.indexOf(marker);
 	const formStart = html.indexOf('<form action="#">', markerIndex);
 
 	if (formStart < 0) return html;
 
-	return `${html.slice(0, formStart)}<form action="#" class="${className}" novalidate>${html.slice(
+	return `${html.slice(0, formStart)}<form action="#" class="${className}" novalidate${attributes}>${html.slice(
 		formStart + '<form action="#">'.length
 	)}`;
 };
@@ -1267,6 +1276,69 @@ const messageContainer = (context: AccountContext) => {
 </div>`;
 };
 
+const accountNameParts = (context: AccountContext) => {
+	const [firstName, ...lastParts] = context.session.name.split(' ');
+
+	return {
+		firstName: firstName || bohemcarsBrand.name,
+		lastName: lastParts.join(' ') || context.roleLabel
+	};
+};
+
+const profileMapEmbedUrl =
+	'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97101.88872869895!2d-74.22688511715344!3d40.487336736141906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1689125037376!5m2!1svi!2s';
+
+const profileFormData = (context: AccountContext): AuxeroAccountProfileFormData => {
+	const { firstName, lastName } = accountNameParts(context);
+
+	return {
+		address: bohemcarsContact.addressLabel,
+		avatarImage: accountAvatarByRole[context.session.role],
+		birthDate: '1994-03-22',
+		company: bohemcarsBrand.name,
+		description: `${bohemcarsBrand.tagline}. ${bohemcarsContact.appointmentNote}.`,
+		email: context.session.email,
+		firstName,
+		gender: 'Male',
+		lastName,
+		mapEmbedUrl: profileMapEmbedUrl,
+		mapOptions: [
+			bohemcarsContact.addressLabel,
+			`${bohemcarsContact.addressLabel} - appointment area`,
+			`${bohemcarsContact.addressLabel} - import handoff`
+		],
+		marketplacePhone: bohemcarsContact.marketplacePhoneLabel,
+		phone: bohemcarsContact.primaryPhoneLabel,
+		posterImage: bohemcarsAssets.footerImage,
+		role: context.session.role,
+		roleLabel: context.roleLabel,
+		roleNote: `Signed in locally as ${context.roleLabel}. Role-aware pages use this profile context.`,
+		socialLinks: [
+			{
+				icon: '/assets/icons/input-facebook.svg',
+				id: 'Facebook',
+				name: 'Facebook',
+				value: bohemcarsContact.facebookHref
+			},
+			{ icon: '/assets/icons/input-skype.svg', id: 'skype', name: 'skype', value: '' },
+			{ icon: '/assets/icons/input-x.svg', id: 'xUrl', name: 'xUrl', value: '' },
+			{ icon: '/assets/icons/input-telegram.svg', id: 'telegram', name: 'telegram', value: '' },
+			{ icon: '/assets/icons/input-instagram.svg', id: 'instagram', name: 'instagram', value: '' },
+			{
+				icon: '/assets/icons/input-youtube.svg',
+				id: 'youtube',
+				name: 'youtube',
+				value: bohemcarsContact.youtubeHref
+			}
+		]
+	};
+};
+
+const passwordFormData = (context: AccountContext): AuxeroAccountPasswordFormData => ({
+	email: context.session.email,
+	role: context.session.role
+});
+
 const applyDashboardData = (
 	html: string,
 	templateFile: string,
@@ -1367,37 +1439,44 @@ const applyProfileData = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const context = accountContext(templateFile, options);
-	const [firstName, ...lastParts] = context.session.name.split(' ');
-	const lastName = lastParts.join(' ') || context.roleLabel;
+	const profile = profileFormData(context);
 	let next = applyAccountShell(html, templateFile, options)
 		.replaceAll('Become Dealer', 'Account Role')
-		.replaceAll('Become A Dealer', context.roleLabel)
+		.replaceAll('Become A Dealer', profile.roleLabel)
 		.replaceAll(
 			'Your current account type is normal. If you want to become a dealer, please click on button Become a Dealer ',
-			`Signed in locally as ${context.roleLabel}. Role-aware pages use this profile context.`
+			profile.roleNote
 		)
 		.replaceAll('Infomation', 'Information')
-		.replaceAll('/assets/images/avatar/avatar-10.jpg', accountAvatarByRole[context.session.role])
-		.replaceAll('/assets/images/avatar/avatar-11.jpg', bohemcarsAssets.footerImage)
-		.replaceAll('value="John"', `value="${escapeHtml(firstName)}"`)
-		.replaceAll('value="Smith"', `value="${escapeHtml(lastName)}"`)
+		.replaceAll('/assets/images/avatar/avatar-10.jpg', profile.avatarImage)
+		.replaceAll('/assets/images/avatar/avatar-11.jpg', profile.posterImage)
+		.replaceAll('value="John"', `value="${escapeHtml(profile.firstName)}"`)
+		.replaceAll('value="Smith"', `value="${escapeHtml(profile.lastName)}"`)
 		.replace(
 			/<textarea placeholder="Your Message\*"[\s\S]*?<\/textarea>/,
-			`<textarea placeholder="Profile notes" rows="4" tabindex="5" name="message" class="message textarea-primary text-secondary" id="message" required>${escapeHtml(bohemcarsBrand.tagline)}. ${escapeHtml(bohemcarsContact.appointmentNote)}.</textarea>`
+			`<textarea placeholder="Profile notes" rows="4" tabindex="5" name="message" class="message textarea-primary text-secondary" id="message" required>${escapeHtml(profile.description)}</textarea>`
 		)
-		.replaceAll('value="123  456  7890 "', `value="${bohemcarsContact.primaryPhoneLabel}"`)
-		.replaceAll(`value="${bohemcarsContact.emailLabel}"`, `value="${context.session.email}"`)
 		.replaceAll('placeholder="Sales Phone*"', 'placeholder="Marketplace Phone*"')
 		.replaceAll(
 			'value="http://www.facebook.com/avitex"',
-			`value="${bohemcarsContact.facebookHref}"`
+			`value="${profile.socialLinks[0]?.value ?? ''}"`
 		)
 		.replace(
 			'placeholder="6205 Peachtree Dunwoody Rd, Atlanta, GA 30328" value="" required',
-			`placeholder="${escapeHtml(bohemcarsContact.addressLabel)}" value="${escapeHtml(bohemcarsContact.addressLabel)}" required`
+			`placeholder="${escapeHtml(profile.address)}" value="${escapeHtml(profile.address)}" required`
 		);
 
-	next = addClassToFirstFormAfter(next, 'My profile', 'bohemcars-profile-form');
+	next = setInputValueByName(next, 'Phone', profile.phone);
+	next = setInputValueByName(next, 'SalesPhone', profile.marketplacePhone);
+	next = setInputValueByName(next, 'EmailAddress', profile.email);
+	next = setInputValueByName(next, 'Company', profile.company);
+	next = setInputValueByName(next, 'youtube', profile.socialLinks[5]?.value ?? '');
+	next = addClassToFirstFormAfter(
+		next,
+		'My profile',
+		'bohemcars-profile-form',
+		' data-bohemcars-profile-form'
+	);
 	next = next.replace(
 		'</form>',
 		`<div class="flex justify-end mt-24">
@@ -1415,12 +1494,18 @@ const applyPasswordData = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const context = accountContext(templateFile, options);
+	const password = passwordFormData(context);
 	let next = applyAccountShell(html, templateFile, options)
-		.replaceAll(`value="${bohemcarsContact.emailLabel}|"`, `value="${context.session.email}"`)
+		.replaceAll(`value="${bohemcarsContact.emailLabel}|"`, `value="${password.email}"`)
 		.replaceAll('value="themesflat@2026"', 'value=""')
 		.replaceAll('placeholder="Password"', 'placeholder="Password"');
 
-	next = addClassToFirstFormAfter(next, 'Change Password', 'bohemcars-password-form');
+	next = addClassToFirstFormAfter(
+		next,
+		'Change Password',
+		'bohemcars-password-form',
+		' data-bohemcars-password-form'
+	);
 
 	return replaceDashboardDemoText(next);
 };
@@ -1616,6 +1701,16 @@ export const getAuxeroUserManagementData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
 ) => userManagementData(accountContext(templateFile, options));
+
+export const getAuxeroAccountProfileFormData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {}
+) => profileFormData(accountContext(templateFile, options));
+
+export const getAuxeroAccountPasswordFormData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {}
+) => passwordFormData(accountContext(templateFile, options));
 
 export const isAccountTemplate = (templateFile: string) =>
 	[

@@ -639,9 +639,13 @@ describe('Auxero template Bohemcars adapter', () => {
 		});
 
 		expect(profile).toContain('bohemcars-profile-form');
+		expect(profile).toContain('data-bohemcars-profile-form');
 		expect(profile).toContain('customer@bohemcars.local');
 		expect(profile).toContain('Save Locally');
+		expect(profile).toContain('0888899911');
+		expect(profile).toContain('value="Bohemcars"');
 		expect(password).toContain('bohemcars-password-form');
+		expect(password).toContain('data-bohemcars-password-form');
 		expect(password).not.toContain('themesflat@2026');
 		expect(addListing).toContain('bohemcars-add-listing-form');
 		expect(addListing).toContain('data-bohemcars-form-target=".bohemcars-add-listing-form"');

@@ -601,6 +601,49 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
+	await page.goto('/account/profile?role=customer');
+	await expect(page.locator('body')).toContainText('My profile');
+	const accountProfile = page.locator('[data-bohemcars-profile-form]');
+	await expect(accountProfile).toBeVisible();
+	await expect(
+		page.locator('.dashboard-menu-item.active[data-bohemcars-menu-item="profile"]')
+	).toBeVisible();
+	await expect(accountProfile.locator('#avatarPreview')).toBeVisible();
+	await expect(accountProfile.locator('#posterPreview')).toBeVisible();
+	await expect(accountProfile.locator('#first_name')).toHaveValue('Bohemcars');
+	await expect(accountProfile.locator('#last_name')).toHaveValue('Customer');
+	await expect(accountProfile.locator('#EmailAddress')).toHaveValue('customer@bohemcars.local');
+	await expect(accountProfile.locator('#Phone')).toHaveValue('+359 893 588 680');
+	await expect(accountProfile.locator('#SalesPhone')).toHaveValue('0888899911');
+	await expect(accountProfile.locator('#Company')).toHaveValue('Bohemcars');
+	await expect(accountProfile.locator('#message')).toHaveValue(/Canada-sourced vehicles/);
+	await expect(accountProfile.locator('.widget-gg-map iframe')).toBeVisible();
+	await expect(page.locator('body')).not.toContainText('Lorem ipsum');
+	await expect(page.locator('body')).not.toContainText('themesflat@gmail.com');
+	await accountProfile.locator('button[type="submit"]').click();
+	await expect(accountProfile.locator('.auxero-form-status')).toHaveText(
+		'Profile saved locally for Bohemcars Customer'
+	);
+
+	await page.goto('/account/password?role=customer');
+	await expect(page.locator('body')).toContainText('Change Password');
+	const accountPassword = page.locator('[data-bohemcars-password-form]');
+	await expect(accountPassword).toBeVisible();
+	await expect(
+		page.locator('.dashboard-menu-item.active[data-bohemcars-menu-item="password"]')
+	).toBeVisible();
+	await expect(accountPassword.locator('#Email')).toHaveValue('customer@bohemcars.local');
+	await expect(accountPassword.locator('#OldPassword')).toHaveValue('');
+	await expect(accountPassword.locator('#NewPassword')).toHaveValue('');
+	await expect(accountPassword.locator('#RetypeNewPassword')).toHaveValue('');
+	await accountPassword.locator('#OldPassword').fill('Bohemcars2026!');
+	await accountPassword.locator('#NewPassword').fill('Bohemcars2026!');
+	await accountPassword.locator('#RetypeNewPassword').fill('Bohemcars2026!');
+	await accountPassword.locator('button[type="submit"]').click();
+	await expect(accountPassword.locator('.auxero-form-status')).toHaveText(
+		'Password change recorded locally'
+	);
+
 	await page.goto('/account/listings?role=customer');
 	await expect(page.locator('body')).toContainText('My Listings');
 	const accountListings = page.locator('[data-bohemcars-account-listings]');

@@ -481,6 +481,48 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
 	});
 
+	it('can split the account profile form without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('my-profile.html', { routePath: 'account/profile' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-profile-form',
+			'form'
+		);
+
+		expect(split?.beforeHtml).toContain('My profile');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('bohemcars-profile-form');
+		expect(split?.sectionHtml).toContain('customer@bohemcars.local');
+		expect(split?.sectionHtml).toContain('Save Locally');
+		expect(split?.sectionHtml).toContain('Canada-sourced vehicles');
+		expect(split?.sectionHtml).toContain('0888899911');
+		expect(split?.sectionHtml).not.toContain('Lorem ipsum');
+		expect(split?.sectionHtml).not.toContain('themesflat@gmail.com');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
+	it('can split the account password form without dropping dashboard chrome', () => {
+		const html = renderAuxeroTemplate('change-password.html', {
+			routePath: 'account/password'
+		});
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-password-form',
+			'form'
+		);
+
+		expect(split?.beforeHtml).toContain('Change Password');
+		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
+		expect(split?.sectionHtml).toContain('bohemcars-password-form');
+		expect(split?.sectionHtml).toContain('customer@bohemcars.local');
+		expect(split?.sectionHtml).not.toContain('themesflat@2026');
+		expect(split?.afterHtml).toContain('CardModal');
+		expect(split?.afterHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+	});
+
 	it('can split the public agents grid without dropping page chrome', () => {
 		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'agents' });
 		const document = splitAuxeroDocument(html!);

@@ -1183,6 +1183,35 @@ npm run build
 
 Browser DOM QA verified `/admin/users?role=admin` on desktop and mobile: one Svelte `data-bohemcars-users-table`, 6 user rows, 1 admin row, 3 lead rows, preserved 6-column headers, 6 message links, 6 inquiry/review links, role notes present, seeded customer and Canada import lead content, no `%2F` encoded links, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-users-svelte/`.
 
+### Task 7Q: Migrate Account Profile And Password Forms
+
+**Checkpoint completed 2026-05-27:**
+
+- `/account/profile` and `/account/password` now use SvelteKit `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`.
+- The pages preserve the Auxero dashboard shell, role-aware sidebar/header, active menu state, profile card stack, password card, upload previews, social inputs, map block, modal stack, body classes, and local script tail.
+- The profile and password forms are rendered by `AccountProfileForm.svelte` and `AccountPasswordForm.svelte` inside focused template page components, using typed shared data from `src/lib/auxero/account-forms.ts`.
+- `src/lib/server/auxero-account-data.ts` now exposes typed profile/password data and marks the raw fallback forms with `data-bohemcars-profile-form` and `data-bohemcars-password-form` for safe splitting.
+- `src/routes/project1.e2e.ts` freezes the account forms contract: visible Svelte forms, active profile/password menu items, seeded customer values, empty password fields, profile submit status, password submit status, preserved map/avatar/poster assets, and no demo text leakage.
+- `src/lib/server/auxero-page.spec.ts` guards that both forms can be split without dropping dashboard chrome, modals, or runtime script tail.
+
+Verification passed with:
+
+```bash
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountProfileForm.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountPasswordForm.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountProfileTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/lib/components/account/AccountPasswordTemplatePage.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/profile/+page.svelte
+npx @sveltejs/mcp svelte-autofixer src/routes/account/password/+page.svelte
+npm run lint
+npm run check
+npm run test:unit -- --run
+npx playwright test src/routes/project1.e2e.ts
+npm run build
+```
+
+Browser QA verified `/account/profile?role=customer` and `/account/password?role=customer` on desktop and mobile: correct form markers, active menu states, customer field values, visible profile avatar/poster/map, empty password fields, no `Lorem ipsum`, no `themesflat@gmail.com`, no `themesflat@2026`, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-profile-password-svelte/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
