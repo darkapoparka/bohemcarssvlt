@@ -15,6 +15,30 @@ export type AuxeroSellCarFormData = {
 	submitLabel: string;
 };
 
+export type AuxeroSellCarStep = {
+	text: string;
+	title: string;
+};
+
+export const auxeroSellSteps: AuxeroSellCarStep[] = [
+	{
+		title: 'Send Vehicle Details',
+		text: 'Share VIN, mileage, photos, equipment, documents, and your expected price.'
+	},
+	{
+		title: 'Review History And Condition',
+		text: 'Bohemcars reviews the information and asks for anything needed before advising.'
+	},
+	{
+		title: 'Choose The Sale Path',
+		text: 'Discuss a direct offer, assisted sale, or publishing the car as a client vehicle.'
+	},
+	{
+		title: 'Complete The Handoff',
+		text: 'Finalize documents, appointment timing, payment path, and vehicle handover.'
+	}
+];
+
 export const sellCarFormData: AuxeroSellCarFormData = {
 	fields: [
 		{

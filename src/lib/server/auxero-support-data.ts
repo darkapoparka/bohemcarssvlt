@@ -7,6 +7,8 @@ import {
 } from '$lib/auxero/calculator';
 import { auxeroFaqGroups, supportFaqs, type AuxeroFaq } from '$lib/auxero/faqs';
 import { auxeroReviewCards, type AuxeroReviewCard } from '$lib/auxero/reviews';
+import { auxeroSellSteps } from '$lib/auxero/sell-your-car';
+import { auxeroServiceCards, type AuxeroSupportService } from '$lib/auxero/services';
 import { auxeroTermsSections } from '$lib/auxero/terms';
 import {
 	bohemcarsAssets,
@@ -19,13 +21,6 @@ import { brands, vehicles } from '$lib/data/vehicles';
 import { getBlogDetailOrFallback, listBlogPosts } from './blog-state';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 
-type SupportService = {
-	description: string;
-	href: string;
-	image: string;
-	title: string;
-};
-
 const supportTemplates = new Set([
 	'about-us.html',
 	'blog-details-1.html',
@@ -37,70 +32,6 @@ const supportTemplates = new Set([
 	'services-center.html',
 	'terms.html'
 ]);
-
-const serviceCards: SupportService[] = [
-	{
-		title: 'Import From Canada',
-		description:
-			'Shortlist vehicles with traceable history, clear photos, and realistic landed-cost expectations before purchase.',
-		href: '/contact',
-		image: '/assets/bohemcars/services/import-canada-service.png'
-	},
-	{
-		title: 'Evaluate A Listing',
-		description:
-			'Review VIN, mileage, history reports, equipment, photos, and seller context before you commit.',
-		href: '/compare',
-		image: '/assets/bohemcars/services/evaluate-link-service.png'
-	},
-	{
-		title: 'Sell Your Car',
-		description:
-			'Send vehicle details, documents, photos, and expectations so Bohemcars can advise on the right sale path.',
-		href: '/sell-your-car',
-		image: '/assets/bohemcars/services/sell-car-service.png'
-	},
-	{
-		title: 'Documents And Registration',
-		description:
-			'Coordinate import documents, technical preparation, registration steps, and handoff details.',
-		href: '/services',
-		image: bohemcarsAssets.footerImage
-	},
-	{
-		title: 'Appointment Viewings',
-		description:
-			'Book prepared viewings so the vehicle, documents, and consultant context are ready before arrival.',
-		href: '/contact',
-		image: bohemcarsAssets.hero
-	},
-	{
-		title: 'Model Comparison',
-		description:
-			'Compare price, mileage, equipment, history, running costs, and import timing across several candidates.',
-		href: '/compare',
-		image: '/assets/bohemcars/cta/import-canada-banner-v2.png'
-	}
-];
-
-const sellSteps = [
-	{
-		title: 'Send Vehicle Details',
-		text: 'Share VIN, mileage, photos, equipment, documents, and your expected price.'
-	},
-	{
-		title: 'Review History And Condition',
-		text: 'Bohemcars reviews the information and asks for anything needed before advising.'
-	},
-	{
-		title: 'Choose The Sale Path',
-		text: 'Discuss a direct offer, assisted sale, or publishing the car as a client vehicle.'
-	},
-	{
-		title: 'Complete The Handoff',
-		text: 'Finalize documents, appointment timing, payment path, and vehicle handover.'
-	}
-];
 
 const escapeHtml = (value: string | number) =>
 	String(value)
@@ -234,7 +165,7 @@ const replaceFromFirstSection = (html: string, body: string) => {
 };
 
 const serviceCard = (
-	service: SupportService,
+	service: AuxeroSupportService,
 	index: number
 ) => `<div class="service-box wow fadeInUp" data-wow-delay="0.${(index % 3) + 1}s">
 	<div class="mb-22 radius-16 overflow-hidden">
@@ -344,7 +275,7 @@ const applySellYourCarData = (html: string) => {
 	<div class="container wow fadeInUp" data-wow-delay="0.1s">
 		<div class="flex justify-center mb-40"><h2>How It Works</h2></div>
 		<div class="sell-your-car-box-wrapper">
-			${sellSteps
+			${auxeroSellSteps
 				.map(
 					(step, index) => `<div class="sell-your-car-box ${index === 1 ? 'active-step' : ''}">
 						<p class="number">${index + 1}</p>
@@ -435,7 +366,7 @@ const applyServicesData = (html: string) => {
 		<h2 class="text-center capitalize mb-12">Featured Services</h2>
 		<p class="mb-40 text-center">Keep the buying, import, and sale decision practical from the first message.</p>
 		<div class="grid grid-cols-3 lg-grid-cols-2 md-grid-cols-1 gap-30">
-			${serviceCards.map(serviceCard).join('\n')}
+			${auxeroServiceCards.map(serviceCard).join('\n')}
 		</div>
 	</div>
 </section>
@@ -489,7 +420,7 @@ const applyServicesData = (html: string) => {
 						<div>
 							<p class="mb-8">Service</p>
 							<select class="select-style-2" name="service">
-								${serviceCards.map((service) => `<option>${escapeHtml(service.title)}</option>`).join('\n')}
+								${auxeroServiceCards.map((service) => `<option>${escapeHtml(service.title)}</option>`).join('\n')}
 							</select>
 						</div>
 						<div><p class="mb-8">Vehicle Or VIN</p><input class="input-large" name="vehicle" type="text" placeholder="Vehicle link or VIN"></div>

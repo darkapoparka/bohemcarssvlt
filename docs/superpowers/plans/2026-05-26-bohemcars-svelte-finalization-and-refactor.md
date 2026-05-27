@@ -960,6 +960,12 @@ npm run build
 
 Browser DOM QA verified the services page on desktop and mobile: 6 service boxes, one `services-center-info` panel, one Svelte `services-center-form` card, 5 `input-large` controls, one select with 6 options, footer chrome, Auxero services body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-26-services-form-svelte/`.
 
+**Data boundary refreshed 2026-05-27:**
+
+- `src/lib/auxero/services.ts` now owns typed service card records, and `serviceFormData.serviceOptions` derives from those card titles so the raw service grid and Svelte service form stay aligned.
+- `src/lib/auxero/sell-your-car.ts` now owns typed sell-your-car workflow steps, and `src/lib/server/auxero-support-data.ts` renders those records instead of keeping local raw-adapter data copies.
+- Focused unit coverage locks the six service cards, service form option alignment, four sell workflow steps, and sell form submit label before the raw template adapter renders them.
+
 ### Task 7E: Migrate Sell Your Car Form
 
 **Checkpoint completed 2026-05-26:**
