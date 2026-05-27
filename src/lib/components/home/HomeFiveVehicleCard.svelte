@@ -6,7 +6,7 @@
 		$props();
 </script>
 
-<div class="card-box card-box-style-1" data-bohemcars-slug={vehicle.slug}>
+<div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug={vehicle.slug}>
 	<div class="top">
 		<p class={`${vehicle.highlightClass} highlight text-white`}>{vehicle.highlightText}</p>
 		<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->

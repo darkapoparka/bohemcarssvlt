@@ -13,7 +13,7 @@
 </script>
 
 {#if variant === 'list'}
-	<div class="card-box card-box-style-9" data-bohemcars-slug={card.slug}>
+	<div class="card-box card-box-style-9 bohemcars-no-image-zoom" data-bohemcars-slug={card.slug}>
 		<div class="top">
 			<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
 			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
@@ -84,7 +84,7 @@
 	</div>
 {:else}
 	<div
-		class="card-box card-box-style-1 wow fadeIn"
+		class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn"
 		data-wow-delay={card.delay}
 		data-bohemcars-slug={card.slug}
 	>

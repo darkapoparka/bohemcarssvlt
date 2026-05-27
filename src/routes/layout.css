@@ -66,6 +66,17 @@ img {
 	max-width: 100%;
 }
 
+.bohemcars-no-image-zoom.card-box.active .card--img,
+.bohemcars-no-image-zoom.card-box:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-1.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-1:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-8.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-8:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-9.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-9:hover .card--img {
+	transform: none !important;
+}
+
 .container {
 	width: min(calc(100% - 32px), 1320px);
 	max-width: none;

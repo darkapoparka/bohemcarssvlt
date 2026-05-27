@@ -5,7 +5,7 @@
 	let { card }: { card: AuxeroFavoriteVehicleCard } = $props();
 </script>
 
-<div class="card-box card-box-style-1" data-bohemcars-slug={card.slug}>
+<div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug={card.slug}>
 	<div class="top">
 		<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
 		<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->

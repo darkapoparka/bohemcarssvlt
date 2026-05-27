@@ -64,11 +64,23 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		3
 	);
 	await expect(homeHero.locator('.search-cars__features-grid .form-group')).toHaveCount(8);
-	const homeFeaturedSection = page.locator('section', { hasText: 'new Bohemcars vehicles' });
+	const homeFeaturedSection = page.locator('[data-bohemcars-home-vehicles]');
+	await expect(homeFeaturedSection.locator('h2')).toHaveText('Bohemcars Vehicles');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(4);
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toContainText('SUV');
+	const featuredPillRows = await homeFeaturedSection
+		.locator('.bohemcars-vehicle-pill')
+		.evaluateAll(
+			(pills) => new Set(pills.map((pill) => Math.round(pill.getBoundingClientRect().top))).size
+		);
+	expect(featuredPillRows).toBe(1);
 	await expect(homeFeaturedSection.locator('.swiper-card-5')).toBeVisible();
 	await expect(homeFeaturedSection.locator('.swiper-slide .card-box-style-1')).toHaveCount(6);
 	await expect(homeFeaturedSection.locator('ul.tag.style2')).toHaveCount(0);
 	await expect(homeFeaturedSection.locator('.pagination-swiper-card-5')).toHaveCount(1);
+	const featuredCard = homeFeaturedSection.locator('.card-box-style-1').first();
+	await featuredCard.hover();
+	await expect(featuredCard.locator('.card--img')).toHaveCSS('transform', 'none');
 	const featuredCarouselDensity = await homeFeaturedSection
 		.locator('.swiper-card-5')
 		.evaluate((carousel) => {
@@ -341,6 +353,12 @@ test('compare and consultants render branded buyer flows without login', async (
 	await expect(agentsGrid.locator('.sale-agent-box')).toHaveCount(3);
 	await expect(agentsGrid.locator('.sale-agent-box.active')).toHaveCount(1);
 	await expect(agentsGrid.locator('.sale-agent-title')).toHaveCount(3);
+	const firstAgentCard = agentsGrid.locator('.sale-agent-box').first();
+	await firstAgentCard.hover();
+	await expect(firstAgentCard.locator('.sale-agent-title')).toHaveCSS(
+		'text-decoration-line',
+		'none'
+	);
 	await expect(agentsGrid.locator('.sale-agent-social')).toHaveCount(3);
 	await expect(agentsGrid.locator('.contact li')).toHaveCount(6);
 	await expect(agentsGrid.locator('.sale-agent-title').first()).toHaveAttribute(
