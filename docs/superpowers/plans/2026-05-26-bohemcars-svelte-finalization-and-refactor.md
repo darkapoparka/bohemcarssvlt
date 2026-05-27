@@ -324,6 +324,8 @@ The migration must not start by redesigning the site. The first success conditio
 
   Featured vehicles fidelity refresh, 2026-05-27: the first post-hero section title/CTA now follows the Home 05 `title-section mb-40`, `h2.capitalize`, and `btn btn-line-style-2 effect-line-primary btn-large hover-fill-white` pattern while keeping the Bohemcars Vehicles copy. The section also exposes the requested body-style pills directly under the title using Auxero `menu-tab-style2` / `car-box` sizing with only a narrow grey fill hover/active state, no shadows, transforms, or image zoom. Browser/Playwright evidence saved under `test-results/visual-contract/2026-05-27-home-pills-hover/`.
 
+  Home hover fidelity refresh, 2026-05-27: vehicle cards, inventory raw-adapter cards, favorite cards, and article cards now use the `bohemcars-no-image-zoom` guard so Auxero card images stay still while the template compare button fill animation remains intact on the compare control itself. Brand cards and budget/vehicle pills keep the Auxero sizing/classes but use the project-approved soft grey fill hover instead of green border-only emphasis, and Home 05 compare-pair cards use a scoped `bohemcars-calm-hover` guard to prevent lift/shadow motion. Verification passed with Svelte autofixer on touched Svelte files, lint, check, full unit tests, project Playwright, build, Browser QA, direct Playwright hover checks, and desktop/mobile screenshots under `test-results/visual-contract/2026-05-27-home-hover-fidelity/`.
+
   Hero/search checkpoint: `src/lib/components/home/HomeFiveHero.svelte` now renders the Home 05 `page-title-style-4` hero, Swiper background slides, synced text slides, tab row, primary search filters, advanced filter panel, and feature checks from typed `HomeFiveHeroData`. The route splits the exact `<!-- page-title -->` block before `New Vehicles`, preserving the Auxero first-viewport class structure while moving hero/search data shaping into `$lib/auxero/home-five.ts`.
 
   Reviews checkpoint: `src/lib/components/home/HomeFiveReviewsSection.svelte` now renders the Home 05 `Client Reviews` carousel from typed `HomeFiveReview` rows in `$lib/auxero/home-five.ts`. The split intentionally follows the post-processed Home 05 closing-comment markers, preserving the Auxero `swiper-testimonior`, `testimonior-box`, star icon, avatar, and pagination structure while keeping the section order `budget -> reviews -> news`.
@@ -1272,6 +1274,14 @@ npm run build
 ```
 
 Browser DOM QA verified `/account/listings?role=customer` and `/admin/inventory?role=admin` on desktop and mobile: one Svelte `data-bohemcars-account-listings` table per page, 2 seeded customer submission rows in the clean browser state, 5 admin inventory rows, preserved 6-column headers, expected edit/message/remove action counts, clean admin edit hrefs with no `%2F` encoding, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-listings-svelte/`.
+
+**Listings state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-listings-state.ts` now owns admin inventory rows, customer sell-your-car submission rows, headers, pagination labels, footer copy, and route-friendly `getAccountListingsData`.
+- `/account/listings` and `/admin/inventory` page loaders import the server-only listings state directly, while the raw `my-listings.html` compatibility adapter reuses the same state to render its fallback table.
+- `src/lib/server/auxero-account-data.ts` now keeps only Auxero account-listing table markup helpers for raw compatibility instead of shaping account/admin listings data inline.
+- Focused unit coverage locks admin inventory action hrefs without `%2F`, customer submission action kinds, header/pagination shape, and helper alignment.
+- Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and hover-fidelity screenshots captured in the same 2026-05-27 verification pass.
 
 ### Task 7P: Migrate Admin Users Table
 

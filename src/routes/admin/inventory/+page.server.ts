@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroAccountListingsData } from '$lib/server/auxero-account-data';
+import { getAccountListingsData } from '$lib/server/account-listings-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -27,7 +27,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterListingsHtml: listingsSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeListingsHtml: listingsSlot.beforeHtml,
-		listings: getAuxeroAccountListingsData('my-listings.html', renderOptions),
+		listings: getAccountListingsData('my-listings.html', renderOptions),
 		pageDocument
 	};
 };

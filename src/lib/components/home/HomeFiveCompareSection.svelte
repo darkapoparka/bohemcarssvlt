@@ -32,7 +32,7 @@
 			<div class="swiper-wrapper">
 				{#each pairs as pair (`${pair.left.slug}-${pair.right.slug}`)}
 					<div class="swiper-slide">
-						<div class="card-box-style-4">
+						<div class="card-box-style-4 bohemcars-calm-hover">
 							<div class="image">
 								<img class="w-full" src={pair.left.image} alt={pair.left.title} />
 								<img class="w-full" src={pair.right.image} alt={pair.right.title} />
@@ -106,3 +106,10 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.bohemcars-calm-hover:hover {
+		box-shadow: none;
+		transform: none;
+	}
+</style>

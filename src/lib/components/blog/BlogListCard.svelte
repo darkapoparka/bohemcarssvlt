@@ -5,7 +5,10 @@
 	let { post }: { post: BlogPost } = $props();
 </script>
 
-<a href={resolve(`/blog/${post.slug}`)} class="post-style-6 overflow-hidden">
+<a
+	href={resolve(`/blog/${post.slug}`)}
+	class="post-style-6 bohemcars-no-image-zoom overflow-hidden"
+>
 	<div class="image">
 		<img class="post--img flex" src={post.image} alt={post.title} />
 	</div>

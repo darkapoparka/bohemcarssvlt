@@ -5,7 +5,7 @@
 	let { cards }: { cards: HomeFiveBrandCard[] } = $props();
 </script>
 
-<section class="bg-white py-100">
+<section class="bohemcars-brand-strip bg-white py-100">
 	<div class="container">
 		<div class="title-section wow fadeInDown mb-42" data-wow-delay="0.1s">
 			<h2 class="">Explore Our Brands</h2>
@@ -49,3 +49,11 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.bohemcars-brand-strip :global(.out-brand-2:hover),
+	.bohemcars-brand-strip :global(.out-brand-2.active) {
+		background-color: #eef0ec !important;
+		box-shadow: inset 0 0 0 1px #d6dbd1 !important;
+	}
+</style>

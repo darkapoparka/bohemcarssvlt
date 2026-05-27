@@ -41,3 +41,12 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	section :global(.menu-tab-style2 .car-box:hover),
+	section :global(.menu-tab-style2 .car-box.active) {
+		border-color: #d6dbd1 !important;
+		background-color: #eef0ec !important;
+		color: #1c1c1c !important;
+	}
+</style>

@@ -165,7 +165,7 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
 	const monthly = `${vehicle.monthly.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR/mo`;
 
-	return `<div class="card-box card-box-style-1 wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
+	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
 			<p class="${highlightClass(vehicle, index)} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
 			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
@@ -206,7 +206,7 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 const listCard = (vehicle: Vehicle, index: number) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
 
-	return `<div class="card-box card-box-style-9" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
+	return `<div class="card-box card-box-style-9 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
 			<p class="${highlightClass(vehicle, index)} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
 			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>

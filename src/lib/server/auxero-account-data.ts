@@ -1,5 +1,6 @@
 import { agents } from '$lib/data/agents';
 import type {
+	AuxeroAccountListingAction,
 	AuxeroAccountListingRow,
 	AuxeroAccountListingsData
 } from '$lib/auxero/account-listings';
@@ -27,7 +28,7 @@ import { resolveBohemcarsSession, type BohemcarsRole } from './auth';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 import { listInquiriesForRole } from './inquiries';
 import { listMessagesForRole } from './messages';
-import { listInventoryForAdmin, listVehicleSubmissions } from './inventory';
+import { listInventoryForAdmin } from './inventory';
 import { listManagedUsers } from './users';
 import { getBohemcarsGarageState } from './garage';
 import {
@@ -37,6 +38,7 @@ import {
 	accountDashboardStatsData,
 	type AccountContext
 } from './account-dashboard-state';
+import { accountListingsData } from './account-listings-state';
 import { accountMessageThreadData } from './account-message-state';
 
 type DashboardMenuItem = {
@@ -465,193 +467,123 @@ const statCards = (context: AccountContext) => {
 </div>`;
 };
 
-const inventoryListingRows = (source: Vehicle[]): AuxeroAccountListingRow[] =>
-	source.map((vehicle) => ({
-		actions: [
-			{
-				ariaLabel: `Edit ${vehicle.title}`,
-				href: `/admin/inventory/edit/${encodeURIComponent(vehicle.slug)}`,
-				icon: '/assets/images/dashboard/AddListing.svg',
-				kind: 'edit-inventory',
-				label: 'Edit Listing'
-			},
-			{
-				ariaLabel: `Remove ${vehicle.title}`,
-				icon: '/assets/icons/trash.svg',
-				kind: 'remove',
-				label: 'Remove Listing'
-			}
-		],
-		columns: [vehicle.brand, String(vehicle.year), vehicle.transmission, vehicle.fuel],
-		description: vehicle.description || bohemcarsContact.appointmentNote,
-		href: `/inventory/${encodeURIComponent(vehicle.slug)}`,
-		id: vehicle.slug,
-		image: vehicle.image,
-		kind: 'inventory',
-		priceLabel: vehicle.priceLabel,
-		title: vehicle.title
-	}));
+const rowAction = (row: AuxeroAccountListingRow, kind: AuxeroAccountListingAction['kind']) =>
+	row.actions.find((action) => action.kind === kind);
 
-const submissionListingRows = (context: AccountContext): AuxeroAccountListingRow[] =>
-	listVehicleSubmissions().map((submission) => ({
-		actions: [
-			{
-				ariaLabel: `Edit ${submission.title}`,
-				href: '/sell-your-car',
-				icon: '/assets/images/dashboard/AddListing.svg',
-				kind: 'edit-submission',
-				label: 'Edit Submission'
-			},
-			{
-				ariaLabel: 'Message Bohemcars',
-				href: '/account/messages',
-				icon: '/assets/images/dashboard/Messages.svg',
-				kind: 'message',
-				label: 'Message'
-			}
-		],
-		columns: [
-			submission.contactPhone,
-			submission.expectedPrice,
-			submission.mileage,
-			submission.status
-		],
-		description: submission.message,
-		id: submission.id,
-		image: accountAvatarByRole[context.session.role],
-		kind: 'submission',
-		title: submission.title,
-		titleMeta: submission.vin
-	}));
+const inventoryCartItem = (row: AuxeroAccountListingRow) => {
+	const url = row.href ?? `/inventory/${encodeURIComponent(row.id)}`;
+	const edit = rowAction(row, 'edit-inventory');
+	const remove = rowAction(row, 'remove');
 
-const accountListingsData = (
-	context: AccountContext,
-	source: Vehicle[] = vehicles.slice(0, 5)
-): AuxeroAccountListingsData =>
-	context.isAdmin
-		? {
-				footerText: `Showing ${source.length} of ${vehicles.length} Bohemcars entries`,
-				headers: ['Car', 'Brand', 'Year', 'Transmission', 'Fuel Type', 'Action'],
-				isSubmissions: false,
-				pagination: ['1', '2', '3'],
-				rows: inventoryListingRows(source)
-			}
-		: {
-				footerText: `Showing ${listVehicleSubmissions().length} Bohemcars sell-your-car submissions`,
-				headers: ['Submission', 'Contact', 'Expected Price', 'Mileage', 'Status', 'Action'],
-				isSubmissions: true,
-				rows: submissionListingRows(context)
-			};
-
-const cartItem = (
-	vehicle: Vehicle,
-	editHref: string | ((vehicle: Vehicle) => string)
-) => `<div class="cart-item" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
-	<a href="/inventory/${encodeURIComponent(vehicle.slug)}" class="cart-item__product">
+	return `<div class="cart-item" data-bohemcars-slug="${escapeHtml(row.id)}">
+	<a href="${escapeHtml(url)}" class="cart-item__product">
 		<div class="cart-item__image">
-			<img src="${escapeHtml(vehicle.image)}" alt="${escapeHtml(vehicle.title)}">
+			<img src="${escapeHtml(row.image)}" alt="${escapeHtml(row.title)}">
 		</div>
 		<div class="cart-item__name">
-			<p class="h4 clamp-1 clamp mb-8">${escapeHtml(vehicle.title)}</p>
-			<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(vehicle.description || bohemcarsContact.appointmentNote)}</p>
-			<p class="h5">${escapeHtml(vehicle.priceLabel)}</p>
+			<p class="h4 clamp-1 clamp mb-8">${escapeHtml(row.title)}</p>
+			<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(row.description)}</p>
+			${row.priceLabel ? `<p class="h5">${escapeHtml(row.priceLabel)}</p>` : ''}
 		</div>
 	</a>
-	<div class="cart-item__price"><span class="price">${escapeHtml(vehicle.brand)}</span></div>
-	<div class="cart-item__year"><span>${vehicle.year}</span></div>
-	<div class="cart-item__total"><span>${escapeHtml(vehicle.transmission)}</span></div>
-	<div><span>${escapeHtml(vehicle.fuel)}</span></div>
+	<div class="cart-item__price"><span class="price">${escapeHtml(row.columns[0] ?? '')}</span></div>
+	<div class="cart-item__year"><span>${escapeHtml(row.columns[1] ?? '')}</span></div>
+	<div class="cart-item__total"><span>${escapeHtml(row.columns[2] ?? '')}</span></div>
+	<div><span>${escapeHtml(row.columns[3] ?? '')}</span></div>
 	<div class="cart-item__action">
-		<a href="${typeof editHref === 'function' ? editHref(vehicle) : editHref}" class="hover-fill-white cart-item__edit action" aria-label="Edit ${escapeHtml(vehicle.title)}">
-			<img src="/assets/images/dashboard/AddListing.svg" alt="edit">
-			<p class="tooltip">Edit Listing</p>
-		</a>
-		<div class="hover-fill-white cart-item__remove action" role="button" tabindex="0" aria-label="Remove ${escapeHtml(vehicle.title)}">
-			<img src="/assets/icons/trash.svg" alt="remove">
-			<p class="tooltip">Remove Listing</p>
-		</div>
+		${
+			edit
+				? `<a href="${escapeHtml(edit.href ?? '#')}" class="hover-fill-white cart-item__edit action" aria-label="${escapeHtml(edit.ariaLabel)}">
+			<img src="${escapeHtml(edit.icon)}" alt="edit">
+			<p class="tooltip">${escapeHtml(edit.label)}</p>
+		</a>`
+				: ''
+		}
+		${
+			remove
+				? `<div class="hover-fill-white cart-item__remove action" role="button" tabindex="0" aria-label="${escapeHtml(remove.ariaLabel)}">
+			<img src="${escapeHtml(remove.icon)}" alt="remove">
+			<p class="tooltip">${escapeHtml(remove.label)}</p>
+		</div>`
+				: ''
+		}
 	</div>
 </div>`;
+};
 
-const cartWrapper = (source: Vehicle[], context: AccountContext) => {
-	const editHref = context.isAdmin
-		? (vehicle: Vehicle) => `/admin/inventory/edit/${encodeURIComponent(vehicle.slug)}`
-		: '/sell-your-car';
-
-	return `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings>
+const inventoryCartWrapper = (
+	data: AuxeroAccountListingsData
+) => `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings>
 	<div class="cart-header">
-		<div class="font-weight-600">Car</div>
-		<div class="font-weight-600">Brand</div>
-		<div class="font-weight-600">Year</div>
-		<div class="font-weight-600">Transmission</div>
-		<div class="font-weight-600">Fuel Type</div>
-		<div class="font-weight-600">Action</div>
+		${data.headers.map((header) => `<div class="font-weight-600">${escapeHtml(header)}</div>`).join('\n')}
 	</div>
 	<div class="cart-items">
-		${source.map((vehicle) => cartItem(vehicle, editHref)).join('\n')}
+		${data.rows.map(inventoryCartItem).join('\n')}
 	</div>
 	<div class="divider w-full mb-20"></div>
 	<div class="flex justify-between items-center flex-wrap gap-12 pagination-bottom" id="pagination-bottom">
 		<ul class="pagination">
-			<li><a href="#" class="pagination__link active">1</a></li>
-			<li><a href="#" class="pagination__link">2</a></li>
-			<li><a href="#" class="pagination__link">3</a></li>
+			${(data.pagination ?? ['1']).map((item, index) => `<li><a href="#" class="pagination__link ${index === 0 ? 'active' : ''}">${escapeHtml(item)}</a></li>`).join('\n')}
 		</ul>
-		<p class="text-secondary">Showing ${source.length} of ${vehicles.length} Bohemcars entries</p>
+		<p class="text-secondary">${escapeHtml(data.footerText)}</p>
 	</div>
 </div>`;
-};
 
-const submissionCartWrapper = (context: AccountContext) => {
-	const submissions = listVehicleSubmissions();
+const submissionCartItem = (row: AuxeroAccountListingRow) => {
+	const edit = rowAction(row, 'edit-submission');
+	const message = rowAction(row, 'message');
 
-	return `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings data-bohemcars-submissions-table>
-	<div class="cart-header">
-		<div class="font-weight-600">Submission</div>
-		<div class="font-weight-600">Contact</div>
-		<div class="font-weight-600">Expected Price</div>
-		<div class="font-weight-600">Mileage</div>
-		<div class="font-weight-600">Status</div>
-		<div class="font-weight-600">Action</div>
-	</div>
-	<div class="cart-items">
-		${submissions
-			.map(
-				(
-					submission
-				) => `<div class="cart-item" data-bohemcars-submission-id="${escapeHtml(submission.id)}">
+	return `<div class="cart-item" data-bohemcars-submission-id="${escapeHtml(row.id)}">
 			<div class="cart-item__product">
 				<div class="cart-item__image">
-					<img src="${accountAvatarByRole[context.session.role]}" alt="${escapeHtml(submission.title)}">
+					<img src="${escapeHtml(row.image)}" alt="${escapeHtml(row.title)}">
 				</div>
 				<div class="cart-item__name">
-					<p class="h4 clamp-1 clamp mb-8">${escapeHtml(submission.title)}</p>
-					<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(submission.message)}</p>
-					<p class="h5">${escapeHtml(submission.vin)}</p>
+					<p class="h4 clamp-1 clamp mb-8">${escapeHtml(row.title)}</p>
+					<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(row.description)}</p>
+					${row.titleMeta ? `<p class="h5">${escapeHtml(row.titleMeta)}</p>` : ''}
 				</div>
 			</div>
-			<div class="cart-item__price"><span class="price">${escapeHtml(submission.contactPhone)}</span></div>
-			<div class="cart-item__year"><span>${escapeHtml(submission.expectedPrice)}</span></div>
-			<div class="cart-item__total"><span>${escapeHtml(submission.mileage)}</span></div>
-			<div><span>${escapeHtml(submission.status)}</span></div>
+			<div class="cart-item__price"><span class="price">${escapeHtml(row.columns[0] ?? '')}</span></div>
+			<div class="cart-item__year"><span>${escapeHtml(row.columns[1] ?? '')}</span></div>
+			<div class="cart-item__total"><span>${escapeHtml(row.columns[2] ?? '')}</span></div>
+			<div><span>${escapeHtml(row.columns[3] ?? '')}</span></div>
 			<div class="cart-item__action">
-				<a href="/sell-your-car" class="hover-fill-white cart-item__edit action" aria-label="Edit ${escapeHtml(submission.title)}">
-					<img src="/assets/images/dashboard/AddListing.svg" alt="edit">
-					<p class="tooltip">Edit Submission</p>
-				</a>
-				<a href="/account/messages" class="hover-fill-white cart-item__edit action" aria-label="Message Bohemcars">
-					<img src="/assets/images/dashboard/Messages.svg" alt="message">
-					<p class="tooltip">Message</p>
-				</a>
+				${
+					edit
+						? `<a href="${escapeHtml(edit.href ?? '#')}" class="hover-fill-white cart-item__edit action" aria-label="${escapeHtml(edit.ariaLabel)}">
+					<img src="${escapeHtml(edit.icon)}" alt="edit">
+					<p class="tooltip">${escapeHtml(edit.label)}</p>
+				</a>`
+						: ''
+				}
+				${
+					message
+						? `<a href="${escapeHtml(message.href ?? '#')}" class="hover-fill-white cart-item__edit action" aria-label="${escapeHtml(message.ariaLabel)}">
+					<img src="${escapeHtml(message.icon)}" alt="message">
+					<p class="tooltip">${escapeHtml(message.label)}</p>
+				</a>`
+						: ''
+				}
 			</div>
-		</div>`
-			)
-			.join('\n')}
+		</div>`;
+};
+
+const submissionCartWrapper = (
+	data: AuxeroAccountListingsData
+) => `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings data-bohemcars-submissions-table>
+	<div class="cart-header">
+		${data.headers.map((header) => `<div class="font-weight-600">${escapeHtml(header)}</div>`).join('\n')}
+	</div>
+	<div class="cart-items">
+		${data.rows.map(submissionCartItem).join('\n')}
 	</div>
 	<div class="divider w-full mb-20"></div>
-	<p class="text-secondary">Showing ${submissions.length} Bohemcars sell-your-car submissions</p>
+	<p class="text-secondary">${escapeHtml(data.footerText)}</p>
 </div>`;
-};
+
+const cartWrapper = (data: AuxeroAccountListingsData) =>
+	data.isSubmissions ? submissionCartWrapper(data) : inventoryCartWrapper(data);
 
 const userRows = (): UserRow[] =>
 	listManagedUsers().map((user) => ({
@@ -1407,7 +1339,7 @@ const applyDashboardData = (
 		next,
 		context.isAdmin ? 'Bohemcars Inventory' : 'My Listings',
 		'<div class="cart-wrapper">',
-		context.isAdmin ? cartWrapper(vehicles.slice(0, 5), context) : submissionCartWrapper(context)
+		cartWrapper(accountListingsData(context))
 	);
 	next = replaceDivContaining(
 		next,
@@ -1574,7 +1506,7 @@ const applyListingsData = (
 		next,
 		'Search by keyword',
 		'<div class="cart-wrapper">',
-		context.isAdmin ? cartWrapper(vehicles.slice(0, 5), context) : submissionCartWrapper(context)
+		cartWrapper(accountListingsData(context))
 	);
 
 	return replaceDashboardDemoText(next);

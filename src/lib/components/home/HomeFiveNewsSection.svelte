@@ -36,7 +36,7 @@
 				<div class="col-lg-6 md-mb-30">
 					<a
 						href={resolve(`/blog/${featured.slug}`)}
-						class="post-style-2 radius-none overflow-hidden"
+						class="post-style-2 radius-none bohemcars-no-image-zoom overflow-hidden"
 					>
 						<img class="post--img flex" src={featured.image} alt={featured.title} />
 						<div class="content">
@@ -55,7 +55,9 @@
 					{#each secondaryPosts as post, index (post.slug)}
 						<a
 							href={resolve(`/blog/${post.slug}`)}
-							class={index === 0 ? 'post-style-3 mb-20' : 'post-style-3'}
+							class={index === 0
+								? 'post-style-3 bohemcars-no-image-zoom mb-20'
+								: 'post-style-3 bohemcars-no-image-zoom'}
 						>
 							<div class="post--img">
 								<img class="flex" src={post.image} alt={post.title} />

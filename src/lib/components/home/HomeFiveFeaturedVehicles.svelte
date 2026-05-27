@@ -135,9 +135,9 @@
 
 	.bohemcars-vehicle-pill:hover,
 	.bohemcars-vehicle-pill.active {
-		border-color: #d6dbd1;
-		background: #eef0ec;
-		color: #1c1c1c;
+		border-color: #d6dbd1 !important;
+		background: #eef0ec !important;
+		color: #1c1c1c !important;
 	}
 
 	.bohemcars-vehicle-pill a {
