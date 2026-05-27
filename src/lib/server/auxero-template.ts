@@ -23,12 +23,11 @@ import {
 	applyDetailData,
 	applyInventoryData,
 	getAuxeroListingRuntimeData,
-	inventoryTemplateForView,
-	resolveInventoryView,
 	type AuxeroRenderOptions
 } from './auxero-listing-data';
 import { applyHome05TemplateData, applyHomeTemplateData } from './auxero-home-data';
 import { applySupportTemplateData, isSupportTemplate } from './auxero-support-data';
+import { inventoryTemplateForView, resolveInventoryView } from './inventory-state';
 
 const templateModules = import.meta.glob('../../../.template-ref/*.html', {
 	query: '?raw',

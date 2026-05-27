@@ -430,31 +430,26 @@ The migration must not start by redesigning the site. The first success conditio
 - Modify: `src/lib/components/detail/AuxeroVehicleDetailStaticContent.svelte`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Add failing inventory card assertions before migration**
+- [x] **Step 1: Add failing inventory card assertions before migration**
 
   Assert the current raw-template inventory page has visible filter button, sort select, three-card rhythm, image ratio, title, price, compare button, and details link.
 
   Inventory content checkpoint: `/inventory` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`, replacing only the generated inventory content block with `AuxeroInventoryContent.svelte` and `AuxeroInventoryVehicleCard.svelte`. The temporary legacy endpoint file has been removed after the SvelteKit route was verified. The test now guards the 3-column, dense 4-column, and half-map view contracts before the rest of the inventory page is migrated.
 
-- [ ] **Step 2: Move inventory filtering into typed server load**
+- [x] **Step 2: Move inventory filtering into typed server load**
 
-  `src/routes/inventory/+page.server.ts` should return serializable data:
+  Inventory state extraction checkpoint: `src/lib/server/inventory-state.ts` now owns
+  inventory view resolution, template mapping, query param aliases, filter normalization, and
+  sorting. `src/routes/inventory/+page.server.ts` imports that server module directly, while
+  `src/lib/server/auxero-listing-data.ts` reuses the same state for the temporary raw Auxero
+  compatibility shell. Unit coverage in `src/lib/server/inventory-state.spec.ts` locks view
+  aliases, filter aliases, and sorted selected vehicles.
 
-  ```ts
-  import type { PageServerLoad } from './$types';
-  import { filterVehicles, sortVehicles } from '$lib/server/inventory';
-
-  export const load: PageServerLoad = ({ url }) => {
-  	const filters = Object.fromEntries(url.searchParams);
-  	const sorted = sortVehicles(filterVehicles(filters), filters.sort);
-
-  	return {
-  		filters,
-  		view: url.searchParams.get('view') ?? 'grid',
-  		vehicles: sorted
-  	};
-  };
-  ```
+  Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`,
+  `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`. Browser DOM QA covered
+  `/inventory`, `/inventory?view=4`, `/inventory?view=map`, and a filtered BMW/Petrol lowest-price
+  route with no console errors or horizontal overflow. Desktop/mobile screenshots were saved under
+  `test-results/visual-contract/2026-05-27-inventory-state-server-module/`.
 
 - [x] **Step 3: Render inventory with keyed Auxero vehicle cards**
 

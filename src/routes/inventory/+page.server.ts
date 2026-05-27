@@ -4,7 +4,7 @@ import {
 	getInventoryState,
 	inventoryTemplateForView,
 	resolveInventoryView
-} from '$lib/server/auxero-listing-data';
+} from '$lib/server/inventory-state';
 import { renderAuxeroPageDocument, splitAuxeroDivBlockByMarker } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
