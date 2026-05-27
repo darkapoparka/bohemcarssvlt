@@ -1108,6 +1108,15 @@ npm run build
 
 Browser DOM QA verified the blog detail page on desktop and mobile: one Svelte `innerpage__content md-mb-30` article column, one `innerpage__sidebar`, one post image, one quote block, 2 previous/next links, 2 related post cards, the Bohemcars comment form success state, preserved Auxero blog detail body class, no console errors, and no mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-blog-detail-svelte/`.
 
+**Blog state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/blog-state.ts` owns the public blog list, detail lookup, related-post selection, and deterministic raw-template fallback.
+- `/blog` and `/blog/[slug]` import the shared server state module directly; the detail route still returns a 404 for unknown slugs instead of falling back to the first article.
+- `src/lib/auxero/blog-detail.ts` now only shapes Auxero detail content from already-resolved blog state, keeping data lookup out of the visual adapter.
+- `src/lib/server/auxero-support-data.ts` reuses the same state for raw `blog-grid-style-1.html` and `blog-details-1.html` compatibility rendering.
+- Unit and Playwright coverage now lock blog listing order, detail lookup, fallback behavior, related posts, comment form behavior, and the `/blog/missing-post` 404.
+- Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and screenshots for `/blog`, `/blog/vnos-ot-kanada-proverka`, raw `blog-details-1.html`, and `/blog/missing-post` under `test-results/visual-contract/2026-05-27-blog-state-server-module/`.
+
 ### Task 7K: Migrate FAQ Accordions
 
 **Checkpoint completed 2026-05-27:**

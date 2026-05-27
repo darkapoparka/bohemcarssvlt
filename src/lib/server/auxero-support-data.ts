@@ -14,8 +14,9 @@ import {
 	bohemcarsContact,
 	bohemcarsConsultants
 } from '$lib/data/bohemcars';
-import { getPostBySlug, posts, type BlogPost } from '$lib/data/blog';
+import type { BlogPost } from '$lib/data/blog';
 import { brands, vehicles } from '$lib/data/vehicles';
+import { getBlogDetailOrFallback, listBlogPosts } from './blog-state';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 
 type SupportService = {
@@ -743,6 +744,7 @@ const blogCard = (
 </a>`;
 
 const applyBlogListData = (html: string) => {
+	const posts = listBlogPosts();
 	const body = `<section class="pb-100">
 	<div class="container"><h2>Bohemcars Blog</h2></div>
 	<div class="tf-spacing-style3"></div>
@@ -760,13 +762,13 @@ const applyBlogListData = (html: string) => {
 	return replaceBodyAfterBreadcrumb(html, body);
 };
 
-const relatedPosts = (post: BlogPost) =>
-	posts.filter((item) => item.slug !== post.slug).slice(0, 3);
-
 const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) => {
-	const slug = options.routePath?.split('/').filter(Boolean).pop() ?? posts[0]?.slug;
-	const post = getPostBySlug(slug ?? '') ?? posts[0];
-	const related = relatedPosts(post);
+	const slug = options.routePath?.split('/').filter(Boolean).pop();
+	const detailState = getBlogDetailOrFallback(slug);
+
+	if (!detailState) return html;
+
+	const { post, related } = detailState;
 	const firstRelated = related[0] ?? post;
 	const secondRelated = related[1] ?? post;
 	const body = `<section class="blog-details-banner">

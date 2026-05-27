@@ -605,6 +605,9 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(blogCommentForm.locator('.auxero-form-status')).toHaveText(
 		'Comment saved locally for Bohemcars review'
 	);
+	const missingBlogResponse = await page.goto('/blog/missing-post');
+	expect(missingBlogResponse?.status()).toBe(404);
+	await expect(page.locator('body')).toContainText('Blog post not found');
 
 	await page.goto('/services');
 	await expect(page.locator('.service-box')).toHaveCount(6);

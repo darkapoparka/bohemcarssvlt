@@ -1,8 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { posts } from '$lib/data/blog';
+import { listBlogPosts } from '$lib/server/blog-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const posts = listBlogPosts();
 	const { pageDocument, slot: blogSlot } = renderAuxeroPageSlot(
 		'blog-grid-style-1.html',
 		{

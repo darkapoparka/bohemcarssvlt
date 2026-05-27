@@ -222,6 +222,7 @@ Backend/auth modules:
 
 - `src/lib/server/auth.ts`
 - `src/lib/server/agent-detail-state.ts`
+- `src/lib/server/blog-state.ts`
 - `src/lib/server/db.ts`
 - `src/lib/server/compare-state.ts`
 - `src/lib/server/inventory-state.ts`
