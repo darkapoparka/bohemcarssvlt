@@ -815,6 +815,14 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Browser smoke screenshots for `/`, `/inventory`, and `/inventory/[slug]` at desktop and mobile were saved under `test-results/visual-contract/2026-05-27-remove-legacy-route-files/`; `report.json` recorded no console errors, no page errors, no non-200 statuses, and no horizontal overflow.
 
+**Admin agents route checkpoint completed 2026-05-27:**
+
+- Added a protected `/admin/agents` SvelteKit page route so the planned agent-management surface no longer depends on the raw catch-all template endpoint.
+- Reused the existing Auxero `sale-agents.html` shell and `AgentsTemplatePage`/`AuxeroAgentsGrid` components, adding typed managed-agent metadata and actions while preserving the consultant card classes, image structure, social row, contact controls, and calm Auxero button styling.
+- Updated the route-source contract so `/admin/agents` maps to `sale-agents.html` instead of the generic dashboard family.
+- Verification passed with Svelte autofixer on the touched agent components and route page, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser smoke screenshots for `/admin/agents?role=admin` at desktop and mobile were saved under `test-results/visual-contract/2026-05-27-admin-agents-svelte-route/`; `report.json` recorded 3 cards, 3 status rows, 3 lead links, 3 message links, no console errors, no page errors, and no horizontal overflow.
+
 ### Task 7A: Migrate Agents Listing Page
 
 **Checkpoint completed 2026-05-26:**

@@ -21,6 +21,7 @@ export const productRouteSources: ProductRouteSource[] = [
 	{ route: '/compare', source: 'compare.html', notes: 'Buyer comparison' },
 	{ route: '/agents', source: 'sale-agents.html', notes: 'Consultant list' },
 	{ route: '/agents/[slug]', source: 'sale-agents-details.html', notes: 'Consultant profile' },
+	{ route: '/admin/agents', source: 'sale-agents.html', notes: 'Admin agent management grid' },
 	{ route: '/sell-your-car', source: 'sell-your-car.html', notes: 'Sell-car intake' },
 	{ route: '/services', source: 'services-center.html', notes: 'Services overview' },
 	{ route: '/contact', source: 'contact-us.html', notes: 'Contact page' },

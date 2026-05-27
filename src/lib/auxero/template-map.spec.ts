@@ -17,6 +17,7 @@ describe('productRouteSources', () => {
 		expect(sourceForProductRoute('/agents')).toBe('sale-agents.html');
 		expect(sourceForProductRoute('/agents/bohemcars-import')).toBe('sale-agents-details.html');
 		expect(sourceForProductRoute('/account/messages')).toBe('dashboard.html');
+		expect(sourceForProductRoute('/admin/agents')).toBe('sale-agents.html');
 		expect(sourceForProductRoute('/admin/inventory/new')).toBe('dashboard.html');
 	});
 

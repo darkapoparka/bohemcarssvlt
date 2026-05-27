@@ -8,15 +8,17 @@
 		afterAgentsHtml,
 		beforeAgentsHtml,
 		cards,
+		management = false,
 		pageDocument
 	}: {
 		afterAgentsHtml: string;
 		beforeAgentsHtml: string;
 		cards: AuxeroAgentCard[];
+		management?: boolean;
 		pageDocument: AuxeroPageDocument;
 	} = $props();
 </script>
 
 <AuxeroPageShell {pageDocument} beforeHtml={beforeAgentsHtml} afterHtml={afterAgentsHtml}>
-	<AuxeroAgentsGrid {cards} />
+	<AuxeroAgentsGrid {cards} {management} />
 </AuxeroPageShell>

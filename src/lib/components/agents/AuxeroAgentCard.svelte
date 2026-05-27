@@ -35,6 +35,14 @@
 				href={resolve('/agents/[slug]', { slug: card.slug })}>{card.name}</a
 			>
 			<p class="text-secondary text-sm">{card.title}</p>
+			{#if card.management}
+				<p class="text-secondary mt-4 text-sm" data-bohemcars-agent-status={card.management.status}>
+					{card.management.statusText}
+				</p>
+				<p class="text-secondary mt-4 text-sm" data-bohemcars-agent-note={card.slug}>
+					{card.management.note}
+				</p>
+			{/if}
 		</div>
 
 		<ul class="contact">
@@ -50,4 +58,17 @@
 			</li>
 		</ul>
 	</div>
+
+	{#if card.management}
+		<div class="mt-16 flex flex-wrap gap-8">
+			<a
+				href={resolve(card.management.assignedLeadsHref)}
+				class="btn btn-small btn-primary-3 font-weight-600">{card.management.assignedLeadsLabel}</a
+			>
+			<a
+				href={resolve(card.management.messagesHref)}
+				class="btn btn-small btn-line-style-2 font-weight-600">Messages</a
+			>
+		</div>
+	{/if}
 </div>

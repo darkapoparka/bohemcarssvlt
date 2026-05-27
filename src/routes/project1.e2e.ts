@@ -901,7 +901,19 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto('/admin/agents?role=admin');
 	await expect(page.locator('body')).toContainText('Bohemcars Agent Management');
-	await expect(page.locator('[data-bohemcars-agent-management="true"]')).toBeVisible();
+	const adminAgents = page.locator('[data-bohemcars-agent-management="true"]');
+	await expect(adminAgents).toBeVisible();
+	await expect(adminAgents.locator('.sale-agent-box')).toHaveCount(3);
+	await expect(adminAgents.locator('[data-bohemcars-agent-status="active"]')).toHaveCount(3);
+	await expect(adminAgents.locator('a[href*="/admin/inquiries?role=admin"]')).toHaveCount(3);
+	await expect(adminAgents.locator('a[href*="/admin/messages?role=admin"]')).toHaveCount(3);
+	await expect(adminAgents).toContainText('open leads');
+
+	const forbiddenAgents = await page.goto('/admin/agents?role=customer');
+	expect(forbiddenAgents?.status()).toBe(403);
+	await expect(page.locator('body')).toContainText(
+		'Bohemcars account role cannot access this route'
+	);
 
 	await page.goto('/admin/users?role=admin');
 	await expect(page.locator('body')).toContainText('User Management');
