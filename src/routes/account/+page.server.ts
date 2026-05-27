@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroDashboardRecentData } from '$lib/server/auxero-account-data';
+import { getAccountDashboardRecentData } from '$lib/server/account-dashboard-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -24,6 +24,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeRecentHtml: recentSlot.beforeHtml,
 		pageDocument,
-		recent: getAuxeroDashboardRecentData('dashboard.html', renderOptions)
+		recent: getAccountDashboardRecentData('dashboard.html', renderOptions)
 	};
 };

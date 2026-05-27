@@ -1225,6 +1225,7 @@ Browser DOM QA verified the account and admin dashboard roots on desktop and mob
 - `/account` and `/admin` still render the same Svelte dashboard recent component data, but that data no longer originates inside the raw adapter.
 - Unit coverage now locks route activity resolution, customer/admin stat identities, recent activity headings/content, helper alignment, and invalid-date fallback behavior.
 - Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and desktop/mobile screenshots for `/account?role=customer` and `/admin?role=admin` under `test-results/visual-contract/2026-05-27-account-dashboard-state-module/`.
+- Route boundary refresh, 2026-05-28: `/account` and `/admin` now import `getAccountDashboardRecentData` directly from `account-dashboard-state.ts`; the raw adapter keeps only compatibility rendering for `dashboard.html`. A route architecture spec guards against reintroducing `auxero-account-data` as the SvelteKit dashboard data source.
 
 ### Task 7N: Migrate Account/Admin Message Threads
 
@@ -1261,6 +1262,7 @@ Browser DOM QA verified `/account/messages`, `/admin/messages`, and `/admin/inqu
 - `/account/messages`, `/admin/messages`, and `/admin/inquiries` still feed the same `MessageThreadContainer.svelte` data shape, but the thread state no longer originates inside the raw adapter.
 - Unit coverage now locks customer contacts, customer thread context, admin inquiry threads, agent-scoped admin messaging, helper alignment, and absence of old demo message/contact leakage.
 - Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and screenshots for `/account/messages?role=customer`, `/admin/messages?role=admin`, and `/admin/inquiries?role=agent` under `test-results/visual-contract/2026-05-27-account-message-state-module/`.
+- Route boundary refresh, 2026-05-28: `/account/messages`, `/admin/messages`, and `/admin/inquiries` now import `getAccountMessageThreadData` directly from `account-message-state.ts`; the raw adapter remains the compatibility renderer for `message.html`. A route architecture spec locks those route imports to the server state module.
 
 ### Task 7O: Migrate Account Listings And Admin Inventory Tables
 

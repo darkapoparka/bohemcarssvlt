@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroMessageThreadData } from '$lib/server/auxero-account-data';
+import { getAccountMessageThreadData } from '$lib/server/account-message-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -24,6 +24,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeMessageHtml: messageSlot.beforeHtml,
 		pageDocument,
-		thread: getAuxeroMessageThreadData('message.html', renderOptions)
+		thread: getAccountMessageThreadData('message.html', renderOptions)
 	};
 };
