@@ -3,11 +3,7 @@ import type {
 	AuxeroAccountListingRow,
 	AuxeroAccountListingsData
 } from '$lib/auxero/account-listings';
-import type {
-	AuxeroMessageBubble,
-	AuxeroMessageContact,
-	AuxeroMessageThreadData
-} from '$lib/auxero/messages';
+import type { AuxeroMessageThreadData } from '$lib/auxero/messages';
 import type {
 	AuxeroUserManagementData,
 	AuxeroUserManagementRow
@@ -39,9 +35,9 @@ import {
 	accountContext,
 	accountDashboardRecentData,
 	accountDashboardStatsData,
-	formatDashboardDate,
 	type AccountContext
 } from './account-dashboard-state';
+import { accountMessageThreadData } from './account-message-state';
 
 type DashboardMenuItem = {
 	badge?: number;
@@ -50,8 +46,6 @@ type DashboardMenuItem = {
 	id: string;
 	label: string;
 };
-
-type Conversation = Omit<AuxeroMessageContact, 'active'>;
 
 type UserRow = {
 	avatarRole: BohemcarsRole;
@@ -890,102 +884,6 @@ const favoriteGrid = (context: AccountContext) => {
 </div>`;
 };
 
-const conversations = (context: AccountContext): Conversation[] => {
-	const records = context.isAdmin
-		? listInquiriesForRole(context.session.role === 'agent' ? 'agent' : 'admin').map(
-				(inquiry, index) => ({
-					avatar: accountAvatarByRole[index === 1 ? 'agent' : 'customer'],
-					badge: inquiry.status === 'new' ? 1 : undefined,
-					email: inquiry.contactEmail,
-					id: inquiry.id,
-					name: inquiry.contactName,
-					preview: inquiry.vehicleTitle ?? inquiry.message,
-					time: index === 2 ? 'Yesterday' : `${16 - index}:24`
-				})
-			)
-		: listMessagesForRole(context.session.role).map((message, index) => ({
-				avatar: accountAvatarByRole.agent,
-				badge: message.status === 'open' ? 1 : undefined,
-				email: bohemcarsContact.emailLabel,
-				id: `${message.threadId}-${message.id}`,
-				name: message.threadId === 'bohemcars-sales' ? 'Bohemcars Sales' : 'Bohemcars Admin',
-				preview: message.message,
-				time: index === 0 ? '16:24' : 'Yesterday'
-			}));
-
-	return records.slice(0, 3);
-};
-
-const fallbackConversation = (context: AccountContext): Conversation => ({
-	avatar: accountAvatarByRole[context.isAdmin ? 'customer' : 'agent'],
-	badge: context.isAdmin ? 1 : undefined,
-	email: bohemcarsContact.emailLabel,
-	id: context.isAdmin ? 'bohemcars-lead-queue' : 'bohemcars-sales',
-	name: context.isAdmin ? 'Bohemcars Lead Queue' : 'Bohemcars Sales',
-	preview: context.isAdmin
-		? 'New Bohemcars inquiries will appear here.'
-		: 'Your Bohemcars conversations will appear here.',
-	time: 'Today'
-});
-
-const messageContactsData = (context: AccountContext): AuxeroMessageContact[] => {
-	const records = conversations(context);
-	const activeIndex = records.length > 1 ? 1 : 0;
-	const contacts = records.length > 0 ? records : [fallbackConversation(context)];
-
-	return contacts.map((conversation, index) => ({
-		...conversation,
-		active: index === activeIndex
-	}));
-};
-
-const messageThreadData = (context: AccountContext): AuxeroMessageThreadData => {
-	const contacts = messageContactsData(context);
-	const activeContact = contacts.find((contact) => contact.active) ?? contacts[0];
-	const messages: AuxeroMessageBubble[] = context.isAdmin
-		? listInquiriesForRole(context.session.role === 'agent' ? 'agent' : 'admin')
-				.slice(0, 3)
-				.map((inquiry, index) => ({
-					id: inquiry.id,
-					sent: index % 2 === 1,
-					text: inquiry.message,
-					time: formatDashboardDate(inquiry.createdAt, 'Today')
-				}))
-		: listMessagesForRole(context.session.role)
-				.slice(0, 3)
-				.map((message, index) => ({
-					id: message.id,
-					sent: index % 2 === 1,
-					text: message.message,
-					time: formatDashboardDate(message.createdAt, 'Today')
-				}));
-
-	const fallbackMessage: AuxeroMessageBubble = {
-		id: context.isAdmin ? 'bohemcars-lead-queue-empty' : 'bohemcars-sales-empty',
-		sent: false,
-		text: context.isAdmin
-			? 'New Bohemcars inquiries will appear here for triage.'
-			: 'Your Bohemcars conversation history will appear here.',
-		time: 'Today'
-	};
-
-	return {
-		activeContact,
-		contacts,
-		contextHref: context.isAdmin ? '/admin/inquiries' : '/contact',
-		heading: context.isAdmin ? 'Inquiries & Messages' : 'Messages',
-		messages: [
-			...(messages.length ? messages : [fallbackMessage]),
-			{
-				id: 'bohemcars-thread-response',
-				sent: true,
-				text: 'Thanks. Bohemcars can review source history, viewing availability, documents, and import timing before you commit.',
-				time: 'Today, 10:12'
-			}
-		]
-	};
-};
-
 const messageOptions = (sent: boolean) => `<div class="message-item__options core-dropdown">
 	<img class="core-dropdown__button${sent ? ' ml-auto' : ''}" src="/assets/icons/more.svg" alt="">
 	<ul class="core-dropdown__menu">
@@ -1074,7 +972,7 @@ const messageBody = (data: AuxeroMessageThreadData) => {
 };
 
 const messageContainer = (context: AccountContext) => {
-	const data = messageThreadData(context);
+	const data = accountMessageThreadData(context);
 
 	return `<div class="message-container" data-bohemcars-message-container>
 	<div class="message-sidebar">
@@ -1571,7 +1469,7 @@ const applyMessagesData = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const context = accountContext(templateFile, options);
-	const data = messageThreadData(context);
+	const data = accountMessageThreadData(context);
 	const next = replaceFirstDivAfter(
 		applyAccountShell(html, templateFile, options).replaceAll(
 			'<p class="h3 mb-40">Message</p>',
@@ -1817,7 +1715,7 @@ export const getAuxeroDashboardRecentData = (
 export const getAuxeroMessageThreadData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
-) => messageThreadData(accountContext(templateFile, options));
+) => accountMessageThreadData(accountContext(templateFile, options));
 
 export const getAuxeroAccountListingsData = (
 	templateFile: string,

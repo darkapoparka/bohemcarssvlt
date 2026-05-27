@@ -1238,6 +1238,14 @@ npm run build
 
 Browser DOM QA verified `/account/messages`, `/admin/messages`, and `/admin/inquiries` on desktop and mobile: one Svelte `data-bohemcars-message-container` per page, preserved message contacts/header/body/action structure, seeded customer and admin inquiry content, no demo contact leakage, no console errors, and no page-level horizontal overflow. The in-app Browser screenshot command timed out on this dashboard view, so full-page Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-27-message-thread-svelte/`.
 
+**Message state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-message-state.ts` owns role-aware message contacts, active-contact selection, inquiry/customer thread messages, fallback messages, and context links for account/admin message surfaces.
+- `src/lib/server/auxero-account-data.ts` now reuses that server state for raw `message.html` compatibility rendering while keeping only Auxero message-container markup functions in the adapter.
+- `/account/messages`, `/admin/messages`, and `/admin/inquiries` still feed the same `MessageThreadContainer.svelte` data shape, but the thread state no longer originates inside the raw adapter.
+- Unit coverage now locks customer contacts, customer thread context, admin inquiry threads, agent-scoped admin messaging, helper alignment, and absence of old demo message/contact leakage.
+- Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and screenshots for `/account/messages?role=customer`, `/admin/messages?role=admin`, and `/admin/inquiries?role=agent` under `test-results/visual-contract/2026-05-27-account-message-state-module/`.
+
 ### Task 7O: Migrate Account Listings And Admin Inventory Tables
 
 **Checkpoint completed 2026-05-27:**
