@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit';
 import {
 	canRoleAccessBohemcarsRoute,
 	defaultRoleForBohemcarsRoute,
@@ -156,6 +157,24 @@ export const resolveBohemcarsPageSession = (
 	if (isProtectedPageRoute(routePath) && !roleFromSearch(searchParams)) return undefined;
 
 	return resolveBohemcarsSession(routePath, searchParams);
+};
+
+export const requireBohemcarsPageSession = (
+	request: Request,
+	routePath = '',
+	searchParams?: URLSearchParams
+): BohemcarsSession => {
+	const session = resolveBohemcarsPageSession(request, routePath, searchParams);
+
+	if (!session) {
+		error(401, 'Bohemcars account session is required');
+	}
+
+	if (!canAccessBohemcarsRoute(session, routePath)) {
+		error(403, 'Bohemcars account role cannot access this route');
+	}
+
+	return session;
 };
 
 export const clearBohemcarsRequestSession = (request: Request) => {

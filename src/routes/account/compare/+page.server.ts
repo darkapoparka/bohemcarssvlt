@@ -1,21 +1,12 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
 import { getCompareVehicles } from '$lib/server/auxero-listing-data';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
-import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
+import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const routePath = 'account/compare';
-	const session = resolveBohemcarsPageSession(request, routePath, url.searchParams);
-
-	if (!session) {
-		error(401, 'Bohemcars account session is required');
-	}
-
-	if (!canAccessBohemcarsRoute(session, routePath)) {
-		error(403, 'Bohemcars account role cannot access this route');
-	}
+	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
 
 	const renderOptions = {
 		request,

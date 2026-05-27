@@ -800,6 +800,14 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Browser smoke screenshots for `/`, `/inventory`, `/inventory/[slug]`, `/compare`, `/account?role=customer`, and `/admin?role=admin` were saved under `test-results/visual-contract/2026-05-27-route-loader-helper/`; `report.json` recorded no product console errors and no horizontal overflow.
 
+**Protected session helper checkpoint completed 2026-05-27:**
+
+- Added `requireBohemcarsPageSession` in `src/lib/server/auth.ts` so protected page loaders share one server-only 401/403 role guard.
+- Refactored account and admin page loaders to use the helper while preserving route paths, render options, template slots, and Svelte page data.
+- Added unit coverage for missing account sessions, denied customer admin access, and allowed agent inquiry access.
+- Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser smoke screenshots for allowed account/admin routes and status checks for denied routes were saved under `test-results/visual-contract/2026-05-27-protected-session-helper/`; `report.json` recorded no status mismatches, no unexpected console errors, and no horizontal overflow.
+
 ### Task 7A: Migrate Agents Listing Page
 
 **Checkpoint completed 2026-05-26:**
