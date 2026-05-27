@@ -71,6 +71,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(featuredCta).toHaveClass(/btn-line-style-2/);
 	await expect(featuredCta).toHaveClass(/effect-line-primary/);
 	await expect(featuredCta).toHaveAttribute('href', /\/inventory\?view=4$/);
+	await expect(featuredCta).toHaveCSS('border-radius', '12px');
+	await featuredCta.hover();
+	await expect(featuredCta).toHaveCSS('transform', 'none');
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(4);
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toContainText('SUV');
 	const featuredPillRows = await homeFeaturedSection
@@ -88,18 +91,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(featuredCard.locator('.card--img')).toHaveCSS('transform', 'none');
 	await expect(featuredCard.locator('.compare-details')).toHaveCSS(
 		'background-color',
-		'rgba(0, 0, 0, 0)'
+		'rgb(28, 28, 28)'
 	);
-	await expect(featuredCard.locator('.compare-details')).toHaveCSS('color', 'rgb(28, 28, 28)');
-	const compareFill = await featuredCard.locator('.compare-details').evaluate((button) => {
-		const fill = getComputedStyle(button, '::after');
-		return {
-			backgroundColor: fill.backgroundColor,
-			transform: fill.transform
-		};
-	});
-	expect(compareFill.backgroundColor).toBe('rgb(238, 240, 236)');
-	expect(compareFill.transform).toBe('matrix(1, 0, 0, 1, 0, 0)');
+	await expect(featuredCard.locator('.compare-details')).toHaveCSS('color', 'rgb(255, 255, 255)');
 	const featuredCarouselDensity = await homeFeaturedSection
 		.locator('.swiper-card-5')
 		.evaluate((carousel) => {
@@ -115,6 +109,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(brandCta).toContainText('View All Brand');
 	await expect(brandCta).toHaveClass(/btn-line-style-2/);
 	await expect(brandCta).toHaveClass(/effect-line-primary/);
+	await expect(brandCta).toHaveCSS('border-radius', '12px');
+	await brandCta.hover();
+	await expect(brandCta).toHaveCSS('transform', 'none');
 	await expect(homeBrandSection.locator('.out-brand-2')).toHaveCount(12);
 	await expect(page.locator('.out-brand-2')).toHaveCount(12);
 	await expect(

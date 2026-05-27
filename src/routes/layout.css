@@ -77,28 +77,6 @@ img {
 	transform: none !important;
 }
 
-.bohemcars-no-image-zoom.card-box .compare-details {
-	font-weight: 600;
-}
-
-.bohemcars-no-image-zoom.card-box .compare-details::after {
-	background-color: #eef0ec;
-}
-
-.bohemcars-no-image-zoom.card-box.active .compare-details,
-.bohemcars-no-image-zoom.card-box:hover .compare-details,
-.bohemcars-no-image-zoom.card-box .compare-details:hover {
-	border-color: #d6dbd1;
-	background-color: transparent;
-	color: #1c1c1c;
-}
-
-.bohemcars-no-image-zoom.card-box.active .compare-details svg path,
-.bohemcars-no-image-zoom.card-box:hover .compare-details svg path,
-.bohemcars-no-image-zoom.card-box .compare-details:hover svg path {
-	stroke: #1c1c1c;
-}
-
 .container {
 	width: min(calc(100% - 32px), 1320px);
 	max-width: none;
@@ -115,27 +93,6 @@ img {
 
 .muted {
 	color: var(--muted);
-}
-
-.btn {
-	display: inline-flex;
-	min-height: 48px;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	border: 0;
-	border-radius: 999px;
-	padding: 0 22px;
-	font-weight: 800;
-	cursor: pointer;
-	transition:
-		transform 0.2s ease,
-		background 0.2s ease,
-		border-color 0.2s ease;
-}
-
-.btn:hover {
-	transform: translateY(-1px);
 }
 
 .btn-primary {
