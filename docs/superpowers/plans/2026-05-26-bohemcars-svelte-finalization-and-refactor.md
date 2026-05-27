@@ -535,6 +535,13 @@ npm run build
 
 Browser DOM QA verified one visible compare table, 4 columns, 12 rows, header/footer visibility, Auxero body class, and no console errors. Browser screenshot capture timed out on the Auxero page, so Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-compare-content-svelte/`.
 
+**Compare state extraction checkpoint completed 2026-05-27:**
+
+- `src/lib/server/compare-state.ts` now owns public compare query parsing, valid vehicle selection, account compare garage fallback, and the four-vehicle cap.
+- `/compare` and `/account/compare` import compare state directly instead of reaching into the raw Auxero listing adapter; `src/lib/server/auxero-listing-data.ts` reuses the same module only for the temporary compatibility renderer.
+- `src/lib/server/compare-state.spec.ts` locks query aliases, requested order, invalid-id fallback, and account garage compare selection.
+- Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`. Browser/Playwright QA covered public compare, query-id compare, and account compare with no console errors or horizontal document overflow; screenshots were saved under `test-results/visual-contract/2026-05-27-compare-state-server-module/`.
+
 ### Task 4B: Migrate Account Favorites Page
 
 **Checkpoint completed 2026-05-26:**

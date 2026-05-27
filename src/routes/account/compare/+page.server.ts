@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
-import { getCompareVehicles } from '$lib/server/auxero-listing-data';
+import { getCompareVehicles } from '$lib/server/compare-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 

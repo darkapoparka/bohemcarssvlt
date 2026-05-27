@@ -1,8 +1,8 @@
 import { bohemcarsConsultants, bohemcarsContact, bohemcarsFetchedAt } from '$lib/data/bohemcars';
 import { agents, getAgentBySlug, type Agent } from '$lib/data/agents';
 import { listManagedAgents, type ManagedAgent } from './agents';
-import { resolveBohemcarsSession, type BohemcarsSession } from './auth';
-import { getBohemcarsGarageState } from './garage';
+import type { BohemcarsSession } from './auth';
+import { getCompareVehicles } from './compare-state';
 import {
 	bodyTypes,
 	brands,
@@ -65,16 +65,6 @@ const escapeHtml = (value: string | number) =>
 		.replaceAll("'", '&#39;');
 
 const km = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
-
-const getParam = (params: URLSearchParams, ...keys: string[]) => {
-	for (const key of keys) {
-		const value = params.get(key)?.trim();
-
-		if (value) return value;
-	}
-
-	return undefined;
-};
 
 const inventoryUrl = (state: InventoryState, overrides: Record<string, string | undefined>) => {
 	const params = new URLSearchParams(state.searchParams);
@@ -421,32 +411,6 @@ export const getAuxeroListingRuntimeData = () => ({
 		year: vehicle.year
 	}))
 });
-
-export const getCompareVehicles = (options: AuxeroRenderOptions = {}) => {
-	const params = new URLSearchParams(options.searchParams);
-	const ids = getParam(params, 'ids', 'compare')
-		?.split(',')
-		.map((slug) => slug.trim())
-		.filter(Boolean);
-	const routePath = options.routePath?.replace(/^\/+|\/+$/g, '') ?? '';
-	const accountGarageIds =
-		!ids?.length && routePath === 'account/compare'
-			? getBohemcarsGarageState(
-					options.session ?? resolveBohemcarsSession(options.routePath, options.searchParams)
-				).compare
-			: undefined;
-	const selected = ids?.length
-		? ids
-				.map((slug) => getVehicleBySlug(slug))
-				.filter((vehicle): vehicle is Vehicle => Boolean(vehicle))
-		: accountGarageIds?.length
-			? accountGarageIds
-					.map((slug) => getVehicleBySlug(slug))
-					.filter((vehicle): vehicle is Vehicle => Boolean(vehicle))
-			: vehicles.slice(0, 4);
-
-	return (selected.length ? selected : vehicles.slice(0, 4)).slice(0, 4);
-};
 
 const compareRow = (
 	icon: string,
