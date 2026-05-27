@@ -462,6 +462,15 @@ test('compare and consultants render branded buyer flows without login', async (
 		'text-decoration-line',
 		'none'
 	);
+	const agentImageTransform = await cssValue(
+		firstAgentCard.locator('.card-top > a > img'),
+		'transform'
+	);
+	expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(agentImageTransform);
+	const firstAgentSocial = firstAgentCard.locator('.sale-agent-social li a').first();
+	await firstAgentSocial.hover();
+	await expect(firstAgentSocial).toHaveCSS('background-color', 'rgb(238, 240, 236)');
+	await expect(firstAgentSocial).toHaveCSS('border-color', 'rgb(214, 219, 209)');
 	await expect(agentsGrid.locator('.sale-agent-social')).toHaveCount(3);
 	await expect(agentsGrid.locator('.contact li')).toHaveCount(6);
 	await expect(agentsGrid.locator('.sale-agent-title').first()).toHaveAttribute(

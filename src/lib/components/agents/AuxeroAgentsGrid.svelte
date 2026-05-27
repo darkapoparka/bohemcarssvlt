@@ -22,7 +22,7 @@
 
 	:global(.bohemcars-agent-grid .sale-agent-social li a:hover),
 	:global(.bohemcars-agent-grid .sale-agent-box .card-bottom .contact li a:hover) {
-		border-color: #d6dbd1;
-		background-color: #eef0ec;
+		border-color: #d6dbd1 !important;
+		background-color: #eef0ec !important;
 	}
 </style>

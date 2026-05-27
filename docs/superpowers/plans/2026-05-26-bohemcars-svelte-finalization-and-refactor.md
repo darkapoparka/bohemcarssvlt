@@ -749,7 +749,7 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Modify: `src/lib/server/roles.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Migrate agents first**
+- [x] **Step 1: Migrate agents first**
 
   Agents are smaller than account/admin and prove the template card/detail pattern.
 
@@ -800,6 +800,12 @@ npm run build
 ```
 
 Browser DOM QA verified the agents listing on desktop and mobile: 3 consultant cards, one active card, 3 social rows, 6 contact controls, preserved `grid-cols-4 sm-grid-cols-1 lg-grid-cols-2` grid classes, Auxero agents body class, and no console errors. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agents-listing-svelte/` after waiting for the agent card selector.
+
+**Checkpoint refreshed 2026-05-27:**
+
+- Tightened the scoped `.bohemcars-agent-grid` hover override so consultant social/contact controls use the project-approved grey fill hover instead of a template-specific translucent hover.
+- Added Playwright assertions that consultant images keep an identity transform on hover and social controls use the grey fill/border hover state.
+- Visual QA screenshots saved under `test-results/visual-contract/2026-05-27-agent-hover/` for agents desktop hover, agents mobile, and agent detail desktop; no console or page errors were collected.
 
 ### Task 7B: Migrate Agent Detail Page
 
