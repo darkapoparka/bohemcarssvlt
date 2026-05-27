@@ -894,6 +894,14 @@ npm run build
 
 Browser DOM QA verified the agent detail page on desktop and mobile: one `.innerpage__content md-mb-30` profile block, 3 `card-box-style-9` inventory cards, 3 compare actions, 3 detail links, one preserved `form.send-inquiry`, footer chrome, Auxero agent detail body class, no console errors, and no mobile horizontal overflow. Playwright fallback screenshots were saved under `test-results/visual-contract/2026-05-26-agent-detail-svelte/` after waiting for the agent inventory selector.
 
+**Agent state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/agent-detail-state.ts` now owns public consultant listing, detail slug lookup, deterministic raw-template fallback selection, and agent inventory selection.
+- `/agents` and `/agents/[slug]` import the server module directly; the detail route now returns a 404 for unknown consultant slugs instead of silently rendering the first consultant.
+- `src/lib/server/auxero-listing-data.ts` reuses the same state for the temporary raw `sale-agents.html` and `sale-agents-details.html` compatibility paths, preserving the first-consultant fallback only where the raw template shell needs it.
+- Unit coverage in `src/lib/server/agent-detail-state.spec.ts` locks consultant listing, valid slug lookup, fallback behavior, and the 3-card agent inventory limit.
+- Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and desktop/mobile screenshots for `/agents`, `/agents/bohemcars-import`, raw `sale-agents-details.html`, and `/agents/missing-consultant` under `test-results/visual-contract/2026-05-27-agent-state-server-module/`.
+
 ### Task 7C: Migrate Contact Form Card
 
 **Checkpoint completed 2026-05-26:**

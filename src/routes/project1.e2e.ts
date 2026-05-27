@@ -501,6 +501,9 @@ test('compare and consultants render branded buyer flows without login', async (
 		3
 	);
 	await expect(page.locator('form.send-inquiry').first()).toBeVisible();
+	const missingAgentResponse = await page.goto('/agents/missing-consultant');
+	expect(missingAgentResponse?.status()).toBe(404);
+	await expect(page.locator('body')).toContainText('Agent not found');
 });
 
 test('planned public support routes render Bohemcars content and local forms', async ({ page }) => {

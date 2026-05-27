@@ -1,10 +1,16 @@
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { agentDetailFromAgent } from '$lib/auxero/agent-detail';
-import { agents, getAgentBySlug } from '$lib/data/agents';
+import { getAgentDetailBySlug } from '$lib/server/agent-detail-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
-	const agent = getAgentBySlug(params.slug) ?? agents[0];
+	const agent = getAgentDetailBySlug(params.slug);
+
+	if (!agent) {
+		error(404, 'Agent not found');
+	}
+
 	const renderOptions = {
 		request,
 		routePath: `agents/${agent.slug}`,

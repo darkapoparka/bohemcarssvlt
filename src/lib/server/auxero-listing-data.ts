@@ -1,6 +1,11 @@
 import { bohemcarsConsultants, bohemcarsContact, bohemcarsFetchedAt } from '$lib/data/bohemcars';
-import { agents, getAgentBySlug, type Agent } from '$lib/data/agents';
+import type { Agent } from '$lib/data/agents';
 import { listManagedAgents, type ManagedAgent } from './agents';
+import {
+	getAgentDetailOrFallback,
+	getAgentInventoryState,
+	listAgentDetails
+} from './agent-detail-state';
 import type { BohemcarsSession } from './auth';
 import { getCompareVehicles } from './compare-state';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
@@ -586,7 +591,7 @@ const agentCard = (agent: Agent | ManagedAgent, index: number, adminMode = false
 const agentGrid = (
 	adminMode = false
 ) => `<div class="grid grid-cols-4 sm-grid-cols-1 lg-grid-cols-2 gap-30 xl-gap-16 bohemcars-agent-grid" data-bohemcars-agent-management="${adminMode}">
-	${(adminMode ? listManagedAgents() : agents).map((agent, index) => agentCard(agent, index, adminMode)).join('\n')}
+	${(adminMode ? listManagedAgents() : listAgentDetails()).map((agent, index) => agentCard(agent, index, adminMode)).join('\n')}
 </div>`;
 
 export const applyAgentsData = (html: string, options: AuxeroRenderOptions = {}) => {
@@ -611,17 +616,15 @@ const agentFromOptions = (options: AuxeroRenderOptions = {}) => {
 		?.replace(/^\/+|\/+$/g, '')
 		.split('/')
 		.pop();
-	const slug = options.slug ?? routeSlug ?? agents[0].slug;
 
-	return getAgentBySlug(slug) ?? agents[0];
+	return getAgentDetailOrFallback(options.slug ?? routeSlug);
 };
 
 const agentInventoryGrid = (agent: Agent) => {
-	const selected = vehicles.filter((vehicle) => vehicle.agentSlug === agent.slug).slice(0, 3);
-	const fallback = selected.length ? selected : vehicles.slice(0, 3);
+	const inventory = getAgentInventoryState(agent, 3);
 
 	return `<div class="grid grid-cols-1 gap-20 mb-40 bohemcars-agent-inventory">
-		${fallback.map((vehicle, index) => listCard(vehicle, index)).join('\n')}
+		${inventory.vehicles.map((vehicle, index) => listCard(vehicle, index)).join('\n')}
 	</div>`;
 };
 
@@ -630,7 +633,7 @@ const bohemcarsMapEmbedSrc =
 
 export const applyAgentDetailData = (html: string, options: AuxeroRenderOptions = {}) => {
 	const agent = agentFromOptions(options);
-	const inventoryCount = vehicles.filter((vehicle) => vehicle.agentSlug === agent.slug).length;
+	const inventoryState = getAgentInventoryState(agent, 3);
 	let next = html
 		.replaceAll('Mike Hanley', escapeHtml(agent.name))
 		.replaceAll('Verified Dealer', 'Verified Bohemcars Consultant')
@@ -643,10 +646,7 @@ export const applyAgentDetailData = (html: string, options: AuxeroRenderOptions 
 			/<p class="text-secondary mb-40">\s*His passion[\s\S]*?<\/p>/,
 			`<p class="text-secondary mb-40">Bohemcars keeps every conversation practical: source details, inspection context, import or registration steps, and viewing appointments are confirmed before the next commitment.</p>`
 		)
-		.replace(
-			/Dealer Inventory \(3\)/g,
-			`Bohemcars Inventory (${inventoryCount || vehicles.length})`
-		)
+		.replace(/Dealer Inventory \(3\)/g, `Bohemcars Inventory (${inventoryState.count})`)
 		.replace(
 			/<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=[^"]*"/g,
 			`<iframe src="${bohemcarsMapEmbedSrc}"`

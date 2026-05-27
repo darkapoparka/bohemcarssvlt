@@ -1,9 +1,10 @@
 import type { PageServerLoad } from './$types';
 import { agentCardsFromAgents } from '$lib/auxero/agents';
-import { agents } from '$lib/data/agents';
+import { listAgentDetails } from '$lib/server/agent-detail-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const agentList = listAgentDetails();
 	const renderOptions = {
 		request,
 		routePath: 'agents',
@@ -23,7 +24,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterAgentsHtml: agentsSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeAgentsHtml: agentsSlot.beforeHtml,
-		cards: agentCardsFromAgents(agents),
+		cards: agentCardsFromAgents(agentList),
 		pageDocument
 	};
 };
