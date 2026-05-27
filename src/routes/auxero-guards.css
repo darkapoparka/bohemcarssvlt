@@ -1,0 +1,30 @@
+.bohemcars-no-image-zoom.card-box.active .card--img,
+.bohemcars-no-image-zoom.card-box:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-1.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-1:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-8.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-8:hover .card--img,
+.bohemcars-no-image-zoom.card-box-style-9.active .card--img,
+.bohemcars-no-image-zoom.card-box-style-9:hover .card--img {
+	transform: none !important;
+}
+
+.bohemcars-no-image-zoom.post-style-2:hover .post--img,
+.bohemcars-no-image-zoom.post-style-3:hover .post--img img,
+.bohemcars-no-image-zoom.post-style-6:hover .post--img {
+	transform: none !important;
+}
+
+.bohemcars-no-image-zoom.card-box-style-1.active,
+.bohemcars-no-image-zoom.card-box-style-1:hover,
+.bohemcars-no-image-zoom.card-box-style-9.active,
+.bohemcars-no-image-zoom.card-box-style-9:hover,
+.bohemcars-calm-hover.active,
+.bohemcars-calm-hover:hover {
+	box-shadow: none !important;
+	transform: none !important;
+}
+
+.bohemcars-no-image-zoom.card-box-style-1 .image {
+	aspect-ratio: 4 / 3;
+}

@@ -156,6 +156,8 @@ Use these filter/sort controls:
 
 Shared layout:
 
+- `src/routes/auxero-guards.css` for narrow Auxero-page motion guards only; do not re-import the
+  old broad `layout.css` shell styles into template-backed pages.
 - `src/lib/components/layout/AuxeroPageShell.svelte`
 - `src/lib/components/layout/SiteHeader.svelte` for non-Auxero fallback surfaces only.
 - `src/lib/components/layout/SiteFooter.svelte` for non-Auxero fallback surfaces only.

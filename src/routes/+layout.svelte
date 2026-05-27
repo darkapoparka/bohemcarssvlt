@@ -1,5 +1,5 @@
 <script lang="ts">
-	import './layout.css';
+	import './auxero-guards.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
