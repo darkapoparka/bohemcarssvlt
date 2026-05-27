@@ -753,27 +753,35 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 
   Agents are smaller than account/admin and prove the template card/detail pattern.
 
-- [ ] **Step 2: Migrate public support pages**
+- [x] **Step 2: Migrate public support pages**
 
   Convert one page at a time. Keep template class names and section order from the mapped Auxero source page.
 
-- [ ] **Step 3: Migrate account/admin shells last**
+- [x] **Step 3: Migrate account/admin shells last**
 
   Keep role checks server-side and preserve dashboard/sidebar layout. Public users must not access admin routes.
 
-- [ ] **Step 4: Verify role behavior**
+- [x] **Step 4: Verify role behavior**
 
   ```bash
   npx playwright test src/routes/project1.e2e.ts --grep "account|admin|agents"
   npm run test:unit -- src/lib/server/backend.spec.ts --run
   ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add src/routes/agents src/routes/services src/routes/sell-your-car src/routes/contact src/routes/account src/routes/admin src/lib/server/auth.ts src/lib/server/roles.ts src/routes/project1.e2e.ts
   git commit -m "refactor: migrate secondary routes to svelte"
   ```
+
+**Checkpoint completed 2026-05-27:**
+
+- Added `src/lib/components/layout/AuxeroPageShell.svelte` to centralize the repeated Auxero head, body-class script, and before/after HTML chrome used by one-slot template pages.
+- Migrated account/admin one-slot template wrappers to the shared shell: dashboard recent boxes, messages, listings, favorites, users, profile, password, and add/edit listing forms.
+- Confirmed account wrappers no longer duplicate `pageDocument.headHtml` / `bodyClassScript`; those raw template adapter boundaries are now constrained to the shared shell for this dashboard slice.
+- Verification passed with Svelte autofixer on the new shell and migrated wrappers, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts --grep "account|admin"`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Visual QA screenshots saved under `test-results/visual-contract/2026-05-27-auxero-shell-account/` for account dashboard desktop, account messages mobile, admin inventory desktop, and admin users mobile; no console or page errors were collected.
 
 ### Task 7A: Migrate Agents Listing Page
 

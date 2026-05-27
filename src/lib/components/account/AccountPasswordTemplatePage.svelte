@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AuxeroAccountPasswordFormData } from '$lib/auxero/account-forms';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
 	import AccountPasswordForm from './AccountPasswordForm.svelte';
 
 	let {
@@ -14,18 +15,8 @@
 		pageDocument: AuxeroPageDocument;
 		password: AuxeroAccountPasswordFormData;
 	} = $props();
-
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
-	);
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html beforePasswordHtml}
-<AccountPasswordForm {password} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterPasswordHtml}
+<AuxeroPageShell {pageDocument} beforeHtml={beforePasswordHtml} afterHtml={afterPasswordHtml}>
+	<AccountPasswordForm {password} />
+</AuxeroPageShell>

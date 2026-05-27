@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AuxeroDashboardRecentData } from '$lib/auxero/dashboard';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
 	import DashboardRecentBox from './DashboardRecentBox.svelte';
 
 	let {
@@ -14,18 +15,8 @@
 		pageDocument: AuxeroPageDocument;
 		recent: AuxeroDashboardRecentData;
 	} = $props();
-
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
-	);
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html beforeRecentHtml}
-<DashboardRecentBox {recent} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterRecentHtml}
+<AuxeroPageShell {pageDocument} beforeHtml={beforeRecentHtml} afterHtml={afterRecentHtml}>
+	<DashboardRecentBox {recent} />
+</AuxeroPageShell>

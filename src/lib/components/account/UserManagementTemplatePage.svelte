@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { AuxeroUserManagementData } from '$lib/auxero/user-management';
+	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
 	import UserManagementTable from './UserManagementTable.svelte';
 
 	let {
@@ -14,18 +15,8 @@
 		pageDocument: AuxeroPageDocument;
 		users: AuxeroUserManagementData;
 	} = $props();
-
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
-	);
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html beforeUsersHtml}
-<UserManagementTable {users} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterUsersHtml}
+<AuxeroPageShell {pageDocument} beforeHtml={beforeUsersHtml} afterHtml={afterUsersHtml}>
+	<UserManagementTable {users} />
+</AuxeroPageShell>
