@@ -31,7 +31,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expectBohemcarsShell(page);
 	const homeHeader = page.locator('.header-wrapper-style-4 .header-style-4');
 	await expect(homeHeader).toHaveCount(1);
+	await expect(homeHeader).toHaveClass(/header-blur/);
 	await expect(homeHeader.locator('.header-top-bar')).toBeVisible();
+	await expect(homeHeader.locator('#menu-primary-menu')).toHaveClass(/style-2/);
 	await expect(homeHeader.locator('#menu-primary-menu > .menu-item')).toHaveCount(7);
 	await expect(homeHeader.locator('#menu-primary-menu > .current-menu-item')).toContainText('Home');
 	await expect(homeHeader.locator('.header-right.main-nav-wrapper')).toHaveCSS('display', 'grid');
@@ -49,7 +51,11 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		'href',
 		/^\.?\/account\/favorites$/
 	);
-	await expect(page.getByRole('link', { name: 'Sign In' }).first()).toBeVisible();
+	const homeSignIn = homeHeader
+		.locator('.mobile-hidden-header-button .bg-sign-in.open-modal')
+		.first();
+	await expect(homeSignIn).toBeVisible();
+	await expect(homeSignIn).toHaveClass(/btn-line-white/);
 	await expect(page.getByRole('link', { name: 'Add Listing' })).toHaveCount(0);
 	const homeHero = page.locator('.page-title-style-4');
 	await expect(homeHero.locator('.swiper-btn.navigation-prev')).toHaveCount(1);

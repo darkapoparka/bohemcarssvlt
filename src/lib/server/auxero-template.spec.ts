@@ -182,6 +182,11 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('Browse, Compare, Drive');
 		expect(html).toContain('With Bohemcars!');
 		expect(html).toContain(bohemcarsBrand.tagline);
+		expect(html).toMatch(/<header class="header header-style-4 header-blur"/);
+		expect(html).toMatch(/id="menu-primary-menu" class="menu menu style-2"/);
+		expect(html).toMatch(
+			/class="btn btn-line-white btn-large font-weight-600\s+bg-sign-in open-modal"/
+		);
 		expect(html).toContain(`Show ${vehicles.length} Matches`);
 		expect(html).toContain(vehicles[0].title);
 		expect(html).toContain(vehicles[0].priceLabel);
