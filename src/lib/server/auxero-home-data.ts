@@ -6,6 +6,7 @@ import {
 	homeFiveBrandCards as home05BrandCards,
 	homeFiveReviewItems as reviewItems,
 	homeFiveTypeCards as home05TypeCards,
+	homeFiveVehiclePills as home05VehiclePills,
 	imageForHomeFiveVehicle as imageForVehicle
 } from '$lib/auxero/home-five';
 
@@ -580,15 +581,10 @@ const home05FeaturedInventory = () => `<!-- New Vehicles -->
 		</div>
 		<div class="bohemcars-vehicle-pills wow fadeIn mb-40 flex items-center justify-center gap-8 overflow-x-auto" data-wow-delay="0.1s">
 			<ul class="menu-tab menu-tab-style2 margin-auto gap-10">
-				${[
-					['SUV', '/inventory?bodyType=SUV', true],
-					['Sedan', '/inventory?bodyType=Sedan', false],
-					['Coupe', '/inventory?bodyType=Coupe', false],
-					['Luxury', '/inventory?bodyType=Luxury', false]
-				]
+				${home05VehiclePills
 					.map(
-						([label, href, active]) =>
-							`<li class="bohemcars-vehicle-pill car-box${active ? ' active' : ''}"><a href="${href}">${label}</a></li>`
+						(pill) =>
+							`<li class="bohemcars-vehicle-pill car-box${pill.active ? ' active' : ''}"><a href="${escapeHtml(pill.href)}">${escapeHtml(pill.label)}</a></li>`
 					)
 					.join('\n')}
 			</ul>

@@ -29,4 +29,5 @@
 	pageDocument={data.pageDocument}
 	reviews={data.reviews}
 	typeCards={data.typeCards}
+	vehiclePills={data.vehiclePills}
 />

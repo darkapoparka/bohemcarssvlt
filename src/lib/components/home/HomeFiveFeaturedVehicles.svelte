@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
+	import type { HomeFiveVehicleCardData, HomeFiveVehiclePill } from '$lib/auxero/home-five';
 	import HomeFiveVehicleCard from './HomeFiveVehicleCard.svelte';
 
-	let { vehicles }: { vehicles: HomeFiveVehicleCardData[] } = $props();
-
-	const vehiclePills = [
-		{ active: true, href: '/inventory?bodyType=SUV', label: 'SUV' },
-		{ active: false, href: '/inventory?bodyType=Sedan', label: 'Sedan' },
-		{ active: false, href: '/inventory?bodyType=Coupe', label: 'Coupe' },
-		{ active: false, href: '/inventory?bodyType=Luxury', label: 'Luxury' }
-	] as const;
+	let {
+		pills,
+		vehicles
+	}: {
+		pills: HomeFiveVehiclePill[];
+		vehicles: HomeFiveVehicleCardData[];
+	} = $props();
 </script>
 
 {#if vehicles.length}
@@ -42,7 +41,7 @@
 				data-wow-delay="0.1s"
 			>
 				<ul class="menu-tab menu-tab-style2 margin-auto gap-10">
-					{#each vehiclePills as pill (pill.label)}
+					{#each pills as pill (pill.label)}
 						<li class={`bohemcars-vehicle-pill car-box ${pill.active ? 'active' : ''}`}>
 							<a href={resolve(pill.href)}>
 								{@render vehicleIcon()}

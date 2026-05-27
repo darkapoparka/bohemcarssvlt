@@ -134,6 +134,12 @@ export type HomeFiveTypeCard = {
 	label: string;
 };
 
+export type HomeFiveVehiclePill = {
+	active: boolean;
+	href: `/inventory?bodyType=${string}`;
+	label: string;
+};
+
 export type HomeFiveCompareVehicle = {
 	brand: string;
 	image: string;
@@ -384,6 +390,13 @@ export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{ label: 'Sedan', image: '/assets/images/card/card-40.jpg', bodyType: 'Sedan' },
 	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
 	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
+];
+
+export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
+	{ active: true, href: '/inventory?bodyType=SUV', label: 'SUV' },
+	{ active: false, href: '/inventory?bodyType=Sedan', label: 'Sedan' },
+	{ active: false, href: '/inventory?bodyType=Coupe', label: 'Coupe' },
+	{ active: false, href: '/inventory?bodyType=Luxury', label: 'Luxury' }
 ];
 
 const uniqueSortedValues = (items: string[]) =>

@@ -9,7 +9,8 @@ import {
 	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
 	homeFiveTypeCards,
-	homeFiveVehicleCardsFromVehicles
+	homeFiveVehicleCardsFromVehicles,
+	homeFiveVehiclePills
 } from '$lib/auxero/home-five';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
@@ -128,6 +129,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 				pageDocument.bodyHtml
 		},
 		reviews: reviewsSectionSlot ? homeFiveReviewItems : [],
-		typeCards: homeFiveTypeCards
+		typeCards: homeFiveTypeCards,
+		vehiclePills: homeFiveVehiclePills
 	};
 };

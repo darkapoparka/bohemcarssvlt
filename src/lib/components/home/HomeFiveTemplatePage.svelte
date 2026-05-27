@@ -20,7 +20,8 @@
 		HomeFiveNewsPost,
 		HomeFiveReview,
 		HomeFiveTypeCard,
-		HomeFiveVehicleCardData
+		HomeFiveVehicleCardData,
+		HomeFiveVehiclePill
 	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 
@@ -47,7 +48,8 @@
 		newsPosts,
 		pageDocument,
 		reviews,
-		typeCards
+		typeCards,
+		vehiclePills
 	}: {
 		afterBrandStripHtml: string;
 		afterBudgetSectionHtml: string;
@@ -72,6 +74,7 @@
 		pageDocument: AuxeroPageDocument;
 		reviews: HomeFiveReview[];
 		typeCards: HomeFiveTypeCard[];
+		vehiclePills: HomeFiveVehiclePill[];
 	} = $props();
 	let bodyClassScript = $derived(
 		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
@@ -90,7 +93,7 @@
 <HomeFiveHero {hero} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterHeroHtml}
-<HomeFiveFeaturedVehicles vehicles={featuredVehicles} />
+<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterFeaturedVehiclesHtml}
 <HomeFiveBrandStrip cards={brandCards} />
