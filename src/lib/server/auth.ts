@@ -1,8 +1,7 @@
 import {
 	canRoleAccessBohemcarsRoute,
 	defaultRoleForBohemcarsRoute,
-	normalizeBohemcarsRole,
-	type BohemcarsRole
+	normalizeBohemcarsRole
 } from './roles';
 import {
 	createBohemcarsSessionRecord,
@@ -11,19 +10,12 @@ import {
 	findBohemcarsSessionByToken,
 	findBohemcarsUserByEmail,
 	findBohemcarsUserByRole,
-	type BohemcarsSessionRecord,
 	type BohemcarsUser
 } from './db';
+import type { BohemcarsRole, BohemcarsSession, BohemcarsSessionRecord } from '$lib/types/account';
 
-export type { BohemcarsRole } from './roles';
+export type { BohemcarsRole, BohemcarsSession } from '$lib/types/account';
 export { bohemcarsRoleLabel } from './roles';
-
-export type BohemcarsSession = {
-	email: string;
-	name: string;
-	role: BohemcarsRole;
-	token?: string;
-};
 
 export const bohemcarsDemoSessions: Record<BohemcarsRole, BohemcarsSession> = {
 	admin: {

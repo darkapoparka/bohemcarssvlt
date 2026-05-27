@@ -1,5 +1,5 @@
 import { vehicles } from '$lib/data/vehicles';
-import type { BohemcarsSession } from './auth';
+import type { BohemcarsSession } from '$lib/types/account';
 
 export type BohemcarsGarageState = {
 	compare: string[];

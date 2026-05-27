@@ -1,6 +1,8 @@
+import type { BohemcarsRole } from '$lib/types/account';
+
 export const bohemcarsRoles = ['customer', 'agent', 'admin'] as const;
 
-export type BohemcarsRole = (typeof bohemcarsRoles)[number];
+export type { BohemcarsRole } from '$lib/types/account';
 
 export const isBohemcarsRole = (value: unknown): value is BohemcarsRole =>
 	typeof value === 'string' && bohemcarsRoles.includes(value as BohemcarsRole);

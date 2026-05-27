@@ -611,7 +611,7 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Test: `src/lib/server/backend.spec.ts`
 - Test: `src/lib/data/vehicles.spec.ts`
 
-- [ ] **Step 1: Create shared public types**
+- [x] **Step 1: Create shared public types**
 
   `src/lib/types/vehicle.ts`:
 
@@ -633,11 +633,11 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
   };
   ```
 
-- [ ] **Step 2: Use server-only modules for mutations**
+- [x] **Step 2: Use server-only modules for mutations**
 
   Keep create/update/delete helpers in `$lib/server/inventory.ts`; do not import server modules from `.svelte` files. Client components receive data from `load` or call `/api/*` endpoints.
 
-- [ ] **Step 3: Test filters and sorting**
+- [x] **Step 3: Test filters and sorting**
 
   Add tests that verify:
 
@@ -648,19 +648,26 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
   );
   ```
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
   ```bash
   npm run test:unit -- src/lib/server/backend.spec.ts src/lib/data/vehicles.spec.ts --run
   npm run check
   ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add src/lib/types src/lib/data src/lib/server src/lib/**/*.spec.ts
   git commit -m "refactor: normalize bohemcars data boundaries"
   ```
+
+**Checkpoint completed 2026-05-27:**
+
+- Added shared public type modules in `src/lib/types/vehicle.ts`, `src/lib/types/agent.ts`, and `src/lib/types/account.ts`.
+- `src/lib/data/vehicles.ts` and `src/lib/data/agents.ts` now consume and re-export those shared domain types instead of owning duplicate interfaces.
+- Server account/auth/db/garage modules now use the shared account/session record types while keeping mutations in `$lib/server`.
+- Focused verification passed with `npm run test:unit -- src/lib/data/vehicles.spec.ts src/lib/server/backend.spec.ts --run` and `npm run check`.
 
 ### Task 6: Migrate Header, Footer, Garage State, And Forms
 

@@ -1,16 +1,7 @@
 import { bohemcarsConsultants, bohemcarsContact } from './bohemcars';
+import type { Agent } from '$lib/types/agent';
 
-export interface Agent {
-	slug: string;
-	name: string;
-	title: string;
-	phone: string;
-	email: string;
-	image: string;
-	rating: number;
-	sales: number;
-	bio: string;
-}
+export type { Agent } from '$lib/types/agent';
 
 const bios: Record<string, string> = {
 	'bohemcars-sales':
