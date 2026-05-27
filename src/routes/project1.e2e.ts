@@ -197,6 +197,70 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(page.getByRole('heading', { name: 'Bohemcars Inventory' })).toBeVisible();
 });
 
+test('header, garage, and inquiry flows keep Auxero behavior', async ({ page }) => {
+	await page.goto('/');
+
+	await expect(page.getByRole('link', { name: /inventory/i }).first()).toBeVisible();
+	await expect(
+		page
+			.getByRole('button', { name: /sign in/i })
+			.or(page.getByRole('link', { name: /sign in/i }))
+			.first()
+	).toBeVisible();
+	await expect(page.getByRole('link', { name: /add listing/i })).toHaveCount(0);
+
+	await page.goto('/inventory');
+	await page.evaluate(() => {
+		localStorage.removeItem('bohemcars:favorites');
+		localStorage.removeItem('bohemcars:compare');
+	});
+	await page.reload();
+
+	const firstCard = page.locator('[data-bohemcars-slug]').first();
+	const firstSlug = await firstCard.getAttribute('data-bohemcars-slug');
+	expect(firstSlug).toBeTruthy();
+
+	await firstCard.locator('.bohemcars-favorite, .heart').click();
+	await expect
+		.poll(async () =>
+			page.evaluate(
+				(slug) => JSON.parse(localStorage.getItem('bohemcars:favorites') ?? '[]').includes(slug),
+				firstSlug
+			)
+		)
+		.toBe(true);
+
+	await firstCard.locator('.compare-details').click();
+	await expect
+		.poll(async () =>
+			page.evaluate(
+				(slug) => JSON.parse(localStorage.getItem('bohemcars:compare') ?? '[]').includes(slug),
+				firstSlug
+			)
+		)
+		.toBe(true);
+
+	await page.route('**/api/inquiries', async (route) => {
+		await route.fulfill({
+			body: JSON.stringify({ data: { id: 'playwright-inquiry' }, ok: true }),
+			contentType: 'application/json',
+			status: 200
+		});
+	});
+	await page.goto('/contact');
+	const inquiryForm = page.locator('.bohemcars-contact-form');
+	await expect(inquiryForm).toBeVisible();
+	await inquiryForm.locator('input[name="Firstname"]').fill('Nikolay');
+	await inquiryForm.locator('input[name="Lastname"]').fill('Petrov');
+	await inquiryForm.locator('input[name="SendInquiryemail"]').fill('nikolay@example.com');
+	await inquiryForm.locator('input[name="SendInquiryphone"]').fill('359888123456');
+	await inquiryForm.locator('textarea[name="message"]').fill('I want to schedule a viewing.');
+	await inquiryForm.getByRole('button', { name: 'Send Message' }).click();
+	await expect(inquiryForm.locator('.auxero-form-status')).toHaveText(
+		'Message queued for Bohemcars locally'
+	);
+});
+
 test('inventory supports branded cards, saved favorites, compare, and view toggles', async ({
 	page
 }) => {

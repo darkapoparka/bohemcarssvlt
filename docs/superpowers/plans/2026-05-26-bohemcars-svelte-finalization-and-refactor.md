@@ -680,7 +680,7 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Create: `src/lib/components/forms/AuthModal.svelte`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Keep header behavior under tests**
+- [x] **Step 1: Keep header behavior under tests**
 
   Assert:
 
@@ -692,7 +692,7 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
   await expect(page.getByRole('link', { name: /add listing/i })).toHaveCount(0);
   ```
 
-- [ ] **Step 2: Keep scoped state in context**
+- [x] **Step 2: Keep scoped state in context**
 
   `GarageState` should continue using Svelte 5 class fields:
 
@@ -703,11 +703,11 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 
   Computed state should use methods or `$derived` in consuming components, not `$effect`.
 
-- [ ] **Step 3: Convert forms to reusable Svelte components**
+- [x] **Step 3: Convert forms to reusable Svelte components**
 
   `InquiryForm.svelte` should submit through a handler or enhanced form and show a local status message with `$state`.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
   ```bash
   npx @sveltejs/mcp svelte-autofixer src/lib/components/layout/SiteHeader.svelte
@@ -716,12 +716,21 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
   npx playwright test src/routes/project1.e2e.ts --grep "header|garage|inquiry"
   ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add src/lib/components/layout src/lib/components/forms src/lib/state src/routes/project1.e2e.ts
   git commit -m "refactor: modularize layout and forms"
   ```
+
+**Checkpoint completed 2026-05-27:**
+
+- Added `src/lib/components/forms/InquiryForm.svelte` and `src/lib/components/forms/AuthModal.svelte` while preserving Auxero form/modal classes and markup rhythm.
+- Contact, services, and sell-your-car forms now share the reusable inquiry form with local `$state` status copy aligned to the existing Bohemcars form script.
+- Home 05 login, forgot-password, and signup modal bodies are extracted into `AuthModal.svelte`; the visible modal structure and template classes are preserved.
+- Added Playwright coverage for buyer header behavior, scoped local garage state, and inquiry submission without polluting later admin dashboard assertions.
+- Verification passed: Svelte autofixer on changed Svelte components, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts --grep "header|garage|inquiry"`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Visual QA screenshots saved under `test-results/visual-contract/2026-05-27-task6-forms/` for contact desktop/mobile, services desktop, sell-your-car mobile, and the Home 05 login modal.
 
 ### Task 7: Migrate Support, Agent, Account, And Admin Pages
 
