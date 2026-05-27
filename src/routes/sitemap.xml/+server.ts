@@ -2,26 +2,9 @@ import { posts } from '$lib/data/blog';
 import { bohemcarsBrand, bohemcarsFetchedAt } from '$lib/data/bohemcars';
 import { agents } from '$lib/data/agents';
 import { vehicles } from '$lib/data/vehicles';
+import { publicSitemapRoutes } from '$lib/auxero/sitemap';
 
 const baseUrl = `https://${bohemcarsBrand.domain}`;
-
-const staticRoutes = [
-	'/',
-	'/inventory',
-	'/inventory?view=4',
-	'/inventory?view=map',
-	'/compare',
-	'/agents',
-	'/services',
-	'/sell-your-car',
-	'/about',
-	'/reviews',
-	'/calculator',
-	'/faqs',
-	'/terms',
-	'/blog',
-	'/contact'
-];
 
 const escapeXml = (value: string) =>
 	value
@@ -44,7 +27,7 @@ export function GET() {
 		...agents.map((agent) => `/agents/${agent.slug}`),
 		...posts.map((post) => `/blog/${post.slug}`)
 	];
-	const urls = [...staticRoutes, ...dynamicRoutes].map((path) => urlEntry(routeUrl(path)));
+	const urls = [...publicSitemapRoutes, ...dynamicRoutes].map((path) => urlEntry(routeUrl(path)));
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.join('\n')}

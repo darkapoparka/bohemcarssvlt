@@ -198,7 +198,8 @@ export const bohemcarsBrand = {
 	bulgarianName: 'Бохем Карс',
 	domain: 'bohemcars.net',
 	tagline: 'Canada-sourced vehicles with verified history',
-	legalNote: 'Company legal details and final phone routing should be confirmed before launch.'
+	legalNote:
+		'Proposal build reflects current public Bohemcars contact channels and appointment viewing.'
 } as const;
 
 export const bohemcarsAssets = {

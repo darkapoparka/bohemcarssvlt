@@ -302,3 +302,12 @@ Auth requirements:
 - All planned public, customer, agent, and admin routes exist and render useful, styled content.
 - Core controls are interactive and data-backed enough for a production-direction prototype: search, filters, sort, view toggle, favorites, compare, calculator, tabs, forms, account state, role guards, inquiries, and messages.
 - Desktop and mobile layouts are checked visually before handoff.
+
+## Proposal Readiness Checkpoint
+
+As of the 2026-05-27 finalization pass, the selected public, account, and admin route families are
+rendered through SvelteKit pages with focused Svelte components for the migrated Auxero sections.
+The remaining compatibility renderer is intentionally kept as the visual shell for Auxero head
+assets, body classes, modals, and script tails while preserving the template 1:1. The handoff QA
+checklist lives in `docs/QA_CHECKLIST.md`, and the public sitemap is limited to proposal-safe public
+routes plus vehicle, consultant, and blog detail pages.

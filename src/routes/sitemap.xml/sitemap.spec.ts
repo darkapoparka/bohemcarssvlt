@@ -3,6 +3,7 @@ import { posts } from '$lib/data/blog';
 import { bohemcarsBrand, bohemcarsFetchedAt } from '$lib/data/bohemcars';
 import { agents } from '$lib/data/agents';
 import { vehicles } from '$lib/data/vehicles';
+import { publicSitemapRoutes } from '$lib/auxero/sitemap';
 import { GET } from './+server';
 
 describe('Bohemcars sitemap', () => {
@@ -13,12 +14,14 @@ describe('Bohemcars sitemap', () => {
 
 		expect(response.headers.get('content-type')).toContain('application/xml');
 		expect(xml).toContain(`<lastmod>${bohemcarsFetchedAt}</lastmod>`);
-		expect(xml).toContain(`<loc>${baseUrl}/inventory</loc>`);
-		expect(xml).toContain(`<loc>${baseUrl}/inventory?view=4</loc>`);
-		expect(xml).toContain(`<loc>${baseUrl}/inventory?view=map</loc>`);
+		for (const route of publicSitemapRoutes) {
+			expect(xml).toContain(`<loc>${baseUrl}${route}</loc>`);
+		}
 		expect(xml).toContain(`<loc>${baseUrl}/inventory/${vehicles[0].slug}</loc>`);
 		expect(xml).toContain(`<loc>${baseUrl}/agents/${agents[0].slug}</loc>`);
 		expect(xml).toContain(`<loc>${baseUrl}/blog/${posts[0].slug}</loc>`);
+		expect(xml).not.toContain(`${baseUrl}/account`);
+		expect(xml).not.toContain(`${baseUrl}/admin`);
 		expect(xml).not.toContain('/shop');
 		expect(xml).not.toContain('/shopping-cart');
 		expect(xml).not.toContain('/check-out');

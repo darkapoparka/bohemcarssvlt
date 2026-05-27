@@ -1251,7 +1251,7 @@ Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit
 - Test: `src/routes/sitemap.xml/sitemap.spec.ts`
 - Test: `src/routes/project1.e2e.ts`
 
-- [ ] **Step 1: Add QA checklist**
+- [x] **Step 1: Add QA checklist**
 
   Create `docs/QA_CHECKLIST.md`:
 
@@ -1270,7 +1270,7 @@ Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit
   - [ ] No ThemeForest/Aurexo/demo credentials remain visible.
   ```
 
-- [ ] **Step 2: Audit visible copy**
+- [x] **Step 2: Audit visible copy**
 
   Search:
 
@@ -1280,7 +1280,7 @@ Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit
 
   Expected: only intentional template-source documentation references remain.
 
-- [ ] **Step 3: Run final verification**
+- [x] **Step 3: Run final verification**
 
   ```bash
   npm run lint
@@ -1290,7 +1290,7 @@ Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit
   npx playwright test src/routes/project1.e2e.ts
   ```
 
-- [ ] **Step 4: Save final screenshots**
+- [x] **Step 4: Save final screenshots**
 
   Save desktop and mobile screenshots for:
 
@@ -1306,12 +1306,20 @@ Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit
   /admin
   ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add README.md PROJECT_PLAN.md docs/QA_CHECKLIST.md src/routes/sitemap.xml src/lib/data/bohemcars.ts src/routes/project1.e2e.ts
   git commit -m "chore: finalize bohemcars proposal readiness"
   ```
+
+**Checkpoint completed 2026-05-27:**
+
+- Added `docs/QA_CHECKLIST.md` and updated README/PROJECT_PLAN handoff copy so the project now points to Home 05 and describes the SvelteKit component migration accurately.
+- Added `src/lib/auxero/sitemap.ts` with shared public sitemap route data, tightened `src/routes/sitemap.xml/+server.ts`, expanded sitemap unit coverage, and added a Playwright route guard that public sitemap entries exclude account/admin surfaces and blocked commerce templates.
+- Updated Bohemcars brand metadata to remove launch-uncertain wording from the proposal data layer.
+- Final verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser QA swept the key proposal pages with no console errors, no visible demo/template leaks, and no horizontal overflow. Desktop/mobile screenshots were saved under `test-results/visual-contract/2026-05-27-final-proposal-readiness/`.
 
 ---
 

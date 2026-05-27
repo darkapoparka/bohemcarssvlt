@@ -794,3 +794,24 @@ test('blocked ecommerce and coming-soon routes are not exposed', async ({ page }
 		await expect(page.locator('body')).toContainText('Auxero template route not found');
 	}
 });
+
+test('sitemap exposes public proposal routes without dashboard surfaces', async ({ page }) => {
+	const response = await page.goto('/sitemap.xml');
+	if (!response) throw new Error('Expected sitemap response');
+
+	expect(response.status()).toBe(200);
+	expect(response.headers()['content-type']).toContain('application/xml');
+
+	const xml = await response.text();
+	expect(xml).toContain('<loc>https://bohemcars.net/</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/inventory</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/inventory?view=4</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/inventory?view=map</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/agents</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/sell-your-car</loc>');
+	expect(xml).toContain('<loc>https://bohemcars.net/contact</loc>');
+	expect(xml).not.toContain('https://bohemcars.net/account');
+	expect(xml).not.toContain('https://bohemcars.net/admin');
+	expect(xml).not.toContain('/shop');
+	expect(xml).not.toContain('/check-out');
+});
