@@ -66,7 +66,11 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeHero.locator('.search-cars__features-grid .form-group')).toHaveCount(8);
 	const homeFeaturedSection = page.locator('[data-bohemcars-home-vehicles]');
 	await expect(homeFeaturedSection.locator('h2')).toHaveText('Bohemcars Vehicles');
-	await expect(homeFeaturedSection.locator('.bohemcars-featured-vehicles__title a')).toHaveCount(0);
+	const featuredCta = homeFeaturedSection.locator('.title-section a');
+	await expect(featuredCta).toContainText('View All');
+	await expect(featuredCta).toHaveClass(/btn-line-style-2/);
+	await expect(featuredCta).toHaveClass(/effect-line-primary/);
+	await expect(featuredCta).toHaveAttribute('href', /\/inventory\?view=4$/);
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(4);
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toContainText('SUV');
 	const featuredPillRows = await homeFeaturedSection
@@ -84,10 +88,18 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(featuredCard.locator('.card--img')).toHaveCSS('transform', 'none');
 	await expect(featuredCard.locator('.compare-details')).toHaveCSS(
 		'background-color',
-		'rgb(238, 240, 236)'
+		'rgba(0, 0, 0, 0)'
 	);
 	await expect(featuredCard.locator('.compare-details')).toHaveCSS('color', 'rgb(28, 28, 28)');
-	await expect(featuredCard.locator('.card-box__price')).toHaveCSS('color', 'rgb(28, 28, 28)');
+	const compareFill = await featuredCard.locator('.compare-details').evaluate((button) => {
+		const fill = getComputedStyle(button, '::after');
+		return {
+			backgroundColor: fill.backgroundColor,
+			transform: fill.transform
+		};
+	});
+	expect(compareFill.backgroundColor).toBe('rgb(238, 240, 236)');
+	expect(compareFill.transform).toBe('matrix(1, 0, 0, 1, 0, 0)');
 	const featuredCarouselDensity = await homeFeaturedSection
 		.locator('.swiper-card-5')
 		.evaluate((carousel) => {
@@ -98,9 +110,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 			return firstSlideBox ? carouselBox.width / firstSlideBox.width : 0;
 		});
 	expect(featuredCarouselDensity).toBeGreaterThan(2.5);
-	await expect(
-		page.locator('section', { hasText: 'Explore Our Brands' }).locator('.out-brand-2')
-	).toHaveCount(12);
+	const homeBrandSection = page.locator('section', { hasText: 'Explore Our Brands' });
+	const brandCta = homeBrandSection.locator('.title-section a');
+	await expect(brandCta).toContainText('View All Brand');
+	await expect(brandCta).toHaveClass(/btn-line-style-2/);
+	await expect(brandCta).toHaveClass(/effect-line-primary/);
+	await expect(homeBrandSection.locator('.out-brand-2')).toHaveCount(12);
 	await expect(page.locator('.out-brand-2')).toHaveCount(12);
 	await expect(
 		page.locator('section', { hasText: 'Browse By Type' }).locator('.brand-item-style-2')

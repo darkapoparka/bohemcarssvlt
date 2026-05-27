@@ -89,7 +89,7 @@ img {
 .bohemcars-no-image-zoom.card-box:hover .compare-details,
 .bohemcars-no-image-zoom.card-box .compare-details:hover {
 	border-color: #d6dbd1;
-	background-color: #eef0ec;
+	background-color: transparent;
 	color: #1c1c1c;
 }
 
@@ -97,42 +97,6 @@ img {
 .bohemcars-no-image-zoom.card-box:hover .compare-details svg path,
 .bohemcars-no-image-zoom.card-box .compare-details:hover svg path {
 	stroke: #1c1c1c;
-}
-
-.bohemcars-no-image-zoom.card-box .view-details {
-	border-radius: 999px;
-	color: #4b4b4b;
-	font-weight: 500;
-	padding: 4px 6px;
-	margin-right: -6px;
-	transition:
-		background-color 0.2s ease,
-		color 0.2s ease;
-}
-
-.bohemcars-no-image-zoom.card-box .view-details:hover {
-	background-color: #eef0ec;
-	color: #1c1c1c;
-	text-decoration: none;
-}
-
-.bohemcars-no-image-zoom.card-box.active .content .card-box__title a,
-.bohemcars-no-image-zoom.card-box:hover .content .card-box__title a,
-.bohemcars-no-image-zoom.card-box.active .content .bottom .category a,
-.bohemcars-no-image-zoom.card-box:hover .content .bottom .category a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.bohemcars-no-image-zoom.card-box .content .card-box__title a:hover,
-.bohemcars-no-image-zoom.card-box .content .bottom .category a:hover {
-	color: inherit;
-	text-decoration: none;
-}
-
-.bohemcars-no-image-zoom.card-box.active .card-box__price,
-.bohemcars-no-image-zoom.card-box:hover .card-box__price {
-	color: #1c1c1c;
 }
 
 .container {
