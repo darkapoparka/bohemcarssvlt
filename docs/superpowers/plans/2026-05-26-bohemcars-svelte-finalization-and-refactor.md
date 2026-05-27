@@ -785,6 +785,13 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Verification passed with Svelte autofixer on the new shell and migrated wrappers, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts --grep "account|admin"`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Visual QA screenshots saved under `test-results/visual-contract/2026-05-27-auxero-shell-account/` for account dashboard desktop, account messages mobile, admin inventory desktop, and admin users mobile; no console or page errors were collected.
 
+**Public shell checkpoint completed 2026-05-27:**
+
+- Migrated the remaining public one-slot template wrappers to `AuxeroPageShell`: about, terms, FAQs, services, sell-your-car, inventory, vehicle detail, reviews, agents, agent detail, calculator, blog, blog detail, contact, and compare.
+- Confirmed only `AuxeroPageShell.svelte` and the intentionally multi-slot `HomeFiveTemplatePage.svelte` still own raw `pageDocument.headHtml` / `bodyClassScript` output boundaries.
+- Verification passed with Svelte autofixer on all touched Svelte wrappers, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Product and matching Auxero source screenshots were captured at desktop and mobile for all 15 touched public routes under `test-results/visual-contract/2026-05-27-auxero-shell-public/`; `report.json` recorded no product console errors and no horizontal overflow.
+
 ### Task 7A: Migrate Agents Listing Page
 
 **Checkpoint completed 2026-05-26:**
