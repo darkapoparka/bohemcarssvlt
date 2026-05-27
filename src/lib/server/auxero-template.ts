@@ -891,6 +891,44 @@ function injectLocalBehavior(
 		transform: none !important;
 		visibility: visible !important;
 	}
+	body.${pageClass} .bohemcars-vehicle-pills {
+		scrollbar-width: none;
+	}
+	body.${pageClass} .bohemcars-vehicle-pills::-webkit-scrollbar {
+		display: none;
+	}
+	body.${pageClass} .bohemcars-vehicle-pills .menu-tab-style2 {
+		align-items: center;
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+	}
+	body.${pageClass} .bohemcars-vehicle-pill {
+		color: #1c1c1c;
+	}
+	body.${pageClass} .bohemcars-vehicle-pill:hover,
+	body.${pageClass} .bohemcars-vehicle-pill.active {
+		background: #eef0ec !important;
+		border-color: #d6dbd1 !important;
+		color: #1c1c1c !important;
+	}
+	body.${pageClass} .bohemcars-vehicle-pill a {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+		white-space: nowrap;
+	}
+	@media (max-width: 575px) {
+		body.${pageClass} .bohemcars-vehicle-pills {
+			justify-content: flex-start;
+			margin-inline: -24px;
+			padding-inline: 24px;
+		}
+		body.${pageClass} .bohemcars-vehicle-pills .menu-tab-style2 {
+			justify-content: flex-start;
+			max-width: none;
+		}
+	}
 	`
 			: ''
 	}

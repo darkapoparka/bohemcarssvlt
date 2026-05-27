@@ -185,7 +185,8 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain(`Show ${vehicles.length} Matches`);
 		expect(html).toContain(vehicles[0].title);
 		expect(html).toContain(vehicles[0].priceLabel);
-		expect(html).toContain('new Bohemcars vehicles');
+		expect(html).toContain('Bohemcars Vehicles');
+		expect(html).toContain('bohemcars-vehicle-pill car-box active');
 		expect(html).toContain('Bohemcars by Budget');
 		expect(html).toContain('Bohemcars notes');
 		expect(html).toContain(bohemcarsContact.addressLabel);
@@ -699,6 +700,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(services).toContain('Import From Canada');
 		expect(services).toContain('bohemcars-service-form');
 		expect(services).toContain('Service request queued locally for Bohemcars');
+		expect(services).not.toContain('image-effect-scale');
 		expect(services).not.toContain('Comprehensive Vehicle Care');
 		expect(services).not.toContain('Tony Nguyen');
 	});

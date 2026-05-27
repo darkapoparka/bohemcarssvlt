@@ -237,7 +237,7 @@ const serviceCard = (
 	service: SupportService,
 	index: number
 ) => `<div class="service-box wow fadeInUp" data-wow-delay="0.${(index % 3) + 1}s">
-	<div class="mb-22 radius-16 image-effect-scale overflow-hidden">
+	<div class="mb-22 radius-16 overflow-hidden">
 		<img class="w-full" src="${escapeHtml(service.image)}" alt="${escapeHtml(service.title)}">
 	</div>
 	<a href="${escapeHtml(service.href)}" class="h4 font-weight-600 mb-8 capitalize">${escapeHtml(service.title)}</a>
@@ -424,7 +424,7 @@ const applyServicesData = (html: string) => {
 				</ul>
 				<div class="flex"><a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Contact Bohemcars</a></div>
 			</div>
-			<div class="ml-24 flex lg-ml-0 wow fadeInUp radius-20 image-effect-scale overflow-hidden">
+			<div class="ml-24 flex lg-ml-0 wow fadeInUp radius-20 overflow-hidden">
 				<img class="w-full" src="/assets/bohemcars/cta/import-canada-banner-v2.png" alt="Bohemcars services">
 			</div>
 		</div>
@@ -730,7 +730,7 @@ const applyCalculatorData = (html: string) => {
 
 const blogCard = (
 	post: BlogPost
-) => `<a href="/blog/${escapeHtml(post.slug)}" class="post-style-6 overflow-hidden">
+) => `<a href="/blog/${escapeHtml(post.slug)}" class="post-style-6 bohemcars-no-image-zoom overflow-hidden">
 	<div class="image"><img class="post--img flex" src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}"></div>
 	<div class="content">
 		<div class="flex gap-12 justify-start mb-12">

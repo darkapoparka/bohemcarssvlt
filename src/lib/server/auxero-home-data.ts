@@ -525,7 +525,7 @@ const home05VehicleCard = (vehicle: Vehicle, index: number, style2 = false) => {
 	const highlightClass = index % 2 === 0 ? 'bg-primary-2' : 'bg-green';
 	const highlight = vehicle.tag ?? (vehicle.isClientVehicle ? 'Client vehicle' : 'Available');
 
-	return `<div class="card-box card-box-style-1" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
+	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 	<div class="top">
 		<p class="${highlightClass} text-white highlight">${escapeHtml(highlight)}</p>
 		<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
@@ -575,8 +575,23 @@ const home05FeaturedInventory = () => `<!-- New Vehicles -->
 <section class="py-100 background-light">
 	<div class="container">
 		<div class="title-section mb-40 wow fadeInUp" data-wow-delay="0.1s">
-			<h2 class="capitalize">new Bohemcars vehicles</h2>
+			<h2 class="capitalize">Bohemcars Vehicles</h2>
 			${sectionButton('/inventory?view=4', 'View All')}
+		</div>
+		<div class="bohemcars-vehicle-pills wow fadeIn mb-40 flex items-center justify-center gap-8 overflow-x-auto" data-wow-delay="0.1s">
+			<ul class="menu-tab menu-tab-style2 margin-auto gap-10">
+				${[
+					['SUV', '/inventory?bodyType=SUV', true],
+					['Sedan', '/inventory?bodyType=Sedan', false],
+					['Coupe', '/inventory?bodyType=Coupe', false],
+					['Luxury', '/inventory?bodyType=Luxury', false]
+				]
+					.map(
+						([label, href, active]) =>
+							`<li class="bohemcars-vehicle-pill car-box${active ? ' active' : ''}"><a href="${href}">${label}</a></li>`
+					)
+					.join('\n')}
+			</ul>
 		</div>
 		<div class="swiper-container swiper-card-wrapper swiper-card-5 wow fadeIn" data-wow-delay="0.1s">
 			<div class="swiper-wrapper">
@@ -775,7 +790,7 @@ const home05NewsSection = () => {
 		</div>
 		<div class="row">
 			<div class="col-lg-6 md-mb-30">
-				<a href="/blog/${featured.slug}" class="post-style-2 radius-none overflow-hidden">
+				<a href="/blog/${featured.slug}" class="post-style-2 radius-none bohemcars-no-image-zoom overflow-hidden">
 					<img class="post--img flex" src="${featured.image}" alt="${escapeHtml(featured.title)}">
 					<div class="content">
 						<p class="h5 text-white mb-8 title">${escapeHtml(featured.title)}</p>
@@ -793,7 +808,7 @@ const home05NewsSection = () => {
 						(
 							post,
 							index
-						) => `<a href="/blog/${post.slug}" class="post-style-3 ${index === 0 ? 'mb-20' : ''}">
+						) => `<a href="/blog/${post.slug}" class="post-style-3 bohemcars-no-image-zoom ${index === 0 ? 'mb-20' : ''}">
 					<div class="post--img">
 						<img class="flex" src="${post.image}" alt="${escapeHtml(post.title)}">
 					</div>

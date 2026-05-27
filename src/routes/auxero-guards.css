@@ -15,6 +15,10 @@
 	transform: none !important;
 }
 
+.bohemcars-no-image-zoom.image-effect-scale:hover img {
+	transform: none !important;
+}
+
 .bohemcars-no-image-zoom.card-box-style-1.active,
 .bohemcars-no-image-zoom.card-box-style-1:hover,
 .bohemcars-no-image-zoom.card-box-style-9.active,

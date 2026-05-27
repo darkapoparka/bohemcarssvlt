@@ -70,7 +70,8 @@ describe('splitAuxeroDocument', () => {
 		);
 
 		expect(split?.beforeHtml).toContain('Browse, Compare, Drive');
-		expect(split?.sectionHtml).toContain('new Bohemcars vehicles');
+		expect(split?.sectionHtml).toContain('Bohemcars Vehicles');
+		expect(split?.sectionHtml).toContain('bohemcars-vehicle-pill car-box active');
 		expect(split?.sectionHtml).toContain('swiper-card-5');
 		expect(split?.sectionHtml).toContain('pagination-swiper-card-5');
 		expect(split?.afterHtml).toContain('<!-- Explore Our Brands -->');
