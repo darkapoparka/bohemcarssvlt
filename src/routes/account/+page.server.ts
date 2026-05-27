@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAuxeroDashboardRecentData } from '$lib/server/auxero-account-data';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -23,21 +22,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('dashboard.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Account dashboard template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const recentSlot = splitAuxeroDivBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-dashboard-recent'
-	);
-
-	if (!recentSlot) {
-		error(500, 'Account dashboard recent slot could not be located');
-	}
+	const { pageDocument, slot: recentSlot } = renderAuxeroPageSlot('dashboard.html', renderOptions, {
+		marker: 'data-bohemcars-dashboard-recent',
+		templateError: 'Account dashboard template could not be rendered',
+		slotError: 'Account dashboard recent slot could not be located'
+	});
 
 	return {
 		afterRecentHtml: recentSlot.afterHtml,

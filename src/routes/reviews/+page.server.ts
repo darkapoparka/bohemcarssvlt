@@ -1,30 +1,21 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { auxeroReviewCards } from '$lib/auxero/reviews';
-import { splitAuxeroDocument, splitAuxeroElementBlockByMarker } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const html = renderAuxeroTemplate('clients-reviews.html', {
-		request,
-		routePath: 'reviews',
-		searchParams: url.searchParams
-	});
-
-	if (!html) {
-		error(500, 'Reviews template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const reviewsSlot = splitAuxeroElementBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-reviews-grid',
-		'div'
+	const { pageDocument, slot: reviewsSlot } = renderAuxeroPageSlot(
+		'clients-reviews.html',
+		{
+			request,
+			routePath: 'reviews',
+			searchParams: url.searchParams
+		},
+		{
+			marker: 'data-bohemcars-reviews-grid',
+			templateError: 'Reviews template could not be rendered',
+			slotError: 'Reviews grid slot could not be located'
+		}
 	);
-
-	if (!reviewsSlot) {
-		error(500, 'Reviews grid slot could not be located');
-	}
 
 	return {
 		afterReviewsHtml: reviewsSlot.afterHtml,

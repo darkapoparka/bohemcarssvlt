@@ -792,6 +792,14 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Verification passed with Svelte autofixer on all touched Svelte wrappers, `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Product and matching Auxero source screenshots were captured at desktop and mobile for all 15 touched public routes under `test-results/visual-contract/2026-05-27-auxero-shell-public/`; `report.json` recorded no product console errors and no horizontal overflow.
 
+**Route loader helper checkpoint completed 2026-05-27:**
+
+- Added `renderAuxeroPageDocument` and `renderAuxeroPageSlot` in `src/lib/server/auxero-page.ts` so page server loads no longer duplicate raw template render, document split, marked slot lookup, and 500 error handling.
+- Refactored Home 05 plus public, account, and admin `+page.server.ts` loaders through the shared server-only helper while preserving each template filename, route path, slot marker, slot tag, and route data shape.
+- Added unit coverage for the helper against the compare template slot contract.
+- Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser smoke screenshots for `/`, `/inventory`, `/inventory/[slug]`, `/compare`, `/account?role=customer`, and `/admin?role=admin` were saved under `test-results/visual-contract/2026-05-27-route-loader-helper/`; `report.json` recorded no product console errors and no horizontal overflow.
+
 ### Task 7A: Migrate Agents Listing Page
 
 **Checkpoint completed 2026-05-26:**

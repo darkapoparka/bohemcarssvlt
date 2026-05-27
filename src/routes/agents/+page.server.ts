@@ -1,9 +1,7 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { agentCardsFromAgents } from '$lib/auxero/agents';
 import { agents } from '$lib/data/agents';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const renderOptions = {
@@ -11,21 +9,15 @@ export const load: PageServerLoad = ({ request, url }) => {
 		routePath: 'agents',
 		searchParams: url.searchParams
 	};
-	const html = renderAuxeroTemplate('sale-agents.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Agents template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const agentsSlot = splitAuxeroDivBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-agent-management="false"'
+	const { pageDocument, slot: agentsSlot } = renderAuxeroPageSlot(
+		'sale-agents.html',
+		renderOptions,
+		{
+			marker: 'data-bohemcars-agent-management="false"',
+			templateError: 'Agents template could not be rendered',
+			slotError: 'Agents grid slot could not be located'
+		}
 	);
-
-	if (!agentsSlot) {
-		error(500, 'Agents grid slot could not be located');
-	}
 
 	return {
 		afterAgentsHtml: agentsSlot.afterHtml,

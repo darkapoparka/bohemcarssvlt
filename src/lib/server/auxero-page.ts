@@ -1,4 +1,20 @@
+import { error } from '@sveltejs/kit';
 import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+import type { AuxeroRenderOptions } from './auxero-listing-data';
+import { renderAuxeroTemplate } from './auxero-template';
+
+export type AuxeroBodySlot = {
+	afterHtml: string;
+	beforeHtml: string;
+	sectionHtml: string;
+};
+
+type AuxeroPageSlotOptions = {
+	marker: string;
+	slotError: string;
+	tagName?: string;
+	templateError: string;
+};
 
 const tagContents = (html: string, tagName: 'body' | 'head') => {
 	const match = html.match(new RegExp(`<${tagName}([^>]*)>([\\s\\S]*?)<\\/${tagName}>`, 'i'));
@@ -34,6 +50,20 @@ export function splitAuxeroDocument(html: string): AuxeroPageDocument {
 		bodyHtml: body.content,
 		headHtml: head.content
 	};
+}
+
+export function renderAuxeroPageDocument(
+	templateFile: string,
+	options: AuxeroRenderOptions,
+	templateError: string
+) {
+	const html = renderAuxeroTemplate(templateFile, options);
+
+	if (!html) {
+		error(500, templateError);
+	}
+
+	return splitAuxeroDocument(html);
 }
 
 export function splitAuxeroBodySection(bodyHtml: string, startComment: string, endComment: string) {
@@ -100,4 +130,19 @@ export function splitAuxeroElementBlockByMarker(bodyHtml: string, marker: string
 
 export function splitAuxeroDivBlockByMarker(bodyHtml: string, marker: string) {
 	return splitAuxeroElementBlockByMarker(bodyHtml, marker, 'div');
+}
+
+export function renderAuxeroPageSlot(
+	templateFile: string,
+	options: AuxeroRenderOptions,
+	{ marker, slotError, tagName = 'div', templateError }: AuxeroPageSlotOptions
+) {
+	const pageDocument = renderAuxeroPageDocument(templateFile, options, templateError);
+	const slot = splitAuxeroElementBlockByMarker(pageDocument.bodyHtml, marker, tagName);
+
+	if (!slot) {
+		error(500, slotError);
+	}
+
+	return { pageDocument, slot };
 }

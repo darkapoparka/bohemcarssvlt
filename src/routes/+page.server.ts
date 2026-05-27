@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
 	homeFiveBrandCards,
@@ -14,21 +13,18 @@ import {
 } from '$lib/auxero/home-five';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
-import { splitAuxeroBodySection, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const html = renderAuxeroTemplate('home-05.html', {
-		request,
-		routePath: '',
-		searchParams: url.searchParams
-	});
-
-	if (!html) {
-		error(500, 'Home 05 template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
+	const pageDocument = renderAuxeroPageDocument(
+		'home-05.html',
+		{
+			request,
+			routePath: '',
+			searchParams: url.searchParams
+		},
+		'Home 05 template could not be rendered'
+	);
 	const headerSlot = splitAuxeroBodySection(
 		pageDocument.bodyHtml,
 		'<!-- Header -->',

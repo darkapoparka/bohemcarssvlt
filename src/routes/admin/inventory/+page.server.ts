@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAuxeroAccountListingsData } from '$lib/server/auxero-account-data';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -23,21 +22,15 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('my-listings.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Admin inventory template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const listingsSlot = splitAuxeroDivBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-account-listings'
+	const { pageDocument, slot: listingsSlot } = renderAuxeroPageSlot(
+		'my-listings.html',
+		renderOptions,
+		{
+			marker: 'data-bohemcars-account-listings',
+			templateError: 'Admin inventory template could not be rendered',
+			slotError: 'Admin inventory slot could not be located'
+		}
 	);
-
-	if (!listingsSlot) {
-		error(500, 'Admin inventory slot could not be located');
-	}
 
 	return {
 		afterListingsHtml: listingsSlot.afterHtml,

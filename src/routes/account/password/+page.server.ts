@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAuxeroAccountPasswordFormData } from '$lib/server/auxero-account-data';
-import { splitAuxeroDocument, splitAuxeroElementBlockByMarker } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -23,22 +22,16 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('change-password.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Account password template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const passwordSlot = splitAuxeroElementBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-password-form',
-		'form'
+	const { pageDocument, slot: passwordSlot } = renderAuxeroPageSlot(
+		'change-password.html',
+		renderOptions,
+		{
+			marker: 'data-bohemcars-password-form',
+			tagName: 'form',
+			templateError: 'Account password template could not be rendered',
+			slotError: 'Account password form slot could not be located'
+		}
 	);
-
-	if (!passwordSlot) {
-		error(500, 'Account password form slot could not be located');
-	}
 
 	return {
 		afterPasswordHtml: passwordSlot.afterHtml,

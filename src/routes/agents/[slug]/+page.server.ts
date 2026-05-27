@@ -1,9 +1,7 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { agentDetailFromAgent } from '$lib/auxero/agent-detail';
 import { agents, getAgentBySlug } from '$lib/data/agents';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
 	const agent = getAgentBySlug(params.slug) ?? agents[0];
@@ -13,21 +11,15 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		searchParams: url.searchParams,
 		slug: agent.slug
 	};
-	const html = renderAuxeroTemplate('sale-agents-details.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Agent detail template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const detailSlot = splitAuxeroDivBlockByMarker(
-		pageDocument.bodyHtml,
-		'class="innerpage__content md-mb-30"'
+	const { pageDocument, slot: detailSlot } = renderAuxeroPageSlot(
+		'sale-agents-details.html',
+		renderOptions,
+		{
+			marker: 'class="innerpage__content md-mb-30"',
+			templateError: 'Agent detail template could not be rendered',
+			slotError: 'Agent detail slot could not be located'
+		}
 	);
-
-	if (!detailSlot) {
-		error(500, 'Agent detail slot could not be located');
-	}
 
 	return {
 		afterDetailHtml: detailSlot.afterHtml,

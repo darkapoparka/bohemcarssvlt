@@ -2,8 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
 import { getCompareVehicles } from '$lib/server/auxero-listing-data';
-import { splitAuxeroDocument, splitAuxeroElementBlockByMarker } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -24,22 +23,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('compare.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Account compare template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const compareSlot = splitAuxeroElementBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-compare-table',
-		'table'
-	);
-
-	if (!compareSlot) {
-		error(500, 'Account compare table slot could not be located');
-	}
+	const { pageDocument, slot: compareSlot } = renderAuxeroPageSlot('compare.html', renderOptions, {
+		marker: 'data-bohemcars-compare-table',
+		tagName: 'table',
+		templateError: 'Account compare template could not be rendered',
+		slotError: 'Account compare table slot could not be located'
+	});
 
 	return {
 		afterCompareHtml: compareSlot.afterHtml,

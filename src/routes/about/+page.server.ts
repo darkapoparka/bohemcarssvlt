@@ -1,30 +1,21 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { auxeroAboutContent } from '$lib/auxero/about';
-import { splitAuxeroDocument, splitAuxeroElementBlockByMarker } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const html = renderAuxeroTemplate('about-us.html', {
-		request,
-		routePath: 'about',
-		searchParams: url.searchParams
-	});
-
-	if (!html) {
-		error(500, 'About template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const aboutSlot = splitAuxeroElementBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-about',
-		'div'
+	const { pageDocument, slot: aboutSlot } = renderAuxeroPageSlot(
+		'about-us.html',
+		{
+			request,
+			routePath: 'about',
+			searchParams: url.searchParams
+		},
+		{
+			marker: 'data-bohemcars-about',
+			templateError: 'About template could not be rendered',
+			slotError: 'About content slot could not be located'
+		}
 	);
-
-	if (!aboutSlot) {
-		error(500, 'About content slot could not be located');
-	}
 
 	return {
 		about: auxeroAboutContent,

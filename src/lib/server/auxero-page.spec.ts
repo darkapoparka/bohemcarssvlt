@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { renderAuxeroTemplate } from './auxero-template';
 import {
+	renderAuxeroPageDocument,
+	renderAuxeroPageSlot,
 	splitAuxeroBodySection,
 	splitAuxeroDivBlockByMarker,
 	splitAuxeroDocument,
@@ -17,6 +19,30 @@ describe('splitAuxeroDocument', () => {
 		expect(document.bodyHtml).toContain('Browse, Compare, Drive');
 		expect(document.bodyHtml).toContain('search-cars__search');
 		expect(document.bodyHtml).not.toContain('<body');
+	});
+
+	it('renders a template document and extracts a marked page slot through the shared helper', () => {
+		const pageDocument = renderAuxeroPageDocument(
+			'compare.html',
+			{ routePath: 'compare' },
+			'Compare template could not be rendered'
+		);
+		const { pageDocument: slotDocument, slot } = renderAuxeroPageSlot(
+			'compare.html',
+			{ routePath: 'compare' },
+			{
+				marker: 'data-bohemcars-compare-table',
+				slotError: 'Compare table slot could not be located',
+				tagName: 'table',
+				templateError: 'Compare template could not be rendered'
+			}
+		);
+
+		expect(pageDocument.bodyClass).toBe('inner-page');
+		expect(slotDocument.headHtml).toBe(pageDocument.headHtml);
+		expect(slot.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(slot.sectionHtml).toContain('data-bohemcars-compare-table');
+		expect(slot.afterHtml).toContain('CompareModal');
 	});
 
 	it('splits a marked Home 05 section without dropping surrounding body markup', () => {

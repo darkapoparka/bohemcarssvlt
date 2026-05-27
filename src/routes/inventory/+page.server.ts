@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { inventoryCardsFromVehicles } from '$lib/auxero/inventory';
 import {
@@ -6,8 +5,7 @@ import {
 	inventoryTemplateForView,
 	resolveInventoryView
 } from '$lib/server/auxero-listing-data';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageDocument, splitAuxeroDivBlockByMarker } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const view = resolveInventoryView(url.searchParams.get('view'));
@@ -18,13 +16,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		view
 	};
-	const html = renderAuxeroTemplate(templateFile, renderOptions);
-
-	if (!html) {
-		error(500, 'Inventory template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
+	const pageDocument = renderAuxeroPageDocument(
+		templateFile,
+		renderOptions,
+		'Inventory template could not be rendered'
+	);
 	const inventorySlot = splitAuxeroDivBlockByMarker(
 		pageDocument.bodyHtml,
 		'bohemcars-inventory-content'

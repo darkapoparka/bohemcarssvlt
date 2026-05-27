@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAuxeroMessageThreadData } from '$lib/server/auxero-account-data';
-import { splitAuxeroDivBlockByMarker, splitAuxeroDocument } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -23,21 +22,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('message.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Admin inquiries template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const messageSlot = splitAuxeroDivBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-message-container'
-	);
-
-	if (!messageSlot) {
-		error(500, 'Admin inquiries slot could not be located');
-	}
+	const { pageDocument, slot: messageSlot } = renderAuxeroPageSlot('message.html', renderOptions, {
+		marker: 'data-bohemcars-message-container',
+		templateError: 'Admin inquiries template could not be rendered',
+		slotError: 'Admin inquiries slot could not be located'
+	});
 
 	return {
 		afterMessageHtml: messageSlot.afterHtml,

@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAuxeroAccountListingFormData } from '$lib/server/auxero-account-data';
-import { splitAuxeroDocument, splitAuxeroElementBlockByMarker } from '$lib/server/auxero-page';
-import { renderAuxeroTemplate } from '$lib/server/auxero-template';
+import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { canAccessBohemcarsRoute, resolveBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -23,22 +22,16 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const html = renderAuxeroTemplate('add-listings-2.html', renderOptions);
-
-	if (!html) {
-		error(500, 'Admin listing form template could not be rendered');
-	}
-
-	const pageDocument = splitAuxeroDocument(html);
-	const formSlot = splitAuxeroElementBlockByMarker(
-		pageDocument.bodyHtml,
-		'data-bohemcars-add-listing-form',
-		'form'
+	const { pageDocument, slot: formSlot } = renderAuxeroPageSlot(
+		'add-listings-2.html',
+		renderOptions,
+		{
+			marker: 'data-bohemcars-add-listing-form',
+			tagName: 'form',
+			templateError: 'Admin listing form template could not be rendered',
+			slotError: 'Admin listing form slot could not be located'
+		}
 	);
-
-	if (!formSlot) {
-		error(500, 'Admin listing form slot could not be located');
-	}
 
 	return {
 		afterFormHtml: formSlot.afterHtml,
