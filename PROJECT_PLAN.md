@@ -227,6 +227,7 @@ Backend/auth modules:
 - `src/lib/server/inventory.ts`
 - `src/lib/server/messages.ts`
 - `src/lib/server/inquiries.ts`
+- `src/lib/server/vehicle-detail-state.ts`
 - `src/lib/server/roles.ts`
 
 ## 1:1 Visual Requirements

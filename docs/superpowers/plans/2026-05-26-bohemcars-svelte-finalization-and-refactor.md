@@ -479,6 +479,17 @@ The migration must not start by redesigning the site. The first success conditio
 
   Detail content checkpoint: `/inventory/[slug]` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`; the temporary legacy endpoint file has been removed after the SvelteKit route was verified. The route loads a real vehicle by slug, returns 404 for missing vehicles, splits the rendered Listing Details 3 document at `listing-details[data-bohemcars-detail]`, and renders the detail block through typed Auxero Svelte components.
 
+  Detail state extraction checkpoint: `src/lib/server/vehicle-detail-state.ts` now owns detail
+  slug lookup, deterministic fallback selection for raw template compatibility, and related-vehicle
+  selection. `src/routes/inventory/[slug]/+page.server.ts` imports that server module directly,
+  while `src/lib/server/auxero-listing-data.ts` reuses the same state for the temporary raw Auxero
+  compatibility shell. Unit coverage in `src/lib/server/vehicle-detail-state.spec.ts` locks valid
+  slug lookup, missing-slug fallback, and related vehicles that do not repeat the current detail car.
+  Verification passed on 2026-05-27 with lint, check, full unit tests, project Playwright, build,
+  Browser detail QA, and desktop/mobile screenshots for `/inventory/21764342419542174` plus the
+  raw `listing-details-3.html` compatibility path under
+  `test-results/visual-contract/2026-05-27-vehicle-detail-state-server-module/`.
+
 - [x] **Step 5: Run Svelte autofixer on changed components**
 
   ```bash

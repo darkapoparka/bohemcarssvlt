@@ -3,15 +3,7 @@ import { agents, getAgentBySlug, type Agent } from '$lib/data/agents';
 import { listManagedAgents, type ManagedAgent } from './agents';
 import type { BohemcarsSession } from './auth';
 import { getCompareVehicles } from './compare-state';
-import {
-	bodyTypes,
-	brands,
-	fuels,
-	getRelatedVehicles,
-	getVehicleBySlug,
-	vehicles,
-	type Vehicle
-} from '$lib/data/vehicles';
+import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import {
 	getInventoryState,
 	inventoryTemplateForView,
@@ -19,6 +11,7 @@ import {
 	type InventoryState,
 	type InventoryView
 } from './inventory-state';
+import { getVehicleDetailOrFallback, getVehicleDetailRelated } from './vehicle-detail-state';
 
 export { getInventoryState, inventoryTemplateForView, resolveInventoryView };
 
@@ -39,8 +32,6 @@ const sortLabels: Record<string, string> = {
 	newest: 'Newest Year',
 	'newest-listed': 'Newest Listed'
 };
-
-const detailFallbackSlug = vehicles[0]?.slug ?? '21764342419542174';
 
 const compareIcon = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<g clip-path="url(#clip0_13399_19575)">
@@ -970,7 +961,7 @@ const replaceFirstBlockAfter = (
 };
 
 const relatedSlides = (vehicle: Vehicle) =>
-	getRelatedVehicles(vehicle, 4)
+	getVehicleDetailRelated(vehicle, 4)
 		.map((related, index) => `<div class="swiper-slide">${gridCard(related, index)}</div>`)
 		.join('\n');
 
@@ -985,7 +976,7 @@ const replaceRelatedVehicles = (html: string, vehicle: Vehicle) => {
 };
 
 export const applyDetailData = (html: string, options: AuxeroRenderOptions = {}) => {
-	const vehicle = getVehicleBySlug(options.slug ?? detailFallbackSlug) ?? vehicles[0];
+	const vehicle = getVehicleDetailOrFallback(options.slug);
 	const monthly = `${vehicle.monthly.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR/mo`;
 	const consultant =
 		bohemcarsConsultants.find((agent) => agent.slug === vehicle.agentSlug) ??
