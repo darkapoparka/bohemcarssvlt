@@ -1374,6 +1374,15 @@ npm run build
 
 Browser QA verified `/admin/inventory/new?role=admin` and `/admin/inventory/edit/21764342419542174?role=admin` on desktop and mobile: correct form markers and modes, active Add Listing menu, 7 dashboard boxes, 7 gallery items, 25 feature checks, 2 local action buttons, visible map iframe, no `Lorem ipsum`, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-listing-form-svelte/`.
 
+**Listing form state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-listing-form-state.ts` now owns role-aware add/edit listing form data, edit route slug resolution, static inventory clone mode, gallery/attachment defaults, feature groups, map options, hidden workflow fields, and field-value lookup.
+- `/admin/inventory/new` and `/admin/inventory/edit/[id]` page loaders import the server-only listing form state directly, while the raw `add-listings-2.html` compatibility adapter reuses the same state.
+- `src/lib/server/auxero-account-data.ts` now keeps only Auxero add-listing demo replacement and form marking helpers for raw compatibility instead of shaping listing form data inline.
+- Focused unit coverage locks create-mode admin hidden fields, static edit clone mode, requested-route vehicle values, demo-text absence, and helper alignment.
+- Verification refreshed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser QA refreshed `/admin/inventory/new?role=admin` and `/admin/inventory/edit/21764342419542174?role=admin` on desktop and mobile: form marker visible, modes `create` and `clone-static`, Bohemcars vehicle values present, 7 dashboard boxes, 7 gallery items, map iframe visible, no `Lorem ipsum`, no Peachtree demo address, no console errors, and no horizontal overflow. Screenshots were saved under `test-results/visual-contract/2026-05-27-account-listing-form-state-module/`.
+
 ### Task 8: Final Product Polish And Proposal Readiness
 
 **Files:**
