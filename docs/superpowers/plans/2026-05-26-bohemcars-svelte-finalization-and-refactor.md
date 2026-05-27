@@ -301,9 +301,9 @@ The migration must not start by redesigning the site. The first success conditio
 
 - [x] **Step 3: Convert the route from raw server response to Svelte page**
 
-  Rename `src/routes/+server.ts` to `src/routes/+server.legacy.ts` or remove it only after `+page.svelte` renders the homepage. The root route must not have both a conflicting `+server.ts` response and the intended `+page.svelte` page for normal browser navigation.
+  Remove the former root `+server.ts` endpoint only after `+page.svelte` renders the homepage. The root route must not have both a conflicting `+server.ts` response and the intended `+page.svelte` page for normal browser navigation.
 
-  Current checkpoint: `src/routes/+server.ts` moved to `src/routes/root-server.legacy.ts`; `/` now renders through `+page.server.ts` and `+page.svelte` using a split, trusted Auxero Home 05 document. Section-by-section Svelte component replacement remains pending under the existing fidelity tests.
+  Current checkpoint: the temporary root legacy endpoint file has been removed; `/` now renders through `+page.server.ts` and `+page.svelte` using a split, trusted Auxero Home 05 document. Section-by-section Svelte component replacement remains pending under the existing fidelity tests.
 
   Brand strip checkpoint: `src/lib/components/home/HomeFiveBrandStrip.svelte` now renders the Home 05 `Explore Our Brands` section from shared `homeFiveBrandCards` data. The rest of the page still streams through trusted Auxero fragments until each section is replaced under visual tests.
 
@@ -399,7 +399,7 @@ The migration must not start by redesigning the site. The first success conditio
 - [ ] **Step 7: Commit**
 
   ```bash
-  git add src/routes/+page.server.ts src/routes/+page.svelte src/routes/+server.legacy.ts src/lib/components/home src/lib/data/bohemcars.ts src/routes/project1.e2e.ts
+  git add src/routes/+page.server.ts src/routes/+page.svelte src/lib/components/home src/lib/data/bohemcars.ts src/routes/project1.e2e.ts
   git commit -m "refactor: migrate home 05 to svelte"
   ```
 
@@ -424,7 +424,7 @@ The migration must not start by redesigning the site. The first success conditio
 
   Assert the current raw-template inventory page has visible filter button, sort select, three-card rhythm, image ratio, title, price, compare button, and details link.
 
-  Inventory content checkpoint: `/inventory` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`, replacing only the generated inventory content block with `AuxeroInventoryContent.svelte` and `AuxeroInventoryVehicleCard.svelte`. The previous endpoint is kept as `server.legacy.ts` for reference. The test now guards the 3-column, dense 4-column, and half-map view contracts before the rest of the inventory page is migrated.
+  Inventory content checkpoint: `/inventory` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`, replacing only the generated inventory content block with `AuxeroInventoryContent.svelte` and `AuxeroInventoryVehicleCard.svelte`. The temporary legacy endpoint file has been removed after the SvelteKit route was verified. The test now guards the 3-column, dense 4-column, and half-map view contracts before the rest of the inventory page is migrated.
 
 - [ ] **Step 2: Move inventory filtering into typed server load**
 
@@ -489,7 +489,7 @@ The migration must not start by redesigning the site. The first success conditio
   };
   ```
 
-  Detail content checkpoint: `/inventory/[slug]` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`; the previous endpoint is preserved as `server.legacy.ts`. The route loads a real vehicle by slug, returns 404 for missing vehicles, splits the rendered Listing Details 3 document at `listing-details[data-bohemcars-detail]`, and renders the detail block through typed Auxero Svelte components.
+  Detail content checkpoint: `/inventory/[slug]` now uses `+page.server.ts`, `+page.svelte`, and `+page.ts` with `csr = false`; the temporary legacy endpoint file has been removed after the SvelteKit route was verified. The route loads a real vehicle by slug, returns 404 for missing vehicles, splits the rendered Listing Details 3 document at `listing-details[data-bohemcars-detail]`, and renders the detail block through typed Auxero Svelte components.
 
 - [x] **Step 5: Run Svelte autofixer on changed components**
 
@@ -807,6 +807,13 @@ Browser DOM QA verified the account compare route on desktop and mobile: 2 visib
 - Added unit coverage for missing account sessions, denied customer admin access, and allowed agent inquiry access.
 - Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
 - Browser smoke screenshots for allowed account/admin routes and status checks for denied routes were saved under `test-results/visual-contract/2026-05-27-protected-session-helper/`; `report.json` recorded no status mismatches, no unexpected console errors, and no horizontal overflow.
+
+**Legacy route endpoint cleanup checkpoint completed 2026-05-27:**
+
+- Removed the stale `*.legacy.ts` route adapter files for `/`, `/inventory`, and `/inventory/[slug]` now that the SvelteKit `+page.server.ts` and `+page.svelte` routes own those pages.
+- Kept the compatibility renderer only as the documented Auxero source contract, shared page-shell boundary, and catch-all template route, not as duplicate route endpoints.
+- Verification passed with `npm run lint`, `npm run check`, `npm run test:unit -- --run`, `npx playwright test src/routes/project1.e2e.ts`, and `npm run build`.
+- Browser smoke screenshots for `/`, `/inventory`, and `/inventory/[slug]` at desktop and mobile were saved under `test-results/visual-contract/2026-05-27-remove-legacy-route-files/`; `report.json` recorded no console errors, no page errors, no non-200 statuses, and no horizontal overflow.
 
 ### Task 7A: Migrate Agents Listing Page
 
