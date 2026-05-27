@@ -1202,6 +1202,14 @@ npm run build
 
 Browser DOM QA verified the account and admin dashboard roots on desktop and mobile: one Svelte `data-bohemcars-dashboard-recent` box per page, customer recent messages, admin recent inquiries, preserved dashboard stat cards and listing tables, preserved dashboard body class, no demo review copy, no console errors, and no page-level mobile horizontal overflow. Full-page Playwright screenshots were saved under `test-results/visual-contract/2026-05-27-dashboard-recent-svelte/`.
 
+**Dashboard state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-dashboard-state.ts` owns dashboard route context, role-aware dashboard stat data, recent activity data, account avatars, and dashboard date formatting.
+- `src/lib/server/auxero-account-data.ts` now reuses that server state for raw `dashboard.html` compatibility rendering while keeping only the Auxero shell/string replacement work in the adapter.
+- `/account` and `/admin` still render the same Svelte dashboard recent component data, but that data no longer originates inside the raw adapter.
+- Unit coverage now locks route activity resolution, customer/admin stat identities, recent activity headings/content, helper alignment, and invalid-date fallback behavior.
+- Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and desktop/mobile screenshots for `/account?role=customer` and `/admin?role=admin` under `test-results/visual-contract/2026-05-27-account-dashboard-state-module/`.
+
 ### Task 7N: Migrate Account/Admin Message Threads
 
 **Checkpoint completed 2026-05-27:**
