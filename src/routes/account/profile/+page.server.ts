@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroAccountProfileFormData } from '$lib/server/auxero-account-data';
+import { getAccountProfileFormData } from '$lib/server/account-profile-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -29,6 +29,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeProfileHtml: profileSlot.beforeHtml,
 		pageDocument,
-		profile: getAuxeroAccountProfileFormData('my-profile.html', renderOptions)
+		profile: getAccountProfileFormData('my-profile.html', renderOptions)
 	};
 };

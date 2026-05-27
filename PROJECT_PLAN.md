@@ -225,6 +225,7 @@ Backend/auth modules:
 - `src/lib/server/account-dashboard-state.ts`
 - `src/lib/server/account-listings-state.ts`
 - `src/lib/server/account-message-state.ts`
+- `src/lib/server/account-profile-state.ts`
 - `src/lib/server/blog-state.ts`
 - `src/lib/server/db.ts`
 - `src/lib/server/compare-state.ts`

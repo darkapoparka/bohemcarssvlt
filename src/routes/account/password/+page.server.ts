@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroAccountPasswordFormData } from '$lib/server/auxero-account-data';
+import { getAccountPasswordFormData } from '$lib/server/account-profile-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -29,6 +29,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforePasswordHtml: passwordSlot.beforeHtml,
 		pageDocument,
-		password: getAuxeroAccountPasswordFormData('change-password.html', renderOptions)
+		password: getAccountPasswordFormData('change-password.html', renderOptions)
 	};
 };

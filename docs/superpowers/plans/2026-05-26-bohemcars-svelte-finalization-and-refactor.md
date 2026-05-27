@@ -1338,6 +1338,13 @@ npm run build
 
 Browser QA verified `/account/profile?role=customer` and `/account/password?role=customer` on desktop and mobile: correct form markers, active menu states, customer field values, visible profile avatar/poster/map, empty password fields, no `Lorem ipsum`, no `themesflat@gmail.com`, no `themesflat@2026`, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-account-profile-password-svelte/`.
 
+**Profile/password state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-profile-state.ts` now owns role-aware profile form data, profile map options, social link defaults, avatar/poster assets, and password form identity data.
+- `/account/profile` and `/account/password` page loaders import the server-only profile/password state directly, while the raw `my-profile.html` and `change-password.html` compatibility adapters reuse the same state.
+- `src/lib/server/auxero-account-data.ts` now keeps only Auxero profile/password form marking and demo-text replacement helpers for raw compatibility instead of shaping profile/password data inline.
+- Focused unit coverage locks customer profile values, social link defaults, map options, absence of template demo names/passwords, role-aware password identity data, and helper alignment.
+
 ### Task 7R: Migrate Admin Add And Edit Listing Forms
 
 **Checkpoint completed 2026-05-27:**
