@@ -30,8 +30,7 @@ import { accountListingFormData, listingFormFieldValue } from './account-listing
 import {
 	accountUserManagementData,
 	accountUserManagementNotesData,
-	accountUserManagementStatsData,
-	getAccountUserManagementData
+	accountUserManagementStatsData
 } from './account-users-state';
 
 type DashboardMenuItem = {
@@ -1160,41 +1159,6 @@ export const applyAccountTemplateData = (
 
 	return html;
 };
-
-export const getAuxeroDashboardRecentData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountDashboardRecentData(accountContext(templateFile, options));
-
-export const getAuxeroMessageThreadData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountMessageThreadData(accountContext(templateFile, options));
-
-export const getAuxeroAccountListingsData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountListingsData(accountContext(templateFile, options));
-
-export const getAuxeroUserManagementData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => getAccountUserManagementData(templateFile, options);
-
-export const getAuxeroAccountProfileFormData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountProfileFormData(accountContext(templateFile, options));
-
-export const getAuxeroAccountPasswordFormData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountPasswordFormData(accountContext(templateFile, options));
-
-export const getAuxeroAccountListingFormData = (
-	templateFile: string,
-	options: AuxeroRenderOptions = {}
-) => accountListingFormData(accountContext(templateFile, options), options);
 
 export const isAccountTemplate = (templateFile: string) =>
 	[

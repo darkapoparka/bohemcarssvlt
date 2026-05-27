@@ -25,4 +25,14 @@ describe('account route state boundaries', () => {
 		expect(joinedRoutes).not.toContain('auxero-account-data');
 		expect(joinedRoutes).toContain('getAccountMessageThreadData');
 	});
+
+	it('keeps account raw adapter exports scoped to compatibility rendering', () => {
+		const adapterSource = routeSource('../lib/server/auxero-account-data.ts');
+
+		expect(adapterSource).toContain('applyAccountTemplateData');
+		expect(adapterSource).toContain('getAuxeroAccountRuntimeData');
+		expect(adapterSource).not.toMatch(
+			/export const getAuxero(?:Dashboard|Message|Account(?:Listings|Profile|Password|ListingForm)|User)/
+		);
+	});
 });

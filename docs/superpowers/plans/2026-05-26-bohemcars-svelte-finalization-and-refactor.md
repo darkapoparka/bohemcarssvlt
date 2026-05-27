@@ -1226,6 +1226,7 @@ Browser DOM QA verified the account and admin dashboard roots on desktop and mob
 - Unit coverage now locks route activity resolution, customer/admin stat identities, recent activity headings/content, helper alignment, and invalid-date fallback behavior.
 - Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and desktop/mobile screenshots for `/account?role=customer` and `/admin?role=admin` under `test-results/visual-contract/2026-05-27-account-dashboard-state-module/`.
 - Route boundary refresh, 2026-05-28: `/account` and `/admin` now import `getAccountDashboardRecentData` directly from `account-dashboard-state.ts`; the raw adapter keeps only compatibility rendering for `dashboard.html`. A route architecture spec guards against reintroducing `auxero-account-data` as the SvelteKit dashboard data source.
+- Adapter API cleanup, 2026-05-28: removed the stale exported `getAuxero...` route-data facades from `auxero-account-data.ts`, leaving account dashboard data ownership in `account-dashboard-state.ts` and raw template ownership in `applyAccountTemplateData`. Browser DOM QA plus screenshot fallback evidence was saved under `test-results/visual-contract/2026-05-28-account-adapter-api-cleanup/`.
 
 ### Task 7N: Migrate Account/Admin Message Threads
 
@@ -1263,6 +1264,7 @@ Browser DOM QA verified `/account/messages`, `/admin/messages`, and `/admin/inqu
 - Unit coverage now locks customer contacts, customer thread context, admin inquiry threads, agent-scoped admin messaging, helper alignment, and absence of old demo message/contact leakage.
 - Verification passed with lint, check, full unit tests, project Playwright, build, Browser QA, and screenshots for `/account/messages?role=customer`, `/admin/messages?role=admin`, and `/admin/inquiries?role=agent` under `test-results/visual-contract/2026-05-27-account-message-state-module/`.
 - Route boundary refresh, 2026-05-28: `/account/messages`, `/admin/messages`, and `/admin/inquiries` now import `getAccountMessageThreadData` directly from `account-message-state.ts`; the raw adapter remains the compatibility renderer for `message.html`. A route architecture spec locks those route imports to the server state module.
+- Adapter API cleanup, 2026-05-28: removed the stale exported `getAuxero...` route-data facades from `auxero-account-data.ts`, so message routes cannot depend on the raw adapter for typed thread state. Browser DOM QA plus screenshot fallback evidence was saved under `test-results/visual-contract/2026-05-28-account-adapter-api-cleanup/`.
 
 ### Task 7O: Migrate Account Listings And Admin Inventory Tables
 
