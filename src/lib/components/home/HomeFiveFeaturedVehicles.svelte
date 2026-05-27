@@ -17,7 +17,7 @@
 	<section class="bohemcars-featured-vehicles background-light py-100" data-bohemcars-home-vehicles>
 		<div class="container">
 			<div class="title-section wow fadeInUp mb-40" data-wow-delay="0.1s">
-				<h2>Bohemcars Vehicles</h2>
+				<h2 class="capitalize">Bohemcars Vehicles</h2>
 				<a
 					href={resolve('/inventory?view=4')}
 					class="btn btn-line-style-2 effect-line-primary btn-large hover-fill-white"
@@ -37,7 +37,10 @@
 					</svg>
 				</a>
 			</div>
-			<div class="bohemcars-vehicle-pills mb-40 flex items-center justify-center overflow-x-auto">
+			<div
+				class="bohemcars-vehicle-pills wow fadeIn mb-40 flex items-center justify-center gap-8 overflow-x-auto"
+				data-wow-delay="0.1s"
+			>
 				<ul class="menu-tab menu-tab-style2 margin-auto gap-10">
 					{#each vehiclePills as pill (pill.label)}
 						<li class={`bohemcars-vehicle-pill car-box ${pill.active ? 'active' : ''}`}>
@@ -124,18 +127,10 @@
 		align-items: center;
 		justify-content: center;
 		flex-wrap: nowrap;
-		width: max-content;
-		max-width: 100%;
 	}
 
 	.bohemcars-vehicle-pill {
-		height: 40px;
-		border-color: rgb(28 28 28 / 0.12);
-		background: rgb(255 255 255 / 0.58);
-		box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.64);
 		color: #1c1c1c;
-		overflow: hidden;
-		padding: 0;
 	}
 
 	.bohemcars-vehicle-pill:hover,
@@ -149,9 +144,6 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		width: 100%;
-		height: 100%;
-		padding: 4px 14px;
 		white-space: nowrap;
 	}
 
