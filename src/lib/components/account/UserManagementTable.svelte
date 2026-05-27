@@ -26,31 +26,26 @@
 						<p class="clamp-1 clamp text-secondary mb-12">{row.description}</p>
 					</div>
 				</div>
-				<div class="cart-item__price"><span class="price">{row.columns[0]}</span></div>
-				<div class="cart-item__year"><span>{row.columns[1]}</span></div>
-				<div class="cart-item__total"><span>{row.columns[2]}</span></div>
-				<div><span>{row.columns[3]}</span></div>
+				<div class="cart-item__price">
+					<span class="clamp-1 clamp price" title={row.columns[0]}>{row.columns[0]}</span>
+				</div>
+				<div class="cart-item__year">
+					<span class="clamp-1 clamp" title={row.columns[1]}>{row.columns[1]}</span>
+				</div>
+				<div class="cart-item__total">
+					<span class="clamp-1 clamp" title={row.columns[2]}>{row.columns[2]}</span>
+				</div>
+				<div><span class="clamp-1 clamp" title={row.columns[3]}>{row.columns[3]}</span></div>
 				<div class="cart-item__action">
 					{#each row.actions as action (action.kind)}
-						{#if action.kind === 'message'}
-							<a
-								href={resolve('/admin/messages?role=admin')}
-								class="hover-fill-white cart-item__edit action"
-								aria-label={action.ariaLabel}
-							>
-								<img src={action.icon} alt={action.kind} />
-								<p class="tooltip">{action.label}</p>
-							</a>
-						{:else if action.kind === 'review'}
-							<a
-								href={resolve('/admin/inquiries?role=admin')}
-								class="hover-fill-white cart-item__edit action"
-								aria-label={action.ariaLabel}
-							>
-								<img src={action.icon} alt={action.kind} />
-								<p class="tooltip">{action.label}</p>
-							</a>
-						{/if}
+						<a
+							href={resolve(action.href)}
+							class="hover-fill-white cart-item__edit action"
+							aria-label={action.ariaLabel}
+						>
+							<img src={action.icon} alt={action.kind} />
+							<p class="tooltip">{action.label}</p>
+						</a>
 					{/each}
 				</div>
 			</div>

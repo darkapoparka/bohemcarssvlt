@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getAuxeroUserManagementData } from '$lib/server/auxero-account-data';
+import { getAccountUserManagementData } from '$lib/server/account-users-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -24,6 +24,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeUsersHtml: usersSlot.beforeHtml,
 		pageDocument,
-		users: getAuxeroUserManagementData('dashboard.html', renderOptions)
+		users: getAccountUserManagementData('dashboard.html', renderOptions)
 	};
 };

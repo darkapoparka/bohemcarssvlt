@@ -1321,6 +1321,15 @@ npm run build
 
 Browser DOM QA verified `/admin/users?role=admin` on desktop and mobile: one Svelte `data-bohemcars-users-table`, 6 user rows, 1 admin row, 3 lead rows, preserved 6-column headers, 6 message links, 6 inquiry/review links, role notes present, seeded customer and Canada import lead content, no `%2F` encoded links, no console errors, and no horizontal overflow. Browser screenshots were saved under `test-results/visual-contract/2026-05-27-admin-users-svelte/`.
 
+**Users state extraction checkpoint refreshed 2026-05-27:**
+
+- `src/lib/server/account-users-state.ts` now owns managed-user rows, admin user stats, role access notes, table headers, footer copy, and action hrefs for the admin users surface.
+- `/admin/users` imports the server-only user-management state directly, while the raw `dashboard.html` compatibility adapter renders the same typed records for its fallback table, stats, and role-note blocks.
+- `src/lib/server/auxero-account-data.ts` now keeps only Auxero user-management markup helpers for raw compatibility instead of shaping admin user data inline.
+- `UserManagementTable.svelte` renders action links from typed data instead of hardcoding message/review route decisions in the visual component.
+- Long email/context cells use Auxero's existing `clamp-1 clamp` utility classes in both Svelte and raw fallback rendering so Bohemcars account data does not visually collide inside the fixed dashboard table rhythm.
+- Focused unit and Playwright coverage locks admin rows, action hrefs, lead/customer content, stats, role notes, helper alignment, clamp classes, and the agents hover transition wait.
+
 ### Task 7Q: Migrate Account Profile And Password Forms
 
 **Checkpoint completed 2026-05-27:**

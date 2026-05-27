@@ -468,6 +468,8 @@ test('compare and consultants render branded buyer flows without login', async (
 	);
 	expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(agentImageTransform);
 	const firstAgentSocial = firstAgentCard.locator('.sale-agent-social li a').first();
+	await expect(firstAgentSocial).toHaveCSS('opacity', '1');
+	await expect(firstAgentSocial).toHaveCSS('bottom', '0px');
 	await firstAgentSocial.hover();
 	await expect(firstAgentSocial).toHaveCSS('background-color', 'rgb(238, 240, 236)');
 	await expect(firstAgentSocial).toHaveCSS('border-color', 'rgb(214, 219, 209)');
@@ -933,6 +935,10 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(adminUsers.locator('[data-bohemcars-user-role="admin"]')).toBeVisible();
 	await expect(adminUsers).toContainText('customer@bohemcars.local');
 	await expect(adminUsers).toContainText('Canada import lead');
+	await expect(adminUsers.locator('.cart-item__price .price.clamp-1.clamp')).toHaveCount(
+		adminUserCount
+	);
+	await expect(adminUsers.locator('.cart-item__total .clamp-1.clamp')).toHaveCount(adminUserCount);
 	await expect(adminUsers.locator('a[href*="/admin/messages"]')).toHaveCount(adminUserCount);
 	await expect(adminUsers.locator('a[href*="/admin/inquiries"]')).toHaveCount(adminUserCount);
 	await expect(page.locator('.bohemcars-users-box')).toContainText('Role Access Notes');

@@ -1,4 +1,3 @@
-import { agents } from '$lib/data/agents';
 import type {
 	AuxeroAccountListingAction,
 	AuxeroAccountListingRow,
@@ -7,15 +6,15 @@ import type {
 import type { AuxeroMessageThreadData } from '$lib/auxero/messages';
 import type {
 	AuxeroUserManagementData,
-	AuxeroUserManagementRow
+	AuxeroUserManagementNote,
+	AuxeroUserManagementStat
 } from '$lib/auxero/user-management';
 import { bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
-import { resolveBohemcarsSession, type BohemcarsRole } from './auth';
+import { resolveBohemcarsSession } from './auth';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 import { listInquiriesForRole } from './inquiries';
 import { listMessagesForRole } from './messages';
-import { listManagedUsers } from './users';
 import { getBohemcarsGarageState } from './garage';
 import {
 	accountAvatarByRole,
@@ -28,6 +27,12 @@ import { accountListingsData } from './account-listings-state';
 import { accountMessageThreadData } from './account-message-state';
 import { accountPasswordFormData, accountProfileFormData } from './account-profile-state';
 import { accountListingFormData, listingFormFieldValue } from './account-listing-form-state';
+import {
+	accountUserManagementData,
+	accountUserManagementNotesData,
+	accountUserManagementStatsData,
+	getAccountUserManagementData
+} from './account-users-state';
 
 type DashboardMenuItem = {
 	badge?: number;
@@ -35,17 +40,6 @@ type DashboardMenuItem = {
 	icon: string;
 	id: string;
 	label: string;
-};
-
-type UserRow = {
-	avatarRole: BohemcarsRole;
-	email: string;
-	id: string;
-	kind: string;
-	name: string;
-	role: string;
-	state: string;
-	status: string;
 };
 
 const demoVehicleTitles = [
@@ -561,151 +555,80 @@ const submissionCartWrapper = (
 const cartWrapper = (data: AuxeroAccountListingsData) =>
 	data.isSubmissions ? submissionCartWrapper(data) : inventoryCartWrapper(data);
 
-const userRows = (): UserRow[] =>
-	listManagedUsers().map((user) => ({
-		avatarRole: user.avatarRole,
-		email: user.email,
-		id: user.id,
-		kind: user.kind,
-		name: user.name,
-		role: user.roleLabel,
-		state: user.statusLabel,
-		status: user.context
-	}));
-
-const userManagementRows = (): AuxeroUserManagementRow[] =>
-	userRows().map((user) => ({
-		actions: [
-			{
-				ariaLabel: `Message ${user.name}`,
-				icon: '/assets/images/dashboard/Messages.svg',
-				kind: 'message',
-				label: 'Message'
-			},
-			{
-				ariaLabel: `Review ${user.name}`,
-				icon: '/assets/images/dashboard/MyReviews.svg',
-				kind: 'review',
-				label: 'Review'
-			}
-		],
-		columns: [user.email, user.role, user.status, user.state],
-		description: user.status,
-		id: user.id,
-		image: accountAvatarByRole[user.avatarRole],
-		kind: user.kind,
-		name: user.name,
-		role: user.role
-	}));
-
-const userManagementData = (context: AccountContext): AuxeroUserManagementData => ({
-	footerText: 'Role-aware prototype accounts and lead contacts managed by Bohemcars.',
-	headers: ['User', 'Email', 'Role', 'Context', 'Status', 'Action'],
-	rows: context.isAdmin ? userManagementRows() : []
-});
-
-const userManagementStats =
-	() => `<div class="grid grid-cols-4 xl-grid-cols-2 sm-grid-cols-1 gap-30 mb-30">
-	${[
-		{
-			href: '/admin/users',
-			icon: '/assets/images/dashboard/MyProfile.svg',
-			label: 'User Roles',
-			value: String(userRows().length)
-		},
-		{
-			href: '/admin/inquiries',
-			icon: '/assets/images/dashboard/clockCountdown.svg',
-			label: 'Open Leads',
-			value: String(listInquiriesForRole('admin').length)
-		},
-		{
-			href: '/admin/messages',
-			icon: '/assets/images/dashboard/chats.svg',
-			label: 'Message Threads',
-			value: String(listMessagesForRole('admin').length)
-		},
-		{
-			href: '/admin/agents',
-			icon: '/assets/images/dashboard/star.svg',
-			label: 'Agents',
-			value: String(agents.length)
-		}
-	]
+const userManagementStats = (
+	stats: AuxeroUserManagementStat[]
+) => `<div class="grid grid-cols-4 xl-grid-cols-2 sm-grid-cols-1 gap-30 mb-30">
+	${stats
 		.map(
-			(stat) => `<a href="${stat.href}" class="dashboard-cart">
+			(stat) => `<a href="${escapeHtml(stat.href)}" class="dashboard-cart">
 		<div>
 			<p class="h7 font-weight-500 mb-4">${escapeHtml(stat.label)}</p>
 			<p class="h3">${escapeHtml(stat.value)}</p>
 		</div>
 		<div class="icon">
-			<img src="${stat.icon}" alt="${escapeHtml(stat.label)}">
+			<img src="${escapeHtml(stat.icon)}" alt="${escapeHtml(stat.label)}">
 		</div>
 	</a>`
 		)
 		.join('\n')}
 </div>`;
 
-const userManagementTable =
-	() => `<div class="cart-wrapper bohemcars-users-table" data-bohemcars-users-table>
+const userManagementTable = (
+	data: AuxeroUserManagementData
+) => `<div class="cart-wrapper bohemcars-users-table" data-bohemcars-users-table>
 	<div class="cart-header">
-		<div class="font-weight-600">User</div>
-		<div class="font-weight-600">Email</div>
-		<div class="font-weight-600">Role</div>
-		<div class="font-weight-600">Context</div>
-		<div class="font-weight-600">Status</div>
-		<div class="font-weight-600">Action</div>
+		${data.headers.map((header) => `<div class="font-weight-600">${escapeHtml(header)}</div>`).join('\n')}
 	</div>
 	<div class="cart-items">
-		${userRows()
+		${data.rows
 			.map(
 				(
 					user
 				) => `<div class="cart-item" data-bohemcars-user-id="${escapeHtml(user.id)}" data-bohemcars-user-kind="${escapeHtml(user.kind)}" data-bohemcars-user-role="${escapeHtml(user.role.toLowerCase())}">
 			<div class="cart-item__product">
-				<div class="cart-item__image"><img src="${accountAvatarByRole[user.avatarRole]}" alt="${escapeHtml(user.name)}"></div>
+				<div class="cart-item__image"><img src="${escapeHtml(user.image)}" alt="${escapeHtml(user.name)}"></div>
 				<div class="cart-item__name">
 					<p class="h4 clamp-1 clamp mb-8">${escapeHtml(user.name)}</p>
-					<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(user.status)}</p>
+					<p class="clamp-1 clamp text-secondary mb-12">${escapeHtml(user.description)}</p>
 				</div>
 			</div>
-			<div class="cart-item__price"><span class="price">${escapeHtml(user.email)}</span></div>
-			<div class="cart-item__year"><span>${escapeHtml(user.role)}</span></div>
-			<div class="cart-item__total"><span>${escapeHtml(user.status)}</span></div>
-			<div><span>${escapeHtml(user.state)}</span></div>
+			<div class="cart-item__price"><span class="price clamp-1 clamp" title="${escapeHtml(user.columns[0] ?? '')}">${escapeHtml(user.columns[0] ?? '')}</span></div>
+			<div class="cart-item__year"><span class="clamp-1 clamp" title="${escapeHtml(user.columns[1] ?? '')}">${escapeHtml(user.columns[1] ?? '')}</span></div>
+			<div class="cart-item__total"><span class="clamp-1 clamp" title="${escapeHtml(user.columns[2] ?? '')}">${escapeHtml(user.columns[2] ?? '')}</span></div>
+			<div><span class="clamp-1 clamp" title="${escapeHtml(user.columns[3] ?? '')}">${escapeHtml(user.columns[3] ?? '')}</span></div>
 			<div class="cart-item__action">
-				<a href="/admin/messages?role=admin" class="hover-fill-white cart-item__edit action" aria-label="Message ${escapeHtml(user.name)}">
-					<img src="/assets/images/dashboard/Messages.svg" alt="message">
-					<p class="tooltip">Message</p>
-				</a>
-				<a href="/admin/inquiries?role=admin" class="hover-fill-white cart-item__edit action" aria-label="Review ${escapeHtml(user.name)}">
-					<img src="/assets/images/dashboard/MyReviews.svg" alt="review">
-					<p class="tooltip">Review</p>
-				</a>
+				${user.actions
+					.map(
+						(
+							action
+						) => `<a href="${escapeHtml(action.href)}" class="hover-fill-white cart-item__edit action" aria-label="${escapeHtml(action.ariaLabel)}">
+					<img src="${escapeHtml(action.icon)}" alt="${escapeHtml(action.kind)}">
+					<p class="tooltip">${escapeHtml(action.label)}</p>
+				</a>`
+					)
+					.join('\n')}
 			</div>
 		</div>`
 			)
 			.join('\n')}
 	</div>
 	<div class="divider w-full mb-20"></div>
-	<p class="text-secondary">Role-aware prototype accounts and lead contacts managed by Bohemcars.</p>
+	<p class="text-secondary">${escapeHtml(data.footerText)}</p>
 </div>`;
 
-const userManagementNotes = () => `<div class="dashboard-box bg-white bohemcars-users-box">
+const userManagementNotes = (
+	notes: AuxeroUserManagementNote[]
+) => `<div class="dashboard-box bg-white bohemcars-users-box">
 	<p class="h4 mb-20">Role Access Notes</p>
 	<div class="comments">
-		<div class="comment-box">
-			<p class="h5 mb-12">Admin</p>
-			<p class="h7 line-height-28">Full access to inventory, inquiries, messages, agents, and users.</p>
-		</div>
-		<div class="comment-box">
-			<p class="h5 mb-12">Agent</p>
-			<p class="h7 line-height-28">Can work assigned inquiries and message threads without full admin access.</p>
-		</div>
-		<div class="comment-box">
-			<p class="h5 mb-12">Customer</p>
-			<p class="h7 line-height-28">Keeps favorites, compare list, messages, profile, password, and sell-car submissions.</p>
-		</div>
+		${notes
+			.map(
+				(note) => `<div class="comment-box">
+			<p class="h5 mb-12">${escapeHtml(note.title)}</p>
+			<p class="h7 line-height-28">${escapeHtml(note.text)}</p>
+		</div>`
+			)
+			.join('\n')}
 	</div>
 </div>`;
 
@@ -949,6 +872,8 @@ const applyDashboardData = (
 };
 
 const applyUsersData = (html: string, templateFile: string, options: AuxeroRenderOptions = {}) => {
+	const context = accountContext(templateFile, options);
+	const data = accountUserManagementData(context);
 	let next = applyAccountShell(html, templateFile, options)
 		.replace('<p class="h3 mb-30">Admin Dashboard</p>', '<p class="h3 mb-30">User Management</p>')
 		.replaceAll('All Listing', 'User Accounts');
@@ -957,19 +882,19 @@ const applyUsersData = (html: string, templateFile: string, options: AuxeroRende
 		next,
 		'User Management',
 		'<div class="grid grid-cols-4',
-		userManagementStats()
+		userManagementStats(accountUserManagementStatsData())
 	);
 	next = replaceFirstDivAfter(
 		next,
 		'User Management',
 		'<div class="cart-wrapper">',
-		userManagementTable()
+		userManagementTable(data)
 	);
 	next = replaceFirstDivAfter(
 		next,
 		'User Management',
 		'<div class="dashboard-box bg-white">',
-		userManagementNotes()
+		userManagementNotes(accountUserManagementNotesData())
 	);
 
 	return replaceDashboardDemoText(next);
@@ -1254,7 +1179,7 @@ export const getAuxeroAccountListingsData = (
 export const getAuxeroUserManagementData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
-) => userManagementData(accountContext(templateFile, options));
+) => getAccountUserManagementData(templateFile, options);
 
 export const getAuxeroAccountProfileFormData = (
 	templateFile: string,
