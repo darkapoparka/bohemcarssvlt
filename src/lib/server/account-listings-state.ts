@@ -20,13 +20,13 @@ export const accountInventoryListingRows = (
 			{
 				ariaLabel: `Edit ${vehicle.title}`,
 				href: `/admin/inventory/edit/${encodeURIComponent(vehicle.slug)}`,
-				icon: '/assets/images/dashboard/AddListing.svg',
+				icon: '/assets/icons/dashboard-edit.svg',
 				kind: 'edit-inventory',
 				label: 'Edit Listing'
 			},
 			{
 				ariaLabel: `Remove ${vehicle.title}`,
-				icon: '/assets/icons/trash.svg',
+				icon: '/assets/icons/dashboard-trash.svg',
 				kind: 'remove',
 				label: 'Remove Listing'
 			}
@@ -47,7 +47,7 @@ export const accountSubmissionListingRows = (context: AccountContext): AuxeroAcc
 			{
 				ariaLabel: `Edit ${submission.title}`,
 				href: '/sell-your-car',
-				icon: '/assets/images/dashboard/AddListing.svg',
+				icon: '/assets/icons/dashboard-edit.svg',
 				kind: 'edit-submission',
 				label: 'Edit Submission'
 			},

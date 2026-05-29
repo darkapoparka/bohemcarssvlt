@@ -1,16 +1,30 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { HomeFiveHeaderData, HomeFiveHeaderSocial } from '$lib/auxero/home-five';
+	import type {
+		HomeFiveHeaderData,
+		HomeFiveHeaderNavigationItem,
+		HomeFiveHeaderSocial
+	} from '$lib/auxero/home-five';
 
 	let { header }: { header?: HomeFiveHeaderData } = $props();
 
 	const addListingHref = '/admin/inventory/new';
+
+	const navItemClass = (item: HomeFiveHeaderNavigationItem) =>
+		[
+			'menu-item',
+			item.megaMenu ? 'menu-item-has-children' : '',
+			item.megaMenu?.variant === 'inventory' ? 'menu-item--static' : '',
+			item.active ? 'current-menu-item menu-item-main' : ''
+		]
+			.filter(Boolean)
+			.join(' ');
 </script>
 
 {#if header}
 	<!-- Header -->
 	<div class="header-wrapper-style-4">
-		<header class="header header-style-4 header-blur" id="header_main">
+		<header class="header header-style-4 bg-white" id="header_main">
 			<div class="header-top-bar bg-primary relative">
 				<div class="topbar-container header-spacing md-w-full md-min-w-full max-w-1920">
 					<div class="flex gap-24">
@@ -94,12 +108,89 @@
 					<div class="header-right header-right-style-2 main-nav-wrapper gap-20">
 						<!-- Menu -->
 						<nav id="main-nav" class="main-nav margin-right-auto">
-							<ul id="menu-primary-menu" class="menu menu style-2">
+							<ul id="menu-primary-menu" class="menu menu">
 								{#each header.navigation as item (item.href)}
-									<li
-										class={item.active ? 'menu-item current-menu-item menu-item-main' : 'menu-item'}
-									>
-										<a href={resolve(item.href as '/')}>{item.label}</a>
+									<li class={navItemClass(item)}>
+										<a
+											href={resolve(item.href as '/')}
+											aria-haspopup={item.megaMenu ? 'true' : undefined}
+										>
+											{item.label}
+											{#if item.megaMenu}
+												{@render chevronIcon('#1C1C1C')}
+											{/if}
+										</a>
+
+										{#if item.megaMenu}
+											{#if item.megaMenu.variant === 'inventory'}
+												<div
+													class="sub-menu sub-menu--full sub-menu--listing bohemcars-mega bohemcars-mega--vehicles"
+												>
+													<div class="bohemcars-mega__content">
+														<div class="bohemcars-mega__vehicle-panel">
+															<div class="sub-menu--listing-nav bohemcars-mega__vehicles">
+																{#each item.megaMenu.vehicles as vehicle (vehicle.href)}
+																	<a class="bohemcars-mega-car" href={resolve(vehicle.href as '/')}>
+																		<span class="bohemcars-mega-car__image-wrap">
+																			<img
+																				class="bohemcars-mega-car__image"
+																				src={vehicle.image}
+																				alt={vehicle.label}
+																			/>
+																		</span>
+																		<span class="bohemcars-mega-car__title">{vehicle.label}</span>
+																		<span class="bohemcars-mega-car__meta">{vehicle.meta}</span>
+																		<span class="bohemcars-mega-car__actions">
+																			<span>{header.ui.megaView}</span>
+																			<span>{header.ui.megaDetails}</span>
+																		</span>
+																	</a>
+																{/each}
+															</div>
+
+															<div class="bohemcars-mega__footer">
+																<a
+																	href={resolve(item.megaMenu.footer.ctaHref as '/')}
+																	class="btn btn-primary btn-medium font-weight-600 bohemcars-mega__footer-button"
+																>
+																	{item.megaMenu.footer.ctaLabel}
+																</a>
+																<div class="bohemcars-mega__footer-copy">
+																	<strong>{item.megaMenu.footer.title}</strong>
+																	<span>{item.megaMenu.footer.copy}</span>
+																</div>
+															</div>
+														</div>
+
+														<div class="sub-menu--listing-image bohemcars-mega__links">
+															{#each item.megaMenu.sections as section (section.title)}
+																<div class="sub-menu-item-listing">
+																	<p class="h5 menu-item-inner-title mb-16">
+																		{section.title}
+																		{@render subMenuTitleChevronIcon()}
+																	</p>
+																	<ul class="sub-menu-item-inner flex flex-col gap-16">
+																		{#each section.links as link (link.href)}
+																			<li>
+																				<a href={resolve(link.href as '/')}>{link.label}</a>
+																			</li>
+																		{/each}
+																	</ul>
+																</div>
+															{/each}
+														</div>
+													</div>
+												</div>
+											{:else}
+												<ul class="sub-menu sub-menu--container">
+													<li>
+														{#each item.megaMenu.links as link (link.href)}
+															<a href={resolve(link.href as '/')}>{link.label}</a>
+														{/each}
+													</li>
+												</ul>
+											{/if}
+										{/if}
 									</li>
 								{/each}
 							</ul>
@@ -110,21 +201,21 @@
 							<!-- Sign In Button -->
 							<a
 								href={resolve('/account')}
-								class="btn btn-line-white btn-large font-weight-600 bg-sign-in open-modal"
+								class="btn btn-primary-3 btn-large font-weight-600 bg-sign-in open-modal"
 								data-modal-id="#LoginModal"
 							>
 								{@render userIcon('#fff')}
-								Sign In
+								{header.ui.signIn}
 							</a>
 							<!-- Sign In Button -->
 
 							<!-- Add Listing Button -->
 							<a
 								href={resolve(addListingHref as '/')}
-								class="btn btn-white btn-large font-weight-600"
+								class="btn btn-primary btn-large font-weight-600"
 							>
-								{@render plusCircleIcon('#1C1C1C')}
-								Add Listing
+								{@render plusCircleIcon('#fff')}
+								{header.ui.addListing}
 							</a>
 							<!-- Add Listing Button -->
 						</div>
@@ -132,7 +223,7 @@
 						<div class="header-actions ml-20">
 							<div class="header-search-wrapper">
 								<span class="header-action-btn relative" id="searchToggle">
-									{@render searchIcon()}
+									{@render searchIcon('#1C1C1C')}
 								</span>
 								<!-- Search Form -->
 								<div class="search-form" id="searchForm">
@@ -146,7 +237,7 @@
 											type="text"
 											class="search-form__input"
 											name="q"
-											placeholder="Search Bohemcars inventory"
+											placeholder={header.ui.searchPlaceholder}
 											autocomplete="off"
 											id="searchInput"
 										/>
@@ -158,19 +249,19 @@
 							<a
 								href={resolve('/compare')}
 								class="header-action-btn header-action-icon"
-								aria-label="Compare"
+								aria-label={header.ui.compare}
 								data-badge={header.actionBadges.compare}
 							>
-								{@render compareIcon()}
+								{@render compareIcon('#1C1C1C')}
 							</a>
 
 							<a
 								href={resolve('/account/favorites')}
 								class="header-action-btn header-action-icon"
-								aria-label="Wishlist"
+								aria-label={header.ui.wishlist}
 								data-badge={header.actionBadges.wishlist}
 							>
-								{@render heartIcon()}
+								{@render heartIcon('#1C1C1C')}
 							</a>
 							<div class="mobile-button"><span></span></div>
 						</div>
@@ -182,11 +273,11 @@
 					<!-- Sign In Button -->
 					<a
 						href={resolve('/account')}
-						class="btn btn-primary btn-large font-weight-600 open-modal"
+						class="btn btn-primary-3 btn-large font-weight-600 open-modal"
 						data-modal-id="#LoginModal"
 					>
-						{@render userIcon('#1C1C1C')}
-						Sign In
+						{@render userIcon('#fff')}
+						{header.ui.signIn}
 					</a>
 					<!-- Sign In Button -->
 
@@ -196,7 +287,7 @@
 						class="btn btn-primary btn-large font-weight-600"
 					>
 						{@render plusCircleIcon('#fff')}
-						Add Listing
+						{header.ui.addListing}
 					</a>
 					<!-- Add Listing Button -->
 				</div>
@@ -218,6 +309,25 @@
 		<path
 			d="M4 6.5L8 10.5L12 6.5"
 			{stroke}
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet subMenuTitleChevronIcon()}
+	<svg
+		class="chevron-down lg-show hidden"
+		width="16"
+		height="12"
+		viewBox="0 0 16 12"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		<path
+			d="M4 6.5L8 10.5L12 6.5"
+			stroke="#9FA1A4"
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
@@ -385,18 +495,18 @@
 	</svg>
 {/snippet}
 
-{#snippet searchIcon()}
+{#snippet searchIcon(stroke: string)}
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M10.5 18C14.6421 18 18 14.6421 18 10.5C18 6.35786 14.6421 3 10.5 3C6.35786 3 3 6.35786 3 10.5C3 14.6421 6.35786 18 10.5 18Z"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
 		<path
 			d="M15.8047 15.8047L21.0012 21.0012"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
@@ -404,32 +514,32 @@
 	</svg>
 {/snippet}
 
-{#snippet compareIcon()}
+{#snippet compareIcon(stroke: string)}
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M16.5 13.5L19.5 16.5L16.5 19.5"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
 		<path
 			d="M4.5 16.5H19.5"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
 		<path
 			d="M7.5 10.5L4.5 7.5L7.5 4.5"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
 		<path
 			d="M19.5 7.5H4.5"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
@@ -437,14 +547,323 @@
 	</svg>
 {/snippet}
 
-{#snippet heartIcon()}
+{#snippet heartIcon(stroke: string)}
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M12 21C12 21 2.25 15.75 2.25 9.5625C2.25 8.21984 2.78337 6.93217 3.73277 5.98277C4.68217 5.03337 5.96984 4.5 7.3125 4.5C9.43031 4.5 11.2444 5.65406 12 7.5C12.7556 5.65406 14.5697 4.5 16.6875 4.5C18.0302 4.5 19.3178 5.03337 20.2672 5.98277C21.2166 6.93217 21.75 8.21984 21.75 9.5625C21.75 15.75 12 21 12 21Z"
-			stroke="#fff"
+			{stroke}
 			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
 	</svg>
 {/snippet}
+
+<style>
+	:global(
+		.header-wrapper-style-4
+			#main-nav
+			.menu
+			> li.menu-item--static
+			.sub-menu.bohemcars-mega--vehicles
+	) {
+		align-items: stretch;
+		background: #ffffff;
+		border: 1px solid #eceff3;
+		border-radius: 0 0 18px 18px;
+		box-shadow: 0 18px 36px rgba(17, 24, 39, 0.08);
+		display: flex !important;
+		flex-direction: column !important;
+		flex-wrap: nowrap !important;
+		gap: 0;
+		left: 50vw !important;
+		max-width: 1410px !important;
+		overflow: hidden;
+		padding: 0;
+		position: fixed !important;
+		right: auto !important;
+		top: 144px !important;
+		transform: translate(-50%, 15px) !important;
+		width: min(1410px, calc(100vw - 60px)) !important;
+		z-index: 30;
+	}
+
+	:global(
+		.header-wrapper-style-4
+			#main-nav
+			.menu
+			> li.menu-item--static:hover
+			.sub-menu.bohemcars-mega--vehicles
+	) {
+		transform: translate(-50%, 0) !important;
+	}
+
+	:global(
+		.header-wrapper-style-4
+			.header.is-fixed.is-custom
+			#main-nav
+			.menu
+			> li.menu-item--static
+			.sub-menu.bohemcars-mega--vehicles
+	) {
+		top: 58px !important;
+	}
+
+	:global(
+		.header-wrapper-style-4
+			#main-nav
+			.menu
+			> li.menu-item--static
+			.sub-menu.bohemcars-mega--vehicles
+			.bohemcars-mega__content
+	) {
+		align-items: stretch;
+		display: flex;
+		gap: 44px;
+		padding: 30px 42px 32px;
+		width: 100%;
+	}
+
+	:global(.bohemcars-mega__vehicle-panel) {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		justify-content: space-between;
+		min-width: 0;
+		width: auto;
+	}
+
+	:global(.bohemcars-mega__vehicles) {
+		display: grid !important;
+		gap: 18px 26px;
+		grid-template-columns: repeat(4, minmax(150px, 1fr));
+		width: 100% !important;
+	}
+
+	:global(.bohemcars-mega__links) {
+		border-left: 1px solid #e7e7e7;
+		display: grid !important;
+		flex: 0 0 360px;
+		gap: 22px;
+		grid-template-columns: repeat(2, minmax(120px, 1fr));
+		padding-left: 34px;
+		width: 360px !important;
+	}
+
+	:global(.bohemcars-mega__links .sub-menu-item-listing) {
+		min-width: 0;
+	}
+
+	:global(.bohemcars-mega__links .sub-menu-item-listing .h5) {
+		font-size: 15px;
+		line-height: 22px;
+		margin-bottom: 12px;
+	}
+
+	:global(.bohemcars-mega__links .sub-menu-item-inner) {
+		gap: 10px;
+	}
+
+	:global(.bohemcars-mega__links .sub-menu-item-inner a) {
+		color: #5c5e62;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	:global(.bohemcars-mega-car) {
+		align-items: center;
+		background: transparent;
+		border-radius: 8px;
+		color: #1c1c1c;
+		display: flex !important;
+		flex-direction: column;
+		min-width: 0;
+		padding: 4px 8px 8px !important;
+		text-align: center;
+		text-decoration: none;
+	}
+
+	:global(.bohemcars-mega-car:hover) {
+		background: #f7f7f7;
+	}
+
+	:global(.bohemcars-mega-car__image-wrap) {
+		align-items: end;
+		display: flex;
+		height: 112px;
+		justify-content: center;
+		margin-bottom: 7px;
+		width: 100%;
+	}
+
+	:global(.bohemcars-mega-car__image) {
+		display: block;
+		height: 100%;
+		max-width: 100%;
+		object-fit: contain;
+	}
+
+	:global(.bohemcars-mega-car__title) {
+		color: #1c1c1c;
+		display: block;
+		font-size: 17px;
+		font-weight: 600;
+		line-height: 24px;
+		margin-bottom: 2px;
+		white-space: nowrap;
+	}
+
+	:global(.bohemcars-mega-car__meta) {
+		color: #5c5e62;
+		display: block;
+		font-size: 13px;
+		line-height: 18px;
+		margin-bottom: 8px;
+		white-space: nowrap;
+	}
+
+	:global(.bohemcars-mega-car__actions) {
+		display: flex;
+		gap: 14px;
+		justify-content: center;
+	}
+
+	:global(.bohemcars-mega-car__actions span) {
+		color: #84a91f;
+		font-size: 13px;
+		line-height: 18px;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	:global(.bohemcars-mega__footer) {
+		align-items: center;
+		background: transparent;
+		border-top: 1px solid #eceff3;
+		display: flex;
+		flex: 0 0 auto;
+		gap: 22px;
+		justify-content: flex-start;
+		margin-top: 24px;
+		padding: 16px 0 0;
+		width: 100%;
+	}
+
+	:global(.bohemcars-mega__footer-button) {
+		white-space: nowrap;
+	}
+
+	:global(.bohemcars-mega__footer-copy) {
+		border-left: 1px solid #e5e7eb;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding-left: 22px;
+	}
+
+	:global(.bohemcars-mega__footer-copy strong) {
+		color: #111827;
+		font-size: 15px;
+		line-height: 22px;
+	}
+
+	:global(.bohemcars-mega__footer-copy span) {
+		color: #667085;
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	@media (max-width: 991px) {
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles) {
+			padding: 0 20px 16px;
+		}
+
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles .bohemcars-mega__content) {
+			display: block;
+			padding: 0;
+		}
+
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles .bohemcars-mega__vehicle-panel) {
+			width: 100%;
+		}
+
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles .bohemcars-mega__vehicles) {
+			display: grid;
+			gap: 10px;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			margin-bottom: 16px;
+		}
+
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles .bohemcars-mega__links) {
+			border-left: 0;
+			display: grid;
+			gap: 14px;
+			grid-template-columns: 1fr;
+			padding-left: 0;
+			width: 100% !important;
+		}
+
+		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles .sub-menu-item-inner a) {
+			color: #cfd2d8;
+			font-size: 14px;
+			line-height: 20px;
+			padding-left: 40px;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega-car) {
+			padding: 8px 0 !important;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega-car__image-wrap) {
+			height: 62px;
+			margin-bottom: 6px;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega-car__title) {
+			color: #fff;
+			font-size: 14px;
+			line-height: 20px;
+			white-space: normal;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega-car__meta) {
+			display: none;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega-car__actions) {
+			gap: 10px;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega__footer) {
+			align-items: stretch;
+			background: transparent;
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+			flex-direction: column;
+			gap: 10px;
+			padding: 14px 0 0;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega__footer-button) {
+			height: 42px;
+			width: 100%;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega__footer-copy) {
+			border-left: 0;
+			padding-left: 0;
+			text-align: center;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega__footer-copy strong) {
+			color: #fff;
+			font-size: 13px;
+			line-height: 18px;
+		}
+
+		:global(#main-nav-mobile .bohemcars-mega__footer-copy span) {
+			color: #cfd2d8;
+			font-size: 12px;
+			line-height: 17px;
+		}
+	}
+</style>

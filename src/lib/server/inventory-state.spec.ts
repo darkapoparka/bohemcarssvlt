@@ -9,7 +9,8 @@ import {
 
 describe('inventory-state', () => {
 	it('resolves Auxero inventory views and source templates', () => {
-		expect(resolveInventoryView(null)).toBe('3');
+		expect(resolveInventoryView(null)).toBe('4');
+		expect(resolveInventoryView('3')).toBe('3');
 		expect(resolveInventoryView('dense')).toBe('4');
 		expect(resolveInventoryView('grid4')).toBe('4');
 		expect(resolveInventoryView('half-map')).toBe('map');

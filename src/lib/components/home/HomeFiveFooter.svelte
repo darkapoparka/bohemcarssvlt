@@ -70,7 +70,9 @@
 									<img class="logo" src={footer.logo.src} alt={footer.logo.alt} />
 								</a>
 
-								<p class="text-muted font-weight-500 mb-8 text-xs uppercase">Opening Hours:</p>
+								<p class="text-muted font-weight-500 mb-8 text-xs uppercase">
+									{footer.labels.openingHours}
+								</p>
 
 								<p class="mb-28 text-white">
 									{footer.hours[0]} <br />
@@ -81,12 +83,12 @@
 							<form class="form-footer relative" action="#">
 								<input
 									type="text"
-									placeholder="Enter your e-mail"
+									placeholder={footer.labels.emailPlaceholder}
 									name="footer-email"
 									id="footer-email"
 									required
 								/>
-								<button type="submit" class="btn-submit" aria-label="Subscribe">
+								<button type="submit" class="btn-submit" aria-label={footer.labels.subscribe}>
 									{@render submitArrow()}
 								</button>
 							</form>
@@ -100,7 +102,7 @@
 									class="collapse-title font-weight-600 mb-14 justify-between text-white"
 									data-breakpoint="mobile"
 								>
-									QUICK LINKS
+									{footer.labels.quickLinks}
 									<span class="icon md-block hidden text-white">+</span>
 								</p>
 								<ul class="widget-links collapse-content md-hidden">
@@ -114,7 +116,7 @@
 									class="collapse-title font-weight-600 mb-14 justify-between text-white"
 									data-breakpoint="mobile"
 								>
-									BUYING & SELLING
+									{footer.labels.buyingSelling}
 									<span class="icon md-block hidden text-white">+</span>
 								</p>
 								<ul class="widget-links collapse-content md-hidden">
@@ -150,7 +152,7 @@
 							</div>
 
 							<div>
-								<p class="font-weight-600 mb-16 text-sm text-white">Bohemcars Online</p>
+								<p class="font-weight-600 mb-16 text-sm text-white">{footer.labels.online}</p>
 								<div class="flex items-center gap-12">
 									{#each footer.appLinks as app (app.label)}
 										<a href={resolve(app.href as '/')}>

@@ -5,13 +5,16 @@
 		AuxeroInventoryView
 	} from '$lib/auxero/inventory';
 	import { inventoryGridClassForView } from '$lib/auxero/inventory';
+	import type { InventoryCopy } from '$lib/i18n/messages';
 	import AuxeroInventoryVehicleCard from './AuxeroInventoryVehicleCard.svelte';
 
 	let {
 		cards,
+		copy,
 		view
 	}: {
 		cards: AuxeroInventoryVehicleCardData[];
+		copy: InventoryCopy;
 		view: AuxeroInventoryView;
 	} = $props();
 
@@ -23,20 +26,21 @@
 	<div class="content-inner active">
 		<div class={gridClass}>
 			{#each cards as card (card.slug)}
-				<AuxeroInventoryVehicleCard {card} variant={view === 'map' ? 'list' : 'grid'} />
+				<AuxeroInventoryVehicleCard
+					{card}
+					copy={copy.vehicleCard}
+					variant={view === 'map' ? 'list' : 'grid'}
+				/>
 			{:else}
 				<div class="card-box card-box-style-1 bohemcars-empty-state">
 					<div class="content border-light">
-						<p class="h6 card-box__title mb-8">No Bohemcars vehicles match these filters</p>
+						<p class="h6 card-box__title mb-8">{copy.emptyTitle}</p>
 						<p class="text-secondary mb-15">
-							Clear filters or contact Bohemcars for a Canada import request.
+							{copy.emptyBody}
 						</p>
 						<a href={resetHref} class="view-details">
-							Reset inventory <img
-								class="ml-4"
-								src="/assets/icons/CaretCircleRight.svg"
-								alt="reset"
-							/>
+							{copy.reset}
+							<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt={copy.reset} />
 						</a>
 					</div>
 				</div>

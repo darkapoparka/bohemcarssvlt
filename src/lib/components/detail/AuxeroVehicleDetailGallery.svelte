@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { DetailCopy } from '$lib/i18n/messages';
 
-	let { images, title }: { images: string[]; title: string } = $props();
+	let { copy, images, title }: { copy: DetailCopy; images: string[]; title: string } = $props();
 	const contactHref = resolve('/contact');
 	const denseInventoryHref = resolve('/inventory?view=4');
 </script>
@@ -10,11 +11,11 @@
 	<div class="listing-details-item--content">
 		<a class="listing-details-item--button" href={contactHref}>
 			<img src="/assets/icons/playcircle.svg" alt="play" />
-			Play Video
+			{copy.playVideo}
 		</a>
 		<a class="listing-details-item--button" href={denseInventoryHref}>
 			<img src="/assets/icons/view-all-photo.svg" alt="view" />
-			View All Photo
+			{copy.viewAllPhoto}
 		</a>
 	</div>
 {/snippet}

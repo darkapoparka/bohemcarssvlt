@@ -20,6 +20,7 @@
 	brandCards={data.brandCards}
 	budgetVehicles={data.budgetVehicles}
 	comparePairs={data.comparePairs}
+	copy={data.copy}
 	featuredVehicles={data.featuredVehicles}
 	footer={data.footer}
 	header={data.header}

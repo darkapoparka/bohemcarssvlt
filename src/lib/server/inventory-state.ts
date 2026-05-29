@@ -66,10 +66,11 @@ const normalizeFilters = (filters: InventoryFilters) =>
 	) as InventoryFilters;
 
 export const resolveInventoryView = (value?: string | InventoryView | null): InventoryView => {
+	if (value === '3' || value === 'grid3' || value === 'comfortable') return '3';
 	if (value === '4' || value === 'dense' || value === 'grid4') return '4';
 	if (value === 'map' || value === 'half-map' || value === 'halfmap') return 'map';
 
-	return '3';
+	return '4';
 };
 
 export const inventoryTemplateForView = (view: InventoryView) => {

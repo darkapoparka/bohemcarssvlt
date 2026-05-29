@@ -1,5 +1,12 @@
 import { bohemcarsContact, bohemcarsConsultants, bohemcarsFetchedAt } from '$lib/data/bohemcars';
 import type { Vehicle } from '$lib/data/vehicles';
+import {
+	getMessages,
+	localizeVehicleTermsInText,
+	translateVehicleTerm,
+	type DetailCopy,
+	type Locale
+} from '$lib/i18n/messages';
 import { formatInventoryKm, formatInventoryMonthly } from './inventory';
 
 export type AuxeroVehicleDetailOverviewItem = {
@@ -31,6 +38,7 @@ export type AuxeroVehicleDetailContact = {
 export type AuxeroVehicleDetailData = {
 	consultant: AuxeroVehicleDetailConsultant;
 	contact: AuxeroVehicleDetailContact;
+	copy: DetailCopy;
 	description: string;
 	featureTabs: AuxeroVehicleDetailFeatureTab[];
 	galleryImages: string[];
@@ -45,60 +53,116 @@ export type AuxeroVehicleDetailData = {
 
 const galleryImageCount = 7;
 
-const detailFeatureTabs = (vehicle: Vehicle): AuxeroVehicleDetailFeatureTab[] => {
+const detailFeatureTabs = (
+	vehicle: Vehicle,
+	locale: Locale = 'en'
+): AuxeroVehicleDetailFeatureTab[] => {
 	const features = (
 		vehicle.features.length
 			? vehicle.features
 			: ['Verified source listing', 'History review available', 'Viewing by appointment']
-	).slice(0, 24);
+	)
+		.map((feature) => localizeVehicleTermsInText(locale, feature))
+		.slice(0, 24);
 
 	return [
-		{ label: 'Equipment', items: features.slice(0, 12) },
-		{ label: 'Comfort', items: features.slice(12, 24) },
+		{ label: locale === 'bg' ? 'Оборудване' : 'Equipment', items: features.slice(0, 12) },
+		{ label: locale === 'bg' ? 'Комфорт' : 'Comfort', items: features.slice(12, 24) },
 		{
-			label: 'History',
-			items: ['Canada import review', 'Document trail review', 'Registration readiness discussion']
+			label: locale === 'bg' ? 'История' : 'History',
+			items:
+				locale === 'bg'
+					? ['Проверка при внос от Канада', 'Преглед на документи', 'Разговор за регистрация']
+					: ['Canada import review', 'Document trail review', 'Registration readiness discussion']
 		},
 		{
-			label: 'Mechanical',
+			label: locale === 'bg' ? 'Техника' : 'Mechanical',
+			items:
+				locale === 'bg'
+					? [
+							'Може да се организира технически преглед',
+							vehicle.engine || 'Детайли за двигателя по запитване'
+						]
+					: ['Mechanical inspection can be arranged', vehicle.engine || 'Engine details on request']
+		},
+		{
+			label: locale === 'bg' ? 'Спецификации' : 'Specs',
 			items: [
-				'Mechanical inspection can be arranged',
-				vehicle.engine || 'Engine details on request'
-			]
+				translateVehicleTerm(locale, 'fuels', vehicle.fuel),
+				translateVehicleTerm(locale, 'transmissions', vehicle.transmission),
+				translateVehicleTerm(locale, 'bodyTypes', vehicle.bodyType)
+			].filter(Boolean)
 		},
 		{
-			label: 'Specs',
-			items: [vehicle.fuel, vehicle.transmission, vehicle.bodyType].filter(Boolean)
-		},
-		{
-			label: 'Notes',
+			label: locale === 'bg' ? 'Бележки' : 'Notes',
 			items: [
-				bohemcarsContact.appointmentNote,
+				locale === 'bg'
+					? 'Огледите се потвърждават предварително.'
+					: bohemcarsContact.appointmentNote,
 				bohemcarsFetchedAt
-					? `Inventory refreshed ${bohemcarsFetchedAt}`
-					: 'Inventory refreshed from Bohemcars source data'
+					? locale === 'bg'
+						? `Наличността е обновена ${bohemcarsFetchedAt}`
+						: `Inventory refreshed ${bohemcarsFetchedAt}`
+					: locale === 'bg'
+						? 'Наличността е обновена от източника на Bohemcars'
+						: 'Inventory refreshed from Bohemcars source data'
 			]
 		}
 	];
 };
 
-const overviewItems = (vehicle: Vehicle): AuxeroVehicleDetailOverviewItem[] => [
-	{ icon: 'icon-gauge.svg', label: 'Mileage', value: formatInventoryKm(vehicle.mileage) },
-	{ icon: 'calendar.svg', label: 'Year', value: String(vehicle.year) },
-	{ icon: 'gaspump.svg', label: 'Fuel', value: vehicle.fuel },
-	{ icon: 'palette.svg', label: 'Color', value: vehicle.exterior },
-	{ icon: 'MapPin.svg', label: 'Location', value: vehicle.location },
-	{ icon: 'Seatbelt.svg', label: 'Interior', value: vehicle.interior },
-	{ icon: 'Frame.svg', label: 'Engine', value: vehicle.engine || 'On request' },
-	{ icon: 'transmission-2.svg', label: 'Transmission', value: vehicle.transmission },
-	{ icon: 'Barcode.svg', label: 'Source ID', value: vehicle.vin },
-	{ icon: 'QrCode.svg', label: 'Stock Number', value: vehicle.stockNumber }
+const overviewItems = (
+	vehicle: Vehicle,
+	locale: Locale = 'en'
+): AuxeroVehicleDetailOverviewItem[] => [
+	{
+		icon: 'icon-gauge.svg',
+		label: locale === 'bg' ? 'Пробег' : 'Mileage',
+		value: formatInventoryKm(vehicle.mileage)
+	},
+	{ icon: 'calendar.svg', label: locale === 'bg' ? 'Година' : 'Year', value: String(vehicle.year) },
+	{
+		icon: 'gaspump.svg',
+		label: locale === 'bg' ? 'Гориво' : 'Fuel',
+		value: translateVehicleTerm(locale, 'fuels', vehicle.fuel)
+	},
+	{ icon: 'palette.svg', label: locale === 'bg' ? 'Цвят' : 'Color', value: vehicle.exterior },
+	{ icon: 'MapPin.svg', label: locale === 'bg' ? 'Локация' : 'Location', value: vehicle.location },
+	{
+		icon: 'Seatbelt.svg',
+		label: locale === 'bg' ? 'Интериор' : 'Interior',
+		value: vehicle.interior
+	},
+	{
+		icon: 'Frame.svg',
+		label: locale === 'bg' ? 'Двигател' : 'Engine',
+		value: vehicle.engine || (locale === 'bg' ? 'По запитване' : 'On request')
+	},
+	{
+		icon: 'transmission-2.svg',
+		label: locale === 'bg' ? 'Скорости' : 'Transmission',
+		value: translateVehicleTerm(locale, 'transmissions', vehicle.transmission)
+	},
+	{
+		icon: 'Barcode.svg',
+		label: locale === 'bg' ? 'ID от източника' : 'Source ID',
+		value: vehicle.vin
+	},
+	{
+		icon: 'QrCode.svg',
+		label: locale === 'bg' ? 'Номер в наличност' : 'Stock Number',
+		value: vehicle.stockNumber
+	}
 ];
 
-export const vehicleDetailFromVehicle = (vehicle: Vehicle): AuxeroVehicleDetailData => {
+export const vehicleDetailFromVehicle = (
+	vehicle: Vehicle,
+	locale: Locale = 'en'
+): AuxeroVehicleDetailData => {
 	const consultant =
 		bohemcarsConsultants.find((agent) => agent.slug === vehicle.agentSlug) ??
 		bohemcarsConsultants[0];
+	const copy = getMessages(locale).detail;
 
 	return {
 		consultant: {
@@ -114,14 +178,15 @@ export const vehicleDetailFromVehicle = (vehicle: Vehicle): AuxeroVehicleDetailD
 			primaryPhoneHref: bohemcarsContact.primaryPhoneHref,
 			primaryPhoneLabel: bohemcarsContact.primaryPhoneLabel
 		},
+		copy,
 		description:
-			vehicle.description ||
-			`${vehicle.title} is available through Bohemcars with source review and viewing by appointment.`,
-		featureTabs: detailFeatureTabs(vehicle),
+			localizeVehicleTermsInText(locale, vehicle.description) ||
+			`${vehicle.title} ${copy.detailDescriptionFallback}`,
+		featureTabs: detailFeatureTabs(vehicle, locale),
 		galleryImages: Array.from({ length: galleryImageCount }, () => vehicle.image),
 		image: vehicle.image,
-		monthlyLabel: formatInventoryMonthly(vehicle.monthly),
-		overviewItems: overviewItems(vehicle),
+		monthlyLabel: formatInventoryMonthly(vehicle.monthly, locale),
+		overviewItems: overviewItems(vehicle, locale),
 		priceBgn: vehicle.priceBgn || vehicle.condition,
 		priceLabel: vehicle.priceLabel,
 		slug: vehicle.slug,

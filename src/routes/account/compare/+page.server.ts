@@ -1,10 +1,12 @@
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
+import { resolveLocale } from '$lib/i18n/messages';
 import { getCompareVehicles } from '$lib/server/compare-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const locale = resolveLocale(url.searchParams.get('lang'));
 	const routePath = 'account/compare';
 	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
 
@@ -14,18 +16,23 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: compareSlot } = renderAuxeroPageSlot('compare.html', renderOptions, {
-		marker: 'data-bohemcars-compare-table',
-		tagName: 'table',
-		templateError: 'Account compare template could not be rendered',
-		slotError: 'Account compare table slot could not be located'
-	});
+	const { pageDocument, slot: compareSlot } = renderAuxeroPageSlot(
+		'dashboard.html',
+		renderOptions,
+		{
+			marker: 'dashboard-content--inner',
+			templateError: 'Account compare dashboard template could not be rendered',
+			slotError: 'Account compare dashboard slot could not be located'
+		}
+	);
 
 	return {
 		afterCompareHtml: compareSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeCompareHtml: compareSlot.beforeHtml,
+		dashboardShell: true,
+		locale,
 		pageDocument,
-		vehicles: compareVehiclesFromVehicles(getCompareVehicles(renderOptions))
+		vehicles: compareVehiclesFromVehicles(getCompareVehicles(renderOptions), locale)
 	};
 };

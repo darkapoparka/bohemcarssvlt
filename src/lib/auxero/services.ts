@@ -1,10 +1,29 @@
 import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
+import type { AuxeroPageBanner } from './page-banner';
 
 export type AuxeroSupportService = {
 	description: string;
 	href: string;
 	image: string;
 	title: string;
+};
+
+export type AuxeroServicesContent = {
+	cards: AuxeroSupportService[];
+	cardsDescription: string;
+	cardsTitle: string;
+	contact: {
+		checklist: string[];
+		description: string;
+		emailLabel: string;
+		phoneHref: string;
+		phoneLabel: string;
+		secondaryPhoneHref: string;
+		secondaryPhoneLabel: string;
+		title: string;
+		workNote: string;
+	};
+	hero: AuxeroPageBanner;
 };
 
 export type AuxeroServiceInputField = {
@@ -29,62 +48,92 @@ export type AuxeroServiceFormData = {
 
 export const auxeroServiceCards: AuxeroSupportService[] = [
 	{
-		title: 'Import From Canada',
+		title: 'Внос от Канада',
 		description:
-			'Shortlist vehicles with traceable history, clear photos, and realistic landed-cost expectations before purchase.',
+			'Подбор на автомобили с проследима история, ясни снимки и реалистична крайна цена преди покупка.',
 		href: '/contact',
-		image: '/assets/bohemcars/services/import-canada-service.png'
+		image: '/assets/bohemcars/services/import-canada-banner-generated.png'
 	},
 	{
-		title: 'Evaluate A Listing',
+		title: 'Проверка на обява',
 		description:
-			'Review VIN, mileage, history reports, equipment, photos, and seller context before you commit.',
+			'Преглед на VIN, пробег, история, оборудване, снимки и контекст на продавача преди решение.',
 		href: '/compare',
 		image: '/assets/bohemcars/services/evaluate-link-service.png'
 	},
 	{
-		title: 'Sell Your Car',
+		title: 'Продажба на автомобил',
 		description:
-			'Send vehicle details, documents, photos, and expectations so Bohemcars can advise on the right sale path.',
+			'Изпрати данни, документи, снимки и очаквания, за да изберем правилния път за продажба.',
 		href: '/sell-your-car',
 		image: '/assets/bohemcars/services/sell-car-service.png'
 	},
 	{
-		title: 'Documents And Registration',
-		description:
-			'Coordinate import documents, technical preparation, registration steps, and handoff details.',
+		title: 'Документи и регистрация',
+		description: 'Съдействие за документи по внос, техническа подготовка, регистрация и предаване.',
 		href: '/services',
 		image: bohemcarsAssets.footerImage
 	},
 	{
-		title: 'Appointment Viewings',
+		title: 'Огледи с уговорка',
 		description:
-			'Book prepared viewings so the vehicle, documents, and consultant context are ready before arrival.',
+			'Подготвени огледи, при които автомобилът, документите и консултантът са готови предварително.',
 		href: '/contact',
 		image: bohemcarsAssets.hero
 	},
 	{
-		title: 'Model Comparison',
+		title: 'Сравнение на модели',
 		description:
-			'Compare price, mileage, equipment, history, running costs, and import timing across several candidates.',
+			'Сравняваме цена, пробег, оборудване, история, разходи и срокове за няколко кандидата.',
 		href: '/compare',
 		image: '/assets/bohemcars/cta/import-canada-banner-v2.png'
 	}
 ];
 
+export const auxeroServicesContent: AuxeroServicesContent = {
+	cards: auxeroServiceCards,
+	cardsDescription:
+		'Практична подкрепа за покупка, внос, проверка, документи и продажба, без излишен шум.',
+	cardsTitle: 'Услуги за покупка и внос',
+	contact: {
+		checklist: [
+			'Специалисти по внос и документи',
+			'Огледи само с уговорен час',
+			'Ясни ориентировъчни разходи преди ангажимент',
+			'Съдействие от заявка до предаване'
+		],
+		description:
+			'Изпрати линк, VIN, бюджет, срок или заявка за продажба и Bohemcars ще подготви правилната следваща стъпка.',
+		emailLabel: bohemcarsContact.emailLabel,
+		phoneHref: bohemcarsContact.primaryPhoneHref,
+		phoneLabel: bohemcarsContact.primaryPhoneLabel,
+		secondaryPhoneHref: bohemcarsContact.marketplacePhoneHref,
+		secondaryPhoneLabel: bohemcarsContact.marketplacePhoneLabel,
+		title: 'Контакт за услуга',
+		workNote: bohemcarsContact.appointmentNote
+	},
+	hero: {
+		description:
+			'Подбор, проверка, документи и реалистична крайна цена за автомобили от Канада, преди да стигнем до оглед.',
+		eyebrow: 'Bohemcars услуги',
+		image: '/assets/bohemcars/services/import-canada-banner-generated.png',
+		title: 'Внос от Канада'
+	}
+};
+
 export const serviceFormData: AuxeroServiceFormData = {
 	fields: [
 		{
 			active: true,
-			label: 'Name',
+			label: 'Име',
 			name: 'name',
-			placeholder: 'Your name',
+			placeholder: 'Вашето име',
 			required: true,
 			type: 'text'
 		},
 		{
 			active: false,
-			label: 'Email',
+			label: 'Имейл',
 			name: 'email',
 			placeholder: bohemcarsContact.emailLabel,
 			required: true,
@@ -92,28 +141,28 @@ export const serviceFormData: AuxeroServiceFormData = {
 		},
 		{
 			active: false,
-			label: 'Phone',
+			label: 'Телефон',
 			name: 'phone',
 			placeholder: bohemcarsContact.primaryPhoneLabel,
 			type: 'tel'
 		},
 		{
 			active: false,
-			label: 'Preferred Date',
+			label: 'Предпочитана дата',
 			name: 'date',
 			type: 'date'
 		}
 	],
-	serviceLabel: 'Service',
+	serviceLabel: 'Услуга',
 	serviceName: 'service',
 	serviceOptions: auxeroServiceCards.map((service) => service.title),
-	submitLabel: 'Schedule Service',
-	title: 'Schedule A Service',
+	submitLabel: 'Изпрати заявка',
+	title: 'Заяви услуга',
 	vehicleField: {
 		active: false,
-		label: 'Vehicle Or VIN',
+		label: 'Автомобил или VIN',
 		name: 'vehicle',
-		placeholder: 'Vehicle link or VIN',
+		placeholder: 'Линк към автомобил или VIN',
 		type: 'text'
 	}
 };

@@ -5,8 +5,9 @@
 </script>
 
 <ServicesTemplatePage
-	afterServiceFormHtml={data.afterServiceFormHtml}
-	beforeServiceFormHtml={data.beforeServiceFormHtml}
+	afterServicesHtml={data.afterServicesHtml}
+	beforeServicesHtml={data.beforeServicesHtml}
 	form={data.form}
 	pageDocument={data.pageDocument}
+	services={data.services}
 />

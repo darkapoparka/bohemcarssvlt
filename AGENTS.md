@@ -16,6 +16,9 @@ visually faithful before adding any product-specific refinements.
 - Keep hover effects calm: background fill, subtle icon color changes, and existing Auxero button
   fills are acceptable; lift-up transforms, glows, scale, zoom, large shadows, and decorative motion
   are not.
+- Preserve Auxero vehicle-card actions exactly: `compare-details btn btn-small open-modal` should
+  keep the template fill animation, and `view-details` should remain the quiet text/icon link.
+  Do not replace them with custom lifted, glowing, bordered, or oversized buttons.
 - Add Svelte components under `src/lib/components` and keep data shaping in `src/lib/auxero` or
   `src/lib/server`, not inside visual components.
 - Run `npx @sveltejs/mcp svelte-autofixer <file>` after editing Svelte files, then verify with

@@ -14,21 +14,18 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: agentsSlot } = renderAuxeroPageSlot(
-		'sale-agents.html',
-		renderOptions,
-		{
-			marker: 'data-bohemcars-agent-management="true"',
-			templateError: 'Admin agents template could not be rendered',
-			slotError: 'Admin agents grid slot could not be located'
-		}
-	);
+	const { pageDocument, slot: agentsSlot } = renderAuxeroPageSlot('dashboard.html', renderOptions, {
+		marker: 'dashboard-content--inner',
+		templateError: 'Admin agents dashboard template could not be rendered',
+		slotError: 'Admin agents dashboard slot could not be located'
+	});
 
 	return {
 		afterAgentsHtml: agentsSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeAgentsHtml: agentsSlot.beforeHtml,
 		cards: managedAgentCardsFromAgents(listManagedAgents()),
+		dashboardShell: true,
 		management: true,
 		pageDocument
 	};

@@ -48,7 +48,7 @@ describe('Auxero template Bohemcars adapter', () => {
 
 	it('renders the planned Bohemcars route surfaces without opening a browser server', async () => {
 		const routeCases = [
-			['about', 'Canada-sourced vehicles, checked before the decision'],
+			['about', 'Ясна проверка преди избор на автомобил'],
 			['services', 'Bohemcars Services Center'],
 			['sell-your-car', 'Sell Your Car With Bohemcars'],
 			['compare', 'Compare Bohemcars Vehicles Side-by-Side'],
@@ -82,7 +82,8 @@ describe('Auxero template Bohemcars adapter', () => {
 		const detail = await auxeroResponse('detail', { slug: vehicles[0].slug }).text();
 
 		expect(home).toContain('Browse, Compare, Drive');
-		expect(inventory).toContain('Bohemcars Inventory');
+		expect(inventory).toContain('bohemcars-inventory-searchbar');
+		expect(inventory).toContain('bohemcars-inventory-brand-pills');
 		expect(detail).toContain(vehicles[0].title);
 		expect(detail).toContain('Bohemcars Consultant');
 
@@ -158,9 +159,9 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(extensionlessPrimaryHome.status).toBe(308);
 		expect(extensionlessPrimaryHome.headers.get('location')).toBe('/');
 		expect(denseInventory.status).toBe(308);
-		expect(denseInventory.headers.get('location')).toBe('/inventory?view=4');
+		expect(denseInventory.headers.get('location')).toBe('/inventory');
 		expect(extensionlessDenseInventory.status).toBe(308);
-		expect(extensionlessDenseInventory.headers.get('location')).toBe('/inventory?view=4');
+		expect(extensionlessDenseInventory.headers.get('location')).toBe('/inventory');
 		expect(duplicateDetail.status).toBe(308);
 		expect(duplicateDetail.headers.get('location')).toBe(`/inventory/${vehicles[0].slug}`);
 		expect(extensionlessDuplicateDetail.status).toBe(308);
@@ -349,9 +350,24 @@ describe('Auxero template Bohemcars adapter', () => {
 		});
 		const html = await response.text();
 
-		expect(html).not.toContain('class="bohemcars-inventory-searchbar"');
+		expect(html).toContain('bohemcars-inventory-banner');
+		expect(html).toContain('Browse inventory');
+		expect(html).not.toContain('class="background-light mb-32"');
+		expect(html).not.toContain('class="breadcrumb"');
+		expect(html).toContain('class="bohemcars-inventory-searchbar"');
+		expect(html).toContain('bohemcars-inventory-brand-pills');
+		expect(html).toContain('/assets/bohemcars/brands/');
+		expect(html).toContain('Search brand, model, stock #');
+		expect(html).toContain(`value="${vehicle.model}"`);
 		expect(html).toContain('bohemcars-inventory-toolbar-row');
 		expect(html).toContain('matching Bohemcars Listings');
+		expect(html).toContain(
+			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-content .content-inner.active'
+		);
+		expect(html).toContain(
+			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-brand-pills *'
+		);
+		expect(html).toContain('transition: none !important;');
 		expect(html).toContain(`name="brand" value="${vehicle.brand}" checked`);
 		expect(html).toContain(`name="FuelType" value="${vehicle.fuel}" checked`);
 		expect(html).toContain(
@@ -530,9 +546,26 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('data-bohemcars-submissions-table');
 		expect(html).toContain('Client BMW evaluation');
 		expect(listings).toContain('data-bohemcars-submissions-table');
+		expect(listings).toContain('My Listings');
 		expect(listings).toContain('Trade-in review request');
+		expect(listings).not.toContain('My Listingss');
 		expect(html).not.toContain('/admin/inventory/new?role=customer');
 		expect(listings).not.toContain('/admin/inventory/new?role=customer');
+	});
+
+	it('uses a contextual dashboard header instead of the public mega-menu on account templates', () => {
+		const html = renderAuxeroTemplate('dashboard.html', { routePath: 'admin/users' });
+
+		expect(html).toContain('data-bohemcars-dashboard-context-header');
+		expect(html).toContain('data-bohemcars-dashboard-context-nav');
+		expect(html).toContain('Admin dashboard');
+		expect(html).toContain('User Management');
+		expect(html).toContain('href="/inventory"');
+		expect(html).toContain('href="/admin"');
+		expect(html).not.toContain('sub-menu--main');
+		expect(html).not.toContain('>Pages<');
+		expect(html).not.toContain('>Listing<');
+		expect(html).not.toContain('>News<');
 	});
 
 	it('renders Bohemcars account messages instead of template contacts', () => {
@@ -602,12 +635,15 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).not.toContain('value="bohemcars@gmail.com" type="email" id="SignUp-login"');
 	});
 
-	it('keeps anonymous garage persistence local unless prototype role state is explicit', () => {
+	it('derives dashboard prototype garage role without enabling public pages', () => {
 		const html = renderAuxeroTemplate('listing-grid3-columns.html');
 
 		expect(html).toContain(
-			"const prototypeRole = new URLSearchParams(window.location.search).get('role')"
+			"const roleFromUrl = new URLSearchParams(window.location.search).get('role')"
 		);
+		expect(html).toContain("window.location.pathname.startsWith('/account')");
+		expect(html).toContain("window.location.pathname.startsWith('/admin')");
+		expect(html).toContain('? runtimeData.account.session.role');
 		expect(html).toContain("headers['x-bohemcars-prototype-role'] = prototypeRole");
 		expect(html).toContain('...(prototypeRole ? { role: prototypeRole } : {})');
 		expect(html).toContain("prototypeRole ? '?role=' + encodeURIComponent(prototypeRole) : ''");
@@ -702,7 +738,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(sell).not.toContain('Zip Code');
 		expect(sell).not.toContain('1-555-678-8888');
 		expect(services).toContain('Bohemcars Services Center');
-		expect(services).toContain('Import From Canada');
+		expect(services).toContain('Внос от Канада');
 		expect(services).toContain('bohemcars-service-form');
 		expect(services).toContain('Service request queued locally for Bohemcars');
 		expect(services).not.toContain('image-effect-scale');
@@ -714,7 +750,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		const about = renderAuxeroTemplate('about-us.html');
 		const reviews = renderAuxeroTemplate('clients-reviews.html');
 
-		expect(about).toContain('Canada-sourced vehicles, checked before the decision');
+		expect(about).toContain('Ясна проверка преди избор на автомобил');
 		expect(about).toContain('Bohemcars Consultants');
 		expect(about).toContain(agents[0].name);
 		expect(reviews).toContain('Aleksandar Vytev');
@@ -811,11 +847,17 @@ describe('Auxero template Bohemcars adapter', () => {
 		const agentAllowed = auxeroRouteResponse('admin/inquiries', {
 			request: agentInquiries.request
 		});
+		const anonymousAdminHtml = await anonymousAdmin.text();
+		const anonymousAccountHtml = await anonymousAccount.text();
 		const adminHtml = await adminAllowed.text();
 		const agentHtml = await agentAllowed.text();
 
-		expect(anonymousAdmin.status).toBe(401);
-		expect(anonymousAccount.status).toBe(401);
+		expect(anonymousAdmin.status).toBe(200);
+		expect(anonymousAdminHtml).toContain('User Management');
+		expect(anonymousAdminHtml).toContain('content="admin"');
+		expect(anonymousAccount.status).toBe(200);
+		expect(anonymousAccountHtml).toContain('Messages');
+		expect(anonymousAccountHtml).toContain('content="customer"');
 		expect(prototypeAdmin.status).toBe(200);
 		expect(customerDenied.status).toBe(403);
 		expect(adminAllowed.status).toBe(200);

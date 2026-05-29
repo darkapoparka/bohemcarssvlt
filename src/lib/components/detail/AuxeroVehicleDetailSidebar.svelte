@@ -11,17 +11,17 @@
 		<div class="flat-tabs">
 			<div class="mb-15 overflow-x-auto">
 				<ul class="menu-tab menu-tab-style5 grid-cols-2">
-					<li>Cash</li>
-					<li class="active">Finance</li>
+					<li>{detail.copy.cash}</li>
+					<li class="active">{detail.copy.finance}</li>
 				</ul>
 			</div>
 
 			<div class="content-tab visible">
 				<div class="content-inner">
-					<p class="h5 mb-4">Price:</p>
+					<p class="h5 mb-4">{detail.copy.price}</p>
 					<p class="h4 mb-4">{detail.priceLabel}</p>
 					<p class="text-secondary mb-16">
-						Listed vehicle price. Final taxes and registration costs confirmed before purchase.
+						{detail.copy.priceIntro}
 					</p>
 
 					<p class="flex items-center gap-8">
@@ -32,14 +32,12 @@
 				</div>
 
 				<div class="content-inner active">
-					<p class="h5 mb-4">Price:</p>
+					<p class="h5 mb-4">{detail.copy.price}</p>
 					<p class="h4 mb-4">{detail.monthlyLabel}</p>
 					<p class="text-secondary mb-4">
-						Estimated payment before final taxes, registration, and transport costs.
+						{detail.copy.financeIntro}
 					</p>
-					<p class="text-secondary mb-16">
-						Estimated over 72 months. Final terms confirmed by Bohemcars.
-					</p>
+					<p class="text-secondary mb-16">{detail.copy.financeTerms}</p>
 
 					<div class="core-dropdown flex items-center gap-8">
 						<img src="/assets/icons/Info.svg" alt="info" />
@@ -73,7 +71,7 @@
 	</div>
 
 	<div class="listing-details--sidebar-box mb-40">
-		<p class="h5 mb-4 capitalize">Car Overview</p>
+		<p class="h5 mb-4 capitalize">{detail.copy.carOverview}</p>
 		<AuxeroVehicleOverview items={detail.overviewItems} />
 	</div>
 
@@ -87,7 +85,7 @@
 
 					<div class="verify">
 						<img src="/assets/icons/SealCheck.svg" alt="verified" />
-						<p class="text-highlight text-sm">Bohemcars Consultant</p>
+						<p class="text-highlight text-sm">{detail.copy.consultantLabel}</p>
 					</div>
 				</div>
 			</div>
@@ -100,7 +98,7 @@
 							{detail.contact.address}
 						</a>
 						<a href={resolve('/contact')} class="text-underline text-highlight text-sm"
-							>Get Directions</a
+							>{detail.copy.directions}</a
 						>
 					</div>
 				</li>
@@ -124,23 +122,23 @@
 				class="btn btn-medium btn-primary-3 font-weight-600 mb-12 gap-5"
 			>
 				<img src="/assets/icons/PhoneCall-2.svg" alt="phone" />
-				Call Bohemcars
+				{detail.copy.callBohemcars}
 			</a>
 
 			<a href={resolve('/contact')} class="btn btn-medium btn-primary-4 font-weight-600 gap-5">
 				<img src="/assets/icons/ChatCircleDots.svg" alt="phone" />
-				Chat on Viber
+				{detail.copy.chatOnViber}
 			</a>
 		</div>
 	</div>
 
 	<div class="listing-details--sidebar-box">
-		<p class="h5 mb-16 capitalize">Send Inquiry about Vehicle</p>
+		<p class="h5 mb-16 capitalize">{detail.copy.inquiryTitle}</p>
 
 		<form action="#" class="send-inquiry">
 			<div class="mb-8 grid grid-cols-1 gap-18">
 				<div>
-					<p class="mb-8">Name</p>
+					<p class="mb-8">{detail.copy.name}</p>
 					<input
 						class="active input-large"
 						id="SendInquiryname"
@@ -151,7 +149,7 @@
 					/>
 				</div>
 				<div>
-					<p class="mb-8">Email</p>
+					<p class="mb-8">{detail.copy.email}</p>
 					<input
 						class="input-large"
 						name="SendInquiryemail"
@@ -162,9 +160,9 @@
 					/>
 				</div>
 				<div>
-					<p class="mb-8">Phone</p>
+					<p class="mb-8">{detail.copy.phone}</p>
 					<input
-						placeholder="Phone (optional)"
+						placeholder={detail.copy.phone}
 						class="input-large"
 						name="SendInquiryphone"
 						id="SendInquiryphone"
@@ -175,18 +173,18 @@
 				</div>
 
 				<div>
-					<p class="mb-8">Subject</p>
+					<p class="mb-8">{detail.copy.subject}</p>
 					<select>
-						<option>This Vehicle's Availability</option>
-						<option>Registration and documents</option>
-						<option>Viewing appointment</option>
+						<option>{detail.copy.subjectAvailability}</option>
+						<option>{detail.copy.subjectDocuments}</option>
+						<option>{detail.copy.subjectViewing}</option>
 					</select>
 				</div>
 
 				<div class="padding-0">
-					<p class="mb-6">Message</p>
+					<p class="mb-6">{detail.copy.message}</p>
 					<textarea
-						placeholder="Comment"
+						placeholder={detail.copy.messagePlaceholder}
 						rows="3"
 						name="message"
 						class="message"
@@ -195,19 +193,20 @@
 					></textarea>
 				</div>
 			</div>
-			<button class="btn btn-primary btn-large font-weight-600 mb-18 w-full">Send Inquiry</button>
+			<button class="btn btn-primary btn-large font-weight-600 mb-18 w-full"
+				>{detail.copy.sendInquiry}</button
+			>
 			<label class="filter-checkbox style-2 mb-6">
 				<input type="checkbox" name="features" value="touch-screen" />
 				<span class="text-sm">
-					Yes, I would like to receive price alerts on this vehicle and helpful shopping
-					information.
+					{detail.copy.formConsent}
 				</span>
 			</label>
 
 			<p class="text-secondary text-xs">
-				By using this service, you accept our
+				{detail.copy.formTerms}
 				<a href={resolve('/contact')} class="text-underline text-highlight text-xs">
-					Visitor Agreement.
+					{detail.copy.formTermsLink}
 				</a>
 			</p>
 		</form>

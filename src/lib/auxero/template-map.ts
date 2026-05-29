@@ -6,7 +6,12 @@ export type ProductRouteSource = {
 
 export const productRouteSources: ProductRouteSource[] = [
 	{ route: '/', source: 'home-05.html', notes: 'Primary Bohemcars homepage' },
-	{ route: '/inventory', source: 'listing-grid3-columns.html', notes: 'Default inventory grid' },
+	{ route: '/inventory', source: 'listing-grid4-columns.html', notes: 'Default inventory grid' },
+	{
+		route: '/inventory?view=3',
+		source: 'listing-grid3-columns.html',
+		notes: 'Comfortable grid variant'
+	},
 	{
 		route: '/inventory?view=4',
 		source: 'listing-grid4-columns.html',

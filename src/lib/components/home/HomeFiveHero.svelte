@@ -19,10 +19,10 @@
 						<input type="checkbox" name={select.name} value="" checked />
 						<span>{select.defaultLabel}</span>
 					</label>
-					{#each select.options as option (option)}
+					{#each select.options as option (option.value)}
 						<label class="filter-checkbox">
-							<input type="checkbox" name={select.name} value={option} />
-							<span>{option}</span>
+							<input type="checkbox" name={select.name} value={option.value} />
+							<span>{option.label}</span>
 						</label>
 					{/each}
 				</div>
@@ -84,7 +84,7 @@
 						{#each hero.textSlides as slide (slide.id)}
 							<div class="swiper-slide">
 								<h1 class="search-cars__title effect-item effect-up text-center delay-3">
-									Browse, Compare, Drive <br class="lg-hide" /> With Bohemcars!
+									{hero.heading}
 								</h1>
 								<p class="h7 effect-item effect-up mb-36 text-center text-white delay-4">
 									{slide.subtitle}
@@ -125,7 +125,9 @@
 						class="search-cars__search md-w-full flex items-center justify-center gap-8"
 					>
 						<img src="/assets/icons/search.svg" alt="search" />
-						Show {hero.totalMatches} Matches
+						{hero.searchSubmitPrefix}
+						{hero.totalMatches}
+						{hero.searchSubmitSuffix}
 					</button>
 				</div>
 
@@ -138,7 +140,7 @@
 							{/each}
 							<div class="search-cars__range">
 								<p class="search-cars__range-label">
-									Year: <span id="yearMin">{hero.yearRange.min}</span> -
+									{hero.yearLabel}: <span id="yearMin">{hero.yearRange.min}</span> -
 									<span id="yearMax">{hero.yearRange.max}</span>
 								</p>
 								<div class="search-cars__range-wrapper" id="yearRangeWrapper">
@@ -155,7 +157,7 @@
 						<div class="divider mt-28 mb-24"></div>
 						<div class="search-cars__features">
 							<p class="h3 search-cars__features-title flex items-center gap-8">
-								Bohemcars Checks
+								{hero.checksTitle}
 								<img src="/assets/icons/minus.svg" alt="minus" />
 							</p>
 							<div class="search-cars__features-grid">
@@ -178,3 +180,45 @@
 		</section>
 	</form>
 {/if}
+
+<style>
+	.search-cars__filters {
+		align-items: stretch;
+	}
+
+	.search-cars__select-wrapper {
+		min-width: 120px;
+	}
+
+	.search-cars__select {
+		display: grid;
+		align-content: center;
+		gap: 3px;
+		padding: 9px 38px 8px 12px;
+	}
+
+	.search-cars__label {
+		position: static;
+		max-width: 100%;
+		overflow: hidden;
+		color: #5f5f5f;
+		font-size: 11px;
+		line-height: 1.15;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.filter-select-dropdown__text span {
+		overflow: hidden;
+		font-size: 15px;
+		line-height: 1.2;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 575px) {
+		.search-cars__select-wrapper {
+			min-width: 100%;
+		}
+	}
+</style>

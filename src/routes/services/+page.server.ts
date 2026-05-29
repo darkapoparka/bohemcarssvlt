@@ -1,9 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { serviceFormData } from '$lib/auxero/services';
+import { auxeroServicesContent, serviceFormData } from '$lib/auxero/services';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: serviceFormSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: servicesSlot } = renderAuxeroPageSlot(
 		'services-center.html',
 		{
 			request,
@@ -11,17 +11,18 @@ export const load: PageServerLoad = ({ request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'services-center-form',
+			marker: 'data-bohemcars-services',
 			templateError: 'Services template could not be rendered',
-			slotError: 'Services form slot could not be located'
+			slotError: 'Services content slot could not be located'
 		}
 	);
 
 	return {
-		afterServiceFormHtml: serviceFormSlot.afterHtml,
+		afterServicesHtml: servicesSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeServiceFormHtml: serviceFormSlot.beforeHtml,
+		beforeServicesHtml: servicesSlot.beforeHtml,
 		form: serviceFormData,
-		pageDocument
+		pageDocument,
+		services: auxeroServicesContent
 	};
 };

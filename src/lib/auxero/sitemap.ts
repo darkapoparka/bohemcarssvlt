@@ -1,7 +1,7 @@
 export const publicSitemapRoutes = [
 	'/',
 	'/inventory',
-	'/inventory?view=4',
+	'/inventory?view=3',
 	'/inventory?view=map',
 	'/compare',
 	'/agents',

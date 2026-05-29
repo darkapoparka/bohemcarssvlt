@@ -2,10 +2,11 @@
 	import { resolve } from '$app/paths';
 	import type { AuxeroCompareRow, AuxeroCompareVehicle } from '$lib/auxero/compare';
 	import { compareRowsFromVehicles } from '$lib/auxero/compare';
+	import type { Locale } from '$lib/i18n/messages';
 
-	let { vehicles }: { vehicles: AuxeroCompareVehicle[] } = $props();
+	let { locale, vehicles }: { locale: Locale; vehicles: AuxeroCompareVehicle[] } = $props();
 
-	const rows: AuxeroCompareRow[] = $derived(compareRowsFromVehicles(vehicles));
+	const rows: AuxeroCompareRow[] = $derived(compareRowsFromVehicles(vehicles, locale));
 </script>
 
 <table class="card-details--table bohemcars-compare-table" data-bohemcars-compare-table>

@@ -8,6 +8,7 @@
 <CompareTemplatePage
 	afterCompareHtml={data.afterCompareHtml}
 	beforeCompareHtml={data.beforeCompareHtml}
+	locale={data.locale}
 	pageDocument={data.pageDocument}
 	vehicles={data.vehicles}
 />

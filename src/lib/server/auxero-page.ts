@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+import { localizeAuxeroPageDocument, resolveLocale } from '$lib/i18n/messages';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 import { renderAuxeroTemplate } from './auxero-template';
 
@@ -63,7 +64,10 @@ export function renderAuxeroPageDocument(
 		error(500, templateError);
 	}
 
-	return splitAuxeroDocument(html);
+	return localizeAuxeroPageDocument(
+		splitAuxeroDocument(html),
+		options.searchParams ? resolveLocale(options.searchParams.get('lang')) : 'en'
+	);
 }
 
 export function splitAuxeroBodySection(bodyHtml: string, startComment: string, endComment: string) {

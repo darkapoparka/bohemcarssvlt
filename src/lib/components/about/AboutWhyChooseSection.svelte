@@ -2,7 +2,6 @@
 	import { resolve } from '$app/paths';
 	import type { AuxeroAboutContent } from '$lib/auxero/about';
 	import AboutChecklist from './AboutChecklist.svelte';
-	import AboutStatsGrid from './AboutStatsGrid.svelte';
 
 	let { about }: { about: AuxeroAboutContent } = $props();
 </script>
@@ -18,10 +17,9 @@
 				<p class="text-muted mb-20">{about.why.description}</p>
 				<AboutChecklist items={about.why.checklist} />
 				<a href={resolve('/services')} class="btn btn-primary btn-large font-weight-600 max-w-min"
-					>Explore Services</a
+					>Виж услугите</a
 				>
 			</div>
 		</div>
-		<AboutStatsGrid stats={about.stats} />
 	</div>
 </section>

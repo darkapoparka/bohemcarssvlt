@@ -19,6 +19,23 @@
 	transform: none !important;
 }
 
+.sale-agent-box.active,
+.sale-agent-box:hover {
+	box-shadow: none !important;
+	transform: none !important;
+}
+
+.sale-agent-box.active .card-top img,
+.sale-agent-box:hover .card-top img {
+	transform: none !important;
+}
+
+.sale-agent-box .sale-agent-social li a:hover,
+.sale-agent-box .card-bottom .contact li a:hover {
+	border-color: #d6dbd1 !important;
+	background-color: #eef0ec !important;
+}
+
 .bohemcars-no-image-zoom.card-box-style-1.active,
 .bohemcars-no-image-zoom.card-box-style-1:hover,
 .bohemcars-no-image-zoom.card-box-style-9.active,

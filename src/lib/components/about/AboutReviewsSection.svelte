@@ -9,10 +9,10 @@
 <section>
 	<div class="wow fadeIn container" data-wow-delay="0.3s">
 		<div class="title-section mb-40">
-			<h2>Client Reviews</h2>
+			<h2>Отзиви от клиенти</h2>
 			<a
 				href={resolve('/reviews')}
-				class="btn btn-line-style-2 effect-line-primary hover-fill-white btn-large">View All</a
+				class="btn btn-line-style-2 effect-line-primary hover-fill-white btn-large">Виж всички</a
 			>
 		</div>
 		<div class="swiper-container swiper-testimonior">

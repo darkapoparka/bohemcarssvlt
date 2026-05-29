@@ -169,7 +169,10 @@ export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 	const maxMileage = filters.maxMileage;
 
 	return source.filter((vehicle) => {
-		const matchesQuery = !query || containsFilterValue(vehicleSearchText(vehicle), query);
+		const matchesFeatureQuery =
+			query === '4x4' && vehicle.features.some((value) => normalizeFilterValue(value) === query);
+		const matchesQuery =
+			!query || containsFilterValue(vehicleSearchText(vehicle), query) || matchesFeatureQuery;
 		const matchesSourceId =
 			!sourceId ||
 			[vehicle.slug, vehicle.vin, vehicle.stockNumber, vehicle.sourceUrl].some((value) =>

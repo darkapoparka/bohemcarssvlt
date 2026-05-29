@@ -1,10 +1,12 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { vehicleDetailFromVehicle } from '$lib/auxero/detail';
+import { resolveLocale } from '$lib/i18n/messages';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { getVehicleDetailBySlug } from '$lib/server/vehicle-detail-state';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
+	const locale = resolveLocale(url.searchParams.get('lang'));
 	const vehicle = getVehicleDetailBySlug(params.slug);
 
 	if (!vehicle) {
@@ -30,7 +32,7 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		afterDetailHtml: detailSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeDetailHtml: detailSlot.beforeHtml,
-		detail: vehicleDetailFromVehicle(vehicle),
+		detail: vehicleDetailFromVehicle(vehicle, locale),
 		pageDocument
 	};
 };

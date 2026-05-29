@@ -2,12 +2,15 @@
 	import { resolve } from '$app/paths';
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
 	import { bohemcarsContact } from '$lib/data/bohemcars';
+	import { getMessages, type VehicleCardCopy } from '$lib/i18n/messages';
 
 	let {
 		card,
+		copy = getMessages('bg').inventory.vehicleCard,
 		variant = 'grid'
 	}: {
 		card: AuxeroInventoryVehicleCard;
+		copy?: VehicleCardCopy;
 		variant?: 'grid' | 'list';
 	} = $props();
 </script>
@@ -21,7 +24,7 @@
 				class="heart bohemcars-favorite"
 				role="button"
 				tabindex="0"
-				aria-label={`Save ${card.title}`}
+				aria-label={`${copy.savePrefix} ${card.title}`}
 			>
 				{@render heartIcon()}
 			</p>
@@ -35,11 +38,11 @@
 			</p>
 			<div class="flex items-center gap-8">
 				<p class="category text-white uppercase">
-					<img src="/assets/icons/picture.svg" alt="photos" />
+					<img src="/assets/icons/picture.svg" alt={copy.photosAlt} />
 					{card.imagesCount}
 				</p>
 				<p class="category text-white uppercase">
-					<img src="/assets/icons/play.svg" alt="video" />
+					<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
 					{card.videoCount}
 				</p>
 			</div>
@@ -70,14 +73,11 @@
 					tabindex="0"
 				>
 					{@render compareIcon()}
-					Compare
+					{copy.compare}
 				</p>
 				<a href={resolve('/inventory/[slug]', { slug: card.slug })} class="view-details">
-					View details <img
-						class="ml-4"
-						src="/assets/icons/CaretCircleRight.svg"
-						alt="view details"
-					/>
+					{copy.viewDetails}
+					<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt={copy.viewDetails} />
 				</a>
 			</div>
 		</div>
@@ -89,13 +89,13 @@
 		data-bohemcars-slug={card.slug}
 	>
 		<div class="top">
-			<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
+			<p class={`${card.highlightClass} highlight text-white`}>{card.mileageLabel}</p>
 			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 			<p
 				class="heart bohemcars-favorite"
 				role="button"
 				tabindex="0"
-				aria-label={`Save ${card.title}`}
+				aria-label={`${copy.savePrefix} ${card.title}`}
 			>
 				{@render heartIcon()}
 			</p>
@@ -115,11 +115,11 @@
 				</p>
 				<div class="flex items-center gap-8">
 					<p class="category text-white uppercase">
-						<img src="/assets/icons/picture.svg" alt="photos" />
+						<img src="/assets/icons/picture.svg" alt={copy.photosAlt} />
 						{card.imagesCount}
 					</p>
 					<p class="category text-white uppercase">
-						<img src="/assets/icons/play.svg" alt="video" />
+						<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
 						{card.videoCount}
 					</p>
 				</div>
@@ -127,18 +127,21 @@
 			<p class="h6 card-box__title mb-8">
 				<a href={resolve('/inventory/[slug]', { slug: card.slug })}>{card.title}</a>
 			</p>
-			{@render cardMeta(card, 'tag style2 mb-10')}
-			<p class="h6 card-box__price mb-15 flex items-center justify-between gap-8">
-				{card.priceLabel}
-				<span class="text-sm">
-					{card.monthlyLabel}<a
-						href={resolve('/inventory/[slug]', { slug: card.slug })}
-						class="text-underline text-muted ml-2 text-xs">See Finance</a
+			{@render compactCardMeta(card, 'tag style2 mb-10 bohemcars-card-specs')}
+			<p class="card-box__price bohemcars-card-price h6 mb-15">
+				<span class="bohemcars-card-price__amount">{card.priceLabel}</span>
+				<span class="bohemcars-card-price__finance">
+					<span class="bohemcars-card-price__monthly text-sm">{card.monthlyLabel}</span>
+					<a
+						href={resolve('/financing')}
+						class="bohemcars-card-price__finance-link text-underline text-muted text-xs"
 					>
+						{copy.finance}
+					</a>
 				</span>
 			</p>
 			<div class="divider mb-15"></div>
-			<div class="flex justify-between">
+			<div class="bohemcars-card-actions flex justify-between">
 				<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 				<p
 					class="compare-details btn btn-small open-modal"
@@ -148,14 +151,11 @@
 					tabindex="0"
 				>
 					{@render compareIcon()}
-					Compare
+					{copy.compare}
 				</p>
 				<a href={resolve('/inventory/[slug]', { slug: card.slug })} class="view-details">
-					View details <img
-						class="ml-4"
-						src="/assets/icons/CaretCircleRight.svg"
-						alt="view details"
-					/>
+					{copy.viewDetails}
+					<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt={copy.viewDetails} />
 				</a>
 			</div>
 		</div>
@@ -165,16 +165,34 @@
 {#snippet cardMeta(card: AuxeroInventoryVehicleCard, tagClass: string)}
 	<ul class={tagClass}>
 		<li>
-			<img src="/assets/icons/icon-gauge.svg" alt="mileage" /><span>{card.mileageLabel}</span>
+			<img src="/assets/icons/icon-gauge.svg" alt={copy.mileageAlt} /><span
+				>{card.mileageLabel}</span
+			>
 		</li>
 		<li>
-			<img src="/assets/icons/calendar.svg" alt="year" /><span>{card.year}</span>
+			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span>{card.year}</span>
 		</li>
 		<li>
-			<img src="/assets/icons/gaspump.svg" alt="fuel" /><span>{card.fuel}</span>
+			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
 		</li>
 		<li>
-			<img src="/assets/icons/auto.svg" alt="transmission" /><span>{card.transmission}</span>
+			<img src="/assets/icons/auto.svg" alt={copy.transmissionAlt} /><span>{card.transmission}</span
+			>
+		</li>
+	</ul>
+{/snippet}
+
+{#snippet compactCardMeta(card: AuxeroInventoryVehicleCard, tagClass: string)}
+	<ul class={tagClass}>
+		<li>
+			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span>{card.year}</span>
+		</li>
+		<li>
+			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
+		</li>
+		<li>
+			<img src="/assets/icons/auto.svg" alt={copy.transmissionAlt} /><span>{card.transmission}</span
+			>
 		</li>
 	</ul>
 {/snippet}
@@ -219,3 +237,76 @@
 		</g>
 	</svg>
 {/snippet}
+
+<style>
+	.card-box-style-1 {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	.card-box-style-1 .content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+	}
+
+	.card-box-style-1 .card-box__title {
+		display: -webkit-box;
+		min-height: 52px;
+		overflow: hidden;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+	}
+
+	.bohemcars-card-specs {
+		flex-wrap: nowrap !important;
+		overflow: hidden;
+	}
+
+	.bohemcars-card-specs li {
+		flex: 0 1 auto;
+		min-width: 0;
+		white-space: nowrap;
+	}
+
+	.bohemcars-card-price {
+		align-items: center;
+		display: flex;
+		gap: 12px;
+		justify-content: space-between;
+	}
+
+	.bohemcars-card-price__amount {
+		font-size: 22px;
+		font-weight: 600;
+		line-height: 28px;
+		white-space: nowrap;
+	}
+
+	.bohemcars-card-price__finance {
+		align-items: flex-end;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		text-align: right;
+	}
+
+	.bohemcars-card-price__monthly {
+		display: block;
+		line-height: 20px;
+		white-space: nowrap;
+	}
+
+	.bohemcars-card-price__finance-link {
+		line-height: 16px;
+		margin-left: 0;
+		white-space: nowrap;
+	}
+
+	.bohemcars-card-actions {
+		align-items: center;
+		margin-top: auto;
+	}
+</style>

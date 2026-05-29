@@ -1,11 +1,25 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { HomeFiveModalVehicle, HomeFiveModalsData } from '$lib/auxero/home-five';
+	import type {
+		HomeFiveHeaderData,
+		HomeFiveModalVehicle,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import AuthModal from '$lib/components/forms/AuthModal.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
 
-	let { modals }: { modals?: HomeFiveModalsData } = $props();
+	let {
+		copy,
+		header,
+		modals
+	}: {
+		copy: HomePageCopy;
+		header?: HomeFiveHeaderData;
+		modals?: HomeFiveModalsData;
+	} = $props();
 
 	const closeIcon = '/assets/icons/close-modal.svg';
+	const searchPlaceholder = $derived(header?.ui.searchPlaceholder ?? 'Search Bohemcars inventory');
 </script>
 
 {#if modals}
@@ -64,7 +78,7 @@
 				class="search-modal__close"
 				id="searchModalClose"
 				type="button"
-				aria-label="Close search"
+				aria-label={copy.vehicleCard.viewDetails}
 			>
 				<svg
 					width="24"
@@ -82,7 +96,7 @@
 					/>
 				</svg>
 			</button>
-			<h2 class="search-modal__title">WHAT ARE YOU LOOKING FOR?</h2>
+			<h2 class="search-modal__title">{searchPlaceholder}</h2>
 			<form
 				class="search-modal__form"
 				action="/inventory"
@@ -94,11 +108,11 @@
 						type="text"
 						class="search-modal__input"
 						name="q"
-						placeholder="Search Bohemcars inventory"
+						placeholder={searchPlaceholder}
 						autocomplete="off"
 						id="searchModalInput"
 					/>
-					<button type="submit" class="search-modal__submit" aria-label="Search">
+					<button type="submit" class="search-modal__submit" aria-label={searchPlaceholder}>
 						{@render searchIcon()}
 					</button>
 				</div>
@@ -128,7 +142,7 @@
 
 							<div class="compare-action">
 								<a href={resolve('/compare')} class="btn btn-primary btn-large font-weight-600">
-									Compare
+									{copy.vehicleCard.compare}
 								</a>
 							</div>
 						</div>
@@ -138,7 +152,7 @@
 							id="compareEmptyState"
 							style="display: none;"
 						>
-							<p class="text-muted">Your compare is currently empty</p>
+							<p class="text-muted">{copy.compareEmpty}</p>
 						</div>
 					</div>
 				</div>
@@ -163,7 +177,7 @@
 
 {#snippet comparePreviewItem(vehicle: HomeFiveModalVehicle)}
 	<div class="compare-item flex items-center gap-12">
-		<button class="compare-item-remove" type="button" aria-label="Remove item">
+		<button class="compare-item-remove" type="button" aria-label={copy.vehicleCard.compare}>
 			<img src={closeIcon} alt="car" class="radius-50" />
 		</button>
 		<div class="compare-item-image">
@@ -173,19 +187,39 @@
 			<p class="h7 font-weight-500 mb-8">{vehicle.title}</p>
 			<div class="flex gap-4">
 				<div class="flex items-center gap-4">
-					<img src="/assets/icons/icon-gauge.svg" alt="mileage" width="16" height="16" />
+					<img
+						src="/assets/icons/icon-gauge.svg"
+						alt={copy.vehicleCard.mileageAlt}
+						width="16"
+						height="16"
+					/>
 					<span class="text-sm">{vehicle.mileageLabel}</span>
 				</div>
 				<div class="flex items-center gap-4">
-					<img src="/assets/icons/calendar.svg" alt="year" width="16" height="16" />
+					<img
+						src="/assets/icons/calendar.svg"
+						alt={copy.vehicleCard.yearAlt}
+						width="16"
+						height="16"
+					/>
 					<span class="text-sm">{vehicle.year}</span>
 				</div>
 				<div class="flex items-center gap-4">
-					<img src="/assets/icons/gaspump.svg" alt="fuel" width="16" height="16" />
+					<img
+						src="/assets/icons/gaspump.svg"
+						alt={copy.vehicleCard.fuelAlt}
+						width="16"
+						height="16"
+					/>
 					<span class="text-sm">{vehicle.fuel}</span>
 				</div>
 				<div class="flex items-center gap-4">
-					<img src="/assets/icons/auto.svg" alt="transmission" width="16" height="16" />
+					<img
+						src="/assets/icons/auto.svg"
+						alt={copy.vehicleCard.transmissionAlt}
+						width="16"
+						height="16"
+					/>
 					<span class="text-sm">{vehicle.transmission}</span>
 				</div>
 			</div>

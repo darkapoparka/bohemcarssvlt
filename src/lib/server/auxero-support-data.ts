@@ -323,7 +323,7 @@ ${contactCtaSection()}
 };
 
 const applyServicesData = (html: string) => {
-	const body = `<section class="bg-white pb-100">
+	const body = `<div data-bohemcars-services><section class="bg-white pb-100">
 	<div class="container">
 		<h2>Services</h2>
 		<div class="tf-spacing-style3"></div>
@@ -356,7 +356,7 @@ const applyServicesData = (html: string) => {
 				<div class="flex"><a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Contact Bohemcars</a></div>
 			</div>
 			<div class="ml-24 flex lg-ml-0 wow fadeInUp radius-20 overflow-hidden">
-				<img class="w-full" src="/assets/bohemcars/cta/import-canada-banner-v2.png" alt="Bohemcars services">
+				<img class="w-full" src="/assets/bohemcars/services/import-canada-banner-generated.png" alt="Bohemcars services">
 			</div>
 		</div>
 	</div>
@@ -431,7 +431,7 @@ const applyServicesData = (html: string) => {
 			</div>
 		</div>
 	</div>
-</section>`;
+</section></div>`;
 
 	return replaceBodyAfterBreadcrumb(html, body);
 };

@@ -70,17 +70,17 @@
 					data-modal-id="#CompareModal"
 					data-bohemcars-compare={detail.slug}
 					role="button"
-					aria-label={`Compare ${detail.title}`}
+					aria-label={`${detail.copy.compare} ${detail.title}`}
 				>
 					{@render compareIcon()}
-					Compare
+					{detail.copy.compare}
 				</a>
 
 				<a
 					href={accountFavoritesHref}
 					class="btn-icon-circle hover-stroke-white bohemcars-favorite"
 					role="button"
-					aria-label={`Save ${detail.title}`}
+					aria-label={`${detail.copy.savePrefix} ${detail.title}`}
 				>
 					{@render favoriteIcon()}
 				</a>
@@ -91,14 +91,18 @@
 			</div>
 		</div>
 
-		<AuxeroVehicleDetailGallery images={detail.galleryImages} title={detail.title} />
+		<AuxeroVehicleDetailGallery
+			images={detail.galleryImages}
+			title={detail.title}
+			copy={detail.copy}
+		/>
 
-		<p class="h4 mb-16">Description</p>
+		<p class="h4 mb-16">{detail.copy.description}</p>
 		<p class="text-secondary mb-40">{detail.description}</p>
 
 		<div class="divider mb-40 w-full"></div>
 
-		<p class="h4 mb-16 capitalize">Get To Know this car</p>
+		<p class="h4 mb-16 capitalize">{detail.copy.getToKnow}</p>
 		<AuxeroVehicleDetailFeatureTabs tabs={detail.featureTabs} />
 
 		<AuxeroVehicleDetailStaticContent {detail} />

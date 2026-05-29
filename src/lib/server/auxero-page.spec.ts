@@ -744,9 +744,9 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-about', 'div');
 
-		expect(split?.sectionHtml).toContain('About Bohemcars');
+		expect(split?.sectionHtml).toContain('Как работим');
 		expect(split?.sectionHtml).toContain('Client Reviews');
-		expect(split?.sectionHtml).toContain('Why Choose Bohemcars?');
+		expect(split?.sectionHtml).toContain('Защо Bohemcars?');
 		expect(split?.sectionHtml).toContain('Bohemcars Consultants');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');

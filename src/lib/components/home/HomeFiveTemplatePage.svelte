@@ -1,5 +1,5 @@
 <script lang="ts">
-	import HomeFiveBrandStrip from './HomeFiveBrandStrip.svelte';
+	import HomeFiveBrowseSection from './HomeFiveBrowseSection.svelte';
 	import HomeFiveBudgetSection from './HomeFiveBudgetSection.svelte';
 	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
 	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
@@ -9,7 +9,6 @@
 	import HomeFiveModals from './HomeFiveModals.svelte';
 	import HomeFiveNewsSection from './HomeFiveNewsSection.svelte';
 	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
-	import HomeFiveTypeGallery from './HomeFiveTypeGallery.svelte';
 	import type {
 		HomeFiveBrandCard,
 		HomeFiveComparePair,
@@ -24,6 +23,7 @@
 		HomeFiveVehiclePill
 	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+	import type { HomePageCopy } from '$lib/i18n/messages';
 
 	let {
 		afterBrandStripHtml,
@@ -40,6 +40,7 @@
 		brandCards,
 		budgetVehicles,
 		comparePairs,
+		copy,
 		featuredVehicles,
 		footer,
 		header,
@@ -65,6 +66,7 @@
 		brandCards: HomeFiveBrandCard[];
 		budgetVehicles: HomeFiveVehicleCardData[];
 		comparePairs: HomeFiveComparePair[];
+		copy: HomePageCopy;
 		featuredVehicles: HomeFiveVehicleCardData[];
 		footer?: HomeFiveFooterData;
 		header?: HomeFiveHeaderData;
@@ -93,30 +95,27 @@
 <HomeFiveHero {hero} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterHeroHtml}
-<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} />
+<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} {copy} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterFeaturedVehiclesHtml}
-<HomeFiveBrandStrip cards={brandCards} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterBrandStripHtml}
-<HomeFiveTypeGallery cards={typeCards} />
+<HomeFiveBrowseSection {brandCards} {typeCards} {copy} {afterBrandStripHtml} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterTypeGalleryHtml}
-<HomeFiveCompareSection pairs={comparePairs} />
+<HomeFiveCompareSection pairs={comparePairs} {copy} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterCompareSectionHtml}
-<HomeFiveBudgetSection vehicles={budgetVehicles} />
+<HomeFiveBudgetSection vehicles={budgetVehicles} {copy} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterBudgetSectionHtml}
-<HomeFiveReviewsSection {reviews} />
+<HomeFiveReviewsSection {reviews} {copy} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterReviewsSectionHtml}
-<HomeFiveNewsSection posts={newsPosts} />
+<HomeFiveNewsSection posts={newsPosts} {copy} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterNewsSectionHtml}
 <HomeFiveFooter {footer} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterFooterHtml}
-<HomeFiveModals {modals} />
+<HomeFiveModals {modals} {copy} {header} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterModalsHtml}

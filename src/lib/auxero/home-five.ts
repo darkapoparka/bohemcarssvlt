@@ -5,7 +5,16 @@ import {
 	mainNavigation
 } from '$lib/data/bohemcars';
 import type { BlogPost } from '$lib/data/blog';
+import { vehicles as inventoryVehicles } from '$lib/data/vehicles';
 import type { Vehicle } from '$lib/data/vehicles';
+import {
+	getMessages,
+	localizeCount,
+	localizeVehicleTermsInText,
+	translateVehicleTerm,
+	type Locale,
+	type PublicMessages
+} from '$lib/i18n/messages';
 
 export type HomeFiveBrandCard = {
 	count: string;
@@ -50,6 +59,14 @@ export type HomeFiveFooterData = {
 	};
 	copyright: string;
 	hours: string[];
+	labels: {
+		buyingSelling: string;
+		emailPlaceholder: string;
+		online: string;
+		openingHours: string;
+		quickLinks: string;
+		subscribe: string;
+	};
 	legalLinks: HomeFiveFooterLink[];
 	logo: {
 		alt: string;
@@ -65,6 +82,51 @@ export type HomeFiveHeaderSocial = {
 	icon: 'chat' | 'facebook' | 'instagram' | 'telegram' | 'x' | 'youtube';
 	label: string;
 	target?: '_blank';
+};
+
+export type HomeFiveHeaderMegaMenuLink = {
+	href: string;
+	label: string;
+};
+
+export type HomeFiveHeaderMegaMenuSection = {
+	links: HomeFiveHeaderMegaMenuLink[];
+	title: string;
+};
+
+export type HomeFiveHeaderMegaMenuVehicle = {
+	href: string;
+	image: string;
+	label: string;
+	meta: string;
+};
+
+export type HomeFiveHeaderMegaMenuFooter = {
+	copy: string;
+	ctaHref: string;
+	ctaLabel: string;
+	title: string;
+};
+
+export type HomeFiveHeaderContainerMenu = {
+	links: HomeFiveHeaderMegaMenuLink[];
+	variant: 'container';
+};
+
+export type HomeFiveHeaderInventoryMegaMenu = {
+	footer: HomeFiveHeaderMegaMenuFooter;
+	sections: HomeFiveHeaderMegaMenuSection[];
+	variant: 'inventory';
+	vehicles: HomeFiveHeaderMegaMenuVehicle[];
+};
+
+export type HomeFiveHeaderMegaMenu = HomeFiveHeaderContainerMenu | HomeFiveHeaderInventoryMegaMenu;
+
+export type HomeFiveHeaderNavigationItem = {
+	active: boolean;
+	href: string;
+	label: string;
+	megaMenu?: HomeFiveHeaderMegaMenu;
 };
 
 export type HomeFiveHeaderData = {
@@ -84,17 +146,22 @@ export type HomeFiveHeaderData = {
 		current: string;
 		options: string[];
 	};
+	ui: {
+		addListing: string;
+		compare: string;
+		megaDetails: string;
+		megaView: string;
+		searchPlaceholder: string;
+		signIn: string;
+		wishlist: string;
+	};
 	logo: {
 		alt: string;
 		href: string;
 		mobileSrc: string;
 		src: string;
 	};
-	navigation: Array<{
-		active: boolean;
-		href: string;
-		label: string;
-	}>;
+	navigation: HomeFiveHeaderNavigationItem[];
 	socialLinks: HomeFiveHeaderSocial[];
 };
 
@@ -130,14 +197,22 @@ export type HomeFiveModalsData = {
 
 export type HomeFiveTypeCard = {
 	bodyType: string;
+	href: `/inventory${string}`;
 	image: string;
 	label: string;
 };
 
+export type HomeFiveVehiclePillIcon = 'coupe' | 'crossover' | 'luxury' | 'pickup' | 'sedan' | 'suv';
+
 export type HomeFiveVehiclePill = {
 	active: boolean;
-	href: `/inventory?bodyType=${string}`;
+	href: `/inventory${string}`;
+	icon?: HomeFiveVehiclePillIcon;
+	image?: string;
+	kind: 'body' | 'brand' | 'spec';
 	label: string;
+	labels?: Partial<Record<Locale, string>>;
+	termGroup?: keyof PublicMessages['vehicleTerms'];
 };
 
 export type HomeFiveCompareVehicle = {
@@ -157,7 +232,6 @@ export type HomeFiveVehicleCardData = {
 	brand: string;
 	fuel: string;
 	highlightClass: 'bg-green' | 'bg-primary-2';
-	highlightText: string;
 	image: string;
 	monthlyLabel: string;
 	photoCount: number;
@@ -170,11 +244,16 @@ export type HomeFiveVehicleCardData = {
 	mileageLabel: string;
 };
 
+export type HomeFiveHeroSelectOption = {
+	label: string;
+	value: string;
+};
+
 export type HomeFiveHeroSelect = {
 	defaultLabel: string;
 	id: string;
 	name: string;
-	options: string[];
+	options: HomeFiveHeroSelectOption[];
 	title: string;
 };
 
@@ -193,16 +272,263 @@ export type HomeFiveHeroTab = {
 export type HomeFiveHeroData = {
 	advancedFilters: HomeFiveHeroSelect[];
 	backgroundImages: string[];
+	checksTitle: string;
 	features: string[];
+	heading: string;
 	primaryFilters: HomeFiveHeroSelect[];
+	searchSubmitPrefix: string;
+	searchSubmitSuffix: string;
 	tabs: HomeFiveHeroTab[];
 	textSlides: HomeFiveHeroTextSlide[];
 	totalMatches: number;
+	yearLabel: string;
 	yearRange: {
 		max: number;
 		min: number;
 	};
 };
+
+const brokenHomeImageSlugs = new Set(['21779200396408437']);
+
+export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
+	brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image;
+
+const inventoryMegaMenuVehicles = [
+	{
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+		label: 'BMW X5 40i',
+		slug: '21764342419542174'
+	},
+	{
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png',
+		label: 'BMW X4 M Competition',
+		slug: '21778068579001193'
+	},
+	{
+		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png',
+		label: 'Audi SQ5 Black Optic',
+		slug: '21778067767337633'
+	},
+	{
+		image: '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png',
+		label: 'Audi A7 Black Optic',
+		slug: '11774283016080050'
+	}
+] as const satisfies Array<{
+	image: string;
+	label: string;
+	slug: string;
+}>;
+
+const inventoryMegaMenuFeaturedVehicles: HomeFiveHeaderMegaMenuVehicle[] =
+	inventoryMegaMenuVehicles.map((entry) => {
+		const vehicle = inventoryVehicles.find((candidate) => candidate.slug === entry.slug);
+
+		return {
+			href: vehicle ? `/inventory/${encodeURIComponent(vehicle.slug)}` : '/inventory',
+			image: entry.image,
+			label: entry.label,
+			meta: vehicle ? `${vehicle.priceLabel} · ${vehicle.fuel}` : 'Available now'
+		};
+	});
+
+const inventoryMegaMenu: HomeFiveHeaderInventoryMegaMenu = {
+	variant: 'inventory',
+	vehicles: inventoryMegaMenuFeaturedVehicles,
+	sections: [
+		{
+			title: 'Browse Inventory',
+			links: [
+				{ href: '/inventory', label: 'All Vehicles' },
+				{ href: '/inventory?view=4', label: 'Grid View' },
+				{ href: '/inventory?view=map', label: 'Map View' },
+				{ href: '/compare', label: 'Compare Vehicles' }
+			]
+		},
+		{
+			title: 'Shop By Body Type',
+			links: [
+				{ href: '/inventory?bodyType=SUV', label: 'SUV' },
+				{ href: '/inventory?bodyType=Sedan', label: 'Sedan' },
+				{ href: '/inventory?bodyType=Coupe', label: 'Coupe' },
+				{ href: '/inventory?bodyType=Wagon', label: 'Wagon' }
+			]
+		},
+		{
+			title: 'Shop By Fuel Type',
+			links: [
+				{ href: '/inventory?fuel=Petrol', label: 'Petrol' },
+				{ href: '/inventory?fuel=Diesel', label: 'Diesel' },
+				{ href: '/inventory?fuel=Hybrid', label: 'Hybrid' },
+				{ href: '/inventory?fuel=EV', label: 'EV' }
+			]
+		},
+		{
+			title: 'Bohemcars Support',
+			links: [
+				{ href: '/services', label: 'Import & Buying Services' },
+				{ href: '/calculator', label: 'Import Cost Calculator' },
+				{ href: '/sell-your-car', label: 'Sell Your Car' },
+				{ href: '/agents', label: 'Meet Our Consultants' }
+			]
+		}
+	],
+	footer: {
+		copy: 'Filter by body, fuel, price, and mileage before you book a viewing.',
+		ctaHref: '/inventory',
+		ctaLabel: 'View All Inventory',
+		title: `${inventoryVehicles.length} vehicles in the Bohemcars stock feed`
+	}
+};
+
+const servicesMegaMenu: HomeFiveHeaderContainerMenu = {
+	variant: 'container',
+	links: [
+		{ href: '/services', label: 'Services Overview' },
+		{ href: '/financing', label: 'Financing' },
+		{ href: '/calculator', label: 'Import Calculator' },
+		{ href: '/sell-your-car', label: 'Sell Your Car' },
+		{ href: '/compare', label: 'Compare Vehicles' },
+		{ href: '/contact', label: 'Book A Consultation' }
+	]
+};
+
+const aboutMegaMenu: HomeFiveHeaderContainerMenu = {
+	variant: 'container',
+	links: [
+		{ href: '/about', label: 'About Us' },
+		{ href: '/agents', label: 'Meet Our Consultants' },
+		{ href: '/reviews', label: 'Client Reviews' },
+		{ href: '/faqs', label: 'Frequently Asked Questions' },
+		{ href: '/blog', label: 'Bohemcars Notes' },
+		{ href: '/contact', label: 'Visit The Office' }
+	]
+};
+
+const inventoryMegaMenuForLocale = (locale: Locale): HomeFiveHeaderInventoryMegaMenu => {
+	if (locale === 'en') return inventoryMegaMenu;
+
+	return {
+		variant: 'inventory',
+		vehicles: inventoryMegaMenuFeaturedVehicles.map((vehicle) => ({
+			...vehicle,
+			meta: localizeVehicleTermsInText(locale, vehicle.meta)
+		})),
+		sections: [
+			{
+				title: locale === 'bg' ? 'Разгледай автомобили' : 'Browse Inventory',
+				links: [
+					{ href: '/inventory', label: locale === 'bg' ? 'Всички автомобили' : 'All Vehicles' },
+					{ href: '/inventory?view=4', label: locale === 'bg' ? 'Изглед с карти' : 'Grid View' },
+					{ href: '/inventory?view=map', label: locale === 'bg' ? 'Карта' : 'Map View' },
+					{ href: '/compare', label: locale === 'bg' ? 'Сравни автомобили' : 'Compare Vehicles' }
+				]
+			},
+			{
+				title: locale === 'bg' ? 'По тип купе' : 'Shop By Body Type',
+				links: [
+					{
+						href: '/inventory?bodyType=SUV',
+						label: translateVehicleTerm(locale, 'bodyTypes', 'SUV')
+					},
+					{
+						href: '/inventory?bodyType=Sedan',
+						label: translateVehicleTerm(locale, 'bodyTypes', 'Sedan')
+					},
+					{
+						href: '/inventory?bodyType=Coupe',
+						label: translateVehicleTerm(locale, 'bodyTypes', 'Coupe')
+					},
+					{
+						href: '/inventory?bodyType=Wagon',
+						label: translateVehicleTerm(locale, 'bodyTypes', 'Wagon')
+					}
+				]
+			},
+			{
+				title: locale === 'bg' ? 'По гориво' : 'Shop By Fuel Type',
+				links: [
+					{
+						href: '/inventory?fuel=Petrol',
+						label: translateVehicleTerm(locale, 'fuels', 'Petrol')
+					},
+					{
+						href: '/inventory?fuel=Diesel',
+						label: translateVehicleTerm(locale, 'fuels', 'Diesel')
+					},
+					{
+						href: '/inventory?fuel=Hybrid',
+						label: translateVehicleTerm(locale, 'fuels', 'Hybrid')
+					},
+					{ href: '/inventory?fuel=EV', label: translateVehicleTerm(locale, 'fuels', 'EV') }
+				]
+			},
+			{
+				title: locale === 'bg' ? 'Съдействие от Bohemcars' : 'Bohemcars Support',
+				links: [
+					{
+						href: '/services',
+						label: locale === 'bg' ? 'Внос и покупка' : 'Import & Buying Services'
+					},
+					{
+						href: '/calculator',
+						label: locale === 'bg' ? 'Калкулатор за внос' : 'Import Cost Calculator'
+					},
+					{
+						href: '/sell-your-car',
+						label: locale === 'bg' ? 'Продай автомобила си' : 'Sell Your Car'
+					},
+					{
+						href: '/agents',
+						label: locale === 'bg' ? 'Нашите консултанти' : 'Meet Our Consultants'
+					}
+				]
+			}
+		],
+		footer: {
+			copy:
+				locale === 'bg'
+					? 'Филтрирай по тип, гориво, цена и пробег преди да запазиш оглед.'
+					: 'Filter by body, fuel, price, and mileage before you book a viewing.',
+			ctaHref: '/inventory',
+			ctaLabel: locale === 'bg' ? 'Виж всички автомобили' : 'View All Inventory',
+			title:
+				locale === 'bg'
+					? `${inventoryVehicles.length} автомобила в наличност`
+					: `${inventoryVehicles.length} vehicles in the Bohemcars stock feed`
+		}
+	};
+};
+
+const servicesMegaMenuForLocale = (locale: Locale): HomeFiveHeaderContainerMenu => ({
+	variant: 'container',
+	links:
+		locale === 'bg'
+			? [
+					{ href: '/services', label: 'Услуги' },
+					{ href: '/financing', label: 'Финансиране' },
+					{ href: '/calculator', label: 'Калкулатор за внос' },
+					{ href: '/sell-your-car', label: 'Продай автомобила си' },
+					{ href: '/compare', label: 'Сравни автомобили' },
+					{ href: '/contact', label: 'Запази консултация' }
+				]
+			: servicesMegaMenu.links
+});
+
+const aboutMegaMenuForLocale = (locale: Locale): HomeFiveHeaderContainerMenu => ({
+	variant: 'container',
+	links:
+		locale === 'bg'
+			? [
+					{ href: '/about', label: 'За нас' },
+					{ href: '/agents', label: 'Нашите консултанти' },
+					{ href: '/reviews', label: 'Отзиви от клиенти' },
+					{ href: '/faqs', label: 'Често задавани въпроси' },
+					{ href: '/blog', label: 'Съвети от Bohemcars' },
+					{ href: '/contact', label: 'Посети офиса' }
+				]
+			: aboutMegaMenu.links
+});
 
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 	{ name: 'BMW', image: '/assets/images/brand/brand-1.png', count: '18 Vehicles', query: 'BMW' },
@@ -259,41 +585,71 @@ export const homeFiveBrandCards: HomeFiveBrandCard[] = [
 	}
 ];
 
-export const homeFiveHeaderData: HomeFiveHeaderData = {
-	actionBadges: {
-		compare: 2,
-		wishlist: 2
-	},
-	contact: {
-		addressHref: '/contact',
-		addressLabel: bohemcarsContact.addressLabel,
-		emailHref: '/contact',
-		emailLabel: bohemcarsContact.emailLabel,
-		phoneHref: '/contact',
-		phoneLabel: bohemcarsContact.primaryPhoneLabel
-	},
-	language: {
-		current: 'English',
-		options: ['English', 'Bulgarian', 'German', 'French']
-	},
-	logo: {
-		alt: bohemcarsBrand.name,
-		href: '/',
-		mobileSrc: bohemcarsAssets.logoDark,
-		src: bohemcarsAssets.logoDark
-	},
-	navigation: mainNavigation.map((item) => ({
-		...item,
-		active: item.href === '/'
-	})),
-	socialLinks: [
-		{ href: '/reviews', icon: 'facebook', label: 'Reviews' },
-		{ href: '/blog', icon: 'youtube', label: 'Blog' },
-		{ href: '/services', icon: 'chat', label: 'Services' },
-		{ href: '/contact', icon: 'telegram', label: 'Contact' },
-		{ href: '/agents', icon: 'x', label: 'Consultants' }
-	]
+export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] =>
+	homeFiveBrandCards.map((card) => ({
+		...card,
+		count: localizeCount(locale, card.count)
+	}));
+
+export const homeFiveHeaderDataForLocale = (locale: Locale): HomeFiveHeaderData => {
+	const t = getMessages(locale);
+
+	return {
+		actionBadges: {
+			compare: 2,
+			wishlist: 2
+		},
+		contact: {
+			addressHref: '/contact',
+			addressLabel: bohemcarsContact.addressLabel,
+			emailHref: '/contact',
+			emailLabel: bohemcarsContact.emailLabel,
+			phoneHref: '/contact',
+			phoneLabel: bohemcarsContact.primaryPhoneLabel
+		},
+		language: {
+			current: t.header.languageCurrent,
+			options: t.header.languageOptions
+		},
+		ui: {
+			addListing: t.header.addListing,
+			compare: t.header.compare,
+			megaDetails: t.header.megaDetails,
+			megaView: t.header.megaView,
+			searchPlaceholder: t.header.searchPlaceholder,
+			signIn: t.header.signIn,
+			wishlist: t.header.wishlist
+		},
+		logo: {
+			alt: bohemcarsBrand.name,
+			href: '/',
+			mobileSrc: bohemcarsAssets.logoLight,
+			src: bohemcarsAssets.logoLight
+		},
+		navigation: mainNavigation.map<HomeFiveHeaderNavigationItem>((item) => ({
+			...item,
+			label: t.nav[item.href as keyof typeof t.nav],
+			active: item.href === '/',
+			megaMenu:
+				item.href === '/inventory'
+					? inventoryMegaMenuForLocale(locale)
+					: item.href === '/services'
+						? servicesMegaMenuForLocale(locale)
+						: item.href === '/about'
+							? aboutMegaMenuForLocale(locale)
+							: undefined
+		})),
+		socialLinks: [
+			{ href: '/reviews', icon: 'facebook', label: t.home.reviewsTitle },
+			{ href: '/blog', icon: 'youtube', label: t.home.newsTitle },
+			{ href: '/services', icon: 'chat', label: t.nav['/services'] },
+			{ href: '/contact', icon: 'telegram', label: t.nav['/contact'] },
+			{ href: '/agents', icon: 'x', label: locale === 'bg' ? 'Консултанти' : 'Consultants' }
+		]
+	};
 };
+
+export const homeFiveHeaderData: HomeFiveHeaderData = homeFiveHeaderDataForLocale('en');
 
 export const homeFiveReviewItems: HomeFiveReview[] = [
 	{
@@ -354,6 +710,14 @@ export const homeFiveFooterData: HomeFiveFooterData = {
 	},
 	copyright: `©2026 ${bohemcarsBrand.name}. All Rights Reserved.`,
 	hours: ['Monday-Friday 9:00 - 18:00', 'Weekend viewings by appointment'],
+	labels: {
+		buyingSelling: 'BUYING & SELLING',
+		emailPlaceholder: 'Enter your e-mail',
+		online: 'Bohemcars Online',
+		openingHours: 'Opening Hours:',
+		quickLinks: 'QUICK LINKS',
+		subscribe: 'Subscribe'
+	},
 	legalLinks: [
 		{ href: '/terms', label: 'Terms Of Services' },
 		{ href: '/terms', label: 'Privacy Policy' },
@@ -383,113 +747,339 @@ export const homeFiveFooterData: HomeFiveFooterData = {
 	]
 };
 
+export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData => {
+	if (locale === 'en') return homeFiveFooterData;
+
+	return {
+		...homeFiveFooterData,
+		appLinks: [
+			{
+				href: '/contact',
+				image: '/assets/images/brand/app-store-dark.png',
+				label: 'Контакт през телефон'
+			},
+			{
+				href: '/contact',
+				image: '/assets/images/brand/google-play-dark.png',
+				label: 'Пиши на Bohemcars'
+			}
+		],
+		buyingLinks: [
+			{ href: '/services', label: 'Услуги' },
+			{ href: '/inventory', label: 'Намери автомобил' },
+			{ href: '/agents', label: 'Намери консултант' },
+			{ href: '/inventory?view=map', label: 'Карта на наличните' },
+			{ href: '/inventory?status=available', label: 'Проверени обяви' },
+			{ href: '/calculator', label: 'Калкулатор за внос' },
+			{ href: '/reviews', label: 'Отзиви от клиенти' }
+		],
+		copyright: `©2026 ${bohemcarsBrand.name}. Всички права запазени.`,
+		hours: ['Понеделник-петък 9:00 - 18:00', 'Огледи през уикенда с уговорка'],
+		labels: {
+			buyingSelling: 'ПОКУПКА И ПРОДАЖБА',
+			emailPlaceholder: 'Въведете имейл',
+			online: 'Bohemcars онлайн',
+			openingHours: 'Работно време:',
+			quickLinks: 'БЪРЗИ ВРЪЗКИ',
+			subscribe: 'Абонирай се'
+		},
+		legalLinks: [
+			{ href: '/terms', label: 'Общи условия' },
+			{ href: '/terms', label: 'Поверителност' },
+			{ href: '/terms', label: 'Бисквитки' }
+		],
+		quickLinks: [
+			{ href: '/about', label: 'За нас' },
+			{ href: '/inventory?view=4', label: 'Покупка с Bohemcars' },
+			{ href: '/sell-your-car', label: 'Продай автомобила си' },
+			{ href: '/services', label: 'Услуги' },
+			{ href: '/faqs', label: 'FAQ' },
+			{ href: '/blog', label: 'Новини' },
+			{ href: '/contact', label: 'Контакт с Bohemcars' }
+		],
+		socialLinks: [
+			{ href: '/contact', icon: 'facebook', label: 'Контакт' },
+			{ href: '/blog', icon: 'youtube', label: 'Блог' },
+			{ href: '/reviews', icon: 'facebook', label: 'Отзиви' },
+			{ href: '/services', icon: 'youtube', label: 'Услуги' },
+			{ href: '/agents', icon: 'x', label: 'Консултанти' },
+			{ href: '/inventory', icon: 'instagram', label: 'Автомобили' }
+		]
+	};
+};
+
 export const homeFiveTypeCards: HomeFiveTypeCard[] = [
-	{ label: 'SUV', image: '/assets/images/card/card-37.jpg', bodyType: 'SUV' },
-	{ label: 'SUV', image: '/assets/images/card/card-38.jpg', bodyType: 'SUV' },
-	{ label: 'Pickup Truck', image: '/assets/images/card/card-39.jpg', bodyType: 'Pickup Truck' },
-	{ label: 'Sedan', image: '/assets/images/card/card-40.jpg', bodyType: 'Sedan' },
-	{ label: 'Hatchback', image: '/assets/images/card/card-41.jpg', bodyType: 'Hatchback' },
-	{ label: 'Crossover', image: '/assets/images/card/card-42.jpg', bodyType: 'Crossover' }
+	{
+		label: 'Electric',
+		image: '/assets/images/card/card-27.png',
+		bodyType: 'Electric',
+		href: '/inventory?fuel=EV'
+	},
+	{
+		label: 'Sedan',
+		image: '/assets/images/card/card-28.png',
+		bodyType: 'Sedan',
+		href: '/inventory?bodyType=Sedan'
+	},
+	{
+		label: 'SUV',
+		image: '/assets/images/card/card-29.png',
+		bodyType: 'SUV',
+		href: '/inventory?bodyType=SUV'
+	},
+	{
+		label: 'Pickup Truck',
+		image: '/assets/images/card/card-30.png',
+		bodyType: 'Pickup Truck',
+		href: '/inventory?bodyType=Pickup%20Truck'
+	},
+	{
+		label: 'Hatchback',
+		image: '/assets/images/card/card-31.png',
+		bodyType: 'Hatchback',
+		href: '/inventory?bodyType=Hatchback'
+	},
+	{
+		label: 'Crossover',
+		image: '/assets/images/card/card-32.png',
+		bodyType: 'Crossover',
+		href: '/inventory?bodyType=Crossover'
+	},
+	{
+		label: 'Coupe',
+		image: '/assets/images/card/card-33.png',
+		bodyType: 'Coupe',
+		href: '/inventory?bodyType=Coupe'
+	},
+	{
+		label: 'Cabriolet',
+		image: '/assets/images/card/card-34.png',
+		bodyType: 'Cabriolet',
+		href: '/inventory?bodyType=Cabriolet'
+	}
 ];
 
+export const homeFiveTypeCardsForLocale = (locale: Locale): HomeFiveTypeCard[] =>
+	homeFiveTypeCards.map((card) => ({
+		...card,
+		label: translateVehicleTerm(locale, 'bodyTypes', card.label)
+	}));
+
 export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
-	{ active: true, href: '/inventory?bodyType=SUV', label: 'SUV' },
-	{ active: false, href: '/inventory?bodyType=Sedan', label: 'Sedan' },
-	{ active: false, href: '/inventory?bodyType=Coupe', label: 'Coupe' },
-	{ active: false, href: '/inventory?bodyType=Luxury', label: 'Luxury' }
+	{
+		active: true,
+		href: '/inventory?bodyType=SUV',
+		icon: 'suv',
+		kind: 'body',
+		label: 'SUV',
+		termGroup: 'bodyTypes'
+	},
+	{
+		active: false,
+		href: '/inventory?bodyType=Sedan',
+		icon: 'sedan',
+		kind: 'body',
+		label: 'Sedan',
+		termGroup: 'bodyTypes'
+	},
+	{
+		active: false,
+		href: '/inventory?bodyType=Coupe',
+		icon: 'coupe',
+		kind: 'body',
+		label: 'Coupe',
+		termGroup: 'bodyTypes'
+	},
+	{
+		active: false,
+		href: '/inventory?bodyType=Luxury',
+		icon: 'luxury',
+		kind: 'body',
+		label: 'Luxury',
+		termGroup: 'bodyTypes'
+	},
+	{
+		active: false,
+		href: '/inventory?transmission=Automatic',
+		image: '/assets/icons/transmission.svg',
+		kind: 'spec',
+		label: 'Automatic',
+		termGroup: 'transmissions'
+	},
+	{
+		active: false,
+		href: '/inventory?q=4x4',
+		image: '/assets/icons/transmission.svg',
+		kind: 'spec',
+		label: '4x4'
+	},
+	{
+		active: false,
+		href: '/inventory?fuel=Petrol',
+		image: '/assets/icons/gaspump.svg',
+		kind: 'spec',
+		label: 'Petrol',
+		termGroup: 'fuels'
+	},
+	{
+		active: false,
+		href: '/inventory?minYear=2021',
+		image: '/assets/icons/calendar.svg',
+		kind: 'spec',
+		label: '2021+'
+	},
+	{
+		active: false,
+		href: '/inventory?maxMileage=120000',
+		image: '/assets/icons/mileage.svg',
+		kind: 'spec',
+		label: 'Under 120k',
+		labels: { bg: 'до 120k' }
+	},
+	{
+		active: false,
+		href: '/inventory?brand=BMW',
+		image: '/assets/images/brand/brand-1.png',
+		kind: 'brand',
+		label: 'BMW'
+	},
+	{
+		active: false,
+		href: '/inventory?brand=Audi',
+		image: '/assets/images/brand/brand-3.png',
+		kind: 'brand',
+		label: 'Audi'
+	},
+	{
+		active: false,
+		href: '/inventory?brand=Mercedes-Benz',
+		image: '/assets/images/brand/brand-2.png',
+		kind: 'brand',
+		label: 'Mercedes'
+	}
 ];
+
+export const homeFiveVehiclePillsForLocale = (locale: Locale): HomeFiveVehiclePill[] =>
+	homeFiveVehiclePills.map((pill) => ({
+		...pill,
+		label:
+			pill.labels?.[locale] ??
+			(pill.termGroup ? translateVehicleTerm(locale, pill.termGroup, pill.label) : pill.label)
+	}));
 
 const uniqueSortedValues = (items: string[]) =>
 	Array.from(new Set(items.filter(Boolean))).sort((left, right) => left.localeCompare(right));
 
-export function homeFiveHeroDataFromVehicles(vehicles: Vehicle[]): HomeFiveHeroData {
+const selectOptions = (
+	locale: Locale,
+	values: string[],
+	group?: keyof PublicMessages['vehicleTerms']
+): HomeFiveHeroSelectOption[] =>
+	uniqueSortedValues(values).map((value) => ({
+		label: group ? translateVehicleTerm(locale, group, value) : value,
+		value
+	}));
+
+export function homeFiveHeroDataFromVehicles(
+	vehicles: Vehicle[],
+	locale: Locale = 'en'
+): HomeFiveHeroData {
+	const t = getMessages(locale).hero;
 	const textSlides: HomeFiveHeroTextSlide[] = Array.from({ length: 4 }, (_, index) => ({
 		ctaHref: '/inventory',
-		ctaLabel: 'View Inventory',
+		ctaLabel: t.ctaLabel,
 		id: `home-five-hero-slide-${index + 1}`,
-		subtitle: `${bohemcarsBrand.tagline} and clear appointment support.`
+		subtitle: t.slideSubtitle
 	}));
 
 	return {
 		advancedFilters: [
 			{
-				defaultLabel: 'All Fuel Types',
+				defaultLabel: t.filters.allFuelTypes,
 				id: 'Home05FuelSelectToggle',
 				name: 'fuel',
-				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.fuel)),
-				title: 'Fuel Type'
+				options: selectOptions(
+					locale,
+					vehicles.map((vehicle) => vehicle.fuel),
+					'fuels'
+				),
+				title: t.filters.fuelType
 			},
 			{
-				defaultLabel: 'All Transmissions',
+				defaultLabel: t.filters.allTransmissions,
 				id: 'Home05TransmissionSelectToggle',
 				name: 'transmission',
-				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.transmission)),
-				title: 'Transmission'
+				options: selectOptions(
+					locale,
+					vehicles.map((vehicle) => vehicle.transmission),
+					'transmissions'
+				),
+				title: t.filters.transmission
 			},
 			{
-				defaultLabel: 'All Statuses',
+				defaultLabel: t.filters.allStatuses,
 				id: 'Home05StatusSelectToggle',
 				name: 'status',
-				options: ['New listing', 'Available', 'Client vehicle'],
-				title: 'Status'
+				options: ['New listing', 'Available', 'Client vehicle'].map((value) => ({
+					label: translateVehicleTerm(locale, 'statuses', value),
+					value
+				})),
+				title: t.filters.status
 			}
 		],
 		backgroundImages: bohemcarsAssets.homeHeroSlides.filter(Boolean),
-		features: [
-			'Verified source listing',
-			'History review',
-			'Mileage review',
-			'Document trail',
-			'Canada import support',
-			'Registration readiness',
-			'Viewing by appointment',
-			'Client vehicle intake'
-		],
+		checksTitle: t.checksTitle,
+		features: t.features,
+		heading: t.heading,
 		primaryFilters: [
 			{
-				defaultLabel: 'All Brand',
+				defaultLabel: t.filters.allBrand,
 				id: 'Home05BrandSelectToggle',
 				name: 'brand',
-				options: uniqueSortedValues(vehicles.map((vehicle) => vehicle.brand)),
-				title: 'Select Brand'
+				options: selectOptions(
+					locale,
+					vehicles.map((vehicle) => vehicle.brand)
+				),
+				title: t.filters.selectBrand
 			},
 			{
-				defaultLabel: 'All Model',
+				defaultLabel: t.filters.allModel,
 				id: 'Home05ModelSelectToggle',
 				name: 'q',
-				options: vehicles.map((vehicle) => vehicle.model).slice(0, 8),
-				title: 'Select Model'
+				options: selectOptions(locale, vehicles.map((vehicle) => vehicle.model).slice(0, 8)),
+				title: t.filters.selectModel
 			},
 			{
-				defaultLabel: 'All Body Types',
+				defaultLabel: t.filters.allBodyTypes,
 				id: 'Home05BodySelectToggle',
 				name: 'bodyType',
-				options: Array.from(new Set(vehicles.map((vehicle) => vehicle.bodyType).filter(Boolean))),
-				title: 'Body Type'
+				options: selectOptions(
+					locale,
+					vehicles.map((vehicle) => vehicle.bodyType).filter(Boolean),
+					'bodyTypes'
+				),
+				title: t.filters.bodyType
 			},
 			{
-				defaultLabel: 'All Price',
+				defaultLabel: t.filters.allPrice,
 				id: 'Home05MaxPriceSelectToggle',
 				name: 'maxPrice',
-				options: ['30 000 EUR', '50 000 EUR', '80 000 EUR', '120 000 EUR'],
-				title: 'Max Price'
+				options: ['30 000 EUR', '50 000 EUR', '80 000 EUR', '120 000 EUR'].map((value) => ({
+					label: value,
+					value
+				})),
+				title: t.filters.maxPrice
 			}
 		],
-		tabs: [
-			{ active: true, label: 'All Vehicles' },
-			{ active: false, label: 'New Listings' },
-			{ active: false, label: 'Client Vehicles' }
-		],
+		searchSubmitPrefix: t.searchSubmitPrefix,
+		searchSubmitSuffix: t.searchSubmitSuffix,
+		tabs: t.tabs,
 		textSlides,
 		totalMatches: vehicles.length,
+		yearLabel: t.yearLabel,
 		yearRange: { min: 2015, max: 2026 }
 	};
 }
-
-const brokenHomeImageSlugs = new Set(['21779200396408437']);
-
-export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
-	brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image;
 
 const compareVehicleFrom = (vehicle: Vehicle): HomeFiveCompareVehicle => ({
 	brand: vehicle.brand,
@@ -501,33 +1091,45 @@ const compareVehicleFrom = (vehicle: Vehicle): HomeFiveCompareVehicle => ({
 
 const formatKm = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
 
+const formatMonthly = (value: number, locale: Locale) =>
+	`${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} ${locale === 'bg' ? 'EUR/мес.' : 'EUR/mo'}`;
+
 export const homeFiveVehicleCardFromVehicle = (
 	vehicle: Vehicle,
-	index: number
+	index: number,
+	locale: Locale = 'en'
 ): HomeFiveVehicleCardData => ({
 	brand: vehicle.brand,
-	fuel: vehicle.fuel,
+	fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
 	highlightClass: index % 2 === 0 ? 'bg-primary-2' : 'bg-green',
-	highlightText: vehicle.tag ?? (vehicle.isClientVehicle ? 'Client vehicle' : 'Available'),
 	image: imageForHomeFiveVehicle(vehicle),
 	mileageLabel: formatKm(vehicle.mileage),
-	monthlyLabel: `${vehicle.monthly.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR/mo`,
+	monthlyLabel: formatMonthly(vehicle.monthly, locale),
 	photoCount: vehicle.images.length || 1,
 	priceLabel: vehicle.priceLabel,
 	slug: vehicle.slug,
 	title: vehicle.title,
-	transmission: vehicle.transmission,
+	transmission: translateVehicleTerm(locale, 'transmissions', vehicle.transmission),
 	transmissionIcon: vehicle.transmission === 'Manual' ? 'manual.svg' : 'auto.svg',
 	year: vehicle.year
 });
 
-export const homeFiveVehicleCardsFromVehicles = (vehicles: Vehicle[], limit: number) =>
-	vehicles.slice(0, limit).map(homeFiveVehicleCardFromVehicle);
+export const homeFiveVehicleCardsFromVehicles = (
+	vehicles: Vehicle[],
+	limit: number,
+	locale: Locale = 'en'
+) =>
+	vehicles
+		.slice(0, limit)
+		.map((vehicle, index) => homeFiveVehicleCardFromVehicle(vehicle, index, locale));
 
-const modalVehicleFromVehicle = (vehicle: Vehicle): HomeFiveModalVehicle => ({
+const modalVehicleFromVehicle = (
+	vehicle: Vehicle,
+	locale: Locale = 'en'
+): HomeFiveModalVehicle => ({
 	engine: vehicle.engine,
 	exterior: vehicle.exterior,
-	fuel: vehicle.fuel,
+	fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
 	image: imageForHomeFiveVehicle(vehicle),
 	interior: vehicle.interior,
 	location: vehicle.location,
@@ -535,13 +1137,14 @@ const modalVehicleFromVehicle = (vehicle: Vehicle): HomeFiveModalVehicle => ({
 	slug: vehicle.slug,
 	stockNumber: vehicle.stockNumber,
 	title: vehicle.title,
-	transmission: vehicle.transmission,
+	transmission: translateVehicleTerm(locale, 'transmissions', vehicle.transmission),
 	vin: vehicle.vin,
 	year: vehicle.year
 });
 
 export function homeFiveModalsDataFromVehicles(
-	vehicles: Vehicle[]
+	vehicles: Vehicle[],
+	locale: Locale = 'en'
 ): HomeFiveModalsData | undefined {
 	const [left, right, ...rest] = vehicles;
 
@@ -549,8 +1152,8 @@ export function homeFiveModalsDataFromVehicles(
 		return undefined;
 	}
 
-	const modalLeft = modalVehicleFromVehicle(left);
-	const modalRight = modalVehicleFromVehicle(right);
+	const modalLeft = modalVehicleFromVehicle(left, locale);
+	const modalRight = modalVehicleFromVehicle(right, locale);
 
 	return {
 		cardCompare: {
@@ -559,36 +1162,56 @@ export function homeFiveModalsDataFromVehicles(
 			rows: [
 				{
 					icon: 'mileage.svg',
-					label: 'Mileage',
+					label: locale === 'bg' ? 'Пробег' : 'Mileage',
 					left: modalLeft.mileageLabel,
 					right: modalRight.mileageLabel
 				},
-				{ icon: 'years.svg', label: 'Years', left: modalLeft.year, right: modalRight.year },
-				{ icon: 'fuel.svg', label: 'Fuel', left: modalLeft.fuel, right: modalRight.fuel },
-				{ icon: 'color.svg', label: 'Color', left: modalLeft.exterior, right: modalRight.exterior },
+				{
+					icon: 'years.svg',
+					label: locale === 'bg' ? 'Година' : 'Years',
+					left: modalLeft.year,
+					right: modalRight.year
+				},
+				{
+					icon: 'fuel.svg',
+					label: locale === 'bg' ? 'Гориво' : 'Fuel',
+					left: modalLeft.fuel,
+					right: modalRight.fuel
+				},
+				{
+					icon: 'color.svg',
+					label: locale === 'bg' ? 'Цвят' : 'Color',
+					left: modalLeft.exterior,
+					right: modalRight.exterior
+				},
 				{
 					icon: 'location.svg',
-					label: 'Location',
+					label: locale === 'bg' ? 'Локация' : 'Location',
 					left: modalLeft.location,
 					right: modalRight.location
 				},
 				{
 					icon: 'interior.svg',
-					label: 'Interior',
+					label: locale === 'bg' ? 'Интериор' : 'Interior',
 					left: modalLeft.interior,
 					right: modalRight.interior
 				},
-				{ icon: 'engine.svg', label: 'Engine', left: modalLeft.engine, right: modalRight.engine },
+				{
+					icon: 'engine.svg',
+					label: locale === 'bg' ? 'Двигател' : 'Engine',
+					left: modalLeft.engine,
+					right: modalRight.engine
+				},
 				{
 					icon: 'transmission.svg',
-					label: 'Transmission',
+					label: locale === 'bg' ? 'Скорости' : 'Transmission',
 					left: modalLeft.transmission,
 					right: modalRight.transmission
 				},
 				{ icon: 'VIN.svg', label: 'VIN', left: modalLeft.vin, right: modalRight.vin },
 				{
 					icon: 'QrCode.svg',
-					label: 'Stock Number',
+					label: locale === 'bg' ? 'Номер в наличност' : 'Stock Number',
 					left: modalLeft.stockNumber,
 					right: modalRight.stockNumber
 				}
@@ -596,7 +1219,7 @@ export function homeFiveModalsDataFromVehicles(
 		},
 		comparePreview: [left, right, ...rest]
 			.slice(0, 3)
-			.map((vehicle) => modalVehicleFromVehicle(vehicle))
+			.map((vehicle) => modalVehicleFromVehicle(vehicle, locale))
 	};
 }
 

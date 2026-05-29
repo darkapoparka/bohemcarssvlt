@@ -236,14 +236,25 @@ export const bohemcarsConsultants = [
 ] as const;
 
 export const mainNavigation = [
-	{ label: 'Home', href: '/' },
-	{ label: 'Inventory', href: '/inventory' },
-	{ label: 'Services', href: '/services' },
-	{ label: 'Sell Your Car', href: '/sell-your-car' },
-	{ label: 'Compare', href: '/compare' },
-	{ label: 'Agents', href: '/agents' },
-	{ label: 'Contact', href: '/contact' }
+	{ label: 'Home', href: '/', matchPrefixes: ['/'] },
+	{ label: 'Inventory', href: '/inventory', matchPrefixes: ['/inventory'] },
+	{
+		label: 'Services',
+		href: '/services',
+		matchPrefixes: ['/services', '/financing', '/calculator', '/sell-your-car', '/compare']
+	},
+	{
+		label: 'About',
+		href: '/about',
+		matchPrefixes: ['/about', '/agents', '/reviews', '/faqs', '/blog']
+	},
+	{ label: 'Contact', href: '/contact', matchPrefixes: ['/contact'] }
 ] as const;
+
+export const isPrimaryNavActive = (pathname: string, item: (typeof mainNavigation)[number]) =>
+	item.matchPrefixes.some(
+		(prefix) => pathname === prefix || (prefix !== '/' && pathname.startsWith(prefix))
+	);
 
 export const getUniqueValues = <Key extends keyof BohemcarsVehicle>(key: Key) =>
 	Array.from(new Set(bohemcarsVehicles.map((vehicle) => vehicle[key]).filter(Boolean))).sort(

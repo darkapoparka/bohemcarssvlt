@@ -1,22 +1,25 @@
 import type { PageServerLoad } from './$types';
 import {
-	homeFiveBrandCards,
+	homeFiveBrandCardsForLocale,
 	homeFiveComparePairsFromVehicles,
-	homeFiveFooterData,
-	homeFiveHeaderData,
+	homeFiveFooterDataForLocale,
+	homeFiveHeaderDataForLocale,
 	homeFiveHeroDataFromVehicles,
 	homeFiveModalsDataFromVehicles,
 	homeFiveNewsPostsFromPosts,
 	homeFiveReviewItems,
-	homeFiveTypeCards,
+	homeFiveTypeCardsForLocale,
 	homeFiveVehicleCardsFromVehicles,
-	homeFiveVehiclePills
+	homeFiveVehiclePillsForLocale
 } from '$lib/auxero/home-five';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
+import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const messages = getMessages(locale);
 	const pageDocument = renderAuxeroPageDocument(
 		'home-05.html',
 		{
@@ -111,14 +114,17 @@ export const load: PageServerLoad = ({ request, url }) => {
 			: (typeGallerySlot?.afterHtml ?? ''),
 		afterModalsHtml: modalSlot?.afterHtml ?? '',
 		auxeroFullPage: true,
-		brandCards: homeFiveBrandCards,
-		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 9),
+		brandCards: homeFiveBrandCardsForLocale(locale),
+		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 8, locale),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
-		featuredVehicles: featuredVehiclesSlot ? homeFiveVehicleCardsFromVehicles(vehicles, 6) : [],
-		footer: footerSlot ? homeFiveFooterData : undefined,
-		header: headerSlot ? homeFiveHeaderData : undefined,
-		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles) : undefined,
-		modals: modalSlot ? homeFiveModalsDataFromVehicles(vehicles) : undefined,
+		copy: messages.home,
+		featuredVehicles: featuredVehiclesSlot
+			? homeFiveVehicleCardsFromVehicles(vehicles, 8, locale)
+			: [],
+		footer: footerSlot ? homeFiveFooterDataForLocale(locale) : undefined,
+		header: headerSlot ? homeFiveHeaderDataForLocale(locale) : undefined,
+		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles, locale) : undefined,
+		modals: modalSlot ? homeFiveModalsDataFromVehicles(vehicles, locale) : undefined,
 		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {
 			...pageDocument,
@@ -129,7 +135,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 				pageDocument.bodyHtml
 		},
 		reviews: reviewsSectionSlot ? homeFiveReviewItems : [],
-		typeCards: homeFiveTypeCards,
-		vehiclePills: homeFiveVehiclePills
+		typeCards: homeFiveTypeCardsForLocale(locale),
+		vehiclePills: homeFiveVehiclePillsForLocale(locale)
 	};
 };

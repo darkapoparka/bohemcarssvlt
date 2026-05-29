@@ -8,6 +8,7 @@
 	afterAgentsHtml={data.afterAgentsHtml}
 	beforeAgentsHtml={data.beforeAgentsHtml}
 	cards={data.cards}
+	dashboardShell={data.dashboardShell}
 	management={data.management}
 	pageDocument={data.pageDocument}
 />

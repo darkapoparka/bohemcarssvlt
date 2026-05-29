@@ -1,4 +1,5 @@
 import type { Vehicle } from '$lib/data/vehicles';
+import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
 import { formatInventoryKm } from './inventory';
 
 export type AuxeroCompareVehicle = {
@@ -25,89 +26,97 @@ export type AuxeroCompareRow = {
 	values: string[];
 };
 
-export const compareVehiclesFromVehicles = (vehicles: Vehicle[]): AuxeroCompareVehicle[] =>
+const compareFallback = (locale: Locale) => (locale === 'bg' ? 'По запитване' : 'On request');
+
+export const compareVehiclesFromVehicles = (
+	vehicles: Vehicle[],
+	locale: Locale = 'en'
+): AuxeroCompareVehicle[] =>
 	vehicles.map((vehicle) => ({
-		engine: vehicle.engine || 'On request',
-		exterior: vehicle.exterior || 'On request',
-		fuel: vehicle.fuel,
+		engine: vehicle.engine || compareFallback(locale),
+		exterior: vehicle.exterior || compareFallback(locale),
+		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
 		image: vehicle.image,
-		interior: vehicle.interior || 'On request',
+		interior: vehicle.interior || compareFallback(locale),
 		location: vehicle.location,
 		mileageLabel: formatInventoryKm(vehicle.mileage),
 		priceLabel: vehicle.priceLabel,
 		slug: vehicle.slug,
 		stockNumber: vehicle.stockNumber,
 		title: vehicle.title,
-		transmission: vehicle.transmission,
+		transmission: translateVehicleTerm(locale, 'transmissions', vehicle.transmission),
 		vin: vehicle.vin,
 		year: vehicle.year
 	}));
 
-export const compareRowsFromVehicles = (vehicles: AuxeroCompareVehicle[]): AuxeroCompareRow[] => [
+export const compareRowsFromVehicles = (
+	vehicles: AuxeroCompareVehicle[],
+	locale: Locale = 'en'
+): AuxeroCompareRow[] => [
 	{
-		alt: 'mileage',
+		alt: locale === 'bg' ? 'пробег' : 'mileage',
 		icon: 'mileage.svg',
-		label: 'Mileage',
+		label: locale === 'bg' ? 'Пробег' : 'Mileage',
 		values: vehicles.map((vehicle) => vehicle.mileageLabel)
 	},
 	{
-		alt: 'year',
+		alt: locale === 'bg' ? 'година' : 'year',
 		icon: 'years.svg',
-		label: 'Years',
+		label: locale === 'bg' ? 'Година' : 'Years',
 		values: vehicles.map((vehicle) => String(vehicle.year))
 	},
 	{
-		alt: 'fuel',
+		alt: locale === 'bg' ? 'гориво' : 'fuel',
 		icon: 'gaspump.svg',
-		label: 'Fuel',
+		label: locale === 'bg' ? 'Гориво' : 'Fuel',
 		values: vehicles.map((vehicle) => vehicle.fuel)
 	},
 	{
-		alt: 'color',
+		alt: locale === 'bg' ? 'цвят' : 'color',
 		icon: 'color.svg',
-		label: 'Color',
+		label: locale === 'bg' ? 'Цвят' : 'Color',
 		values: vehicles.map((vehicle) => vehicle.exterior)
 	},
 	{
-		alt: 'location',
+		alt: locale === 'bg' ? 'локация' : 'location',
 		icon: 'location.svg',
-		label: 'Location',
+		label: locale === 'bg' ? 'Локация' : 'Location',
 		values: vehicles.map((vehicle) => vehicle.location)
 	},
 	{
-		alt: 'interior',
+		alt: locale === 'bg' ? 'интериор' : 'interior',
 		icon: 'interior.svg',
-		label: 'Interior',
+		label: locale === 'bg' ? 'Интериор' : 'Interior',
 		values: vehicles.map((vehicle) => vehicle.interior)
 	},
 	{
-		alt: 'engine',
+		alt: locale === 'bg' ? 'двигател' : 'engine',
 		icon: 'engine.svg',
-		label: 'Engine',
+		label: locale === 'bg' ? 'Двигател' : 'Engine',
 		values: vehicles.map((vehicle) => vehicle.engine)
 	},
 	{
-		alt: 'transmission',
+		alt: locale === 'bg' ? 'скорости' : 'transmission',
 		icon: 'transmission.svg',
-		label: 'Transmission',
+		label: locale === 'bg' ? 'Скорости' : 'Transmission',
 		values: vehicles.map((vehicle) => vehicle.transmission)
 	},
 	{
-		alt: 'source id',
+		alt: locale === 'bg' ? 'id от източника' : 'source id',
 		icon: 'VIN.svg',
-		label: 'Source ID',
+		label: locale === 'bg' ? 'ID от източника' : 'Source ID',
 		values: vehicles.map((vehicle) => vehicle.vin)
 	},
 	{
-		alt: 'stock number',
+		alt: locale === 'bg' ? 'номер в наличност' : 'stock number',
 		icon: 'QrCode.svg',
-		label: 'Stock Number',
+		label: locale === 'bg' ? 'Номер в наличност' : 'Stock Number',
 		values: vehicles.map((vehicle) => vehicle.stockNumber)
 	},
 	{
-		alt: 'price',
+		alt: locale === 'bg' ? 'цена' : 'price',
 		icon: 'Payment.png',
-		label: 'Price',
+		label: locale === 'bg' ? 'Цена' : 'Price',
 		values: vehicles.map((vehicle) => vehicle.priceLabel)
 	}
 ];

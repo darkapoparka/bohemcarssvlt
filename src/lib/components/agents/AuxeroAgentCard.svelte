@@ -7,7 +7,7 @@
 	const externalHref = (href: string) => ({ href });
 </script>
 
-<div class={`sale-agent-box ${card.active ? 'active' : ''}`}>
+<div class={`sale-agent-box bohemcars-no-image-zoom ${card.active ? 'active' : ''}`}>
 	<div class="card-top mb-20">
 		<a class="flex w-full" href={resolve('/agents/[slug]', { slug: card.slug })}>
 			<img class="w-full" src={card.image} alt={card.name} />

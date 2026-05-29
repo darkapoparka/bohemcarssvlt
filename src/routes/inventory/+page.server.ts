@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { inventoryCardsFromVehicles } from '$lib/auxero/inventory';
+import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import {
 	getInventoryState,
 	inventoryTemplateForView,
@@ -8,6 +9,7 @@ import {
 import { renderAuxeroPageDocument, splitAuxeroDivBlockByMarker } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const locale = resolveLocale(url.searchParams.get('lang'));
 	const view = resolveInventoryView(url.searchParams.get('view'));
 	const templateFile = inventoryTemplateForView(view);
 	const renderOptions = {
@@ -31,7 +33,8 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterInventoryHtml: inventorySlot?.afterHtml ?? '',
 		auxeroFullPage: true,
 		beforeInventoryHtml: inventorySlot?.beforeHtml ?? pageDocument.bodyHtml,
-		cards: inventorySlot ? inventoryCardsFromVehicles(inventoryState.selected) : [],
+		cards: inventorySlot ? inventoryCardsFromVehicles(inventoryState.selected, locale) : [],
+		copy: getMessages(locale).inventory,
 		pageDocument,
 		view: inventoryState.view
 	};

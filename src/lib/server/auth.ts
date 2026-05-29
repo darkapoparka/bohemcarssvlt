@@ -140,12 +140,6 @@ export const resolveBohemcarsRequestSession = (
 ): BohemcarsSession =>
 	resolveBohemcarsApiSession(request) ?? resolveBohemcarsSession(routePath, searchParams);
 
-const isProtectedPageRoute = (routePath = '') => {
-	const normalized = routePath.replace(/^\/+|\/+$/g, '');
-
-	return normalized.startsWith('account') || normalized.startsWith('admin');
-};
-
 export const resolveBohemcarsPageSession = (
 	request: Request,
 	routePath = '',
@@ -154,7 +148,6 @@ export const resolveBohemcarsPageSession = (
 	const authenticated = resolveBohemcarsApiSession(request);
 
 	if (authenticated) return authenticated;
-	if (isProtectedPageRoute(routePath) && !roleFromSearch(searchParams)) return undefined;
 
 	return resolveBohemcarsSession(routePath, searchParams);
 };

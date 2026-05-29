@@ -66,7 +66,7 @@ const inventoryUrl = (state: InventoryState, overrides: Record<string, string | 
 	const params = new URLSearchParams(state.searchParams);
 
 	for (const [key, value] of Object.entries(overrides)) {
-		if (!value || (key === 'view' && value === '3')) {
+		if (!value || (key === 'view' && value === '4')) {
 			params.delete(key);
 		} else {
 			params.set(key, value);
@@ -84,6 +84,72 @@ const modelOptions = Array.from(new Set(vehicles.map((vehicle) => vehicle.model)
 const transmissionOptions = Array.from(new Set(vehicles.map((vehicle) => vehicle.transmission)))
 	.filter(Boolean)
 	.sort();
+const brandLogos: Record<string, string> = {
+	Audi: '/assets/bohemcars/brands/audi.png',
+	BMW: '/assets/bohemcars/brands/bmw.png',
+	Ford: '/assets/bohemcars/brands/ford.png',
+	Mazda: '/assets/bohemcars/brands/mazda.png',
+	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
+	Porsche: '/assets/bohemcars/brands/porsche.png',
+	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+};
+const brandCounts = new Map<string, number>();
+
+for (const vehicle of vehicles) {
+	brandCounts.set(vehicle.brand, (brandCounts.get(vehicle.brand) ?? 0) + 1);
+}
+
+const inventoryBrandPills = brands
+	.map((brand) => ({
+		count: brandCounts.get(brand) ?? 0,
+		image:
+			brandLogos[brand] ?? '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
+		label: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
+		value: brand
+	}))
+	.sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, 'en'));
+const bodyTypeCounts = new Map<string, number>();
+
+for (const vehicle of vehicles) {
+	bodyTypeCounts.set(vehicle.bodyType, (bodyTypeCounts.get(vehicle.bodyType) ?? 0) + 1);
+}
+
+const inventoryBodyTypePills = bodyTypes
+	.map((bodyType) => ({
+		count: bodyTypeCounts.get(bodyType) ?? 0,
+		label: bodyType,
+		value: bodyType
+	}))
+	.filter((bodyType) => bodyType.value !== 'Car' && bodyType.count > 0)
+	.sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, 'en'));
+const fuelCounts = new Map<string, number>();
+
+for (const vehicle of vehicles) {
+	fuelCounts.set(vehicle.fuel, (fuelCounts.get(vehicle.fuel) ?? 0) + 1);
+}
+
+const fuelLabels: Record<string, string> = {
+	'Plug-in хибрид': 'Plug-in Hybrid'
+};
+const fuelOrder = ['Petrol', 'Plug-in хибрид', 'EV'];
+const inventoryFuelPills = fuels
+	.map((fuel) => ({
+		count: fuelCounts.get(fuel) ?? 0,
+		label: fuelLabels[fuel] ?? fuel,
+		value: fuel
+	}))
+	.filter((fuel) => fuel.count > 0 && fuel.value !== '340 к.с.')
+	.sort((left, right) => {
+		const leftIndex = fuelOrder.indexOf(left.value);
+		const rightIndex = fuelOrder.indexOf(right.value);
+
+		if (leftIndex !== -1 || rightIndex !== -1) {
+			return (leftIndex === -1 ? 99 : leftIndex) - (rightIndex === -1 ? 99 : rightIndex);
+		}
+
+		return right.count - left.count || left.label.localeCompare(right.label, 'en');
+	});
 
 const viewIcon = (view: InventoryView) => {
 	if (view === '4') {
@@ -147,6 +213,147 @@ const sortDropdown = (state: InventoryState) => {
 	</ul>`;
 };
 
+const inventoryQuickUrl = (
+	state: InventoryState,
+	overrides: { bodyType?: string | null; brand?: string | null; fuel?: string | null } = {}
+) => {
+	const params = new URLSearchParams();
+	const brand = Object.hasOwn(overrides, 'brand') ? overrides.brand : state.filters.brand;
+	const bodyType = Object.hasOwn(overrides, 'bodyType')
+		? overrides.bodyType
+		: state.filters.bodyType;
+	const fuel = Object.hasOwn(overrides, 'fuel') ? overrides.fuel : state.filters.fuel;
+
+	if (state.view !== '4') params.set('view', state.view);
+	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
+	if (brand) params.set('brand', brand);
+	if (bodyType) params.set('bodyType', bodyType);
+	if (fuel) params.set('fuel', fuel);
+
+	const query = params.toString();
+
+	return `/inventory${query ? `?${query}` : ''}`;
+};
+
+const inventoryAllStockUrl = (state: InventoryState) =>
+	inventoryQuickUrl(state, { bodyType: null, brand: null, fuel: null });
+
+const inventoryBrandUrl = (state: InventoryState, brand: string) =>
+	inventoryQuickUrl(state, { brand });
+
+const inventoryBodyTypeUrl = (state: InventoryState, bodyType: string) =>
+	inventoryQuickUrl(state, {
+		bodyType: state.filters.bodyType?.toLowerCase() === bodyType.toLowerCase() ? null : bodyType
+	});
+
+const inventoryFuelUrl = (state: InventoryState, fuel: string) =>
+	inventoryQuickUrl(state, {
+		fuel: state.filters.fuel?.toLowerCase() === fuel.toLowerCase() ? null : fuel
+	});
+
+const inventorySearchHiddenInputs = (state: InventoryState) =>
+	[
+		state.filters.brand
+			? `<input type="hidden" name="brand" value="${escapeHtml(state.filters.brand)}">`
+			: '',
+		state.filters.bodyType
+			? `<input type="hidden" name="bodyType" value="${escapeHtml(state.filters.bodyType)}">`
+			: '',
+		state.filters.fuel
+			? `<input type="hidden" name="fuel" value="${escapeHtml(state.filters.fuel)}">`
+			: '',
+		state.view !== '4' ? `<input type="hidden" name="view" value="${state.view}">` : '',
+		state.sortParam !== 'best-match'
+			? `<input type="hidden" name="sort" value="${escapeHtml(state.sortParam)}">`
+			: ''
+	].join('');
+
+const inventorySearchSurface = (state: InventoryState) => {
+	const selectedBrand = state.filters.brand?.toLowerCase();
+	const selectedBodyType = state.filters.bodyType?.toLowerCase();
+	const selectedFuel = state.filters.fuel?.toLowerCase();
+	const brandPills = inventoryBrandPills
+		.map(
+			(brand) => `<li class="bohemcars-quick-pill bohemcars-brand-pill car-box ${
+				selectedBrand === brand.value.toLowerCase() ? 'active' : ''
+			}">
+				<a href="${inventoryBrandUrl(state, brand.value)}" aria-label="Browse ${escapeHtml(brand.value)} vehicles">
+					<img src="${brand.image}" alt="${escapeHtml(brand.label)}">
+					<span>${escapeHtml(brand.label)}</span>
+				</a>
+			</li>`
+		)
+		.join('');
+	const typePills = inventoryBodyTypePills
+		.map(
+			(bodyType) => `<li class="bohemcars-quick-pill bohemcars-type-pill car-box ${
+				selectedBodyType === bodyType.value.toLowerCase() ? 'active' : ''
+			}">
+				<a href="${inventoryBodyTypeUrl(state, bodyType.value)}" aria-label="Browse ${escapeHtml(bodyType.label)} vehicles">
+					<span>${escapeHtml(bodyType.label)}</span>
+				</a>
+			</li>`
+		)
+		.join('');
+	const fuelPills = inventoryFuelPills
+		.map(
+			(fuel) => `<li class="bohemcars-quick-pill bohemcars-fuel-pill car-box ${
+				selectedFuel === fuel.value.toLowerCase() ? 'active' : ''
+			}">
+				<a href="${inventoryFuelUrl(state, fuel.value)}" aria-label="Browse ${escapeHtml(fuel.label)} vehicles">
+					<span>${escapeHtml(fuel.label)}</span>
+				</a>
+			</li>`
+		)
+		.join('');
+
+	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" data-bohemcars-search-form="inventory">
+		${inventorySearchHiddenInputs(state)}
+		<div class="bohemcars-inventory-searchbar__row">
+			<button class="btn-filter bohemcars-inventory-searchbar__filter" id="filterSidebarToggle" type="button" aria-label="Open filters">
+				<img src="/assets/icons/filter.svg" alt="">
+				<span>Filters</span>
+			</button>
+			<div class="bohemcars-inventory-searchbar__primary">
+				<label class="bohemcars-inventory-searchbar__search">
+					<img src="/assets/icons/search.svg" alt="">
+					<input type="text" name="q" value="${escapeHtml(state.filters.query ?? '')}" placeholder="Search brand, model, stock #" autocomplete="off">
+				</label>
+				<button class="bohemcars-inventory-searchbar__submit" type="submit">Search</button>
+			</div>
+		</div>
+		<div class="bohemcars-inventory-brand-pills">
+			<ul class="menu-tab menu-tab-style2 gap-10">
+				<li class="bohemcars-quick-pill bohemcars-brand-pill bohemcars-brand-pill--all car-box ${selectedBrand || selectedBodyType || selectedFuel ? '' : 'active'}">
+					<a href="${inventoryAllStockUrl(state)}" aria-label="Browse all Bohemcars vehicles">
+						<span>All Stock</span>
+					</a>
+				</li>
+				${brandPills}
+				<li class="bohemcars-quick-pill-divider" aria-hidden="true"></li>
+				${typePills}
+				<li class="bohemcars-quick-pill-divider" aria-hidden="true"></li>
+				${fuelPills}
+			</ul>
+		</div>
+	</form>`;
+};
+
+const inventoryBanner = (state: InventoryState) => {
+	const hasFilters = Object.keys(state.filters).length > 0;
+	const countLabel = `${state.selected.length} ${hasFilters ? 'matching ' : ''}${state.selected.length === 1 ? 'vehicle' : 'vehicles'}`;
+
+	return `<section class="bohemcars-inventory-banner">
+		<div class="container">
+			<div class="bohemcars-inventory-banner__content">
+				<p class="bohemcars-inventory-banner__eyebrow">Bohemcars current stock</p>
+				<h1>Browse inventory</h1>
+				<p>${escapeHtml(countLabel)} available with appointment viewings and source checks.</p>
+			</div>
+		</div>
+	</section>`;
+};
+
 const highlightClass = (vehicle: Vehicle, index: number) => {
 	if (vehicle.isClientVehicle) return 'bg-primary-2';
 	if (vehicle.tag === 'New listing') return 'bg-green';
@@ -161,13 +368,20 @@ const cardMeta = (vehicle: Vehicle, tagClass = 'tag style2 mb-10') => `<ul class
 	<li><img src="/assets/icons/auto.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
 </ul>`;
 
+const compactCardMeta = (vehicle: Vehicle, tagClass = 'tag style2 mb-10 bohemcars-card-specs') =>
+	`<ul class="${tagClass}">
+	<li><img src="/assets/icons/calendar.svg" alt="year"><span>${vehicle.year}</span></li>
+	<li><img src="/assets/icons/gaspump.svg" alt="fuel"><span>${escapeHtml(vehicle.fuel)}</span></li>
+	<li><img src="/assets/icons/auto.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
+</ul>`;
+
 const gridCard = (vehicle: Vehicle, index: number) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
 	const monthly = `${vehicle.monthly.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR/mo`;
 
 	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
-			<p class="${highlightClass(vehicle, index)} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
+			<p class="${highlightClass(vehicle, index)} text-white highlight">${km(vehicle.mileage)}</p>
 			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="image">
@@ -186,13 +400,16 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 				</div>
 			</div>
 			<p class="h6 card-box__title mb-8"><a href="${url}">${escapeHtml(vehicle.title)}</a></p>
-			${cardMeta(vehicle)}
-			<p class="h6 card-box__price mb-15 flex justify-between gap-8 items-center">
-				${escapeHtml(vehicle.priceLabel)}
-				<span class="text-sm">${monthly}<a href="${url}" class="text-underline ml-2 text-muted text-xs">See Finance</a></span>
+			${compactCardMeta(vehicle)}
+			<p class="h6 card-box__price bohemcars-card-price mb-15">
+				<span class="bohemcars-card-price__amount">${escapeHtml(vehicle.priceLabel)}</span>
+				<span class="bohemcars-card-price__finance">
+					<span class="bohemcars-card-price__monthly text-sm">${monthly}</span>
+					<a href="${url}" class="bohemcars-card-price__finance-link text-underline text-muted text-xs">See Finance</a>
+				</span>
 			</p>
 			<div class="divider mb-15"></div>
-			<div class="flex justify-between">
+			<div class="bohemcars-card-actions flex justify-between">
 				<p class="compare-details btn btn-small open-modal" data-modal-id="#CompareModal" data-bohemcars-compare="${escapeHtml(vehicle.slug)}" role="button" tabindex="0">
 					${compareIcon}
 					Compare
@@ -276,7 +493,7 @@ const replaceFirstDivAfter = (
 const inventoryContent = (state: InventoryState) => {
 	const gridClass =
 		state.view === '4'
-			? 'grid grid-cols-4 xl-grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41'
+			? 'grid grid-cols-4 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41'
 			: state.view === 'map'
 				? 'grid grid-cols-1 gap-20'
 				: 'grid grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
@@ -314,8 +531,12 @@ const replaceInventoryToolbar = (html: string, state: InventoryState) => {
 	return html
 		.replace(/Showing 1\s*(?:–|-)\s*30 of 118 Listings/g, showingText)
 		.replace(
-			/(<div class="container mb-40 flat-tabs" data-custom="true">\s*)<div class="row mb-24">/,
+			/(<div class="container mb-40 flat-tabs" data-custom="true">\s*)<div class="row(?: mb-24)?">/,
 			`$1<div class="row mb-24 bohemcars-inventory-toolbar-row">`
+		)
+		.replace(
+			/<div class="flex items-center gap-16">\s*<button class="btn-filter" id="filterSidebarToggle">[\s\S]*?<\/button>\s*<p class="md-hidden">([\s\S]*?)<\/p>\s*<\/div>/,
+			`<div class="flex items-center gap-16 bohemcars-inventory-result-count"><p class="md-hidden">$1</p></div>`
 		)
 		.replace(
 			/<span id="filterMatchesCount">\s*\d+\s*<\/span>/g,
@@ -332,6 +553,18 @@ const replaceInventoryToolbar = (html: string, state: InventoryState) => {
 		)
 		.replace(/<ul class="core-dropdown__list">[\s\S]*?<\/ul>/, sortDropdown(state));
 };
+
+const replaceInventorySearchSurface = (html: string, state: InventoryState) =>
+	html.replace(
+		/<div class="container">\s*<h2>Listing Grid(?: 3 Columns| 4 Columns| Half Map)<\/h2>\s*<\/div>/,
+		`<div class="container">${inventorySearchSurface(state)}</div>`
+	);
+
+const replaceInventoryBreadcrumb = (html: string, state: InventoryState) =>
+	html.replace(
+		/<!-- breadcrumb -->\s*<section class="background-light mb-32">[\s\S]*?<\/section>\s*<!-- breadcrumb -->/,
+		inventoryBanner(state)
+	);
 
 const replaceInventoryContent = (html: string, state: InventoryState) => {
 	const tabsStart = html.indexOf('data-custom="true"');
@@ -728,6 +961,26 @@ export const applyContactData = (html: string) => {
 		.replaceAll('value="Tony"', 'value=""')
 		.replaceAll('placeholder="Enter your last name"', 'placeholder="Enter your last name"');
 
+	const contactMapOverlay = `<div class="bohemcars-contact-map__overlay">
+		<p class="bohemcars-contact-map__eyebrow">Bohemcars Plovdiv</p>
+		<h1>Огледи и консултации с уговорка</h1>
+		<p>${escapeHtml(bohemcarsContact.addressLabel)}</p>
+		<div class="bohemcars-contact-map__actions">
+			<a href="${bohemcarsContact.primaryPhoneHref}" class="btn btn-white text-primary btn-large font-weight-600">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</a>
+			<a href="${bohemcarsContact.viberHref}" class="btn btn-primary btn-large font-weight-600">Пиши във Viber</a>
+		</div>
+	</div>`;
+
+	next = next
+		.replace(
+			'class="widget-gg-map flex radius-8 overflow-hidden"',
+			'class="widget-gg-map bohemcars-contact-map flex radius-8 overflow-hidden"'
+		)
+		.replace(
+			/(<div class="widget-gg-map bohemcars-contact-map[\s\S]*?<iframe[\s\S]*?<\/iframe>)(\s*<\/div>)/,
+			`$1${contactMapOverlay}$2`
+		);
+
 	next = addClassToFirstFormAfter(next, 'contact-page-form', 'bohemcars-contact-form');
 
 	return next;
@@ -859,7 +1112,9 @@ export const applyInventoryData = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const state = getInventoryState(templateFile, options);
-	let next = replaceInventoryToolbar(html, state);
+	let next = replaceInventoryBreadcrumb(html, state);
+	next = replaceInventorySearchSurface(next, state);
+	next = replaceInventoryToolbar(next, state);
 	next = replaceInventoryContent(next, state);
 	next = replaceFilterSidebar(next, state);
 

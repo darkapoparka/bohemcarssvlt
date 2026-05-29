@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { GitCompare, Heart, Menu, Plus, Search, User, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
-	import { bohemcarsAssets, mainNavigation } from '$lib/data/bohemcars';
+	import { bohemcarsAssets, isPrimaryNavActive, mainNavigation } from '$lib/data/bohemcars';
 	import { cn } from '$lib/utils/cn';
 	import { getGarageContext } from '$lib/state/garage.svelte';
 
@@ -43,8 +43,7 @@
 				<a
 					class={cn(
 						'site-nav__link',
-						(pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) &&
-							'site-nav__link--active'
+						isPrimaryNavActive(pathname, item) && 'site-nav__link--active'
 					)}
 					href={resolve(item.href)}
 					onclick={() => (menuOpen = false)}

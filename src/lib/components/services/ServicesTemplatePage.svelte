@@ -1,22 +1,24 @@
 <script lang="ts">
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import type { AuxeroServiceFormData } from '$lib/auxero/services';
+	import type { AuxeroServiceFormData, AuxeroServicesContent } from '$lib/auxero/services';
 	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
-	import ServiceFormCard from './ServiceFormCard.svelte';
+	import ServicesContent from './ServicesContent.svelte';
 
 	let {
-		afterServiceFormHtml,
-		beforeServiceFormHtml,
+		afterServicesHtml,
+		beforeServicesHtml,
 		form,
-		pageDocument
+		pageDocument,
+		services
 	}: {
-		afterServiceFormHtml: string;
-		beforeServiceFormHtml: string;
+		afterServicesHtml: string;
+		beforeServicesHtml: string;
 		form: AuxeroServiceFormData;
 		pageDocument: AuxeroPageDocument;
+		services: AuxeroServicesContent;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeServiceFormHtml} afterHtml={afterServiceFormHtml}>
-	<ServiceFormCard {form} />
+<AuxeroPageShell {pageDocument} beforeHtml={beforeServicesHtml} afterHtml={afterServicesHtml}>
+	<ServicesContent {form} {services} />
 </AuxeroPageShell>
