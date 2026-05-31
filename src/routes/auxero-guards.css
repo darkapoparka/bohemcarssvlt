@@ -49,3 +49,11 @@
 .bohemcars-no-image-zoom.card-box-style-1 .image {
 	aspect-ratio: 4 / 3;
 }
+
+/* Soften heavy Cyrillic section headings (theme default is 600, which reads clunky in Manrope Cyrillic) */
+.title-section h2,
+.bohemcars-compare-section h2,
+.bohemcars-featured-vehicles h2 {
+	font-weight: 500;
+	letter-spacing: -0.01em;
+}

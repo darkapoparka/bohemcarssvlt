@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HomeFiveVehicleCard from './HomeFiveVehicleCard.svelte';
+	import HomeSectionCta from './HomeSectionCta.svelte';
 	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 
@@ -9,8 +10,9 @@
 <section class="bohemcars-budget-section flat-tabs py-100">
 	<div class="container">
 		<div class="bohemcars-home-section-surface">
-			<div class="wow fadeInUp mb-40 flex items-center justify-center">
+			<div class="title-section wow fadeInUp mb-40">
 				<h2>{copy.budgetTitle}</h2>
+				<HomeSectionCta href="/inventory" label={copy.commonCta} />
 			</div>
 			<div
 				class="bohemcars-budget-tabs wow fadeIn mb-40 flex items-center justify-center gap-8 overflow-x-auto"

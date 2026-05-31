@@ -6,7 +6,7 @@
 	let { href, label }: { href: SectionCtaHref; label: string } = $props();
 </script>
 
-<a href={resolve(href)} class="btn btn-primary-3 btn-large font-weight-600 bohemcars-section-cta">
+<a href={resolve(href)} class="btn btn-primary-3 btn-large bohemcars-section-cta">
 	{label}
 	<svg
 		width="20"
@@ -27,9 +27,11 @@
 	.bohemcars-section-cta {
 		gap: 8px;
 		color: #ffffff !important;
+		font-weight: 500;
 	}
 
-	.bohemcars-section-cta:hover {
+	.bohemcars-section-cta:hover,
+	.bohemcars-section-cta:focus-visible {
 		color: #ffffff !important;
 	}
 
@@ -38,7 +40,10 @@
 		color: #ffffff;
 	}
 
-	.bohemcars-section-cta svg path {
+	/* White arrow in every state (default lime + dark hover fill) */
+	.bohemcars-section-cta svg path,
+	.bohemcars-section-cta:hover svg path,
+	.bohemcars-section-cta:focus-visible svg path {
 		fill: #ffffff !important;
 	}
 </style>

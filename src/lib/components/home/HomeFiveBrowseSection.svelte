@@ -128,6 +128,11 @@
 		min-height: 168px;
 	}
 
+	/* Contrast: darken the brand count (text-muted was 2.5:1) */
+	.bohemcars-browse-section :global(.out-brand-2 .text-muted) {
+		color: #5a6356 !important;
+	}
+
 	.bohemcars-browse-section :global(.out-brand-2:hover),
 	.bohemcars-browse-section :global(.out-brand-2.active) {
 		background-color: #eef0ec !important;
@@ -147,8 +152,8 @@
 	}
 
 	.bohemcars-type-gallery__cta:hover {
-		background: #1c1c1c !important;
-		border-color: #1c1c1c !important;
+		background: #1a2a16 !important;
+		border-color: #1a2a16 !important;
 		color: #ffffff !important;
 		transform: none;
 	}
@@ -159,11 +164,8 @@
 		width: 21px;
 	}
 
+	/* White arrow in every state */
 	.bohemcars-type-gallery__cta svg path {
-		fill: #ffffff !important;
-	}
-
-	.bohemcars-type-gallery__cta:hover svg path {
 		fill: #ffffff !important;
 	}
 

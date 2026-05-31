@@ -121,7 +121,7 @@ describe('splitAuxeroDocument', () => {
 		);
 
 		expect(typeSplit?.sectionHtml).toContain('Browse By Type');
-		expect(typeSplit?.sectionHtml).toContain('card-37.jpg');
+		expect(typeSplit?.sectionHtml).toContain('card-27.png');
 		expect(typeSplit?.afterHtml).toContain('<!-- Compare Top Rated Vehicles -->');
 	});
 
@@ -764,7 +764,7 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.beforeHtml).toContain('Bohemcars Blog');
 		expect(split?.sectionHtml).toContain('post-style-6');
 		expect(split?.sectionHtml).toContain(
-			'What Bohemcars Checks Before Importing A Vehicle From Canada'
+			'Какво проверява Bohemcars преди внос на автомобил от Канада'
 		);
 		expect(split?.afterHtml).toContain('pagination__link active');
 		expect(split?.afterHtml).toContain('footer');

@@ -13,33 +13,33 @@ export type AuxeroReviewCard = {
 const baseReviews = [
 	{
 		name: 'Aleksandar Vytev',
-		role: 'Facebook recommendation',
-		text: 'The purchase and delivery process followed the plan that was explained before we started.'
+		role: 'Препоръка във Facebook',
+		text: 'Процесът по покупка и доставка следваше плана, който беше обяснен преди да започнем.'
 	},
 	{
 		name: 'Krasimir Georgiev',
-		role: 'Client vehicle handoff',
-		text: 'The car I bought through Bohemcars came exactly as discussed. I would choose them again.'
+		role: 'Предаване на клиентски автомобил',
+		text: 'Колата, която купих чрез Bohemcars, дойде точно както беше уговорено. Бих ги избрал отново.'
 	},
 	{
 		name: 'Zhivko Zaimov',
-		role: 'Canada import client',
-		text: 'Every step was explained clearly: photos before purchase, Carfax context, and no hidden fees.'
+		role: 'Клиент с внос от Канада',
+		text: 'Всяка стъпка беше обяснена ясно: снимки преди покупка, Carfax контекст и без скрити такси.'
 	},
 	{
 		name: 'Asen Hristov',
-		role: 'Verified buyer',
-		text: 'What I ordered is what arrived. The important part was a vehicle without hidden issues.'
+		role: 'Потвърден купувач',
+		text: 'Това, което поръчах, е това, което пристигна. Важното беше автомобил без скрити проблеми.'
 	},
 	{
 		name: 'Stanislav Stefanov Kyumyurdzhiev',
-		role: 'Delivery review',
-		text: 'I received the vehicle within the agreed timing and without surprise charges.'
+		role: 'Отзив за доставка',
+		text: 'Получих автомобила в уговорения срок и без изненадващи такси.'
 	},
 	{
 		name: 'Bohemcars client',
-		role: 'Appointment viewing',
-		text: 'The documents, service context, and vehicle condition were ready when I came to view the car.'
+		role: 'Оглед по уговорка',
+		text: 'Документите, сервизният контекст и състоянието на автомобила бяха готови, когато дойдох да видя колата.'
 	}
 ] as const;
 

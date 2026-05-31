@@ -59,7 +59,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['faqs', 'Why import a vehicle from Canada?'],
 			['terms', 'Bohemcars Terms Of Use'],
 			['blog', 'Bohemcars Blog'],
-			['blog/gotov-za-registracia', 'What Ready For Registration Means'],
+			['blog/gotov-za-registracia', 'Какво означава „готов за регистрация“'],
 			['contact', 'Reach Out to Bohemcars'],
 			['account', 'Account Dashboard', 'customer'],
 			['account/favorites', 'My Favorites', 'customer'],

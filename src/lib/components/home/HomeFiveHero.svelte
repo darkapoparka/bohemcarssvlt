@@ -1,8 +1,32 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveHeroData, HomeFiveHeroSelect } from '$lib/auxero/home-five';
+	import { ArrowRight } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	let { hero }: { hero?: HomeFiveHeroData } = $props();
+
+	// Respect prefers-reduced-motion: halt the auto-rotating hero carousel.
+	onMount(() => {
+		if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		let tries = 0;
+		const timer = setInterval(() => {
+			tries += 1;
+			const autoplays = Array.from(document.querySelectorAll('.page-title [class*="swiper"]'))
+				.map(
+					(el) =>
+						(el as unknown as { swiper?: { autoplay?: { stop: () => void } } }).swiper?.autoplay
+				)
+				.filter((a): a is { stop: () => void } => Boolean(a));
+			if (autoplays.length) {
+				autoplays.forEach((a) => a.stop());
+				clearInterval(timer);
+			} else if (tries > 50) {
+				clearInterval(timer);
+			}
+		}, 100);
+		return () => clearInterval(timer);
+	});
 </script>
 
 {#snippet heroSelect(select: HomeFiveHeroSelect)}
@@ -34,7 +58,7 @@
 {#if hero}
 	<form action={resolve('/inventory')} method="get" data-bohemcars-search-form="inventory">
 		<section class="page-title page-title-style-4 effect-content-slide effect-2 flex">
-			<p class="swiper-btn navigation-prev">
+			<button type="button" class="swiper-btn navigation-prev" aria-label="Предишен слайд">
 				<svg
 					width="20"
 					height="20"
@@ -47,8 +71,8 @@
 						fill="white"
 					/>
 				</svg>
-			</p>
-			<p class="swiper-btn navigation-next">
+			</button>
+			<button type="button" class="swiper-btn navigation-next" aria-label="Следващ слайд">
 				<svg
 					width="20"
 					height="20"
@@ -61,7 +85,7 @@
 						fill="white"
 					/>
 				</svg>
-			</p>
+			</button>
 
 			<div class="swiper-container page-title--slider sw-single">
 				<div class="swiper-wrapper">
@@ -81,19 +105,26 @@
 			<div class="search-cars thumb effect-zoom-item container">
 				<div class="sw-single-thumb swiper">
 					<div class="swiper-wrapper">
-						{#each hero.textSlides as slide (slide.id)}
+						{#each hero.textSlides as slide, index (slide.id)}
 							<div class="swiper-slide">
-								<h1 class="search-cars__title effect-item effect-up text-center delay-3">
-									{hero.heading}
-								</h1>
-								<p class="h7 effect-item effect-up mb-36 text-center text-white delay-4">
+								{#if index === 0}
+									<h1 class="search-cars__title effect-item effect-up text-center delay-3">
+										{slide.heading}
+									</h1>
+								{:else}
+									<p class="search-cars__title effect-item effect-up text-center delay-3">
+										{slide.heading}
+									</p>
+								{/if}
+								<p class="h7 effect-item effect-up text-center text-white delay-4">
 									{slide.subtitle}
 								</p>
 								<a
 									href={resolve(slide.ctaHref)}
-									class="btn btn-white text-primary btn-large-2 font-weight-600 effect-item effect-up mx-auto max-w-min capitalize delay-5"
+									class="search-cars__slide-cta btn effect-line-primary effect-item effect-up delay-5"
 								>
 									{slide.ctaLabel}
+									<ArrowRight size={18} strokeWidth={1.8} aria-hidden="true" />
 								</a>
 							</div>
 						{/each}
@@ -182,6 +213,97 @@
 {/if}
 
 <style>
+	:global(.page-title.page-title-style-4 .tp-showcase-slider-bg::after) {
+		background:
+			linear-gradient(180deg, rgba(28, 28, 28, 0.08), rgba(28, 28, 28, 0.18)),
+			linear-gradient(
+				90deg,
+				rgba(28, 28, 28, 0.2),
+				rgba(28, 28, 28, 0.06) 50%,
+				rgba(28, 28, 28, 0.18)
+			);
+	}
+
+	:global(.page-title.page-title-style-4 .tp-showcase-slider-bg) {
+		background-position: center bottom;
+	}
+
+	:global(.page-title.page-title-style-4 .search-cars) {
+		padding-top: 4px;
+	}
+
+	:global(.page-title.page-title-style-4 .sw-single-thumb) {
+		overflow: hidden;
+	}
+
+	:global(.page-title.page-title-style-4 .sw-single-thumb .swiper-slide) {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		visibility: hidden;
+	}
+
+	:global(.page-title.page-title-style-4 .sw-single-thumb .swiper-slide-active) {
+		opacity: 1 !important;
+		pointer-events: auto !important;
+		visibility: visible;
+	}
+
+	.search-cars__title {
+		font-size: clamp(44px, 4.1vw, 68px);
+		font-weight: 600;
+		letter-spacing: 0;
+		line-height: 1.08;
+		margin-bottom: 16px;
+		text-shadow: 0 4px 20px rgba(12, 21, 23, 0.2);
+	}
+
+	.search-cars p:not(.search-cars__title) {
+		text-shadow: 0 2px 12px rgba(12, 21, 23, 0.18);
+	}
+
+	.search-cars__slide-cta {
+		gap: 8px;
+		width: fit-content;
+		min-height: 42px;
+		margin: 18px auto 0;
+		padding: 11px 22px;
+		border: 1px solid rgba(255, 255, 255, 0.54);
+		border-radius: 999px;
+		background: rgba(152, 188, 42, 0.92);
+		box-shadow: none;
+		backdrop-filter: blur(10px);
+		color: #ffffff;
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 1;
+		text-shadow: 0 2px 10px rgba(12, 21, 23, 0.18);
+	}
+
+	.search-cars__slide-cta::after {
+		background-color: #1c1c1c;
+	}
+
+	.search-cars__slide-cta:hover,
+	.search-cars__slide-cta:focus-visible {
+		border-color: #1c1c1c;
+		box-shadow: none;
+		color: #ffffff;
+	}
+
+	.search-cars__slide-cta :global(svg) {
+		display: block;
+		flex: 0 0 18px;
+		width: 18px;
+		height: 18px;
+		color: inherit;
+	}
+
+	.search-cars__slide-cta :global(svg path) {
+		fill: none !important;
+		stroke: #ffffff !important;
+		stroke-width: 1.8;
+	}
+
 	.search-cars__filters {
 		align-items: stretch;
 	}
@@ -217,6 +339,15 @@
 	}
 
 	@media (max-width: 575px) {
+		.search-cars__title {
+			font-size: 40px;
+			line-height: 1.12;
+		}
+
+		.search-cars__slide-cta {
+			margin-top: 14px;
+		}
+
 		.search-cars__select-wrapper {
 			min-width: 100%;
 		}

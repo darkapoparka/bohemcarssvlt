@@ -6,6 +6,14 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'bg';
 
 export type HomePageCopy = {
+	actionBand: {
+		buyBody: string;
+		buyCta: string;
+		buyTitle: string;
+		importBody: string;
+		importCta: string;
+		importTitle: string;
+	};
 	brandCta: string;
 	brandTitle: string;
 	budgetTabs: Array<{ active: boolean; label: string }>;
@@ -16,7 +24,12 @@ export type HomePageCopy = {
 	compareTitle: string;
 	featuredTitle: string;
 	newsTitle: string;
+	readMore: string;
 	reviewsTitle: string;
+	seo: {
+		description: string;
+		title: string;
+	};
 	typeCta: string;
 	typeTitle: string;
 	vehicleCard: VehicleCardCopy;
@@ -169,6 +182,14 @@ export const messages: Record<Locale, PublicMessages> = {
 			wishlist: 'Wishlist'
 		},
 		home: {
+			actionBand: {
+				buyBody: 'Available cars with clear origin and inspection before the deal.',
+				buyCta: 'View inventory',
+				buyTitle: 'Buy Available Cars',
+				importBody: 'Selection, inspection, documents and delivery from Canada.',
+				importCta: 'See the process',
+				importTitle: 'Import From Canada'
+			},
 			brandCta: 'View All Brand',
 			brandTitle: 'Explore Our Brands',
 			budgetTabs: [
@@ -185,7 +206,13 @@ export const messages: Record<Locale, PublicMessages> = {
 			compareTitle: 'Compare Top Rated Vehicles',
 			featuredTitle: 'Available Vehicles',
 			newsTitle: 'Bohemcars notes',
+			readMore: 'Read more',
 			reviewsTitle: 'Client Reviews',
+			seo: {
+				description:
+					'Bohemcars: verified cars with clear origin, plus Canada import — selection, inspection, documents, delivery and warranty for Bulgaria.',
+				title: 'Bohemcars — Cars & Import From Canada'
+			},
 			typeCta: 'View All Types',
 			typeTitle: 'Browse By Type',
 			vehicleCard: vehicleCardEn
@@ -301,6 +328,14 @@ export const messages: Record<Locale, PublicMessages> = {
 			wishlist: 'Любими'
 		},
 		home: {
+			actionBand: {
+				buyBody: 'Налични автомобили с ясен произход и оглед преди сделка.',
+				buyCta: 'Виж наличните',
+				buyTitle: 'Купи наличните',
+				importBody: 'Подбор, проверка, документи и доставка от Канада.',
+				importCta: 'Виж процеса',
+				importTitle: 'Внос от Канада'
+			},
 			brandCta: 'Виж всички марки',
 			brandTitle: 'Разгледай по марка',
 			budgetTabs: [
@@ -317,7 +352,13 @@ export const messages: Record<Locale, PublicMessages> = {
 			compareTitle: 'Сравни избрани автомобили',
 			featuredTitle: 'Налични автомобили',
 			newsTitle: 'Съвети от Bohemcars',
+			readMore: 'Прочети повече',
 			reviewsTitle: 'Отзиви от клиенти',
+			seo: {
+				description:
+					'Bohemcars: проверени автомобили с ясен произход и внос от Канада — подбор, проверка, документи, доставка и гаранция за България.',
+				title: 'Bohemcars — автомобили и внос от Канада'
+			},
 			typeCta: 'Виж всички типове',
 			typeTitle: 'Разгледай по тип',
 			vehicleCard: vehicleCardBg

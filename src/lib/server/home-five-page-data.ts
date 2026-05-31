@@ -1,4 +1,3 @@
-import type { PageServerLoad } from './$types';
 import {
 	homeFiveBrandCardsForLocale,
 	homeFiveComparePairsFromVehicles,
@@ -17,7 +16,7 @@ import { vehicles } from '$lib/data/vehicles';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/auxero-page';
 
-export const load: PageServerLoad = ({ request, url }) => {
+export const buildHomeFivePageData = ({ request, url }: { request: Request; url: URL }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
 	const messages = getMessages(locale);
 	const pageDocument = renderAuxeroPageDocument(

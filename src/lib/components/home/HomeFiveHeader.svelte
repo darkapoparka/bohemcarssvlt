@@ -560,6 +560,19 @@
 {/snippet}
 
 <style>
+	:global(.header-wrapper-style-4 .header .header-action-btn.header-action-icon::after) {
+		top: -6px;
+		right: -9px;
+		min-width: 17px;
+		height: 17px;
+		border: 2px solid #ffffff;
+		background: #d9f275;
+		box-shadow: 0 4px 12px rgba(28, 28, 28, 0.14);
+		color: #1c1c1c;
+		font-size: 10px;
+		font-weight: 700;
+	}
+
 	:global(
 		.header-wrapper-style-4
 			#main-nav

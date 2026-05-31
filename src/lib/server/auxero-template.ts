@@ -180,6 +180,7 @@ for (const file of duplicateDetailFiles) {
 
 function normalizeAssetUrls(html: string) {
 	return html
+		.replace(/\s*<script src="\.?\/assets\/js\/switcher\.js"><\/script>\s*/g, '\n')
 		.replaceAll('./assets/', '/assets/')
 		.replaceAll('href="assets/', 'href="/assets/')
 		.replaceAll("href='assets/", "href='/assets/")
@@ -973,12 +974,12 @@ function injectLocalBehavior(
 		min-width: max-content;
 	}
 	body.${pageClass} .bohemcars-quick-pill {
-		background: #f7f8f4 !important;
-		border-color: transparent !important;
+		background: #eef1ea !important;
+		border: 1px solid #e2e6dc !important;
 		min-height: 46px;
 		overflow: hidden;
 		padding: 0 !important;
-		transition: background-color 0.18s ease;
+		transition: background-color 0.18s ease, border-color 0.18s ease;
 	}
 	body.${pageClass} .bohemcars-quick-pill a {
 		align-items: center;
@@ -998,14 +999,18 @@ function injectLocalBehavior(
 	body.${pageClass} .bohemcars-quick-pill span {
 		white-space: nowrap;
 	}
-	body.${pageClass} .bohemcars-quick-pill.active,
 	body.${pageClass} .bohemcars-quick-pill:hover {
-		background: #eef0ec !important;
-		border-color: transparent !important;
+		background: #e2e7da !important;
+		border-color: #cfd6c6 !important;
+	}
+	body.${pageClass} .bohemcars-quick-pill.active {
+		background: #d9f275 !important;
+		border-color: #cbe65c !important;
 	}
 	body.${pageClass} .bohemcars-type-pill.active,
 	body.${pageClass} .bohemcars-fuel-pill.active {
 		background: #d9f275 !important;
+		border-color: #cbe65c !important;
 	}
 	body.${pageClass} .bohemcars-quick-pill-divider {
 		align-self: center;
@@ -1437,8 +1442,8 @@ function injectLocalBehavior(
 		width: auto;
 	}
 	body.${pageClass} .bohemcars-vehicle-pill {
-		background: #f7f8f4 !important;
-		border-color: transparent !important;
+		background: #eef1ea !important;
+		border: 1px solid #e2e6dc !important;
 		color: #1c1c1c;
 		min-height: 44px;
 		overflow: hidden;
@@ -1446,13 +1451,13 @@ function injectLocalBehavior(
 		transition: background-color 0.18s ease;
 	}
 	body.${pageClass} .bohemcars-vehicle-pill:hover {
-		background: #eef0ec !important;
-		border-color: transparent !important;
+		background: #e2e7da !important;
+		border-color: #cfd6c6 !important;
 		color: #1c1c1c !important;
 	}
 	body.${pageClass} .bohemcars-vehicle-pill.active {
 		background: #d9f275 !important;
-		border-color: transparent !important;
+		border-color: #cbe65c !important;
 		color: #1c1c1c !important;
 	}
 	body.${pageClass} .mobile-hidden-header-button .bg-sign-in.open-modal {

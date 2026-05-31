@@ -17,8 +17,8 @@ describe('blog-state', () => {
 	it('resolves the requested blog detail slug', () => {
 		const detail = getBlogDetailBySlug('vnos-ot-kanada-proverka');
 
-		expect(detail?.post.category).toBe('Canada import');
-		expect(detail?.post.content[0]).toContain('Before recommending a vehicle');
+		expect(detail?.post.category).toBe('Внос от Канада');
+		expect(detail?.post.content[0]).toContain('Преди да препоръча автомобил');
 	});
 
 	it('keeps raw template fallback deterministic for compatibility routes', () => {

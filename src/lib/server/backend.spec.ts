@@ -32,7 +32,7 @@ describe('Bohemcars backend prototype modules', () => {
 		expect(canRoleAccessBohemcarsRoute('agent', 'admin/users')).toBe(false);
 	});
 
-	it('requires and authorizes protected page sessions in one server helper', () => {
+	it('resolves and authorizes protected page sessions in one server helper', () => {
 		const accountRequest = new Request('https://bohemcars.test/account');
 		const customerAdminRequest = new Request('https://bohemcars.test/admin?role=customer');
 		const agentInquiryRequest = new Request('https://bohemcars.test/admin/inquiries?role=agent');
@@ -44,8 +44,10 @@ describe('Bohemcars backend prototype modules', () => {
 				return thrown as { body?: { message?: string }; status?: number };
 			}
 		};
-		const missingSession = captureThrown(() =>
-			requireBohemcarsPageSession(accountRequest, 'account', new URLSearchParams())
+		const defaultSession = requireBohemcarsPageSession(
+			accountRequest,
+			'account',
+			new URLSearchParams()
 		);
 		const deniedSession = captureThrown(() =>
 			requireBohemcarsPageSession(
@@ -55,10 +57,7 @@ describe('Bohemcars backend prototype modules', () => {
 			)
 		);
 
-		expect(missingSession).toMatchObject({
-			body: { message: 'Bohemcars account session is required' },
-			status: 401
-		});
+		expect(defaultSession.role).toBe('customer');
 		expect(deniedSession).toMatchObject({
 			body: { message: 'Bohemcars account role cannot access this route' },
 			status: 403

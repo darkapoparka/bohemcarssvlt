@@ -5,6 +5,18 @@
 	let { data }: PageProps = $props();
 </script>
 
+<svelte:head>
+	<title>{data.copy.seo.title}</title>
+	<meta name="description" content={data.copy.seo.description} />
+	<link
+		rel="preload"
+		as="image"
+		fetchpriority="high"
+		href="/assets/bohemcars/hero/home-hero-available-inventory-wow.webp"
+		type="image/webp"
+	/>
+</svelte:head>
+
 <HomeFiveTemplatePage
 	afterBrandStripHtml={data.afterBrandStripHtml}
 	afterBudgetSectionHtml={data.afterBudgetSectionHtml}
@@ -19,7 +31,6 @@
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
 	brandCards={data.brandCards}
 	budgetVehicles={data.budgetVehicles}
-	comparePairs={data.comparePairs}
 	copy={data.copy}
 	featuredVehicles={data.featuredVehicles}
 	footer={data.footer}

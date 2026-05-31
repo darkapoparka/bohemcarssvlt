@@ -258,8 +258,9 @@ export type HomeFiveHeroSelect = {
 };
 
 export type HomeFiveHeroTextSlide = {
-	ctaHref: '/inventory';
+	ctaHref: '/inventory' | '/services' | '/sell-your-car';
 	ctaLabel: string;
+	heading: string;
 	id: string;
 	subtitle: string;
 };
@@ -596,8 +597,8 @@ export const homeFiveHeaderDataForLocale = (locale: Locale): HomeFiveHeaderData 
 
 	return {
 		actionBadges: {
-			compare: 2,
-			wishlist: 2
+			compare: 0,
+			wishlist: 0
 		},
 		contact: {
 			addressHref: '/contact',
@@ -654,21 +655,21 @@ export const homeFiveHeaderData: HomeFiveHeaderData = homeFiveHeaderDataForLocal
 export const homeFiveReviewItems: HomeFiveReview[] = [
 	{
 		name: 'Aleksandar Vytev',
-		role: 'Bohemcars client',
+		role: 'Клиент на Bohemcars',
 		avatar: '/assets/images/avatar/avatar-1.png',
-		text: 'The team explained the vehicle history, transport, and registration steps before I committed. The handoff felt calm and transparent.'
+		text: 'Екипът ми обясни историята на автомобила, транспорта и стъпките по регистрацията, преди да поема ангажимент. Предаването беше спокойно и прозрачно.'
 	},
 	{
 		name: 'Krasimir Georgiev',
-		role: 'Import client',
+		role: 'Клиент с внос',
 		avatar: '/assets/images/avatar/avatar-2.png',
-		text: 'Bohemcars kept the conversation practical: photos, documents, mileage, and the costs that matter before delivery.'
+		text: 'Bohemcars запазиха разговора практичен: снимки, документи, пробег и разходите, които имат значение преди доставка.'
 	},
 	{
 		name: 'Iliyan Petrov',
-		role: 'Client vehicle seller',
+		role: 'Продава клиентски автомобил',
 		avatar: '/assets/images/avatar/avatar-3.png',
-		text: 'I sent the car details and received clear feedback on pricing, documents, and the best way to present the vehicle.'
+		text: 'Изпратих данните за колата и получих ясна обратна връзка за цената, документите и най-добрия начин да представя автомобила.'
 	}
 ];
 
@@ -980,17 +981,60 @@ const selectOptions = (
 		value
 	}));
 
+const heroTextSlidesForLocale = (locale: Locale): Omit<HomeFiveHeroTextSlide, 'id'>[] =>
+	locale === 'bg'
+		? [
+				{
+					ctaHref: '/inventory',
+					ctaLabel: 'Виж наличните',
+					heading: 'Налични автомобили',
+					subtitle: 'Проверени автомобили с ясна история и съдействие до регистрация.'
+				},
+				{
+					ctaHref: '/services',
+					ctaLabel: 'Виж процеса по внос',
+					heading: 'Внос от Канада',
+					subtitle: 'Подбор, проверка, документи и доставка до България.'
+				},
+				{
+					ctaHref: '/sell-your-car',
+					ctaLabel: 'Заяви оценка',
+					heading: 'Продай автомобила си',
+					subtitle: 'Оценка, представяне и съдействие до финална сделка.'
+				}
+			]
+		: [
+				{
+					ctaHref: '/inventory',
+					ctaLabel: 'View available cars',
+					heading: 'Available Vehicles',
+					subtitle: 'Verified vehicles with clear history and registration support.'
+				},
+				{
+					ctaHref: '/services',
+					ctaLabel: 'See import process',
+					heading: 'Import From Canada',
+					subtitle: 'Selection, inspection, documents, and delivery to Bulgaria.'
+				},
+				{
+					ctaHref: '/sell-your-car',
+					ctaLabel: 'Request valuation',
+					heading: 'Sell Your Vehicle',
+					subtitle: 'Valuation, presentation, and support through the final deal.'
+				}
+			];
+
 export function homeFiveHeroDataFromVehicles(
 	vehicles: Vehicle[],
 	locale: Locale = 'en'
 ): HomeFiveHeroData {
 	const t = getMessages(locale).hero;
-	const textSlides: HomeFiveHeroTextSlide[] = Array.from({ length: 4 }, (_, index) => ({
-		ctaHref: '/inventory',
-		ctaLabel: t.ctaLabel,
-		id: `home-five-hero-slide-${index + 1}`,
-		subtitle: t.slideSubtitle
-	}));
+	const textSlides: HomeFiveHeroTextSlide[] = heroTextSlidesForLocale(locale).map(
+		(slide, index) => ({
+			id: `home-five-hero-slide-${index + 1}`,
+			...slide
+		})
+	);
 
 	return {
 		advancedFilters: [

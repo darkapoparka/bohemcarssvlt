@@ -11,44 +11,44 @@ export interface BlogPost {
 export const posts: BlogPost[] = [
 	{
 		slug: 'vnos-ot-kanada-proverka',
-		title: 'What Bohemcars Checks Before Importing A Vehicle From Canada',
-		category: 'Canada import',
-		date: 'May 2026',
+		title: 'Какво проверява Bohemcars преди внос на автомобил от Канада',
+		category: 'Внос от Канада',
+		date: 'Май 2026',
 		image: '/assets/bohemcars/blog/import-check-cover.png',
 		excerpt:
-			'History, mileage, service records, purchase photos, and documents shape a calmer import decision.',
+			'История, пробег, сервизни записи, снимки от покупката и документи правят решението за внос по-спокойно.',
 		content: [
-			'Before recommending a vehicle, Bohemcars reviews origin, mileage, service history, condition, and document trail so the buyer knows what they are approving before the car leaves Canada.',
-			'The strongest candidates come from traceable sources with clear photos, history, and service context.',
-			'After approval, Bohemcars coordinates transport, customs steps, and preparation for registration.'
+			'Преди да препоръча автомобил, Bohemcars проверява произход, пробег, сервизна история, състояние и документи, за да знае купувачът какво одобрява още преди колата да напусне Канада.',
+			'Най-силните предложения идват от проследими източници с ясни снимки, история и сервизен контекст.',
+			'След одобрение Bohemcars организира транспорта, митническите стъпки и подготовката за регистрация.'
 		]
 	},
 	{
 		slug: 'gotov-za-registracia',
-		title: 'What Ready For Registration Means',
-		category: 'Documents',
-		date: 'May 2026',
+		title: 'Какво означава „готов за регистрация“',
+		category: 'Документи',
+		date: 'Май 2026',
 		image: '/assets/bohemcars/blog/registration-cover.png',
 		excerpt:
-			'Technical checks, coding, documents, and model-specific preparation are part of the real handoff.',
+			'Технически проверки, кодиране, документи и подготовка според модела са част от истинското предаване.',
 		content: [
-			'For an imported vehicle, preparation does not stop at transport. Documents, technical requirements, and model-specific details need to be reviewed before registration.',
-			'Some cars need lighting, navigation, coding, or other adjustments before European use.',
-			'A clear offer should separate the next steps and expected costs before the buyer commits.'
+			'При внесен автомобил подготовката не свършва с транспорта. Документите, техническите изисквания и спецификите по модела трябва да се прегледат преди регистрация.',
+			'Някои коли се нуждаят от осветление, навигация, кодиране или други настройки преди употреба в Европа.',
+			'Ясната оферта трябва да разделя следващите стъпки и очакваните разходи, преди купувачът да поеме ангажимент.'
 		]
 	},
 	{
 		slug: 'prodai-avtomobila-si',
-		title: 'How Bohemcars Reviews A Client Vehicle',
-		category: 'Sell your car',
-		date: 'May 2026',
+		title: 'Как Bohemcars преглежда клиентски автомобил',
+		category: 'Продай автомобила си',
+		date: 'Май 2026',
 		image: '/assets/bohemcars/blog/sell-car-cover.png',
 		excerpt:
-			'Photos, VIN, service history, mileage, and expected price help the team give realistic feedback.',
+			'Снимки, VIN, сервизна история, пробег и очаквана цена помагат на екипа да даде реалистична обратна връзка.',
 		content: [
-			'When a client wants to sell a vehicle, the first step is clear information: VIN, mileage, history, photos, and documents.',
-			'After review, Bohemcars can discuss a direct offer, sale assistance, or publishing the car as a client vehicle.',
-			'Good information at the beginning saves time and helps the price stay realistic.'
+			'Когато клиент иска да продаде автомобил, първата стъпка е ясна информация: VIN, пробег, история, снимки и документи.',
+			'След преглед Bohemcars може да обсъди директна оферта, съдействие при продажба или публикуване на колата като клиентски автомобил.',
+			'Добрата информация в началото спестява време и помага цената да остане реалистична.'
 		]
 	}
 ];

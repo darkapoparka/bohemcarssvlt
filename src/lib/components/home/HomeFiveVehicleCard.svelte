@@ -215,6 +215,7 @@
 	}
 
 	.bohemcars-card-price__finance-link {
+		color: #5a6356 !important;
 		line-height: 16px;
 		margin-left: 0;
 		white-space: nowrap;

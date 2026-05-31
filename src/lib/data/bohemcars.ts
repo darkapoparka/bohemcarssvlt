@@ -207,9 +207,9 @@ export const bohemcarsAssets = {
 	logoLight: '/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png',
 	hero: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
 	homeHeroSlides: [
-		'/assets/bohemcars/hero/home-05-showroom-exterior.webp',
-		'/assets/bohemcars/hero/home-05-inspection-studio.webp',
-		'/assets/bohemcars/hero/home-05-import-handoff.webp'
+		'/assets/bohemcars/hero/home-hero-available-inventory-wow.webp',
+		'/assets/bohemcars/hero/home-hero-import-canada-wow.webp',
+		'/assets/bohemcars/hero/home-hero-sell-car-wow.webp'
 	],
 	footerImage: '/assets/bohemcars/footer-canada-request-v2.png'
 } as const;

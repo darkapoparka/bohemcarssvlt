@@ -13,6 +13,6 @@ describe('route lookup helpers', () => {
 	});
 
 	it('finds blog detail records', () => {
-		expect(getPostBySlug('vnos-ot-kanada-proverka')?.category).toBe('Canada import');
+		expect(getPostBySlug('vnos-ot-kanada-proverka')?.category).toBe('Внос от Канада');
 	});
 });
