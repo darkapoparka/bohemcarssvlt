@@ -23,13 +23,8 @@
 		mobile: InventoryMobileData;
 	} = $props();
 
-	let drawerOpen = $state(false);
-	const closeDrawer = () => {
-		drawerOpen = false;
-	};
-	const openDrawer = () => {
-		drawerOpen = true;
-	};
+	const searchDrawerId = 'bohemcars-inventory-mobile-search-toggle';
+	const filterDrawerId = 'bohemcars-inventory-mobile-filter-toggle';
 	const useFallbackImage = (event: Event) => {
 		const image = event.currentTarget as HTMLImageElement;
 
@@ -44,49 +39,81 @@
 </script>
 
 <div class="bohemcars-inventory-mobile">
+	<input
+		id={searchDrawerId}
+		class="bohemcars-inventory-mobile__drawer-toggle"
+		type="checkbox"
+		aria-label={mobile.searchDrawerTitle}
+	/>
+	<input
+		id={filterDrawerId}
+		class="bohemcars-inventory-mobile__drawer-toggle"
+		type="checkbox"
+		aria-label={mobile.drawerTitle}
+	/>
 	<main class="bohemcars-inventory-mobile__main">
-		<form class="bohemcars-inventory-mobile__search" action={resolve('/inventory')} method="get">
-			{#each mobile.hiddenInputs as input (`${input.name}-${input.value}`)}
-				<input type="hidden" name={input.name} value={input.value} />
-			{/each}
+		<div class="bohemcars-inventory-mobile__search">
 			<div class="bohemcars-inventory-mobile__search-field">
-				<Search size={21} strokeWidth={2.15} aria-hidden="true" />
-				<input
-					name="q"
-					type="search"
-					value={mobile.searchValue}
-					placeholder={mobile.searchPlaceholder}
-					autocomplete="off"
-					aria-label={mobile.searchPlaceholder}
-				/>
-				<button type="submit" aria-label={mobile.searchLabel}>
+				<label
+					class="bohemcars-inventory-mobile__search-label"
+					for={searchDrawerId}
+					aria-haspopup="dialog"
+					aria-controls="bohemcars-inventory-mobile-search-drawer"
+				>
+					<Search size={21} strokeWidth={2.15} aria-hidden="true" />
+					<span class:active={Boolean(mobile.searchValue)}>
+						{mobile.searchValue || mobile.searchPlaceholder}
+					</span>
+				</label>
+				<label
+					class="bohemcars-inventory-mobile__search-action"
+					for={searchDrawerId}
+					aria-label={mobile.searchLabel}
+					aria-controls="bohemcars-inventory-mobile-search-drawer"
+				>
 					<Search size={21} strokeWidth={2.25} aria-hidden="true" />
-				</button>
+				</label>
 			</div>
-		</form>
+		</div>
 
 		<div class="bohemcars-inventory-mobile__selects" aria-label={mobile.filterLabel}>
-			<button type="button" onclick={openDrawer}>
+			<label
+				for={filterDrawerId}
+				aria-haspopup="dialog"
+				aria-controls="bohemcars-inventory-mobile-filter-drawer"
+			>
 				<span>{mobile.brandLabel}</span>
 				<strong>{mobile.brandValue}</strong>
 				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
-			</button>
-			<button type="button" onclick={openDrawer}>
+			</label>
+			<label
+				for={filterDrawerId}
+				aria-haspopup="dialog"
+				aria-controls="bohemcars-inventory-mobile-filter-drawer"
+			>
 				<span>{mobile.modelLabel}</span>
 				<strong>{mobile.modelValue}</strong>
 				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
-			</button>
+			</label>
 		</div>
 
 		<nav class="bohemcars-inventory-mobile__tools" aria-label={mobile.filterLabel}>
-			<button type="button" onclick={openDrawer}>
+			<label
+				for={filterDrawerId}
+				aria-haspopup="dialog"
+				aria-controls="bohemcars-inventory-mobile-filter-drawer"
+			>
 				<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
 				{mobile.filterLabel}
-			</button>
-			<a href={resolve((mobile.sortOptions[1]?.href ?? '/inventory') as '/inventory')}>
+			</label>
+			<label
+				for={filterDrawerId}
+				aria-haspopup="dialog"
+				aria-controls="bohemcars-inventory-mobile-filter-drawer"
+			>
 				<ArrowUpDown size={18} strokeWidth={2.2} aria-hidden="true" />
 				{mobile.sortLabel}
-			</a>
+			</label>
 			<a
 				class:active={mobile.totalPill.active}
 				href={resolve(mobile.totalPill.href as '/inventory')}
@@ -148,59 +175,161 @@
 		</section>
 	</main>
 
-	{#if drawerOpen}
-		<div class="bohemcars-inventory-mobile-drawer" role="dialog" aria-modal="true">
-			<button
-				class="bohemcars-inventory-mobile-drawer__backdrop"
-				type="button"
-				onclick={closeDrawer}
+	<div
+		id="bohemcars-inventory-mobile-search-drawer"
+		class="bohemcars-inventory-mobile-drawer bohemcars-inventory-mobile-drawer--search"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="bohemcars-inventory-mobile-search-title"
+	>
+		<label class="bohemcars-inventory-mobile-drawer__backdrop" for={searchDrawerId}>
+			<span>{mobile.closeLabel}</span>
+		</label>
+		<section class="bohemcars-inventory-mobile-drawer__sheet">
+			<header>
+				<div>
+					<p>{mobile.searchLabel}</p>
+					<h2 id="bohemcars-inventory-mobile-search-title">{mobile.searchDrawerTitle}</h2>
+				</div>
+				<label for={searchDrawerId} aria-label={mobile.closeLabel}>×</label>
+			</header>
+			<form
+				class="bohemcars-inventory-mobile-drawer__search-form"
+				action={resolve('/inventory')}
+				method="get"
 			>
-				<span>{copy.reset}</span>
-			</button>
-			<section class="bohemcars-inventory-mobile-drawer__sheet">
-				<header>
-					<h2>{mobile.drawerTitle}</h2>
-					<button type="button" onclick={closeDrawer}>×</button>
-				</header>
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.brandLabel}</p>
-					<div>
-						{#each mobile.quickPills as pill (pill.href)}
-							<a class:active={pill.active} href={resolve(pill.href as '/inventory')}>
-								{#if pill.image}
-									<img src={pill.image} alt="" aria-hidden="true" />
-								{/if}
-								{pill.label}
-							</a>
-						{/each}
-					</div>
+				{#each mobile.hiddenInputs as input (`${input.name}-${input.value}`)}
+					<input type="hidden" name={input.name} value={input.value} />
+				{/each}
+				<div class="bohemcars-inventory-mobile-drawer__search-box">
+					<Search size={20} strokeWidth={2.15} aria-hidden="true" />
+					<input
+						name="q"
+						type="search"
+						value={mobile.searchValue}
+						placeholder={mobile.searchPlaceholder}
+						autocomplete="off"
+						aria-label={mobile.searchPlaceholder}
+					/>
 				</div>
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.sortLabel}</p>
-					<div>
-						{#each mobile.sortOptions as option (option.value)}
-							<a class:active={option.active} href={resolve(option.href as '/inventory')}>
-								{option.label}
-							</a>
-						{/each}
-					</div>
+				<button type="submit">{mobile.searchLabel}</button>
+			</form>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.brandLabel}</p>
+				<div>
+					{#each mobile.brandOptions.slice(1, 7) as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							{option.label}
+						</a>
+					{/each}
 				</div>
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.fuelLabel}</p>
-					<div>
-						{#each mobile.fuelOptions as option (option.value)}
-							<a class:active={option.active} href={resolve(option.href as '/inventory')}>
-								{option.label}
-							</a>
-						{/each}
-					</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.bodyLabel}</p>
+				<div>
+					{#each mobile.bodyOptions.slice(1, 7) as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							{option.label}
+						</a>
+					{/each}
 				</div>
+			</div>
+			<a class="bohemcars-inventory-mobile-drawer__clear" href={resolve('/inventory')}>
+				{mobile.countLabel}
+			</a>
+		</section>
+	</div>
+
+	<div
+		id="bohemcars-inventory-mobile-filter-drawer"
+		class="bohemcars-inventory-mobile-drawer bohemcars-inventory-mobile-drawer--filters"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="bohemcars-inventory-mobile-filter-title"
+	>
+		<label class="bohemcars-inventory-mobile-drawer__backdrop" for={filterDrawerId}>
+			<span>{mobile.closeLabel}</span>
+		</label>
+		<section class="bohemcars-inventory-mobile-drawer__sheet">
+			<header>
+				<div>
+					<p>{mobile.filterLabel}</p>
+					<h2 id="bohemcars-inventory-mobile-filter-title">{mobile.drawerTitle}</h2>
+				</div>
+				<label for={filterDrawerId} aria-label={mobile.closeLabel}>×</label>
+			</header>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.brandLabel}</p>
+				<div>
+					{#each mobile.brandOptions as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							<span>{option.label}</span>
+							{#if option.countLabel}
+								<small>{option.countLabel}</small>
+							{/if}
+						</a>
+					{/each}
+				</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.modelLabel}</p>
+				<div>
+					{#each mobile.modelOptions as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							<span>{option.label}</span>
+							{#if option.countLabel}
+								<small>{option.countLabel}</small>
+							{/if}
+						</a>
+					{/each}
+				</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.bodyLabel}</p>
+				<div>
+					{#each mobile.bodyOptions as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							<span>{option.label}</span>
+							{#if option.countLabel}
+								<small>{option.countLabel}</small>
+							{/if}
+						</a>
+					{/each}
+				</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.sortLabel}</p>
+				<div>
+					{#each mobile.sortOptions as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							<span>{option.label}</span>
+						</a>
+					{/each}
+				</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__group">
+				<p>{mobile.fuelLabel}</p>
+				<div>
+					{#each mobile.fuelOptions as option (option.value)}
+						<a class:active={option.active} href={resolve(option.href as '/inventory')}>
+							<span>{option.label}</span>
+							{#if option.countLabel}
+								<small>{option.countLabel}</small>
+							{/if}
+						</a>
+					{/each}
+				</div>
+			</div>
+			<div class="bohemcars-inventory-mobile-drawer__actions">
 				<a class="bohemcars-inventory-mobile-drawer__clear" href={resolve(mobile.clearHref as '/')}>
 					{copy.reset}
 				</a>
-			</section>
-		</div>
-	{/if}
+				<label class="bohemcars-inventory-mobile-drawer__done" for={filterDrawerId}>
+					{mobile.doneLabel}
+				</label>
+			</div>
+		</section>
+	</div>
 </div>
 
 <style>
@@ -208,6 +337,14 @@
 		min-height: 100vh;
 		background: #ffffff;
 		color: #111111;
+	}
+
+	.bohemcars-inventory-mobile__drawer-toggle {
+		position: fixed;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	.bohemcars-inventory-mobile__main {
@@ -233,46 +370,55 @@
 		color: #1c1c1c;
 	}
 
-	.bohemcars-inventory-mobile__search input {
-		display: block;
+	.bohemcars-inventory-mobile__search-label {
+		display: flex;
 		min-width: 0;
 		height: 42px !important;
-		width: 100%;
 		flex: 1 1 auto;
-		border: 0 !important;
-		border-radius: 0 !important;
-		background: transparent !important;
-		box-shadow: none !important;
+		align-items: center;
+		gap: 12px;
 		color: #1c1c1c;
+		cursor: pointer;
+	}
+
+	.bohemcars-inventory-mobile__search-label span {
+		display: block;
+		min-width: 0;
+		overflow: hidden;
+		color: #9ba0a5;
 		font-size: 16px;
 		font-weight: 700;
 		line-height: 22px;
-		outline: 0;
-		padding: 0 !important;
-		appearance: none;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
-	.bohemcars-inventory-mobile__search input::placeholder {
-		color: #9ba0a5;
-		opacity: 1;
+	.bohemcars-inventory-mobile__search-label span.active {
+		color: #1c1c1c;
 	}
 
-	.bohemcars-inventory-mobile__search button {
+	.bohemcars-inventory-mobile__search-label :global(svg) {
+		flex: 0 0 21px;
+	}
+
+	.bohemcars-inventory-mobile__search-action {
 		display: flex;
 		width: 42px;
 		height: 42px;
 		align-items: center;
 		justify-content: center;
 		flex: 0 0 42px;
-		border: 0;
+		border: 0 !important;
 		border-radius: 10px;
 		background: #1c1c1c;
+		box-shadow: none !important;
 		color: #ffffff;
+		cursor: pointer;
 		padding: 0;
 	}
 
-	.bohemcars-inventory-mobile__search button :global(svg),
-	.bohemcars-inventory-mobile__search button :global(path) {
+	.bohemcars-inventory-mobile__search-action :global(svg),
+	.bohemcars-inventory-mobile__search-action :global(path) {
 		stroke: #ffffff;
 	}
 
@@ -282,7 +428,7 @@
 		gap: 9px;
 	}
 
-	.bohemcars-inventory-mobile__selects button {
+	.bohemcars-inventory-mobile__selects label {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		gap: 2px 8px;
@@ -292,6 +438,7 @@
 		border-radius: 12px;
 		background: #eef1f5;
 		padding: 7px 12px;
+		cursor: pointer;
 		text-align: left;
 	}
 
@@ -335,7 +482,7 @@
 	}
 
 	.bohemcars-inventory-mobile__tools a,
-	.bohemcars-inventory-mobile__tools button,
+	.bohemcars-inventory-mobile__tools label,
 	.bohemcars-inventory-mobile__active a {
 		display: inline-flex;
 		flex: 0 0 auto;
@@ -347,13 +494,14 @@
 		background: #eef1f5;
 		padding: 0 13px;
 		color: #1c1c1c;
+		cursor: pointer;
 		font-size: 15px;
 		font-weight: 800;
 		line-height: 18px;
 	}
 
 	.bohemcars-inventory-mobile__tools a.active,
-	.bohemcars-inventory-mobile__tools button:focus-visible,
+	.bohemcars-inventory-mobile__tools label:focus-visible,
 	.bohemcars-inventory-mobile__tools a:focus-visible,
 	.bohemcars-inventory-mobile__active a:focus-visible {
 		background: #d9f275;
@@ -522,13 +670,25 @@
 		position: fixed;
 		inset: 0;
 		z-index: 80;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	#bohemcars-inventory-mobile-search-toggle:checked ~ .bohemcars-inventory-mobile-drawer--search,
+	#bohemcars-inventory-mobile-filter-toggle:checked ~ .bohemcars-inventory-mobile-drawer--filters {
+		visibility: visible;
+		pointer-events: auto;
 	}
 
 	.bohemcars-inventory-mobile-drawer__backdrop {
 		position: absolute;
 		inset: 0;
+		display: block;
 		border: 0;
 		background: rgba(17, 17, 17, 0.34);
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity 0.18s ease;
 	}
 
 	.bohemcars-inventory-mobile-drawer__backdrop span {
@@ -552,12 +712,47 @@
 		border-radius: 18px 18px 0 0;
 		background: #ffffff;
 		padding: 18px 16px 22px;
+		transform: translateY(100%);
+		transition: transform 0.22s ease;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	#bohemcars-inventory-mobile-search-toggle:checked
+		~ .bohemcars-inventory-mobile-drawer--search
+		.bohemcars-inventory-mobile-drawer__backdrop,
+	#bohemcars-inventory-mobile-filter-toggle:checked
+		~ .bohemcars-inventory-mobile-drawer--filters
+		.bohemcars-inventory-mobile-drawer__backdrop {
+		opacity: 1;
+	}
+
+	#bohemcars-inventory-mobile-search-toggle:checked
+		~ .bohemcars-inventory-mobile-drawer--search
+		.bohemcars-inventory-mobile-drawer__sheet,
+	#bohemcars-inventory-mobile-filter-toggle:checked
+		~ .bohemcars-inventory-mobile-drawer--filters
+		.bohemcars-inventory-mobile-drawer__sheet {
+		transform: translateY(0);
 	}
 
 	.bohemcars-inventory-mobile-drawer__sheet header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.bohemcars-inventory-mobile-drawer__sheet header div {
+		min-width: 0;
+	}
+
+	.bohemcars-inventory-mobile-drawer__sheet header p {
+		margin: 0 0 2px;
+		color: #8fbd24;
+		font-size: 11px;
+		font-weight: 900;
+		line-height: 14px;
+		text-transform: uppercase;
 	}
 
 	.bohemcars-inventory-mobile-drawer__sheet h2 {
@@ -567,15 +762,65 @@
 		line-height: 28px;
 	}
 
-	.bohemcars-inventory-mobile-drawer__sheet header button {
+	.bohemcars-inventory-mobile-drawer__sheet header label {
+		display: flex;
 		width: 38px;
 		height: 38px;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 38px;
 		border: 0;
 		border-radius: 50%;
 		background: #eef1f5;
 		color: #111111;
+		cursor: pointer;
 		font-size: 28px;
 		line-height: 34px;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-form {
+		display: grid;
+		gap: 10px;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-box {
+		display: flex;
+		min-height: 50px;
+		align-items: center;
+		gap: 10px;
+		border-radius: 12px;
+		background: #eef1f5;
+		padding: 0 13px;
+		color: #111111;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-box input {
+		min-width: 0;
+		width: 100%;
+		height: 48px;
+		flex: 1 1 auto;
+		border: 0 !important;
+		border-radius: 0 !important;
+		background: transparent !important;
+		box-shadow: none !important;
+		color: #111111;
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 22px;
+		outline: 0;
+		padding: 0 !important;
+		appearance: none;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-form button {
+		min-height: 46px;
+		border: 0;
+		border-radius: 10px;
+		background: #1c1c1c;
+		color: #ffffff;
+		font-size: 15px;
+		font-weight: 900;
+		line-height: 20px;
 	}
 
 	.bohemcars-inventory-mobile-drawer__group {
@@ -617,16 +862,51 @@
 		background: #d9f275;
 	}
 
-	.bohemcars-inventory-mobile-drawer__group img {
-		width: 24px;
-		height: 20px;
-		object-fit: contain;
+	.bohemcars-inventory-mobile-drawer__group a span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.bohemcars-inventory-mobile-drawer__group a small {
+		display: inline-flex;
+		min-width: 21px;
+		height: 21px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		background: #ffffff;
+		color: #67717d;
+		font-size: 11px;
+		font-weight: 900;
+		line-height: 21px;
+	}
+
+	.bohemcars-inventory-mobile-drawer__actions {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 9px;
 	}
 
 	.bohemcars-inventory-mobile-drawer__clear {
 		justify-content: center;
 		background: #1c1c1c;
 		color: #ffffff;
+	}
+
+	.bohemcars-inventory-mobile-drawer__done {
+		display: inline-flex;
+		min-height: 44px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9px;
+		background: #d9f275;
+		color: #111111;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 900;
+		line-height: 18px;
 	}
 
 	@media (max-width: 399px) {

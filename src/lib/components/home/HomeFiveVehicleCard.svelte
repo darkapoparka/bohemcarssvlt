@@ -174,15 +174,33 @@
 		-webkit-line-clamp: 2;
 	}
 
+	/* Spec row as soft chips: more scannable/visible without heavier type. */
 	.bohemcars-card-specs {
-		flex-wrap: nowrap !important;
-		overflow: hidden;
+		flex-wrap: wrap !important;
+		justify-content: flex-start;
+		gap: 6px;
+		overflow: visible;
+		margin-bottom: 14px;
 	}
 
 	.bohemcars-card-specs li {
-		flex: 0 1 auto;
+		flex: 0 0 auto;
 		min-width: 0;
 		white-space: nowrap;
+		padding: 5px 10px;
+		border: 1px solid #e4ebdb;
+		border-radius: 8px;
+		background: #eef2e8;
+	}
+
+	.bohemcars-card-specs li img {
+		width: 14px;
+		height: 14px;
+		opacity: 0.8;
+	}
+
+	.bohemcars-card-specs li span {
+		color: #303a2b;
 	}
 
 	.bohemcars-card-price {
@@ -264,7 +282,7 @@
 		}
 
 		.card-box-style-1 .image {
-			aspect-ratio: 1.55;
+			aspect-ratio: 1.68;
 			height: auto;
 		}
 
@@ -294,7 +312,7 @@
 		}
 
 		.card-box-style-1 .content {
-			padding: 12px;
+			padding: 11px 12px 12px;
 		}
 
 		.card-box-style-1 .bottom {
@@ -302,22 +320,29 @@
 		}
 
 		.card-box-style-1 .card-box__title {
-			min-height: 48px;
+			min-height: 0;
 			margin-bottom: 8px;
-			font-size: 18px;
+			font-size: 17px;
 			font-weight: 800;
-			line-height: 24px;
+			line-height: 22px;
 		}
 
+		/* Mobile: title → spec chips → price anchored at the bottom (price as the bold conclusion). */
 		.bohemcars-card-specs {
+			order: 1;
 			flex-wrap: wrap !important;
-			gap: 6px 10px !important;
-			margin-bottom: 8px !important;
+			gap: 5px 6px !important;
+			margin-top: 0;
+			margin-bottom: 12px !important;
 		}
 
 		.bohemcars-card-specs li {
+			padding: 5px 9px;
 			font-size: 12px;
 			line-height: 16px;
+			/* Card bg is #eef1ed on mobile, so the pale chip bg vanished — use white for contrast. */
+			background: #ffffff;
+			border-color: #e1e6db;
 		}
 
 		.bohemcars-card-specs img {
@@ -326,59 +351,36 @@
 		}
 
 		.bohemcars-card-price {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 2px;
-			margin-bottom: 10px !important;
+			order: 2;
+			margin-top: auto;
+			align-items: center;
+			flex-direction: row;
+			gap: 8px;
+			margin-bottom: 0 !important;
 		}
 
 		.bohemcars-card-price__amount {
 			font-size: 18px;
 			font-weight: 800;
-			line-height: 23px;
+			line-height: 22px;
 		}
 
 		.bohemcars-card-price__finance {
-			align-items: flex-start;
-			text-align: left;
+			align-items: flex-end;
+			min-width: 0;
+			text-align: right;
 		}
 
 		.bohemcars-card-price__monthly,
 		.bohemcars-card-price__finance-link {
-			font-size: 12px;
-			line-height: 16px;
+			font-size: 11px;
+			line-height: 15px;
 		}
 
-		.card-box-style-1 .divider {
-			margin-bottom: 10px !important;
-		}
-
+		/* Mobile: the whole card taps to the detail page, so drop the footer
+		   (divider + Сравни + Виж детайли). Compare still lives on the PDP + header. */
+		.card-box-style-1 .divider,
 		.bohemcars-card-actions {
-			gap: 6px;
-		}
-
-		.bohemcars-card-actions .compare-details {
-			min-width: auto;
-			height: 34px;
-			padding: 0 12px;
-			font-size: 12px;
-			line-height: 34px;
-		}
-
-		.bohemcars-card-actions .compare-details svg {
-			width: 14px;
-			height: 14px;
-		}
-
-		.bohemcars-card-actions .view-details {
-			min-width: 0;
-			font-size: 12px;
-			font-weight: 800;
-			line-height: 16px;
-			white-space: nowrap;
-		}
-
-		.bohemcars-card-actions .view-details img {
 			display: none;
 		}
 	}

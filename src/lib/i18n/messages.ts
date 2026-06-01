@@ -483,9 +483,9 @@ export const messages: Record<Locale, PublicMessages> = {
 				'New listing': 'Нова обява'
 			},
 			transmissions: {
-				Automatic: 'Автоматик',
-				Auto: 'Автоматик',
-				Manual: 'Ръчна',
+				Automatic: 'Автомат',
+				Auto: 'Автомат',
+				Manual: 'Ръчни',
 				'On request': 'По запитване'
 			}
 		}
@@ -586,8 +586,8 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Petrol/g, 'Бензин'],
 	[/Diesel/g, 'Дизел'],
 	[/Hybrid/g, 'Хибрид'],
-	[/Automatic/g, 'Автоматик'],
-	[/Manual/g, 'Ръчна']
+	[/Automatic/g, 'Автомат'],
+	[/Manual/g, 'Ръчни']
 ];
 
 const localizeAuxeroHtmlSegment = (html: string) =>
