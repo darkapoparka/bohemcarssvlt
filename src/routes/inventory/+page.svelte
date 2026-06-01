@@ -10,6 +10,7 @@
 	beforeInventoryHtml={data.beforeInventoryHtml}
 	cards={data.cards}
 	copy={data.copy}
+	mobile={data.mobile}
 	pageDocument={data.pageDocument}
 	view={data.view}
 />

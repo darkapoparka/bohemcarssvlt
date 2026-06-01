@@ -17,6 +17,10 @@
 		pills: HomeFiveVehiclePill[];
 		vehicles: HomeFiveVehicleCardData[];
 	} = $props();
+
+	const mobileFeaturedTitle = $derived(
+		copy.featuredTitle === 'Available Vehicles' ? 'Newest' : 'Нови коли'
+	);
 </script>
 
 {#if vehicles.length}
@@ -38,7 +42,7 @@
 							loading="lazy"
 						/>
 						<div class="bohemcars-stock-banner__copy">
-							<h2>{copy.featuredTitle}</h2>
+							<h2 data-mobile-title={mobileFeaturedTitle}>{copy.featuredTitle}</h2>
 						</div>
 						<a
 							href={resolve('/inventory?view=4')}
@@ -720,35 +724,76 @@
 		}
 	}
 
-	@media (max-width: 575px) {
+	@media (max-width: 767px) {
 		.bohemcars-featured-vehicles {
-			padding-top: 64px;
+			background: #ffffff;
+			padding-top: 0;
+			padding-bottom: 28px;
+		}
+
+		.bohemcars-stock-unit {
+			margin-bottom: 6px;
+			border-radius: 0;
+			overflow: visible;
+			background: #ffffff;
+			box-shadow: none;
 		}
 
 		.bohemcars-stock-banner {
-			min-height: 146px;
+			min-height: auto;
 			align-items: center;
-			flex-direction: column;
-			gap: 18px;
-			padding: 26px 22px;
+			flex-direction: row;
+			justify-content: space-between;
+			gap: 16px;
+			border-radius: 0;
+			background: #ffffff;
+			padding: 22px 0 8px;
 		}
 
 		.bohemcars-stock-banner h2 {
-			font-size: 32px;
-			line-height: 1.12;
+			max-width: none;
+			font-size: 0;
+			font-weight: 700;
+			line-height: 1.08;
+			text-align: left;
+			white-space: nowrap;
+		}
+
+		.bohemcars-stock-banner h2::before {
+			content: attr(data-mobile-title);
+			color: #1c1c1c;
+			font-size: 26px;
+			letter-spacing: 0;
+			line-height: 1.08;
+		}
+
+		.bohemcars-stock-banner__cta {
+			display: none !important;
 		}
 
 		.bohemcars-vehicle-pills {
-			justify-content: flex-start;
-			margin-inline: -15px;
-			padding-inline: 15px;
+			display: none !important;
 		}
 
-		.bohemcars-vehicle-pills :global(.menu-tab-style2) {
-			justify-content: flex-start;
-			max-width: none;
-			min-width: max-content;
-			width: auto;
+		.bohemcars-home-vehicle-grid {
+			display: flex !important;
+			grid-template-columns: none !important;
+			gap: 14px;
+			margin-inline: -16px;
+			overflow-x: auto;
+			padding: 0 16px 8px;
+			scroll-padding-inline: 16px;
+			scroll-snap-type: x proximity;
+			scrollbar-width: none;
+		}
+
+		.bohemcars-home-vehicle-grid::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-home-vehicle-grid :global(.card-box-style-1) {
+			flex: 0 0 min(82vw, 320px);
+			scroll-snap-align: start;
 		}
 	}
 </style>

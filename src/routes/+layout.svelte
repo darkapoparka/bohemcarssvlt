@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
+	import MobileBottomNav from '$lib/components/layout/MobileBottomNav.svelte';
 	import ScrollTop from '$lib/components/layout/ScrollTop.svelte';
 	import { GarageState, setGarageContext } from '$lib/state/garage.svelte';
 
@@ -22,3 +23,4 @@
 	<SiteFooter />
 	<ScrollTop />
 {/if}
+<MobileBottomNav pathname={page.url.pathname} />

@@ -221,6 +221,14 @@
 						</div>
 
 						<div class="header-actions ml-20">
+							<a
+								href={resolve(header.contact.phoneHref as '/')}
+								class="bohemcars-mobile-call"
+								aria-label={header.contact.phoneLabel}
+								title={header.contact.phoneLabel}
+							>
+								{@render phoneIcon()}
+							</a>
 							<div class="header-search-wrapper">
 								<span class="header-action-btn relative" id="searchToggle">
 									{@render searchIcon('#1C1C1C')}
@@ -560,6 +568,10 @@
 {/snippet}
 
 <style>
+	.bohemcars-mobile-call {
+		display: none;
+	}
+
 	:global(.header-wrapper-style-4 .header .header-action-btn.header-action-icon::after) {
 		top: -6px;
 		right: -9px;
@@ -786,7 +798,7 @@
 		line-height: 20px;
 	}
 
-	@media (max-width: 991px) {
+	@media (max-width: 767.98px) {
 		:global(#main-nav-mobile .sub-menu.bohemcars-mega--vehicles) {
 			padding: 0 20px 16px;
 		}
@@ -877,6 +889,94 @@
 			color: #cfd2d8;
 			font-size: 12px;
 			line-height: 17px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		:global(.header-wrapper-style-4 .header-top-bar),
+		:global(.header-wrapper-style-4 .header-button),
+		:global(.header-wrapper-style-4 .wrapper-header-button),
+		:global(.header-wrapper-style-4 #main-nav),
+		:global(.header-wrapper-style-4 .header-search-wrapper),
+		:global(.header-wrapper-style-4 .header-action-btn.header-action-icon),
+		:global(.header-wrapper-style-4 .mobile-button) {
+			display: none !important;
+		}
+
+		:global(.header-wrapper-style-4 .header.header-style-4) {
+			background: #ffffff !important;
+			border-bottom: 1px solid #e8ece4;
+			box-shadow: none;
+			height: 64px !important;
+			min-height: 64px !important;
+		}
+
+		:global(.header-wrapper-style-4 .header-container-fluid) {
+			height: 64px !important;
+			min-height: 64px !important;
+			padding: 0 12px !important;
+		}
+
+		:global(.header-wrapper-style-4 .header-inner) {
+			height: 64px;
+			min-height: 64px;
+		}
+
+		:global(.header-wrapper-style-4 .logo) {
+			display: flex !important;
+			align-items: center;
+			width: 176px;
+		}
+
+		:global(.header-wrapper-style-4 .logo img) {
+			display: block !important;
+			visibility: visible !important;
+			width: 142px !important;
+			max-width: 142px;
+			height: auto;
+			max-height: none;
+			filter: none;
+		}
+
+		:global(.header-wrapper-style-4 .main-nav .logo-mobile) {
+			display: none !important;
+		}
+
+		:global(.header-wrapper-style-4 .header .header-right-style-2.header-right) {
+			width: auto !important;
+			margin-left: auto !important;
+			gap: 0 !important;
+			justify-content: flex-end !important;
+		}
+
+		:global(.header-wrapper-style-4 .header-actions) {
+			position: absolute;
+			top: 13px;
+			right: 12px;
+			margin-left: 0 !important;
+			margin-right: 0 !important;
+		}
+
+		.bohemcars-mobile-call {
+			display: flex;
+			width: 38px;
+			height: 38px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
+			background: #edf2e8;
+			color: #1c1c1c;
+		}
+
+		.bohemcars-mobile-call:hover,
+		.bohemcars-mobile-call:focus-visible {
+			background: #d9f275;
+			color: #1c1c1c;
+		}
+
+		.bohemcars-mobile-call :global(svg) {
+			width: 16px;
+			height: 16px;
 		}
 	}
 </style>

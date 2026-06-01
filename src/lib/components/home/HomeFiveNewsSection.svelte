@@ -8,6 +8,17 @@
 	let { copy, posts }: { copy: HomePageCopy; posts: HomeFiveNewsPost[] } = $props();
 
 	let cards = $derived(posts.slice(0, 3));
+	const readAllBlogTitle = $derived(
+		copy.newsTitle === 'Bohemcars notes' ? 'Read all blog posts' : 'Виж всички статии'
+	);
+	const readAllBlogCopy = $derived(
+		copy.newsTitle === 'Bohemcars notes'
+			? 'Import, registration, and selling guides in one place.'
+			: 'Съвети за внос, регистрация и продажба на автомобил.'
+	);
+	const readAllBlogEyebrow = $derived(
+		copy.newsTitle === 'Bohemcars notes' ? 'Bohemcars blog' : 'Bohemcars блог'
+	);
 </script>
 
 {#if cards.length}
@@ -41,6 +52,15 @@
 						</span>
 					</a>
 				{/each}
+				<a href={resolve('/blog')} class="bohemcars-news-all-card">
+					<span class="bohemcars-news-all-card__eyebrow">{readAllBlogEyebrow}</span>
+					<span class="bohemcars-news-all-card__title">{readAllBlogTitle}</span>
+					<span class="bohemcars-news-all-card__copy">{readAllBlogCopy}</span>
+					<span class="bohemcars-news-all-card__cta">
+						{copy.readMore}
+						<ArrowRight size={18} strokeWidth={2.4} aria-hidden="true" />
+					</span>
+				</a>
 			</div>
 		</div>
 	</section>
@@ -156,11 +176,98 @@
 		flex: 0 0 auto;
 	}
 
+	.bohemcars-news-all-card {
+		display: none;
+	}
+
 	@media (max-width: 991px) {
 		.bohemcars-news-grid {
 			grid-template-columns: 1fr;
 			margin: 0 auto;
 			max-width: 460px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		.bohemcars-news-section :global(.title-section) {
+			align-items: flex-start;
+			justify-content: flex-start;
+			margin-bottom: 18px !important;
+			text-align: left;
+		}
+
+		.bohemcars-news-section :global(.title-section a) {
+			display: none !important;
+		}
+
+		.bohemcars-news-section :global(.title-section h2) {
+			margin: 0;
+			font-size: 26px;
+			font-weight: 800;
+			letter-spacing: 0;
+			line-height: 32px;
+			text-align: left;
+		}
+
+		.bohemcars-news-all-card {
+			display: flex;
+			min-height: 196px;
+			aspect-ratio: auto;
+			flex-direction: column;
+			gap: 10px;
+			overflow: hidden;
+			border-radius: 16px;
+			background: #eef1ed;
+			color: #1c1c1c;
+			padding: 22px;
+		}
+
+		.bohemcars-news-all-card:hover {
+			background: #e4eadf;
+			color: #1c1c1c;
+			transform: none;
+		}
+
+		.bohemcars-news-all-card__eyebrow {
+			align-self: flex-start;
+			border-radius: 999px;
+			background: #ffffff;
+			color: #607057;
+			font-size: 11px;
+			font-weight: 800;
+			letter-spacing: 0.03em;
+			line-height: 18px;
+			padding: 5px 10px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-news-all-card__title {
+			display: block;
+			max-width: 260px;
+			margin-top: auto;
+			font-size: 26px;
+			font-weight: 900;
+			letter-spacing: 0;
+			line-height: 31px;
+		}
+
+		.bohemcars-news-all-card__copy {
+			display: block;
+			max-width: 290px;
+			color: #566050;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+
+		.bohemcars-news-all-card__cta {
+			display: inline-flex;
+			align-items: center;
+			gap: 7px;
+			color: #86aa1f;
+			font-size: 14px;
+			font-weight: 900;
+			line-height: 20px;
 		}
 	}
 </style>

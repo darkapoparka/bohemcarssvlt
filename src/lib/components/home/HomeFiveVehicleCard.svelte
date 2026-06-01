@@ -248,4 +248,138 @@
 	.bohemcars-card-soft-hover:hover .content {
 		background-color: #ffffff;
 	}
+
+	@media (max-width: 767px) {
+		.card-box-style-1 {
+			overflow: hidden;
+			border: 0;
+			border-radius: 10px;
+			background: #eef1ed;
+			box-shadow: none !important;
+		}
+
+		.bohemcars-card-soft-hover .content,
+		.bohemcars-card-soft-hover:hover .content {
+			background: #eef1ed;
+		}
+
+		.card-box-style-1 .image {
+			aspect-ratio: 1.55;
+			height: auto;
+		}
+
+		.card-box-style-1 .image :global(img),
+		.card-box-style-1 .image img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.card-box-style-1 .top .highlight {
+			top: 8px;
+			left: 8px;
+			min-height: 24px;
+			padding: 0 9px;
+			border-radius: 7px;
+			font-size: 10px;
+			font-weight: 800;
+			line-height: 24px;
+		}
+
+		.card-box-style-1 .top .heart {
+			top: 8px;
+			right: 8px;
+			width: 30px;
+			height: 30px;
+		}
+
+		.card-box-style-1 .content {
+			padding: 12px;
+		}
+
+		.card-box-style-1 .bottom {
+			display: none;
+		}
+
+		.card-box-style-1 .card-box__title {
+			min-height: 48px;
+			margin-bottom: 8px;
+			font-size: 18px;
+			font-weight: 800;
+			line-height: 24px;
+		}
+
+		.bohemcars-card-specs {
+			flex-wrap: wrap !important;
+			gap: 6px 10px !important;
+			margin-bottom: 8px !important;
+		}
+
+		.bohemcars-card-specs li {
+			font-size: 12px;
+			line-height: 16px;
+		}
+
+		.bohemcars-card-specs img {
+			width: 13px;
+			height: 13px;
+		}
+
+		.bohemcars-card-price {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 2px;
+			margin-bottom: 10px !important;
+		}
+
+		.bohemcars-card-price__amount {
+			font-size: 18px;
+			font-weight: 800;
+			line-height: 23px;
+		}
+
+		.bohemcars-card-price__finance {
+			align-items: flex-start;
+			text-align: left;
+		}
+
+		.bohemcars-card-price__monthly,
+		.bohemcars-card-price__finance-link {
+			font-size: 12px;
+			line-height: 16px;
+		}
+
+		.card-box-style-1 .divider {
+			margin-bottom: 10px !important;
+		}
+
+		.bohemcars-card-actions {
+			gap: 6px;
+		}
+
+		.bohemcars-card-actions .compare-details {
+			min-width: auto;
+			height: 34px;
+			padding: 0 12px;
+			font-size: 12px;
+			line-height: 34px;
+		}
+
+		.bohemcars-card-actions .compare-details svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.bohemcars-card-actions .view-details {
+			min-width: 0;
+			font-size: 12px;
+			font-weight: 800;
+			line-height: 16px;
+			white-space: nowrap;
+		}
+
+		.bohemcars-card-actions .view-details img {
+			display: none;
+		}
+	}
 </style>

@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { inventoryCardsFromVehicles } from '$lib/auxero/inventory';
+import { inventoryMobileDataFromState } from '$lib/auxero/inventory-mobile';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import {
 	getInventoryState,
@@ -35,6 +36,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		beforeInventoryHtml: inventorySlot?.beforeHtml ?? pageDocument.bodyHtml,
 		cards: inventorySlot ? inventoryCardsFromVehicles(inventoryState.selected, locale) : [],
 		copy: getMessages(locale).inventory,
+		mobile: inventoryMobileDataFromState(inventoryState, locale),
 		pageDocument,
 		view: inventoryState.view
 	};
