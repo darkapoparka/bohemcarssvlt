@@ -1,10 +1,22 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import HomeFiveVehicleCard from './HomeFiveVehicleCard.svelte';
 	import HomeSectionCta from './HomeSectionCta.svelte';
 	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 
 	let { copy, vehicles }: { copy: HomePageCopy; vehicles: HomeFiveVehicleCardData[] } = $props();
+
+	const budgetTabHref = (index: number) =>
+		(
+			[
+				'/inventory',
+				'/inventory?minPrice=20000&maxPrice=50000',
+				'/inventory?minPrice=50000&maxPrice=70000',
+				'/inventory?minPrice=70000&maxPrice=100000',
+				'/inventory?minPrice=100000'
+			] as const
+		)[index] ?? '/inventory';
 </script>
 
 <section class="bohemcars-budget-section flat-tabs py-100">
@@ -19,8 +31,10 @@
 				data-wow-delay="0.1s"
 			>
 				<ul class="menu-tab menu-tab-style2 margin-auto gap-10">
-					{#each copy.budgetTabs as tab (tab.label)}
-						<li class={tab.active ? 'active car-box' : 'car-box'}>{tab.label}</li>
+					{#each copy.budgetTabs as tab, index (tab.label)}
+						<li class={tab.active ? 'active car-box' : 'car-box'}>
+							<a href={resolve(budgetTabHref(index))}>{tab.label}</a>
+						</li>
 					{/each}
 				</ul>
 			</div>
@@ -63,16 +77,70 @@
 	}
 
 	.bohemcars-budget-section :global(.menu-tab-style2 .car-box) {
-		background: #ffffff;
-		border-color: #d9d9d9;
+		background: #f4f6f1;
+		border-color: #dfe5d8;
 		color: #1c1c1c;
+	}
+
+	.bohemcars-budget-section :global(.menu-tab-style2 .car-box a) {
+		display: inline-flex;
+		min-height: inherit;
+		align-items: center;
+		color: inherit;
+		text-decoration: none;
 	}
 
 	section :global(.menu-tab-style2 .car-box:hover),
 	section :global(.menu-tab-style2 .car-box.active) {
-		border-color: #d6dbd1 !important;
-		background-color: #eef0ec !important;
+		border-color: #cde85f !important;
+		background-color: #d7f75b !important;
 		color: #1c1c1c !important;
+	}
+
+	@media (min-width: 768px) {
+		.bohemcars-home-section-surface {
+			background: #fbfcf8;
+			border: 1px solid #e2e8dc;
+			border-radius: 14px;
+			padding: 26px 16px 16px;
+		}
+
+		.bohemcars-budget-section :global(.title-section) {
+			align-items: center;
+			margin-bottom: 18px !important;
+			padding-inline: 6px;
+		}
+
+		.bohemcars-budget-section :global(.title-section h2) {
+			color: #16210f;
+		}
+
+		.bohemcars-budget-tabs {
+			justify-content: flex-start;
+			margin: 0 -16px 22px !important;
+			border: solid #dde4d4;
+			border-width: 1px 0;
+			border-radius: 0;
+			background: #ffffff;
+			padding: 14px 16px;
+			overflow-x: auto !important;
+			scrollbar-width: none;
+		}
+
+		.bohemcars-budget-tabs::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-budget-tabs :global(.menu-tab-style2) {
+			display: flex;
+			flex: 0 1 auto;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			width: auto !important;
+			max-width: 100%;
+			min-width: 0 !important;
+			margin: 0 !important;
+		}
 	}
 
 	@media (max-width: 767px) {
@@ -83,6 +151,9 @@
 		}
 
 		.bohemcars-home-section-surface {
+			background: transparent;
+			border: 0;
+			border-radius: 0;
 			padding: 0;
 		}
 
@@ -105,24 +176,28 @@
 		.bohemcars-budget-tabs {
 			justify-content: flex-start;
 			margin-bottom: 16px !important;
-			margin-inline: -16px;
-			padding-inline: 16px;
+			margin-inline: 0;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			padding-inline: 0;
 			scrollbar-width: none;
 		}
 
 		.bohemcars-budget-tabs :global(.menu-tab-style2) {
+			flex-wrap: nowrap;
 			justify-content: flex-start;
 			width: auto;
 			min-width: max-content;
 		}
 
 		.bohemcars-budget-section :global(.menu-tab-style2 .car-box) {
-			min-height: 38px;
-			border: 0 !important;
-			border-radius: 8px !important;
-			background: #eef1ed !important;
+			min-height: 40px;
+			border: 1px solid #e2e8dc !important;
+			border-radius: 10px !important;
+			background: #f3f6f1 !important;
 			padding: 0 13px !important;
-			font-size: 12px;
+			font-size: 13px;
 			font-weight: 800;
 			line-height: 38px;
 			white-space: nowrap;
@@ -130,7 +205,8 @@
 
 		.bohemcars-budget-section :global(.menu-tab-style2 .car-box.active),
 		.bohemcars-budget-section :global(.menu-tab-style2 .car-box:hover) {
-			background: #e4eadf !important;
+			border-color: #cde85f !important;
+			background: #d7f75b !important;
 		}
 
 		.bohemcars-budget-tabs::-webkit-scrollbar {

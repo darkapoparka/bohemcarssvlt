@@ -22,13 +22,6 @@
 	const mobileFeaturedTitle = $derived(
 		copy.featuredTitle === 'Newest Vehicles' ? 'Newest' : 'Нови коли'
 	);
-
-	// Keep the quick-filter row focused: browse by body type or make. The spec
-	// pills (transmission/fuel/year/mileage) added noise and duplicated the
-	// dedicated browse sections below.
-	const focusedPills = $derived(
-		pills.filter((pill) => pill.kind === 'body' || pill.kind === 'brand')
-	);
 </script>
 
 {#if vehicles.length}
@@ -46,7 +39,6 @@
 						<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileFeaturedTitle}>
 							{copy.featuredTitle}
 						</h2>
-						<HomeSectionCta href="/inventory" label={copy.commonCta} />
 						<img
 							class="bohemcars-newest-band__car bohemcars-newest-band__car--right"
 							src="/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png"
@@ -56,7 +48,7 @@
 					</div>
 					<div class="bohemcars-vehicle-pills flex items-center gap-8 overflow-x-auto">
 						<ul class="menu-tab menu-tab-style2 gap-10">
-							{#each focusedPills as pill (pill.href)}
+							{#each pills as pill (pill.href)}
 								<li
 									class={`bohemcars-quick-pill bohemcars-${pill.kind === 'body' ? 'type' : pill.kind}-pill bohemcars-vehicle-pill car-box ${pill.active ? 'active' : ''}`}
 								>
@@ -84,6 +76,9 @@
 					{#each vehicles as vehicle (vehicle.slug)}
 						<HomeFiveVehicleCard {vehicle} copy={copy.vehicleCard} />
 					{/each}
+				</div>
+				<div class="bohemcars-newest-footer-cta">
+					<HomeSectionCta href="/inventory" label={copy.commonCta} />
 				</div>
 			</div>
 		</div>
@@ -574,19 +569,21 @@
 	}
 
 	.bohemcars-home-section-surface {
-		background: transparent;
-		border: 0;
-		border-radius: 0;
-		padding: 0;
+		background: #fbfcf8;
+		border: 1px solid #e2e8dc;
+		border-radius: 14px;
+		padding: 0 16px 16px;
 	}
 
-	/* Newest-inventory module: one rounded card holding the lime header (title +
-	   CTA) and the quick-filter chips, so they read as a single banner. */
+	/* Newest-inventory module: one rounded card holding the title band and
+	   quick-filter chips, so the controls read as one compact inventory strip. */
 	.bohemcars-newest-unit {
-		margin-bottom: 22px;
-		border-radius: 12px;
+		margin: -1px -17px 16px;
+		border: 1px solid #dde4d4;
+		border-radius: 14px 14px 10px 10px;
 		overflow: hidden;
-		box-shadow: 0 14px 34px rgb(28 42 22 / 0.1);
+		background: #ffffff;
+		box-shadow: none;
 	}
 
 	.bohemcars-newest-band {
@@ -597,9 +594,7 @@
 		margin-bottom: 0;
 		border-radius: 0;
 		overflow: hidden;
-		background:
-			radial-gradient(ellipse at 50% 112%, rgb(195 236 78 / 0.32), transparent 56%),
-			linear-gradient(112deg, #121b10 0%, #1b2c16 56%, #3f561f 100%);
+		background: #142110;
 		padding: 22px clamp(168px, 17vw, 242px);
 		text-align: center;
 	}
@@ -609,15 +604,7 @@
 		z-index: 2;
 		margin: 0;
 		color: #ffffff;
-		text-shadow: 0 3px 18px rgb(0 0 0 / 0.32);
-	}
-
-	.bohemcars-newest-band :global(.bohemcars-section-cta) {
-		position: absolute;
-		top: 50%;
-		right: 24px;
-		z-index: 3;
-		transform: translateY(-50%);
+		text-shadow: none;
 	}
 
 	.bohemcars-newest-band__car {
@@ -628,7 +615,7 @@
 		height: auto;
 		pointer-events: none;
 		user-select: none;
-		filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.34));
+		filter: drop-shadow(0 16px 18px rgb(41 53 32 / 0.16));
 	}
 
 	.bohemcars-newest-band__car--left {
@@ -636,9 +623,9 @@
 	}
 
 	.bohemcars-newest-band__car--right {
-		right: 136px;
+		right: 24px;
 		width: min(18vw, 246px);
-		opacity: 0.74;
+		opacity: 0.64;
 	}
 
 	/* Chips sit flush inside the card (the unit clips/rounds the corners). */
@@ -651,6 +638,7 @@
 		background: #ffffff !important;
 		box-shadow: none !important;
 		padding: 11px 16px !important;
+		overflow-x: visible !important;
 		scrollbar-width: none;
 	}
 
@@ -662,10 +650,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-		flex-wrap: nowrap;
-		width: auto;
-		min-width: max-content;
-		gap: 10px;
+		flex-wrap: wrap !important;
+		width: 100% !important;
+		min-width: 0 !important;
+		gap: 8px;
 	}
 
 	.bohemcars-vehicle-pill {
@@ -679,12 +667,12 @@
 		display: inline-flex;
 		min-height: 42px;
 		align-items: center;
-		gap: 7px;
+		gap: 6px;
 		color: inherit;
-		font-size: 15px;
+		font-size: 14px;
 		font-weight: 500;
 		line-height: 22px;
-		padding: 0 11px;
+		padding: 0 9px;
 		white-space: nowrap;
 	}
 
@@ -695,7 +683,7 @@
 	}
 
 	.bohemcars-type-icon {
-		width: 36px;
+		width: 32px;
 		height: 18px;
 		color: currentColor;
 		stroke-width: 1.15;
@@ -717,8 +705,20 @@
 		max-width: 38px;
 	}
 
+	@media (min-width: 1320px) {
+		.bohemcars-vehicle-pills :global(.menu-tab-style2) {
+			flex-wrap: nowrap !important;
+		}
+	}
+
 	.bohemcars-home-vehicle-grid {
 		overflow: visible;
+	}
+
+	.bohemcars-newest-footer-cta {
+		display: flex;
+		justify-content: center;
+		padding-top: 18px;
 	}
 
 	@media (max-width: 1199px) {
@@ -732,7 +732,7 @@
 		}
 
 		.bohemcars-newest-band__car--right {
-			right: 112px;
+			right: 20px;
 			width: min(18vw, 208px);
 		}
 	}
@@ -752,12 +752,26 @@
 			text-align: left;
 		}
 
-		/* Plain header on mobile (no card/band) to match the other section headers. */
-		.bohemcars-newest-unit {
-			margin-bottom: 0;
+		.bohemcars-home-section-surface {
+			background: transparent;
+			border: 0;
 			border-radius: 0;
-			overflow: visible;
-			box-shadow: none;
+			padding: 0;
+		}
+
+		/* Keep the section named for assistive tech, but let mobile jump from
+		   hero quick pills straight into the vehicle rail. */
+		.bohemcars-newest-unit {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			margin: -1px;
+			padding: 0;
+			clip: rect(0 0 0 0);
+			clip-path: inset(50%);
+			border: 0;
+			overflow: hidden;
+			white-space: nowrap;
 		}
 
 		.bohemcars-newest-band {
@@ -797,6 +811,11 @@
 
 		.bohemcars-featured-vehicles :global(.bohemcars-section-cta) {
 			display: none !important;
+		}
+
+		.bohemcars-newest-footer-cta {
+			display: none;
+			padding-top: 0;
 		}
 
 		.bohemcars-vehicle-pills {

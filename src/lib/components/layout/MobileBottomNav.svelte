@@ -48,13 +48,25 @@
 
 	const isActive = (href: string, exact = false) =>
 		exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+
+	let menuOpen = $state(false);
+
+	const toggleMenu = () => {
+		menuOpen = !menuOpen;
+	};
+
+	const closeMenu = () => {
+		menuOpen = false;
+	};
 </script>
 
 <input
 	id="mobile-bottom-menu-toggle"
 	class="mobile-menu-toggle"
 	type="checkbox"
-	aria-label="Отвори менюто"
+	bind:checked={menuOpen}
+	aria-hidden="true"
+	tabindex="-1"
 />
 
 <nav class="mobile-bottom-nav" aria-label="Мобилна навигация">
@@ -66,22 +78,31 @@
 				href={resolve(item.href as '/')}
 				aria-current={isActive(item.href, item.exact) ? 'page' : undefined}
 			>
-				<Icon size={22} strokeWidth={2.2} />
+				<Icon size={21} strokeWidth={2.15} />
 				<span>{item.label}</span>
 			</a>
 		{/each}
-		<label
+		<button
+			type="button"
 			class="mobile-bottom-nav__menu-trigger"
-			for="mobile-bottom-menu-toggle"
 			aria-controls="mobile-bottom-menu"
+			aria-expanded={menuOpen}
+			aria-haspopup="dialog"
+			onclick={toggleMenu}
 		>
-			<Menu size={23} strokeWidth={2.2} />
+			<Menu size={21} strokeWidth={2.15} />
 			<span>Меню</span>
-		</label>
+		</button>
 	</div>
 </nav>
 
-<div class="mobile-menu-sheet" id="mobile-bottom-menu" role="dialog" aria-modal="true">
+<div
+	class="mobile-menu-sheet"
+	id="mobile-bottom-menu"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="mobile-bottom-menu-title"
+>
 	<label
 		class="mobile-menu-sheet__backdrop"
 		for="mobile-bottom-menu-toggle"
@@ -93,11 +114,11 @@
 		<div class="mobile-menu-sheet__header">
 			<div>
 				<p>Bohemcars</p>
-				<strong>Меню</strong>
+				<strong id="mobile-bottom-menu-title">Меню</strong>
 			</div>
-			<label for="mobile-bottom-menu-toggle" aria-label="Затвори менюто">
+			<button type="button" aria-label="Затвори менюто" onclick={closeMenu}>
 				<X size={22} strokeWidth={2.3} />
-			</label>
+			</button>
 		</div>
 
 		<a class="mobile-menu-sheet__sell" href={resolve('/sell-your-car')}>
@@ -151,7 +172,7 @@
 
 	@media (max-width: 767.98px) {
 		:global(body) {
-			padding-bottom: calc(78px + env(safe-area-inset-bottom));
+			padding-bottom: calc(72px + env(safe-area-inset-bottom));
 		}
 
 		.mobile-menu-toggle {
@@ -175,7 +196,7 @@
 			left: 0;
 			z-index: 999;
 			display: block;
-			padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+			padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
 			background: rgba(255, 255, 255, 0.95);
 			border-top: 1px solid rgba(28, 28, 28, 0.07);
 			box-shadow: 0 -10px 24px rgba(28, 28, 28, 0.08);
@@ -185,7 +206,7 @@
 		.mobile-bottom-nav__inner {
 			display: grid;
 			grid-template-columns: repeat(5, minmax(0, 1fr));
-			gap: 4px;
+			gap: 3px;
 			max-width: 480px;
 			margin: 0 auto;
 		}
@@ -194,28 +215,46 @@
 		.mobile-bottom-nav__menu-trigger {
 			display: flex;
 			min-width: 0;
-			min-height: 54px;
+			min-height: 50px;
 			align-items: center;
 			justify-content: center;
 			flex-direction: column;
-			gap: 3px;
+			gap: 2px;
 			border: 0;
 			border-radius: 8px;
 			background: transparent;
+			appearance: none;
 			color: #687065;
 			font-size: 11px;
 			font-weight: 700;
 			line-height: 14px;
 			cursor: pointer;
+			padding: 0;
 			text-align: center;
 		}
 
+		.mobile-bottom-nav span {
+			color: inherit;
+			font-size: 11px;
+			font-weight: 700;
+			line-height: 14px;
+		}
+
 		.mobile-bottom-nav a.active,
-		.mobile-bottom-nav a:focus-visible,
-		.mobile-bottom-nav__menu-trigger:focus-visible,
 		#mobile-bottom-menu-toggle:checked ~ .mobile-bottom-nav .mobile-bottom-nav__menu-trigger {
 			background: #e9f1da;
 			color: #4f7012;
+		}
+
+		.mobile-bottom-nav a:focus-visible,
+		.mobile-bottom-nav__menu-trigger:focus-visible {
+			background: #e9f1da;
+			color: #4f7012;
+			outline: 2px solid #1c1c1c;
+			outline-offset: 2px;
+		}
+
+		.mobile-bottom-nav a.active {
 			outline: 0;
 		}
 
@@ -313,7 +352,7 @@
 			line-height: 27px;
 		}
 
-		.mobile-menu-sheet__header label {
+		.mobile-menu-sheet__header button {
 			display: flex;
 			width: 42px;
 			height: 42px;
@@ -322,8 +361,10 @@
 			border: 0;
 			border-radius: 999px;
 			background: #e9ede6;
+			appearance: none;
 			color: #1c1c1c;
 			cursor: pointer;
+			padding: 0;
 		}
 
 		.mobile-menu-sheet__sell {

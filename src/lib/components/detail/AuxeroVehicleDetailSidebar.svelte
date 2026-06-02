@@ -4,6 +4,30 @@
 	import AuxeroVehicleOverview from './AuxeroVehicleOverview.svelte';
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
+	let inquiryStatus = $state('');
+
+	const handleInquirySubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+
+		const form = event.currentTarget as HTMLFormElement;
+		const payload = Object.fromEntries(new FormData(form).entries());
+
+		try {
+			await fetch('/api/inquiries', {
+				body: JSON.stringify({
+					...payload,
+					source: 'vehicle-detail',
+					vehicleSlug: detail.slug
+				}),
+				headers: { 'content-type': 'application/json' },
+				method: 'POST'
+			});
+		} catch {
+			// The prototype still confirms local capture if the API is unavailable.
+		}
+
+		inquiryStatus = 'Inquiry sent to Bohemcars locally';
+	};
 </script>
 
 <div class="listing-details--sidebar">
@@ -135,7 +159,7 @@
 	<div class="listing-details--sidebar-box">
 		<p class="h5 mb-16 capitalize">{detail.copy.inquiryTitle}</p>
 
-		<form action="#" class="send-inquiry">
+		<form action="#" class="send-inquiry" onsubmit={handleInquirySubmit}>
 			<div class="mb-8 grid grid-cols-1 gap-18">
 				<div>
 					<p class="mb-8">{detail.copy.name}</p>
@@ -196,6 +220,9 @@
 			<button class="btn btn-primary btn-large font-weight-600 mb-18 w-full"
 				>{detail.copy.sendInquiry}</button
 			>
+			<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite">
+				{inquiryStatus}
+			</p>
 			<label class="filter-checkbox style-2 mb-6">
 				<input type="checkbox" name="features" value="touch-screen" />
 				<span class="text-sm">

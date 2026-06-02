@@ -313,7 +313,7 @@
 			min-height: 0;
 			margin-bottom: 8px;
 			font-size: 17px;
-			font-weight: 800;
+			font-weight: 500;
 			line-height: 22px;
 		}
 

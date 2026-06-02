@@ -156,8 +156,27 @@
 	}
 
 	.bohemcars-action-card__cta :global(svg) {
-		flex: 0 0 auto;
+		display: block;
+		width: 18px;
+		height: 18px;
+		flex: 0 0 18px;
 		transition: transform 0.2s ease;
+	}
+
+	.bohemcars-action-card--import .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card--import .bohemcars-action-card__cta :global(path),
+	.bohemcars-action-card--import .bohemcars-action-card__cta :global(line),
+	.bohemcars-action-card--import .bohemcars-action-card__cta :global(polyline) {
+		color: #ffffff !important;
+		stroke: #ffffff !important;
+	}
+
+	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(path),
+	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(line),
+	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(polyline) {
+		color: #14210f !important;
+		stroke: #14210f !important;
 	}
 
 	.bohemcars-action-card:hover .bohemcars-action-card__cta :global(svg) {

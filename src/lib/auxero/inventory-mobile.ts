@@ -6,6 +6,7 @@ export type InventoryMobilePill = {
 	active: boolean;
 	href: string;
 	image?: string;
+	kind?: 'body' | 'brand' | 'total';
 	label: string;
 };
 
@@ -19,6 +20,7 @@ export type InventoryMobileOption = {
 
 export type InventoryMobileData = {
 	activeFilters: InventoryMobilePill[];
+	applyLabel: string;
 	bodyLabel: string;
 	bodyOptions: InventoryMobileOption[];
 	brandOptions: InventoryMobileOption[];
@@ -35,6 +37,7 @@ export type InventoryMobileData = {
 	hiddenInputs: Array<{ name: string; value: string }>;
 	modelLabel: string;
 	modelOptions: InventoryMobileOption[];
+	modelOptionsByBrand: Record<string, InventoryMobileOption[]>;
 	modelValue: string;
 	quickPills: InventoryMobilePill[];
 	searchDrawerTitle: string;
@@ -64,6 +67,7 @@ const labels = (locale: Locale) =>
 				allBodyTypes: 'Всички типове',
 				allBrands: 'Всички марки',
 				allWithCount: (count: number) => `Всички ${count}`,
+				apply: 'Приложи',
 				body: 'Тип купе',
 				brand: 'Марка',
 				clear: 'Изчисти',
@@ -91,6 +95,7 @@ const labels = (locale: Locale) =>
 				allBodyTypes: 'All body types',
 				allBrands: 'All brands',
 				allWithCount: (count: number) => `All ${count}`,
+				apply: 'Apply',
 				body: 'Body type',
 				brand: 'Brand',
 				clear: 'Clear',
@@ -185,14 +190,38 @@ export const inventoryMobileDataFromState = (
 	const brandCounts = countBy(vehicles.map((vehicle) => vehicle.brand));
 	const bodyCounts = countBy(vehicles.map((vehicle) => vehicle.bodyType));
 	const fuelCounts = countBy(vehicles.map((vehicle) => vehicle.fuel));
-	const modelCounts = countBy(vehicles.map((vehicle) => vehicle.model).filter(Boolean));
 	const selectedBrand = state.filters.brand?.toLowerCase();
 	const selectedBody = state.filters.bodyType?.toLowerCase();
 	const selectedFuel = state.filters.fuel?.toLowerCase();
 	const selectedQuery = state.filters.query?.toLowerCase();
+	const buildModelOptions = (brand = '') => {
+		const selectedBrandMatches = brand ? selectedBrand === brand.toLowerCase() : !selectedBrand;
+		const modelVehicles = brand
+			? vehicles.filter((vehicle) => vehicle.brand.toLowerCase() === brand.toLowerCase())
+			: vehicles;
+		const modelCounts = countBy(modelVehicles.map((vehicle) => vehicle.model).filter(Boolean));
+
+		return Array.from(modelCounts.entries())
+			.map(([model, count]) => ({
+				active: selectedBrandMatches && selectedQuery === model.toLowerCase(),
+				countLabel: String(count),
+				href: inventoryUrl(state, {
+					brand: brand || null,
+					q: selectedBrandMatches && selectedQuery === model.toLowerCase() ? null : model
+				}),
+				label: model,
+				value: model
+			}))
+			.sort((left, right) => {
+				const countDelta = Number(right.countLabel) - Number(left.countLabel);
+
+				return countDelta || left.label.localeCompare(right.label);
+			});
+	};
 	const totalPill = {
-		active: !selectedBrand && !selectedBody && !selectedFuel,
+		active: !selectedBrand && !selectedBody && !selectedFuel && !selectedQuery,
 		href: quickUrl(state, { bodyType: null, brand: null, fuel: null }),
+		kind: 'total' as const,
 		label: text.allWithCount(state.selected.length)
 	};
 	const brandOptions: InventoryMobileOption[] = [
@@ -221,6 +250,7 @@ export const inventoryMobileDataFromState = (
 			count: brandCounts.get(brand) ?? 0,
 			href: quickUrl(state, { brand }),
 			image: brandLogos[brand],
+			kind: 'brand' as const,
 			label: brand === 'Mercedes-Benz' ? 'Mercedes' : brand
 		}))
 		.filter((pill) => pill.count > 0)
@@ -233,6 +263,7 @@ export const inventoryMobileDataFromState = (
 			href: quickUrl(state, {
 				bodyType: selectedBody === bodyType.toLowerCase() ? null : bodyType
 			}),
+			kind: 'body' as const,
 			label: translateVehicleTerm(locale, 'bodyTypes', bodyType)
 		}))
 		.filter((pill) => pill.count > 0 && pill.label !== 'Автомобил' && pill.label !== 'Car')
@@ -262,19 +293,11 @@ export const inventoryMobileDataFromState = (
 			)
 			.sort((left, right) => right.count - left.count)
 	];
-	const modelOptions = Array.from(modelCounts.entries())
-		.map(([model, count]) => ({
-			active: selectedQuery === model.toLowerCase(),
-			countLabel: String(count),
-			href: inventoryUrl(state, { q: selectedQuery === model.toLowerCase() ? null : model }),
-			label: model,
-			value: model
-		}))
-		.sort((left, right) => {
-			const countDelta = Number(right.countLabel) - Number(left.countLabel);
-
-			return countDelta || left.label.localeCompare(right.label);
-		});
+	const modelOptions = buildModelOptions(state.filters.brand ?? '');
+	const modelOptionsByBrand = {
+		'': buildModelOptions(''),
+		...Object.fromEntries(brands.map((brand) => [brand, buildModelOptions(brand)]))
+	};
 	const fuelOptions = fuels
 		.map((fuel) => ({
 			active: selectedFuel === fuel.toLowerCase(),
@@ -323,6 +346,7 @@ export const inventoryMobileDataFromState = (
 
 	return {
 		activeFilters,
+		applyLabel: text.apply,
 		bodyLabel: text.body,
 		bodyOptions,
 		brandOptions,
@@ -339,6 +363,7 @@ export const inventoryMobileDataFromState = (
 		hiddenInputs: hiddenInputs(state.filters, state.sortParam),
 		modelLabel: text.model,
 		modelOptions,
+		modelOptionsByBrand,
 		modelValue: state.filters.query ?? text.all,
 		quickPills: [totalPill, ...brandPills, ...bodyPills],
 		searchDrawerTitle: text.searchDrawerTitle,

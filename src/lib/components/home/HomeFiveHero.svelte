@@ -57,25 +57,61 @@
 			: mobileAllLabel
 	);
 	const mobileActionTabs = $derived.by(() => hero?.actions ?? []);
-	const mobileQuickFilters = $derived.by(() => {
-		const bodyTypes =
-			hero?.primaryFilters
-				.find((filter) => filter.name === 'bodyType')
-				?.options.slice(0, 2)
-				.map((option) => ({
-					href: `/inventory?bodyType=${encodeURIComponent(option.value)}`,
-					label: option.label
-				})) ?? [];
-		const fuels =
-			hero?.advancedFilters
-				.find((filter) => filter.name === 'fuel')
-				?.options.slice(0, 2)
-				.map((option) => ({
-					href: `/inventory?fuel=${encodeURIComponent(option.value)}`,
-					label: option.label
-				})) ?? [];
+	const mobileQuickFilters = $derived(
+		isEnglish
+			? [
+					{ href: '/inventory?maxPrice=10000', label: 'Under 10k' },
+					{ href: '/inventory?maxPrice=20000', label: 'Under 20k' },
+					{ href: '/inventory?maxPrice=30000', label: 'Under 30k' },
+					{ href: '/inventory?status=New%20listing', label: 'New listings' },
+					{ href: '/inventory?status=Available', label: 'In stock' }
+				]
+			: [
+					{ href: '/inventory?maxPrice=10000', label: 'До 10 000' },
+					{ href: '/inventory?maxPrice=20000', label: 'До 20 000' },
+					{ href: '/inventory?maxPrice=30000', label: 'До 30 000' },
+					{ href: '/inventory?status=New%20listing', label: 'Нови обяви' },
+					{ href: '/inventory?status=Available', label: 'Налични' }
+				]
+	);
+	const mobileModeQuickLinks = $derived.by(() => {
+		if (activeAction?.mode === 'import') {
+			return isEnglish
+				? [
+						{ href: '/calculator', label: 'Import calculator' },
+						{ href: '/services', label: 'Import process' },
+						{ href: '/agents', label: 'Consultant' },
+						{ href: '/contact', label: 'Ask Bohemcars' },
+						{ href: '/inventory', label: 'Available cars' }
+					]
+				: [
+						{ href: '/calculator', label: 'Калкулатор' },
+						{ href: '/services', label: 'Процес по внос' },
+						{ href: '/agents', label: 'Консултант' },
+						{ href: '/contact', label: 'Попитай Bohemcars' },
+						{ href: '/inventory', label: 'Налични коли' }
+					];
+		}
 
-		return [...bodyTypes, ...fuels].slice(0, 4);
+		if (activeAction?.mode === 'sell') {
+			return isEnglish
+				? [
+						{ href: '/sell-your-car', label: 'Valuation form' },
+						{ href: '/services', label: 'Selling process' },
+						{ href: '/agents', label: 'Consultant' },
+						{ href: '/contact', label: 'Ask Bohemcars' },
+						{ href: '/inventory', label: 'Available cars' }
+					]
+				: [
+						{ href: '/sell-your-car', label: 'Оценка' },
+						{ href: '/services', label: 'Как продаваме' },
+						{ href: '/agents', label: 'Консултант' },
+						{ href: '/contact', label: 'Попитай Bohemcars' },
+						{ href: '/inventory', label: 'Налични коли' }
+					];
+		}
+
+		return mobileQuickFilters;
 	});
 
 	// The hero reads as a single static block — the three intents live in the
@@ -329,20 +365,23 @@
 		</div>
 	</form>
 
-	{#if isInventoryMode}
+	{#if mobileModeQuickLinks.length}
 		<section class="bohemcars-mobile-home-quick" aria-label={hero.heading}>
 			<div class="container">
 				<nav class="bohemcars-mobile-home-quick__scroller">
-					<label
-						for={mobileSearchToggleId}
-						aria-haspopup="dialog"
-						aria-controls="bohemcars-mobile-search-panel"
-					>
-						<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
-						{isEnglish ? 'Filters' : 'Филтри'}
-					</label>
-					{#each mobileQuickFilters as filter (filter.href)}
-						<a href={resolve(filter.href as '/inventory')}>{filter.label}</a>
+					{#if isInventoryMode}
+						<label
+							class="bohemcars-mobile-home-quick__filter"
+							for={mobileSearchToggleId}
+							aria-haspopup="dialog"
+							aria-controls="bohemcars-mobile-search-panel"
+							aria-label={isEnglish ? 'Open filters' : 'Отвори филтри'}
+						>
+							<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
+						</label>
+					{/if}
+					{#each mobileModeQuickLinks as filter (filter.href)}
+						<a href={resolve(filter.href as '/')}>{filter.label}</a>
 					{/each}
 				</nav>
 			</div>
@@ -399,13 +438,6 @@
 								<p class="h7 effect-item effect-up text-center text-white delay-4">
 									{slide.subtitle}
 								</p>
-								<a
-									href={resolve(slide.ctaHref)}
-									class="search-cars__slide-cta btn effect-line-primary effect-item effect-up delay-5"
-								>
-									{slide.ctaLabel}
-									<ArrowRight size={18} strokeWidth={1.8} aria-hidden="true" />
-								</a>
 							</div>
 						{/each}
 					</div>
@@ -594,19 +626,7 @@
 	}
 
 	:global(.page-title.page-title-style-4 .tp-showcase-slider-bg) {
-		background:
-			linear-gradient(
-				160deg,
-				transparent 0 35%,
-				rgb(255 255 255 / 0.09) 35% 36%,
-				transparent 36% 100%
-			),
-			linear-gradient(
-				20deg,
-				transparent 0 59%,
-				rgb(255 255 255 / 0.1) 59% 60%,
-				transparent 60% 100%
-			) !important;
+		background: none !important;
 		background-position: center bottom;
 	}
 
@@ -621,19 +641,6 @@
 		outline-color: rgb(255 255 255 / 0.72);
 	}
 
-	/* Make the slider arrows discoverable over the light hero (was rgba white 0.1 = nearly invisible). */
-	:global(.page-title.page-title-style-4 .swiper-btn) {
-		background-color: rgba(28, 28, 28, 0.32);
-		border: 1px solid rgba(255, 255, 255, 0.55);
-		box-shadow: 0 6px 18px rgba(12, 21, 23, 0.18);
-	}
-
-	:global(.page-title.page-title-style-4 .swiper-btn:hover),
-	:global(.page-title.page-title-style-4 .swiper-btn:focus-visible) {
-		background-color: #ffffff;
-		border-color: #ffffff;
-	}
-
 	.bohemcars-mobile-home,
 	.bohemcars-mobile-home-quick {
 		display: none;
@@ -645,7 +652,7 @@
 
 	@media (min-width: 768px) {
 		:global(.page-title.page-title-style-4 .flat-tabs) {
-			margin-top: clamp(38px, 4.2vw, 58px);
+			margin-top: clamp(40px, 4.4vw, 60px);
 		}
 
 		:global(.page-title.page-title-style-4 .search-cars__filters) {
@@ -690,49 +697,6 @@
 
 	.search-cars p:not(.search-cars__title) {
 		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.34);
-	}
-
-	.search-cars__slide-cta {
-		gap: 8px;
-		width: fit-content;
-		min-height: 42px;
-		margin: 16px auto 0;
-		padding: 11px 22px;
-		border: 1px solid rgba(216, 242, 117, 0.82);
-		border-radius: 999px;
-		background: #98bc2a;
-		box-shadow: none;
-		backdrop-filter: blur(10px);
-		color: #ffffff;
-		font-size: 15px;
-		font-weight: 700;
-		line-height: 1;
-		text-shadow: 0 2px 10px rgba(12, 21, 23, 0.18);
-	}
-
-	.search-cars__slide-cta::after {
-		background-color: #1c1c1c;
-	}
-
-	.search-cars__slide-cta:hover,
-	.search-cars__slide-cta:focus-visible {
-		border-color: #1c1c1c;
-		box-shadow: none;
-		color: #ffffff;
-	}
-
-	.search-cars__slide-cta :global(svg) {
-		display: block;
-		flex: 0 0 18px;
-		width: 18px;
-		height: 18px;
-		color: inherit;
-	}
-
-	.search-cars__slide-cta :global(svg path) {
-		fill: none !important;
-		stroke: #ffffff !important;
-		stroke-width: 1.8;
 	}
 
 	:global(.page-title.page-title-style-4 .menu-tab-style1 a:focus-visible) {
@@ -838,10 +802,6 @@
 			line-height: 1.12;
 		}
 
-		.search-cars__slide-cta {
-			margin-top: 14px;
-		}
-
 		.search-cars__select-wrapper {
 			min-width: 100%;
 		}
@@ -913,7 +873,7 @@
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			gap: 0;
 			height: 37px;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.32);
+			border-bottom: 0;
 			border-radius: 0;
 			background: transparent;
 		}
@@ -924,7 +884,7 @@
 			align-items: center;
 			justify-content: center;
 			border-radius: 0;
-			color: rgba(255, 255, 255, 0.78);
+			color: rgba(255, 255, 255, 0.9);
 			font-size: 15px;
 			font-weight: 800;
 			line-height: 20px;
@@ -1552,7 +1512,10 @@
 
 		.bohemcars-mobile-home-quick {
 			background: #ffffff;
-			padding: 8px 0 10px;
+			margin: 0;
+			padding: 7px 0 9px;
+			border: 0;
+			box-shadow: none;
 			overflow: hidden;
 		}
 
@@ -1573,29 +1536,38 @@
 		.bohemcars-mobile-home-quick__scroller label {
 			display: inline-flex;
 			min-width: max-content;
-			height: 40px;
+			min-height: 42px;
 			align-items: center;
 			justify-content: center;
-			gap: 7px;
+			gap: 8px;
 			flex: 0 0 auto;
 			padding: 0 13px;
-			border-radius: 8px;
-			background: #f0f3ed;
+			border-radius: 11px;
+			background: #eef1f5;
 			color: #1c1c1c;
 			cursor: pointer;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 18px;
 			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-home-quick__scroller .bohemcars-mobile-home-quick__filter {
+			width: 42px;
+			min-width: 42px;
+			padding: 0;
 		}
 
 		.bohemcars-mobile-home-quick__scroller a:hover,
 		.bohemcars-mobile-home-quick__scroller a:focus-visible,
 		.bohemcars-mobile-home-quick__scroller label:hover,
 		.bohemcars-mobile-home-quick__scroller label:focus-visible {
-			background: #e4eadf;
+			background: #d9f275;
+			box-shadow: inset 0 0 0 1px rgba(87, 118, 13, 0.08);
 			color: #1c1c1c;
-			outline: 0;
+			outline: 2px solid #1c1c1c;
+			outline-offset: 2px;
 		}
 
 		.bohemcars-mobile-home-quick__scroller :global(svg) {
@@ -1657,19 +1629,19 @@
 			border: 1px solid rgba(255, 255, 255, 0.2);
 			background: rgba(255, 255, 255, 0.22);
 			box-sizing: border-box;
-			color: #ffffff;
+			color: #1c1c1c;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
-			width: 16px;
-			height: 16px;
+			width: 18px;
+			height: 18px;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
 			background: rgba(255, 255, 255, 0.22);
-			color: #ffffff;
+			color: #1c1c1c;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
@@ -1681,7 +1653,7 @@
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
 			background: rgba(255, 255, 255, 0.3);
-			color: #ffffff;
+			color: #1c1c1c;
 		}
 	}
 </style>

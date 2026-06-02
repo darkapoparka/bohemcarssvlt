@@ -5,6 +5,7 @@
 		HomeFiveHeaderNavigationItem,
 		HomeFiveHeaderSocial
 	} from '$lib/auxero/home-five';
+	import { MapPin, PhoneCall } from '@lucide/svelte';
 
 	let { header }: { header?: HomeFiveHeaderData } = $props();
 
@@ -227,7 +228,7 @@
 								aria-label={header.contact.addressLabel}
 								title={header.contact.addressLabel}
 							>
-								{@render mapPinIcon()}
+								<MapPin size={18} strokeWidth={2.3} aria-hidden="true" />
 							</label>
 							<a
 								href={resolve(header.contact.phoneHref as '/')}
@@ -235,7 +236,7 @@
 								aria-label={header.contact.phoneLabel}
 								title={header.contact.phoneLabel}
 							>
-								{@render phoneIcon()}
+								<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
 							</a>
 							<div class="header-search-wrapper">
 								<span class="header-action-btn relative" id="searchToggle">
@@ -993,8 +994,9 @@
 
 		.bohemcars-mobile-call :global(svg),
 		.bohemcars-mobile-map :global(svg) {
-			width: 16px;
-			height: 16px;
+			width: 18px;
+			height: 18px;
+			stroke: currentColor;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .header-actions) {
@@ -1008,7 +1010,7 @@
 			border: 1px solid rgba(255, 255, 255, 0.2);
 			background: rgba(255, 255, 255, 0.22) !important;
 			box-sizing: border-box;
-			color: #ffffff !important;
+			color: #1c1c1c !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
@@ -1020,13 +1022,13 @@
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
 			background: rgba(255, 255, 255, 0.3) !important;
-			color: #ffffff !important;
+			color: #1c1c1c !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
-			width: 16px !important;
-			height: 16px !important;
+			width: 18px !important;
+			height: 18px !important;
 		}
 	}
 </style>

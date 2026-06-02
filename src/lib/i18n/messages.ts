@@ -185,7 +185,7 @@ export const messages: Record<Locale, PublicMessages> = {
 			actionBand: {
 				buyBody: 'Available cars with clear origin and inspection before the deal.',
 				buyCta: 'View inventory',
-				buyTitle: 'Buy Available Cars',
+				buyTitle: 'Available Cars',
 				importBody: 'Selection, inspection, documents and delivery from Canada.',
 				importCta: 'See the process',
 				importTitle: 'Import From Canada'
@@ -331,7 +331,7 @@ export const messages: Record<Locale, PublicMessages> = {
 			actionBand: {
 				buyBody: 'Налични автомобили с ясен произход и оглед преди сделка.',
 				buyCta: 'Виж наличните',
-				buyTitle: 'Купи наличните',
+				buyTitle: 'Налични автомобили',
 				importBody: 'Подбор, проверка, документи и доставка от Канада.',
 				importCta: 'Виж процеса',
 				importTitle: 'Внос от Канада'
@@ -532,7 +532,14 @@ export const localizeCount = (locale: Locale, count: string) =>
 const auxeroBgReplacements: Array<[RegExp, string]> = [
 	// Inventory + detail template strings. Multi-word/compound phrases are listed
 	// before the generic single-word rules below (e.g. /Price/) so they match first.
-	[/Showing (\d+)\s*[-–]\s*(\d+) of (\d+)(?: Bohemcars)? Listings/g, 'Показани $1 – $2 от $3 обяви'],
+	[
+		/Showing (\d+)\s*[-–]\s*(\d+) of (\d+) matching(?: Bohemcars)? Listings/g,
+		'Показани $1 – $2 от $3 съвпадащи обяви'
+	],
+	[
+		/Showing (\d+)\s*[-–]\s*(\d+) of (\d+)(?: Bohemcars)? Listings/g,
+		'Показани $1 – $2 от $3 обяви'
+	],
 	[/Showing 0 of (\d+)(?: Bohemcars)? Listings/g, 'Показани 0 от $1 обяви'],
 	// Inventory banner + searchbar
 	[/Bohemcars current stock/gi, 'Налични автомобили в Bohemcars'],
@@ -641,7 +648,10 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Registration readiness discussion/g, 'Разговор за регистрация'],
 	[/Mechanical inspection can be arranged/g, 'Може да се организира технически преглед'],
 	[/Engine details on request/g, 'Детайли за двигателя по запитване'],
-	[/Inventory refreshed from Bohemcars source data/g, 'Наличността е обновена от данните на Bohemcars'],
+	[
+		/Inventory refreshed from Bohemcars source data/g,
+		'Наличността е обновена от данните на Bohemcars'
+	],
 	[/Inventory refreshed/g, 'Наличността е обновена'],
 	[/Verified source listing/g, 'Проверена обява от източника'],
 	[/History review available/g, 'Налична е история'],
@@ -649,6 +659,7 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Vehicle viewings by appointment/g, 'Огледите се потвърждават предварително'],
 	[/Registration and documents/g, 'Регистрация и документи'],
 	[/Viewing appointment/g, 'Оглед по уговорка'],
+	[/Bohemcars Consultants/g, 'Консултанти на Bohemcars'],
 	[/Bohemcars Consultant/g, 'Консултант на Bohemcars'],
 	[/Bohemcars Sales/g, 'Продажби Bohemcars'],
 	[/Call Bohemcars/g, 'Обади се на Bohemcars'],
@@ -658,6 +669,7 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/\bComfort\b/g, 'Комфорт'],
 	[/\bHistory\b/g, 'История'],
 	[/\bSpecs\b/g, 'Спецификации'],
+	[/Role Access Notes/g, 'Бележки за достъп по роли'],
 	[/\bNotes\b/g, 'Бележки'],
 	[/\bSearch\b/g, 'Търсене'],
 	[/\bHome\b/g, 'Начало'],

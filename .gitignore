@@ -29,5 +29,11 @@ playwright-report
 
 # Local audit artifacts
 *.audit.png
+.audit/
+.codex-review-screens/
+.playwright-mcp/
+tmp/
 tmp-vite*.log
+.tmp-*.log
+.tmp-*.png
 .tmp-dev-*.log

@@ -9,3 +9,13 @@ bun.lockb
 /static/
 /.template-ref/
 PROJECT_PLAN.md
+
+# Local audit artifacts
+/.audit/
+/.codex-review-screens/
+/.playwright-mcp/
+/tmp/
+*.audit.png
+tmp-vite*.log
+.tmp-*.log
+.tmp-*.png
