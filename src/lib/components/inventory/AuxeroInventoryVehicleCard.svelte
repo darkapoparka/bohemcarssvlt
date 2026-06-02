@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
-	import { bohemcarsContact } from '$lib/data/bohemcars';
+	import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 	import { getMessages, type VehicleCardCopy } from '$lib/i18n/messages';
 
 	let {
@@ -13,6 +13,16 @@
 		copy?: VehicleCardCopy;
 		variant?: 'grid' | 'list';
 	} = $props();
+
+	const handleCardImageError = (event: Event) => {
+		const image = event.currentTarget;
+
+		if (!(image instanceof HTMLImageElement) || image.src.endsWith(bohemcarsAssets.hero)) {
+			return;
+		}
+
+		image.src = bohemcarsAssets.hero;
+	};
 </script>
 
 {#if variant === 'list'}
@@ -49,7 +59,7 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} />
+				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
 			</a>
 		</div>
 		<div class="content">
@@ -102,7 +112,7 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} />
+				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
 			</a>
 		</div>
 		<div class="content border-light border-top-none">
@@ -258,6 +268,22 @@
 		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
+	}
+
+	.card-box-style-1 .image {
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+	}
+
+	.card-box-style-1 .image a,
+	.card-box-style-1 .image img {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.card-box-style-1 .image img {
+		object-fit: cover;
 	}
 
 	.bohemcars-card-specs {

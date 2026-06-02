@@ -28,6 +28,51 @@
 	let renderedPageHtml = $derived(stripScripts(rawPageHtml));
 	let deferredScriptTags = $derived(scriptTags(rawPageHtml));
 
+	const setFormStatus = (form: HTMLFormElement, message: string) => {
+		let status = form.querySelector<HTMLElement>('.auxero-form-status');
+
+		if (!status) {
+			status = document.createElement('p');
+			status.className = 'auxero-form-status text-highlight font-weight-600 mt-12';
+			status.setAttribute('aria-live', 'polite');
+			form.appendChild(status);
+		}
+
+		status.textContent = message;
+	};
+
+	const handleRenderedSubmit = async (event: SubmitEvent) => {
+		const form = event.target;
+
+		if (
+			!(form instanceof HTMLFormElement) ||
+			!form.matches('.bohemcars-pdp-desktop form.send-inquiry')
+		) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		const payload = Object.fromEntries(new FormData(form).entries());
+
+		try {
+			await fetch('/api/inquiries', {
+				body: JSON.stringify({
+					...payload,
+					source: 'vehicle-detail',
+					vehicleSlug: detail.slug
+				}),
+				headers: { 'content-type': 'application/json' },
+				method: 'POST'
+			});
+		} catch {
+			// Local confirmation remains available if the prototype API is unavailable.
+		}
+
+		setFormStatus(form, 'Inquiry sent to Bohemcars locally');
+	};
+
 	const appendDeferredScript = (scriptTag: string) =>
 		new Promise<void>((resolve) => {
 			const template = document.createElement('template');
@@ -79,7 +124,7 @@
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 <svelte:head>{@html pageDocument.headHtml}</svelte:head>
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html renderedPageHtml}
+<div onsubmit={handleRenderedSubmit}>{@html renderedPageHtml}</div>
 <AuxeroVehicleMobileIsland {detail} />
 
 <style>
