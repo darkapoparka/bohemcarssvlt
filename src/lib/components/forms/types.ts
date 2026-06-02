@@ -13,6 +13,7 @@ export type InquiryInputField = InquiryFieldBase & {
 	placeholder?: string;
 	required?: boolean;
 	type: InquiryInputType;
+	value?: string;
 };
 
 export type InquirySelectField = InquiryFieldBase & {

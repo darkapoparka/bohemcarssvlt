@@ -12,6 +12,7 @@
 	const garage = new GarageState();
 	setGarageContext(garage);
 	let isAuxeroFullPage = $derived(Boolean(page.data.auxeroFullPage));
+	let isInventoryDetailPage = $derived(/^\/inventory\/[^/]+\/?$/.test(page.url.pathname));
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -23,4 +24,6 @@
 	<SiteFooter />
 	<ScrollTop />
 {/if}
-<MobileBottomNav pathname={page.url.pathname} />
+{#if !isInventoryDetailPage}
+	<MobileBottomNav pathname={page.url.pathname} />
+{/if}

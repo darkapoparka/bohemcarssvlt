@@ -1237,6 +1237,20 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 		bohemcarsConsultants.find((agent) => agent.slug === vehicle.agentSlug) ??
 		bohemcarsConsultants[0];
 	let next = html
+		// Lead with the actual price, not the financing estimate: make the Cash tab
+		// active by default so the headline shows the car price; Finance is one tab away.
+		.replace(
+			/<li>Cash<\/li>\s*<li class="active">Finance<\/li>/,
+			'<li class="active">Cash</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>Finance</li>'
+		)
+		.replace(
+			/<div class="content-inner">(\s*<p class="h5 mb-4">Price:<\/p>\s*<p class="h4 mb-4">\$44\.900)/,
+			'<div class="content-inner active">$1'
+		)
+		.replace(
+			/<div class="content-inner active">(\s*<p class="h5 mb-4">Price:<\/p>\s*<p class="h4 mb-4">\$245\/mo)/,
+			'<div class="content-inner">$1'
+		)
 		.replaceAll('Audi A6 Avant e-tron', escapeHtml(vehicle.title))
 		.replaceAll('Audi A6 Avant E-Tron', escapeHtml(vehicle.title))
 		.replace(

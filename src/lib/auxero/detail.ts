@@ -20,6 +20,22 @@ export type AuxeroVehicleDetailFeatureTab = {
 	label: string;
 };
 
+export type AuxeroVehicleDetailDrawerTabId = 'info' | 'specs' | 'features' | 'images' | 'contact';
+
+export type AuxeroVehicleDetailDrawerTab = {
+	id: AuxeroVehicleDetailDrawerTabId;
+	label: string;
+};
+
+export type AuxeroVehicleDetailMobileDrawer = {
+	backLabel: string;
+	closeLabel: string;
+	copiedLabel: string;
+	photoLabel: string;
+	shareLabel: string;
+	tabs: AuxeroVehicleDetailDrawerTab[];
+};
+
 export type AuxeroVehicleDetailConsultant = {
 	image: string;
 	name: string;
@@ -43,6 +59,8 @@ export type AuxeroVehicleDetailData = {
 	featureTabs: AuxeroVehicleDetailFeatureTab[];
 	galleryImages: string[];
 	image: string;
+	imageFallback: string;
+	mobileDrawer: AuxeroVehicleDetailMobileDrawer;
 	monthlyLabel: string;
 	overviewItems: AuxeroVehicleDetailOverviewItem[];
 	priceBgn: string;
@@ -51,7 +69,31 @@ export type AuxeroVehicleDetailData = {
 	title: string;
 };
 
-const galleryImageCount = 7;
+const vehicleImageOverrides: Record<string, string> = {
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
+};
+
+const vehicleImageFallback = (vehicle: Vehicle): string => {
+	const normalizedTitle = vehicle.title.toLowerCase();
+
+	if (normalizedTitle.includes('x5')) {
+		return '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png';
+	}
+
+	if (normalizedTitle.includes('x4')) {
+		return '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png';
+	}
+
+	if (normalizedTitle.includes('sq5')) {
+		return '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png';
+	}
+
+	if (normalizedTitle.includes('a7')) {
+		return '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png';
+	}
+
+	return '/assets/images/inner-page/slide-listing-details-1.jpg';
+};
 
 const detailFeatureTabs = (
 	vehicle: Vehicle,
@@ -111,6 +153,30 @@ const detailFeatureTabs = (
 	];
 };
 
+const mobileDrawer = (locale: Locale = 'en'): AuxeroVehicleDetailMobileDrawer => ({
+	backLabel: locale === 'bg' ? 'Назад' : 'Back',
+	closeLabel: locale === 'bg' ? 'Затвори' : 'Close',
+	copiedLabel: locale === 'bg' ? 'Линкът е копиран' : 'Link copied',
+	photoLabel: locale === 'bg' ? 'Снимки' : 'Photos',
+	shareLabel: locale === 'bg' ? 'Сподели' : 'Share',
+	tabs:
+		locale === 'bg'
+			? [
+					{ id: 'info', label: 'Инфо' },
+					{ id: 'specs', label: 'Данни' },
+					{ id: 'features', label: 'Екстри' },
+					{ id: 'images', label: 'Снимки' },
+					{ id: 'contact', label: 'Контакт' }
+				]
+			: [
+					{ id: 'info', label: 'Info' },
+					{ id: 'specs', label: 'Specs' },
+					{ id: 'features', label: 'Features' },
+					{ id: 'images', label: 'Images' },
+					{ id: 'contact', label: 'Contact' }
+				]
+});
+
 const overviewItems = (
 	vehicle: Vehicle,
 	locale: Locale = 'en'
@@ -163,6 +229,11 @@ export const vehicleDetailFromVehicle = (
 		bohemcarsConsultants.find((agent) => agent.slug === vehicle.agentSlug) ??
 		bohemcarsConsultants[0];
 	const copy = getMessages(locale).detail;
+	const fallbackImage = vehicleImageFallback(vehicle);
+	const primaryImage = vehicleImageOverrides[vehicle.slug] ?? vehicle.image;
+	const galleryImages = Array.from(
+		new Set([primaryImage, ...vehicle.gallery, ...vehicle.images].filter(Boolean))
+	);
 
 	return {
 		consultant: {
@@ -183,8 +254,10 @@ export const vehicleDetailFromVehicle = (
 			localizeVehicleTermsInText(locale, vehicle.description) ||
 			`${vehicle.title} ${copy.detailDescriptionFallback}`,
 		featureTabs: detailFeatureTabs(vehicle, locale),
-		galleryImages: Array.from({ length: galleryImageCount }, () => vehicle.image),
-		image: vehicle.image,
+		galleryImages,
+		image: primaryImage,
+		imageFallback: fallbackImage,
+		mobileDrawer: mobileDrawer(locale),
 		monthlyLabel: formatInventoryMonthly(vehicle.monthly, locale),
 		overviewItems: overviewItems(vehicle, locale),
 		priceBgn: vehicle.priceBgn || vehicle.condition,

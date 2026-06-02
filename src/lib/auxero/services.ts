@@ -34,6 +34,7 @@ export type AuxeroServiceInputField = {
 	placeholder?: string;
 	required?: boolean;
 	type: 'date' | 'email' | 'tel' | 'text';
+	value?: string;
 };
 
 export type AuxeroServiceFormData = {
@@ -166,3 +167,35 @@ export const serviceFormData: AuxeroServiceFormData = {
 		type: 'text'
 	}
 };
+
+export const importRequestSteps = [
+	{
+		title: 'Линк или VIN',
+		text: 'Изпрати конкретната обява, VIN или кратко описание на автомобила, който искаш да внесеш.'
+	},
+	{
+		title: 'Проверка',
+		text: 'Bohemcars преглежда история, снимки, продавач, пробег, оборудване и реалистични разходи.'
+	},
+	{
+		title: 'Следващ ход',
+		text: 'Получаваш практичен отговор: струва ли си, какъв е рискът и как продължава вносът.'
+	}
+] as const;
+
+export const importRequestFormData = (vehicle = ''): AuxeroServiceFormData => ({
+	...serviceFormData,
+	fields: serviceFormData.fields.map((field) =>
+		field.name === 'phone' ? { ...field, active: true, required: true } : { ...field }
+	),
+	serviceOptions: ['Внос от Канада', 'Проверка на обява'],
+	submitLabel: 'Изпрати за проверка',
+	title: 'Провери автомобил за внос',
+	vehicleField: {
+		...serviceFormData.vehicleField,
+		active: true,
+		placeholder: 'Линк към обява от Канада или VIN',
+		required: true,
+		value: vehicle
+	}
+});

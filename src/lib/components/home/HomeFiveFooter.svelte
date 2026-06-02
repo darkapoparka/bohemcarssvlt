@@ -3,6 +3,8 @@
 	import type { HomeFiveFooterData, HomeFiveFooterSocial } from '$lib/auxero/home-five';
 
 	let { footer }: { footer?: HomeFiveFooterData } = $props();
+
+	const externalHref = (href: string) => ({ href });
 </script>
 
 {#snippet submitArrow()}
@@ -41,6 +43,13 @@
 			/>
 			<path
 				d="M9.99988 5C7.23793 5 5 7.23818 5 9.99988C5 12.7606 7.23793 15.0002 9.99988 15.0002C12.761 15.0002 14.9998 12.7606 14.9998 9.99988C14.9998 7.23818 12.761 5 9.99988 5ZM9.99988 13.3335C8.15915 13.3335 6.66671 11.8411 6.66671 9.99988C6.66671 8.15866 8.15915 6.66671 9.99988 6.66671C11.8406 6.66671 13.333 8.15866 13.333 9.99988C13.333 11.8411 11.8406 13.3335 9.99988 13.3335Z"
+				fill="white"
+			/>
+		</svg>
+	{:else if icon === 'viber'}
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path
+				d="M12 2C6.5 2 2 5.8 2 10.5c0 2.6 1.4 4.9 3.5 6.5-.1 1-.5 2.3-1.2 3.2 1.5-.2 3-.8 4.2-1.7 1.1.3 2.3.5 3.5.5 5.5 0 10-3.8 10-8.5S17.5 2 12 2ZM8 11.7a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm4 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z"
 				fill="white"
 			/>
 		</svg>
@@ -132,7 +141,7 @@
 						<div class="footer-contact">
 							<div>
 								<p class="font-weight-500 mb-8 text-white">
-									<a href={resolve(footer.contact.phoneHref as '/')} class="h7 flex items-start">
+									<a {...externalHref(footer.contact.phoneHref)} class="h7 flex items-start">
 										{footer.contact.phoneLabel}
 									</a>
 								</p>
@@ -143,23 +152,17 @@
 								<ul class="widget-socical mb-12">
 									{#each footer.socialLinks as social (social.label)}
 										<li>
-											<a href={resolve(social.href as '/')} aria-label={social.label}>
+											<a
+												{...externalHref(social.href)}
+												target="_blank"
+												rel="noopener noreferrer"
+												aria-label={social.label}
+											>
 												{@render socialIcon(social.icon)}
 											</a>
 										</li>
 									{/each}
 								</ul>
-							</div>
-
-							<div>
-								<p class="font-weight-600 mb-16 text-sm text-white">{footer.labels.online}</p>
-								<div class="flex items-center gap-12">
-									{#each footer.appLinks as app (app.label)}
-										<a href={resolve(app.href as '/')}>
-											<img class="h-40" src={app.image} alt={app.label} />
-										</a>
-									{/each}
-								</div>
 							</div>
 						</div>
 					</div>
@@ -181,3 +184,81 @@
 		</div>
 	</footer>
 {/if}
+
+<style>
+	@media (max-width: 767px) {
+		.footer :global(.footer-top) {
+			padding-top: 44px !important;
+			padding-bottom: 38px !important;
+		}
+
+		.footer :global(.logo) {
+			height: 48px;
+			margin-bottom: 24px;
+		}
+
+		.footer :global(.footer-top-inner) {
+			margin-bottom: 24px;
+		}
+
+		.footer :global(.form-footer) {
+			margin-top: 4px;
+		}
+
+		.footer :global(.footer-links) {
+			gap: 0 !important;
+			margin-top: 20px;
+			margin-bottom: 22px;
+		}
+
+		.footer :global(.footer-links .collapse) {
+			border-top: 1px solid rgb(255 255 255 / 0.12);
+			padding: 14px 0;
+		}
+
+		.footer :global(.footer-links .collapse:last-child) {
+			border-bottom: 1px solid rgb(255 255 255 / 0.12);
+		}
+
+		.footer :global(.footer-contact) {
+			margin-top: 4px;
+		}
+
+		.footer :global(.widget-socical) {
+			gap: 10px;
+			margin-top: 16px;
+		}
+
+		.footer :global(.widget-socical li:not(:last-child)) {
+			margin-bottom: 0;
+		}
+
+		.footer :global(.widget-socical li a) {
+			border-color: rgb(255 255 255 / 0.24);
+			background: rgb(255 255 255 / 0.06);
+		}
+
+		.footer :global(.widget-socical li a svg) {
+			width: 18px;
+			height: 18px;
+		}
+
+		.footer :global(.widget-socical li a svg path) {
+			fill: #ffffff;
+		}
+
+		.footer :global(.footer-bottom) {
+			padding: 18px 0 22px !important;
+		}
+
+		.footer :global(.footer-bottom .md-flex-col) {
+			gap: 8px;
+		}
+
+		.footer :global(.footer-bottom-links) {
+			flex-wrap: wrap;
+			justify-content: center;
+			row-gap: 4px;
+		}
+	}
+</style>

@@ -58,16 +58,6 @@
 					{vehicle.brand}
 				</a>
 			</p>
-			<div class="flex items-center gap-8">
-				<p class="category text-white uppercase">
-					<img src="/assets/icons/picture.svg" alt={copy.photosAlt} />
-					{vehicle.photoCount}
-				</p>
-				<p class="category text-white uppercase">
-					<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
-					0
-				</p>
-			</div>
 		</div>
 		<p class="card-box__title h6 mb-8">
 			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}>{vehicle.title}</a>

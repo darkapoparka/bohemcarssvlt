@@ -30,7 +30,7 @@
 			title: 'Автомобили',
 			links: [
 				{ href: '/inventory', label: 'Всички коли', icon: Car },
-				{ href: '/services', label: 'Внос от Канада', icon: Wrench },
+				{ href: '/import', label: 'Внос от Канада', icon: Wrench },
 				{ href: '/compare', label: 'Сравни автомобили', icon: GitCompare },
 				{ href: '/calculator', label: 'Калкулатор за внос', icon: Calculator }
 			]
@@ -176,9 +176,9 @@
 			z-index: 999;
 			display: block;
 			padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-			background: rgba(255, 255, 255, 0.94);
-			border-top: 0;
-			box-shadow: 0 -10px 24px rgba(28, 28, 28, 0.1);
+			background: rgba(255, 255, 255, 0.95);
+			border-top: 1px solid rgba(28, 28, 28, 0.07);
+			box-shadow: 0 -10px 24px rgba(28, 28, 28, 0.08);
 			backdrop-filter: blur(16px);
 		}
 
@@ -214,8 +214,8 @@
 		.mobile-bottom-nav a:focus-visible,
 		.mobile-bottom-nav__menu-trigger:focus-visible,
 		#mobile-bottom-menu-toggle:checked ~ .mobile-bottom-nav .mobile-bottom-nav__menu-trigger {
-			background: #edf2e8;
-			color: #86aa1f;
+			background: #e9f1da;
+			color: #4f7012;
 			outline: 0;
 		}
 

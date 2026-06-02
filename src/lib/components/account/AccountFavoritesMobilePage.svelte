@@ -210,9 +210,9 @@
 		align-items: center;
 		gap: 7px;
 		flex: 0 0 auto;
-		border-radius: 8px;
+		border-radius: 999px;
 		background: #d9f275;
-		padding: 0 12px;
+		padding: 0 16px;
 		color: #111111;
 		font-size: 14px;
 		font-weight: 900;
@@ -227,9 +227,9 @@
 		align-items: center;
 		gap: 10px;
 		border: 1px solid rgba(255, 255, 255, 0.24);
-		border-radius: 12px;
+		border-radius: 999px;
 		background: rgba(255, 255, 255, 0.94);
-		padding: 0 7px 0 14px;
+		padding: 0 8px 0 18px;
 		color: #111111;
 		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
 	}
@@ -265,7 +265,7 @@
 		justify-content: center;
 		flex: 0 0 38px;
 		border: 0;
-		border-radius: 9px;
+		border-radius: 999px;
 		background: #eef1f5;
 		color: #111111;
 		padding: 0;

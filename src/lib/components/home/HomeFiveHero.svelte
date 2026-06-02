@@ -21,24 +21,42 @@
 	const inventoryFilterHref = (name: string, value: string) =>
 		`/inventory?${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 	const isEnglish = $derived(hero?.searchSubmitPrefix === 'Show');
+	const activeMode = $derived(hero?.activeMode ?? 'buy');
+	const activeAction = $derived.by(
+		() => hero?.actions.find((action) => action.mode === activeMode) ?? hero?.actions[0]
+	);
+	const activeActionHref = $derived(activeAction?.actionHref ?? '/inventory');
+	const activeSubmitLabel = $derived(
+		activeAction?.mode === 'buy' && hero
+			? `${hero.searchSubmitPrefix} ${hero.totalMatches} ${hero.searchSubmitSuffix}`
+			: (activeAction?.submitLabel ?? '')
+	);
+	const isInventoryMode = $derived(activeAction?.mode === 'buy');
 	const mobileSearchPlaceholder = $derived(
-		isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...'
+		activeAction?.placeholder ??
+			(isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...')
 	);
-	const mobileHeading = $derived(isEnglish ? 'Find your car.' : 'Намери автомобила си.');
-	const mobileSearchDrawerTitle = $derived(isEnglish ? 'Find a car' : 'Намери автомобил');
-	const mobileSearchDrawerKicker = $derived(isEnglish ? 'Search' : 'Търсене');
+	const mobileHeading = $derived(
+		activeAction?.mobileHeading ?? (isEnglish ? 'Find your car.' : 'Намери автомобила си.')
+	);
+	const mobileSearchDrawerTitle = $derived(
+		activeAction?.drawerTitle ?? (isEnglish ? 'Find a car' : 'Намери автомобил')
+	);
+	const mobileSearchDrawerKicker = $derived(
+		activeAction?.drawerKicker ?? (isEnglish ? 'Search' : 'Търсене')
+	);
 	const mobileSearchDrawerClose = $derived(isEnglish ? 'Close search' : 'Затвори търсенето');
-	const mobileLocationLabel = $derived(isEnglish ? 'Showroom: Plovdiv' : 'Шоурум: Пловдив');
 	const mobileAllLabel = $derived(
-		isEnglish
-			? `browse all ${hero?.totalMatches ?? 0} cars`
-			: `разгледай всички ${hero?.totalMatches ?? 0} автомобила`
+		activeAction?.secondaryLabel ?? (isEnglish ? 'Browse all' : 'Разгледай всички')
 	);
-	const mobileActionTabs = $derived.by(() => [
-		{ active: true, href: '/inventory', label: isEnglish ? 'Buy' : 'Купи' },
-		{ active: false, href: '/services', label: isEnglish ? 'Import' : 'Внос' },
-		{ active: false, href: '/sell-your-car', label: isEnglish ? 'Sell' : 'Продай' }
-	]);
+	// In buy mode show the live inventory count ("Всички 340 коли") as the browse
+	// affordance — mirrors the count pill that makes the sibling builds scan faster.
+	const mobileAllCount = $derived(
+		isInventoryMode && hero
+			? `${isEnglish ? 'All' : 'Всички'} ${hero.totalMatches} ${hero.searchSubmitSuffix}`
+			: mobileAllLabel
+	);
+	const mobileActionTabs = $derived.by(() => hero?.actions ?? []);
 	const mobileQuickFilters = $derived.by(() => {
 		const bodyTypes =
 			hero?.primaryFilters
@@ -60,9 +78,10 @@
 		return [...bodyTypes, ...fuels].slice(0, 4);
 	});
 
-	// Respect prefers-reduced-motion: halt the auto-rotating hero carousel.
+	// The hero reads as a single static block — the three intents live in the
+	// Купи/Внос/Продай tabs below, so we halt the template's auto-rotating slider
+	// (and the nav arrows are removed from the markup).
 	onMount(() => {
-		if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		let tries = 0;
 		const timer = setInterval(() => {
 			tries += 1;
@@ -112,9 +131,9 @@
 {#if hero}
 	<form
 		class="bohemcars-mobile-home"
-		action={resolve('/inventory')}
+		action={resolve(activeActionHref)}
 		method="get"
-		data-bohemcars-search-form="inventory"
+		data-bohemcars-search-form={activeAction?.mode ?? 'buy'}
 	>
 		<input
 			id="bohemcars-mobile-location-toggle"
@@ -132,47 +151,46 @@
 			<div class="container">
 				<div class="bohemcars-mobile-hero__copy">
 					<h1>{mobileHeading}</h1>
-					<label
-						for="bohemcars-mobile-location-toggle"
-						class="bohemcars-mobile-hero__location"
-						aria-haspopup="dialog"
-						aria-controls="bohemcars-mobile-location-panel"
-					>
-						<MapPin size={15} strokeWidth={2.25} aria-hidden="true" />
-						{mobileLocationLabel}
-					</label>
 				</div>
 
-				<nav class="bohemcars-mobile-hero__tabs" aria-label={hero.heading}>
-					{#each mobileActionTabs as tab (tab.href)}
-						<a class:active={tab.active} href={resolve(tab.href as '/')}>{tab.label}</a>
-					{/each}
-				</nav>
+				<div class="bohemcars-mobile-hero__search-module">
+					<nav class="bohemcars-mobile-hero__tabs" aria-label={hero.heading}>
+						{#each mobileActionTabs as tab (tab.mode)}
+							<a
+								class:active={tab.mode === activeMode}
+								href={resolve(tab.tabHref)}
+								aria-current={tab.mode === activeMode ? 'page' : undefined}
+							>
+								{tab.label}
+							</a>
+						{/each}
+					</nav>
 
-				<div class="bohemcars-mobile-hero__search">
-					<label
-						class="bohemcars-mobile-hero__search-label"
-						for={mobileSearchToggleId}
-						aria-haspopup="dialog"
-						aria-controls="bohemcars-mobile-search-panel"
-					>
-						<Search size={22} strokeWidth={2.15} aria-hidden="true" />
-						<span>{mobileSearchPlaceholder}</span>
-					</label>
-					<label
-						class="bohemcars-mobile-hero__search-action"
-						for={mobileSearchToggleId}
-						aria-label={hero.searchSubmitPrefix}
-						aria-controls="bohemcars-mobile-search-panel"
-					>
-						<Search size={23} strokeWidth={2.25} aria-hidden="true" />
-					</label>
+					<div class="bohemcars-mobile-hero__search">
+						<label
+							class="bohemcars-mobile-hero__search-label"
+							for={mobileSearchToggleId}
+							aria-haspopup="dialog"
+							aria-controls="bohemcars-mobile-search-panel"
+						>
+							<Search size={22} strokeWidth={2.15} aria-hidden="true" />
+							<span>{mobileSearchPlaceholder}</span>
+						</label>
+						<label
+							class="bohemcars-mobile-hero__search-action"
+							for={mobileSearchToggleId}
+							aria-label={hero.searchSubmitPrefix}
+							aria-controls="bohemcars-mobile-search-panel"
+						>
+							<Search size={23} strokeWidth={2.25} aria-hidden="true" />
+						</label>
+					</div>
 				</div>
 
 				<div class="bohemcars-mobile-hero__all-row">
 					<a class="bohemcars-mobile-hero__all" href={resolve('/inventory')}>
-						<span>{mobileAllLabel}</span>
-						<ArrowRight size={18} strokeWidth={2.15} aria-hidden="true" />
+						<span>{mobileAllCount}</span>
+						<ArrowRight size={16} strokeWidth={2.3} aria-hidden="true" />
 					</a>
 				</div>
 			</div>
@@ -267,120 +285,107 @@
 				<div class="bohemcars-mobile-search-sheet__field">
 					<Search size={20} strokeWidth={2.15} aria-hidden="true" />
 					<input
-						name="q"
+						name={activeAction?.inputName ?? 'q'}
 						type="search"
 						placeholder={mobileSearchPlaceholder}
 						autocomplete="off"
+						required={!isInventoryMode}
 						aria-label={mobileSearchPlaceholder}
 					/>
 				</div>
-				{#each hero.primaryFilters.slice(0, 3) as select (select.id)}
+				{#if isInventoryMode}
+					{#each hero.primaryFilters.slice(0, 3) as select (select.id)}
+						<section class="bohemcars-mobile-search-sheet__group">
+							<p>{select.title}</p>
+							<div>
+								{#each select.options.slice(0, 8) as option (option.value)}
+									<a href={resolve(inventoryFilterHref(select.name, option.value) as '/inventory')}>
+										{option.label}
+									</a>
+								{/each}
+							</div>
+						</section>
+					{/each}
 					<section class="bohemcars-mobile-search-sheet__group">
-						<p>{select.title}</p>
+						<p>{isEnglish ? 'Fuel' : 'Гориво'}</p>
 						<div>
-							{#each select.options.slice(0, 8) as option (option.value)}
-								<a href={resolve(inventoryFilterHref(select.name, option.value) as '/inventory')}>
+							{#each hero.advancedFilters[0]?.options.slice(0, 6) ?? [] as option (option.value)}
+								<a href={resolve(inventoryFilterHref('fuel', option.value) as '/inventory')}>
 									{option.label}
 								</a>
 							{/each}
 						</div>
 					</section>
-				{/each}
-				<section class="bohemcars-mobile-search-sheet__group">
-					<p>{isEnglish ? 'Fuel' : 'Гориво'}</p>
-					<div>
-						{#each hero.advancedFilters[0]?.options.slice(0, 6) ?? [] as option (option.value)}
-							<a href={resolve(inventoryFilterHref('fuel', option.value) as '/inventory')}>
-								{option.label}
-							</a>
-						{/each}
-					</div>
-				</section>
+				{:else if activeAction}
+					<p class="bohemcars-mobile-search-sheet__hint">{activeAction.helper}</p>
+				{/if}
 				<div class="bohemcars-mobile-search-sheet__actions">
-					<a href={resolve('/inventory')}>{mobileAllLabel}</a>
+					<a href={resolve(activeAction?.secondaryHref ?? '/inventory')}>{mobileAllLabel}</a>
 					<button type="submit">
-						{hero.searchSubmitPrefix}
-						{hero.totalMatches}
-						{hero.searchSubmitSuffix}
+						{activeSubmitLabel}
 					</button>
 				</div>
 			</div>
 		</div>
 	</form>
 
-	<section class="bohemcars-mobile-home-quick" aria-label={hero.heading}>
-		<div class="container">
-			<nav class="bohemcars-mobile-home-quick__scroller">
-				<label
-					for={mobileSearchToggleId}
-					aria-haspopup="dialog"
-					aria-controls="bohemcars-mobile-search-panel"
-				>
-					<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
-					{isEnglish ? 'Filters' : 'Филтри'}
-				</label>
-				{#each mobileQuickFilters as filter (filter.href)}
-					<a href={resolve(filter.href as '/inventory')}>{filter.label}</a>
-				{/each}
-			</nav>
-		</div>
-	</section>
+	{#if isInventoryMode}
+		<section class="bohemcars-mobile-home-quick" aria-label={hero.heading}>
+			<div class="container">
+				<nav class="bohemcars-mobile-home-quick__scroller">
+					<label
+						for={mobileSearchToggleId}
+						aria-haspopup="dialog"
+						aria-controls="bohemcars-mobile-search-panel"
+					>
+						<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
+						{isEnglish ? 'Filters' : 'Филтри'}
+					</label>
+					{#each mobileQuickFilters as filter (filter.href)}
+						<a href={resolve(filter.href as '/inventory')}>{filter.label}</a>
+					{/each}
+				</nav>
+			</div>
+		</section>
+	{/if}
 
 	<form
 		class="bohemcars-desktop-hero"
-		action={resolve('/inventory')}
+		action={resolve(activeActionHref)}
 		method="get"
-		data-bohemcars-search-form="inventory"
+		data-bohemcars-search-form={activeAction?.mode ?? 'buy'}
 	>
 		<section class="page-title page-title-style-4 effect-content-slide effect-2 flex">
-			<button type="button" class="swiper-btn navigation-prev" aria-label="Предишен слайд">
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 20 20"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M13.9487 2.71258C14.2097 2.97026 14.2335 3.37348 14.0199 3.65762L13.9487 3.73903L7.60622 10L13.9487 16.261C14.2097 16.5186 14.2335 16.9219 14.0199 17.206L13.9487 17.2874C13.6877 17.5451 13.2792 17.5685 12.9913 17.3577L12.9088 17.2874L6.04609 10.5132C5.78505 10.2555 5.76132 9.85232 5.9749 9.56818L6.04609 9.48678L12.9088 2.71258C13.196 2.42914 13.6615 2.42914 13.9487 2.71258Z"
-						fill="white"
-					/>
-				</svg>
-			</button>
-			<button type="button" class="swiper-btn navigation-next" aria-label="Следващ слайд">
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 20 20"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M6.0513 17.2874C5.79025 17.0297 5.76652 16.6265 5.98011 16.3424L6.0513 16.261L12.3938 10L6.0513 3.73903C5.79025 3.48135 5.76652 3.07813 5.98011 2.79399L6.0513 2.71258C6.31235 2.45491 6.72084 2.43148 7.00869 2.64231L7.09116 2.71258L13.9539 9.48678C14.215 9.74446 14.2387 10.1477 14.0251 10.4318L13.9539 10.5132L7.09116 17.2874C6.80401 17.5709 6.33845 17.5709 6.0513 17.2874Z"
-						fill="white"
-					/>
-				</svg>
-			</button>
-
 			<div class="swiper-container page-title--slider sw-single">
 				<div class="swiper-wrapper">
-					{#each hero.backgroundImages as image (image)}
+					{#each hero.textSlides.slice(0, 1) as slide (slide.id)}
 						<div class="swiper-slide">
-							<div
-								class="tp-showcase-slider-bg"
-								data-background={image}
-								style={`background-image: url('${image}')`}
-							></div>
+							<div class="tp-showcase-slider-bg"></div>
 						</div>
 					{/each}
 				</div>
+			</div>
+
+			<div class="bohemcars-hero-cars" aria-hidden="true">
+				<img
+					class="bohemcars-hero-car bohemcars-hero-car--left"
+					src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png"
+					alt=""
+					loading="eager"
+				/>
+				<img
+					class="bohemcars-hero-car bohemcars-hero-car--right"
+					src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png"
+					alt=""
+					loading="eager"
+				/>
 			</div>
 
 			<!-- Search Cars Section -->
 			<div class="search-cars thumb effect-zoom-item container">
 				<div class="sw-single-thumb swiper">
 					<div class="swiper-wrapper">
-						{#each hero.textSlides as slide, index (slide.id)}
+						{#each hero.textSlides.slice(0, 1) as slide, index (slide.id)}
 							<div class="swiper-slide">
 								{#if index === 0}
 									<h1 class="search-cars__title effect-item effect-up text-center delay-3">
@@ -409,9 +414,14 @@
 				<div class="flat-tabs mb-16">
 					<div class="overflow-x-auto">
 						<ul class="menu-tab menu-tab-style1 margin-auto text-white">
-							{#each hero.tabs as tab (tab.label)}
-								<li class={tab.active ? 'active' : ''}>
-									<span class="font-weight-600 text-white">{tab.label}</span>
+							{#each hero.actions as tab (tab.mode)}
+								<li class={tab.mode === activeMode ? 'active' : ''}>
+									<a
+										href={resolve(tab.tabHref)}
+										aria-current={tab.mode === activeMode ? 'page' : undefined}
+									>
+										<span class="font-weight-600 text-white">{tab.label}</span>
+									</a>
 								</li>
 							{/each}
 						</ul>
@@ -420,25 +430,47 @@
 
 				<!-- Primary Search Filters -->
 				<div class="search-cars__filters">
-					{#each hero.primaryFilters as select (select.id)}
-						{@render heroSelect(select)}
-					{/each}
-					<div class="search-cars__filter" id="filterToggle">
-						<img src="/assets/icons/filter.svg" alt="Filter" />
-					</div>
-					<button
-						type="submit"
-						class="search-cars__search md-w-full flex items-center justify-center gap-8"
-					>
-						<img src="/assets/icons/search.svg" alt="search" />
-						{hero.searchSubmitPrefix}
-						{hero.totalMatches}
-						{hero.searchSubmitSuffix}
-					</button>
+					{#if isInventoryMode}
+						{#each hero.primaryFilters as select (select.id)}
+							{@render heroSelect(select)}
+						{/each}
+						<div class="search-cars__filter" id="filterToggle">
+							<img src="/assets/icons/filter.svg" alt="Filter" />
+						</div>
+						<button
+							type="submit"
+							class="search-cars__search md-w-full flex items-center justify-center gap-8"
+						>
+							<img src="/assets/icons/search.svg" alt="search" />
+							{activeSubmitLabel}
+						</button>
+					{:else}
+						<label class="search-cars__intent-field">
+							<span>{mobileSearchDrawerTitle}</span>
+							<input
+								name={activeAction?.inputName ?? 'vehicle'}
+								type="search"
+								placeholder={mobileSearchPlaceholder}
+								required
+								autocomplete="off"
+							/>
+						</label>
+						<button
+							type="submit"
+							class="search-cars__search search-cars__search--intent md-w-full flex items-center justify-center gap-8"
+						>
+							<img src="/assets/icons/search.svg" alt="search" />
+							{activeSubmitLabel}
+						</button>
+					{/if}
 				</div>
 
 				<!-- Advanced Filters Panel -->
-				<div class="search-cars__advanced" id="advancedFilters">
+				<div
+					class:search-cars__advanced--hidden={!isInventoryMode}
+					class="search-cars__advanced"
+					id="advancedFilters"
+				>
 					<div class="search-cars__advanced-content">
 						<div class="search-cars__advanced-row">
 							{#each hero.advancedFilters as select (select.id)}
@@ -488,19 +520,105 @@
 {/if}
 
 <style>
+	:global(.page-title.page-title-style-4) {
+		height: auto !important;
+		min-height: 0 !important;
+		align-items: center;
+		padding-top: 42px !important;
+		padding-bottom: 42px !important;
+		background:
+			radial-gradient(ellipse at 50% 111%, rgb(184 224 70 / 0.52) 0 18%, transparent 53%),
+			radial-gradient(circle at 50% 24%, rgb(255 255 255 / 0.13) 0 12%, transparent 41%),
+			linear-gradient(115deg, #10170f 0%, #1b2719 48%, #344521 100%);
+	}
+
+	/* Let the hero collapse to its real content height (the template swiper
+	   otherwise stretches it ~180px taller than the search module needs). */
+	:global(.page-title.page-title-style-4 .search-cars) {
+		height: auto !important;
+		min-height: 0 !important;
+		position: relative;
+		z-index: 7;
+	}
+
+	.bohemcars-hero-cars {
+		position: absolute;
+		inset: 0;
+		z-index: 4;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	.bohemcars-hero-cars::before {
+		position: absolute;
+		right: 4%;
+		bottom: 18px;
+		left: 4%;
+		height: 118px;
+		border-radius: 999px;
+		background: radial-gradient(ellipse at center, rgb(205 242 94 / 0.32), transparent 68%);
+		content: '';
+		filter: blur(2px);
+		opacity: 0.8;
+	}
+
+	.bohemcars-hero-car {
+		position: absolute;
+		top: 43%;
+		width: min(28vw, 438px);
+		height: auto;
+		user-select: none;
+		filter: drop-shadow(0 26px 24px rgb(0 0 0 / 0.38));
+		transform: translateY(-50%);
+	}
+
+	.bohemcars-hero-car--left {
+		left: 0.8%;
+	}
+
+	.bohemcars-hero-car--right {
+		right: 0.8%;
+		transform: translateY(-50%) scaleX(-1);
+	}
+
 	:global(.page-title.page-title-style-4 .tp-showcase-slider-bg::after) {
 		background:
-			linear-gradient(180deg, rgba(28, 28, 28, 0.08), rgba(28, 28, 28, 0.18)),
 			linear-gradient(
-				90deg,
-				rgba(28, 28, 28, 0.2),
-				rgba(28, 28, 28, 0.06) 50%,
-				rgba(28, 28, 28, 0.18)
-			);
+				180deg,
+				rgba(4, 7, 5, 0.1) 0%,
+				rgba(4, 7, 5, 0.02) 42%,
+				rgba(7, 13, 9, 0.34) 78%,
+				rgba(5, 9, 6, 0.54) 100%
+			),
+			linear-gradient(90deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.04) 50%, rgba(0, 0, 0, 0.38));
 	}
 
 	:global(.page-title.page-title-style-4 .tp-showcase-slider-bg) {
+		background:
+			linear-gradient(
+				160deg,
+				transparent 0 35%,
+				rgb(255 255 255 / 0.09) 35% 36%,
+				transparent 36% 100%
+			),
+			linear-gradient(
+				20deg,
+				transparent 0 59%,
+				rgb(255 255 255 / 0.1) 59% 60%,
+				transparent 60% 100%
+			) !important;
 		background-position: center bottom;
+	}
+
+	:global(.page-title.page-title-style-4 .search-cars__title),
+	:global(.page-title.page-title-style-4 .search-cars .h7),
+	:global(.page-title.page-title-style-4 .menu-tab-style1 .font-weight-600) {
+		color: #ffffff !important;
+		text-shadow: 0 4px 22px rgb(0 0 0 / 0.4);
+	}
+
+	:global(.page-title.page-title-style-4 .menu-tab-style1 a:focus-visible) {
+		outline-color: rgb(255 255 255 / 0.72);
 	}
 
 	/* Make the slider arrows discoverable over the light hero (was rgba white 0.1 = nearly invisible). */
@@ -525,6 +643,26 @@
 		padding-top: 4px;
 	}
 
+	@media (min-width: 768px) {
+		:global(.page-title.page-title-style-4 .flat-tabs) {
+			margin-top: clamp(38px, 4.2vw, 58px);
+		}
+
+		:global(.page-title.page-title-style-4 .search-cars__filters) {
+			padding: 15px 16px;
+			border-color: rgba(255, 255, 255, 0.14);
+			background: rgba(255, 255, 255, 0.14);
+			box-shadow: 0 20px 44px rgba(0, 0, 0, 0.18);
+			backdrop-filter: blur(10px);
+		}
+	}
+
+	@media (max-width: 1199px) {
+		.bohemcars-hero-car {
+			width: min(31vw, 380px);
+		}
+	}
+
 	:global(.page-title.page-title-style-4 .sw-single-thumb) {
 		overflow: hidden;
 	}
@@ -542,27 +680,27 @@
 	}
 
 	.search-cars__title {
-		font-size: clamp(44px, 4.1vw, 68px);
+		font-size: clamp(44px, 4vw, 64px);
 		font-weight: 600;
 		letter-spacing: 0;
 		line-height: 1.08;
-		margin-bottom: 16px;
-		text-shadow: 0 4px 20px rgba(12, 21, 23, 0.2);
+		margin-bottom: 14px;
+		text-shadow: 0 4px 22px rgba(0, 0, 0, 0.4);
 	}
 
 	.search-cars p:not(.search-cars__title) {
-		text-shadow: 0 2px 12px rgba(12, 21, 23, 0.18);
+		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.34);
 	}
 
 	.search-cars__slide-cta {
 		gap: 8px;
 		width: fit-content;
 		min-height: 42px;
-		margin: 18px auto 0;
+		margin: 16px auto 0;
 		padding: 11px 22px;
-		border: 1px solid rgba(255, 255, 255, 0.54);
+		border: 1px solid rgba(216, 242, 117, 0.82);
 		border-radius: 999px;
-		background: rgba(152, 188, 42, 0.92);
+		background: #98bc2a;
 		box-shadow: none;
 		backdrop-filter: blur(10px);
 		color: #ffffff;
@@ -597,6 +735,11 @@
 		stroke-width: 1.8;
 	}
 
+	:global(.page-title.page-title-style-4 .menu-tab-style1 a:focus-visible) {
+		outline: 2px solid rgba(255, 255, 255, 0.72);
+		outline-offset: 4px;
+	}
+
 	.search-cars__filters {
 		align-items: stretch;
 	}
@@ -607,6 +750,7 @@
 
 	.search-cars__select {
 		display: grid;
+		min-height: 62px;
 		align-content: center;
 		gap: 3px;
 		padding: 9px 38px 8px 12px;
@@ -629,6 +773,63 @@
 		line-height: 1.2;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.search-cars__intent-field {
+		display: grid;
+		min-width: min(520px, 100%);
+		flex: 1 1 auto;
+		align-content: center;
+		gap: 4px;
+		border-radius: 8px;
+		background: #ffffff;
+		padding: 9px 18px;
+	}
+
+	.search-cars__intent-field span {
+		color: #5f5f5f;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.15;
+	}
+
+	.search-cars__intent-field input {
+		width: 100%;
+		height: 25px;
+		border: 0 !important;
+		background: transparent !important;
+		box-shadow: none !important;
+		color: #1c1c1c;
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1.2;
+		outline: 0;
+		padding: 0 !important;
+	}
+
+	.search-cars__intent-field input::placeholder {
+		color: #858585;
+		opacity: 1;
+	}
+
+	.search-cars__search--intent {
+		min-width: 210px;
+	}
+
+	.search-cars__filter,
+	.search-cars__search {
+		height: 66px;
+	}
+
+	.search-cars__search {
+		width: 272px;
+		padding: 13px 16px;
+		font-size: 16px;
+		font-weight: 700;
+	}
+
+	.search-cars__advanced--hidden {
+		display: none !important;
 	}
 
 	@media (max-width: 575px) {
@@ -672,7 +873,7 @@
 		}
 
 		.bohemcars-mobile-hero {
-			padding: 20px 0 18px;
+			padding: 15px 0 13px;
 			background: #8fc51d;
 		}
 
@@ -687,60 +888,43 @@
 		.bohemcars-mobile-hero__copy {
 			display: grid;
 			justify-items: center;
-			margin-bottom: 14px;
+			margin-bottom: 10px;
 			text-align: center;
 		}
 
 		.bohemcars-mobile-hero__copy h1 {
-			margin: 0 0 5px;
+			margin: 0;
 			color: #ffffff;
-			font-size: 24px;
+			font-size: 23px;
 			font-weight: 800;
-			line-height: 31px;
+			line-height: 29px;
 			letter-spacing: 0;
 		}
 
-		.bohemcars-mobile-hero__location {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 5px;
-			border: 0;
-			background: transparent;
-			color: rgba(255, 255, 255, 0.92);
-			font-size: 14px;
-			font-weight: 800;
-			line-height: 20px;
+		.bohemcars-mobile-hero__search-module {
+			display: grid;
+			gap: 10px;
+			margin-bottom: 8px;
 			padding: 0;
-			cursor: pointer;
-			text-decoration: underline;
-			text-decoration-thickness: 1.5px;
-			text-underline-offset: 4px;
-		}
-
-		.bohemcars-mobile-hero__location :global(svg) {
-			flex: 0 0 auto;
-			color: currentColor;
-			stroke: currentColor;
 		}
 
 		.bohemcars-mobile-hero__tabs {
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			gap: 0;
-			height: 52px;
-			margin-bottom: 13px;
-			padding: 5px;
-			border-radius: 14px;
-			background: rgba(255, 255, 255, 0.23);
+			height: 37px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.32);
+			border-radius: 0;
+			background: transparent;
 		}
 
 		.bohemcars-mobile-hero__tabs a {
+			position: relative;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			border-radius: 9px;
-			color: #ffffff;
+			border-radius: 0;
+			color: rgba(255, 255, 255, 0.78);
 			font-size: 15px;
 			font-weight: 800;
 			line-height: 20px;
@@ -748,22 +932,43 @@
 		}
 
 		.bohemcars-mobile-hero__tabs a.active {
+			background: transparent;
+			color: #ffffff;
+			box-shadow: none;
+		}
+
+		.bohemcars-mobile-hero__tabs a::after {
+			position: absolute;
+			right: 14px;
+			bottom: -1px;
+			left: 14px;
+			height: 3px;
+			border-radius: 999px 999px 0 0;
+			background: transparent;
+			content: '';
+		}
+
+		.bohemcars-mobile-hero__tabs a.active::after,
+		.bohemcars-mobile-hero__tabs a:hover::after,
+		.bohemcars-mobile-hero__tabs a:focus-visible::after {
 			background: #ffffff;
-			color: #1c1c1c;
-			box-shadow: 0 8px 18px rgba(44, 85, 10, 0.1);
+		}
+
+		.bohemcars-mobile-hero__tabs a:focus-visible {
+			outline: 2px solid rgba(255, 255, 255, 0.72);
+			outline-offset: 3px;
 		}
 
 		.bohemcars-mobile-hero__search {
 			display: flex;
-			height: 62px;
+			height: 56px;
 			align-items: center;
 			gap: 10px;
-			margin-bottom: 13px;
-			padding: 7px 8px 7px 18px;
+			padding: 6px 6px 6px 20px;
 			border-radius: 999px;
 			background: #ffffff;
 			color: #1c1c1c;
-			box-shadow: none;
+			box-shadow: 0 8px 22px rgba(26, 42, 22, 0.14);
 		}
 
 		.bohemcars-mobile-hero__search :global(svg) {
@@ -787,20 +992,20 @@
 			min-width: 0;
 			overflow: hidden;
 			color: #8a8f86;
-			font-size: 16px;
+			font-size: 15px;
 			font-weight: 600;
-			line-height: 22px;
+			line-height: 20px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
 		.bohemcars-mobile-hero__search-action {
 			display: flex;
-			width: 48px;
-			height: 48px;
+			width: 44px;
+			height: 44px;
 			align-items: center;
 			justify-content: center;
-			flex: 0 0 48px;
+			flex: 0 0 44px;
 			border: 0 !important;
 			border-radius: 999px;
 			background: #6f9f0c;
@@ -808,6 +1013,7 @@
 			color: #ffffff;
 			cursor: pointer;
 			padding: 0;
+			transition: background-color 0.18s ease;
 		}
 
 		.bohemcars-mobile-hero__search-action:hover,
@@ -836,41 +1042,43 @@
 
 		.bohemcars-mobile-hero__all {
 			display: inline-flex;
-			min-height: 40px;
+			min-height: 34px;
 			min-width: 0;
 			align-items: center;
 			justify-content: center;
-			gap: 7px;
+			gap: 6px;
 			flex: 0 1 auto;
 			max-width: 100%;
 			border-radius: 999px;
-			background: rgba(255, 255, 255, 0.2);
-			padding: 0 12px;
+			background: rgba(255, 255, 255, 0.18);
+			padding: 0 15px;
 			color: #ffffff !important;
-			font-size: 15px;
+			font-size: 13px;
 			font-weight: 800;
-			line-height: 22px;
+			line-height: 20px;
 			text-decoration: none;
+			transition: background-color 0.18s ease;
 		}
 
 		.bohemcars-mobile-hero__all span {
 			min-width: 0;
 			overflow: hidden;
+			color: #ffffff;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
 		.bohemcars-mobile-hero__all:hover,
 		.bohemcars-mobile-hero__all:focus-visible {
-			background: #ffffff;
-			color: #1c1c1c !important;
+			background: rgba(255, 255, 255, 0.28);
+			color: #ffffff !important;
 			outline: 0;
 		}
 
 		.bohemcars-mobile-hero__all :global(svg) {
 			flex: 0 0 auto;
-			color: currentColor;
-			stroke: currentColor;
+			color: #ffffff;
+			stroke: #ffffff;
 		}
 
 		.bohemcars-mobile-location-sheet {
@@ -1301,6 +1509,17 @@
 			outline: 0;
 		}
 
+		.bohemcars-mobile-search-sheet__hint {
+			margin: 0;
+			border-radius: 12px;
+			background: #eef1f5;
+			padding: 12px 13px;
+			color: #4b5563;
+			font-size: 14px;
+			font-weight: 800;
+			line-height: 20px;
+		}
+
 		.bohemcars-mobile-search-sheet__actions {
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1333,13 +1552,13 @@
 
 		.bohemcars-mobile-home-quick {
 			background: #ffffff;
-			padding: 12px 0 14px;
+			padding: 8px 0 10px;
 			overflow: hidden;
 		}
 
 		.bohemcars-mobile-home-quick__scroller {
 			display: flex;
-			gap: 10px;
+			gap: 8px;
 			overflow-x: auto;
 			padding-bottom: 2px;
 			scrollbar-width: none;
@@ -1354,12 +1573,12 @@
 		.bohemcars-mobile-home-quick__scroller label {
 			display: inline-flex;
 			min-width: max-content;
-			height: 44px;
+			height: 40px;
 			align-items: center;
 			justify-content: center;
 			gap: 7px;
 			flex: 0 0 auto;
-			padding: 0 15px;
+			padding: 0 13px;
 			border-radius: 8px;
 			background: #f0f3ed;
 			color: #1c1c1c;
@@ -1389,22 +1608,36 @@
 			border-bottom: 0 !important;
 			background: #8fc51d !important;
 			box-shadow: none !important;
+			height: 56px !important;
+			min-height: 56px !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4) {
-			height: 64px !important;
-			min-height: 64px !important;
+			height: 56px !important;
+			min-height: 56px !important;
 			background: #8fc51d !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .header-container-fluid) {
 			background: #8fc51d !important;
+			height: 56px !important;
+			min-height: 56px !important;
+		}
+
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .header-inner) {
+			height: 56px !important;
+			min-height: 56px !important;
+		}
+
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .header-actions) {
+			top: 11px;
+			gap: 8px;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .logo a) {
 			display: flex;
 			width: 184px;
-			height: 38px;
+			height: 34px;
 			align-items: center;
 			background: none;
 		}
@@ -1417,7 +1650,24 @@
 			filter: brightness(0) invert(1) !important;
 		}
 
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call) {
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
+			width: 34px;
+			height: 34px;
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			background: rgba(255, 255, 255, 0.22);
+			box-sizing: border-box;
+			color: #ffffff;
+		}
+
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
+			width: 16px;
+			height: 16px;
+		}
+
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
 			background: rgba(255, 255, 255, 0.22);
 			color: #ffffff;
 		}
@@ -1425,6 +1675,10 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:focus-visible
+		),
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:hover),
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
 			background: rgba(255, 255, 255, 0.3);
 			color: #ffffff;

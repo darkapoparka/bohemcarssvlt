@@ -5,6 +5,7 @@ export const publicSitemapRoutes = [
 	'/inventory?view=map',
 	'/compare',
 	'/agents',
+	'/import',
 	'/services',
 	'/sell-your-car',
 	'/about',

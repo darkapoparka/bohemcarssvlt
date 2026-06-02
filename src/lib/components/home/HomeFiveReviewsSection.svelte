@@ -6,16 +6,13 @@
 
 	let { copy, reviews }: { copy: HomePageCopy; reviews: HomeFiveReview[] } = $props();
 
-	const stars = Array.from({ length: 5 }, (_, index) => index);
 	const reviewsHref = resolve('/reviews');
+	const isEnglish = $derived(copy.reviewsTitle === 'Client Reviews');
+	const starsLabel = $derived(isEnglish ? '5 out of 5 stars' : '5 от 5 звезди');
 	let duplicatedReviews = $derived([...reviews, ...reviews]);
-	let moreReviewsLabel = $derived(
-		copy.reviewsTitle === 'Client Reviews' ? 'View all reviews' : 'Виж всички отзиви'
-	);
+	let moreReviewsLabel = $derived(isEnglish ? 'View all reviews' : 'Виж всички отзиви');
 	let moreReviewsHint = $derived(
-		copy.reviewsTitle === 'Client Reviews'
-			? 'Read more client stories'
-			: 'Прочети още реални истории'
+		isEnglish ? 'Read more client stories' : 'Прочети още реални истории'
 	);
 </script>
 
@@ -32,11 +29,11 @@
 						{#each duplicatedReviews as review, index (`${review.name}-${index}`)}
 							<div class="swiper-slide" class:bohemcars-review-extra={index >= reviews.length}>
 								<a href={reviewsHref} class="testimonior-box">
-									<div class="bohemcars-review-stars mb-16 flex items-center gap-4">
-										{#each stars as star (star)}
-											<img src="/assets/icons/star.svg" alt="rating" />
-										{/each}
-									</div>
+									<div
+										class="bohemcars-review-stars mb-16"
+										role="img"
+										aria-label={starsLabel}
+									></div>
 									<p class="testimonior-box--desc mb-16">{review.text}</p>
 									<div class="testimonior-box--user">
 										<img class="testimonior--img" src={review.avatar} alt={review.name} />
@@ -66,6 +63,11 @@
 {/if}
 
 <style>
+	.bohemcars-home-reviews {
+		padding-top: 84px;
+		padding-bottom: 84px;
+	}
+
 	.bohemcars-reviews-panel {
 		background: #f6f7f3;
 		border-radius: 8px;
@@ -97,6 +99,19 @@
 
 	.bohemcars-home-reviews :global(.testimonior-box:hover) {
 		box-shadow: 0 8px 18px rgba(28, 28, 28, 0.04);
+	}
+
+	.bohemcars-review-stars {
+		position: relative;
+		min-height: 20px;
+	}
+
+	.bohemcars-review-stars::before {
+		content: '★★★★★';
+		color: #98bc2a;
+		font-size: 18px;
+		letter-spacing: 2px;
+		line-height: 20px;
 	}
 
 	.bohemcars-review-more-slide {
@@ -214,20 +229,13 @@
 		}
 
 		.bohemcars-review-stars {
-			position: relative;
 			min-height: 18px;
 		}
 
 		.bohemcars-review-stars::before {
-			content: '★★★★★';
-			color: #98bc2a;
 			font-size: 15px;
 			letter-spacing: 0;
 			line-height: 18px;
-		}
-
-		.bohemcars-review-stars :global(img) {
-			display: none;
 		}
 
 		.bohemcars-home-reviews :global(.testimonior-box--desc) {

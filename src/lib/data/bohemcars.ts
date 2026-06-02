@@ -206,11 +206,7 @@ export const bohemcarsAssets = {
 	logoDark: '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
 	logoLight: '/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png',
 	hero: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
-	homeHeroSlides: [
-		'/assets/bohemcars/hero/home-hero-available-inventory-wow.webp',
-		'/assets/bohemcars/hero/home-hero-import-canada-wow.webp',
-		'/assets/bohemcars/hero/home-hero-sell-car-wow.webp'
-	],
+	homeHeroSlides: [],
 	footerImage: '/assets/bohemcars/footer-canada-request-v2.png'
 } as const;
 
@@ -241,7 +237,14 @@ export const mainNavigation = [
 	{
 		label: 'Services',
 		href: '/services',
-		matchPrefixes: ['/services', '/financing', '/calculator', '/sell-your-car', '/compare']
+		matchPrefixes: [
+			'/services',
+			'/import',
+			'/financing',
+			'/calculator',
+			'/sell-your-car',
+			'/compare'
+		]
 	},
 	{
 		label: 'About',

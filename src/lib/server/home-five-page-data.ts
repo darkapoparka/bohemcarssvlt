@@ -9,7 +9,8 @@ import {
 	homeFiveReviewItems,
 	homeFiveTypeCardsForLocale,
 	homeFiveVehicleCardsFromVehicles,
-	homeFiveVehiclePillsForLocale
+	homeFiveVehiclePillsForLocale,
+	resolveHomeFiveHeroActionMode
 } from '$lib/auxero/home-five';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
@@ -18,6 +19,7 @@ import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/au
 
 export const buildHomeFivePageData = ({ request, url }: { request: Request; url: URL }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
+	const activeHeroMode = resolveHomeFiveHeroActionMode(url.searchParams.get('intent'));
 	const messages = getMessages(locale);
 	const pageDocument = renderAuxeroPageDocument(
 		'home-05.html',
@@ -122,7 +124,7 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 			: [],
 		footer: footerSlot ? homeFiveFooterDataForLocale(locale) : undefined,
 		header: headerSlot ? homeFiveHeaderDataForLocale(locale) : undefined,
-		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles, locale) : undefined,
+		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles, locale, activeHeroMode) : undefined,
 		modals: modalSlot ? homeFiveModalsDataFromVehicles(vehicles, locale) : undefined,
 		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
 		pageDocument: {

@@ -28,6 +28,7 @@ export const productRouteSources: ProductRouteSource[] = [
 	{ route: '/agents/[slug]', source: 'sale-agents-details.html', notes: 'Consultant profile' },
 	{ route: '/admin/agents', source: 'sale-agents.html', notes: 'Admin agent management grid' },
 	{ route: '/sell-your-car', source: 'sell-your-car.html', notes: 'Sell-car intake' },
+	{ route: '/import', source: 'services-center.html', notes: 'Import link intake' },
 	{ route: '/services', source: 'services-center.html', notes: 'Services overview' },
 	{ route: '/contact', source: 'contact-us.html', notes: 'Contact page' },
 	{ route: '/account/*', source: 'dashboard.html', notes: 'Account dashboard family' },

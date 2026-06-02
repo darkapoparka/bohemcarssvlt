@@ -1,0 +1,1008 @@
+<script lang="ts">
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import type { AuxeroVehicleDetailData, AuxeroVehicleDetailDrawerTabId } from '$lib/auxero/detail';
+	import { ArrowLeft, Check, Heart, PhoneCall, Share2, X } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+	import { Drawer } from 'vaul-svelte';
+
+	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
+
+	const compareHref = resolve('/compare');
+	const favoritesHref = resolve('/account/favorites');
+	const drawerSnapPoints: (number | string)[] = [0.52, 0.9];
+
+	let activeTab = $state<AuxeroVehicleDetailDrawerTabId>('info');
+	let drawerOpen = $state(true);
+	let activeSnapPoint = $state<number | string | null>(0.52);
+	let selectedImageIndex = $state(0);
+	let shareStatus = $state('');
+	let viewerOpen = $state(false);
+
+	const heroGalleryImages = $derived(Array.from(new Set(detail.galleryImages)));
+	const heroImage = $derived(heroGalleryImages[selectedImageIndex] ?? detail.image);
+	const primaryFacts = $derived(detail.overviewItems.slice(0, 4));
+	const specItems = $derived(detail.overviewItems.slice(0, 10));
+	const featureGroups = $derived(detail.featureTabs.filter((tab) => tab.items.length > 0));
+	const contentTabs = $derived(
+		detail.mobileDrawer.tabs.filter((tab) => ['info', 'specs', 'features'].includes(tab.id))
+	);
+
+	const useFallbackImage = (event: Event) => {
+		const image = event.currentTarget as HTMLImageElement;
+
+		if (image.src !== detail.imageFallback) {
+			image.src = detail.imageFallback;
+		}
+	};
+
+	const goBack = () => {
+		if (browser && window.history.length > 1) {
+			window.history.back();
+			return;
+		}
+
+		goto(resolve('/inventory'));
+	};
+
+	const shareVehicle = async () => {
+		if (!browser) return;
+
+		const url = window.location.href;
+
+		try {
+			if (navigator.share) {
+				await navigator.share({
+					text: detail.description,
+					title: detail.title,
+					url
+				});
+				return;
+			}
+
+			await navigator.clipboard?.writeText(url);
+			shareStatus = detail.mobileDrawer.copiedLabel;
+			window.setTimeout(() => {
+				shareStatus = '';
+			}, 1800);
+		} catch (error) {
+			if (error instanceof DOMException && error.name === 'AbortError') return;
+		}
+	};
+
+	const callPrimaryPhone = () => {
+		if (!browser) return;
+
+		window.location.href = detail.contact.primaryPhoneHref;
+	};
+
+	const openImageViewer = (index: number) => {
+		selectedImageIndex = index;
+		viewerOpen = true;
+	};
+
+	const closeImageViewer = () => {
+		viewerOpen = false;
+	};
+
+	const handleWindowKeydown = (event: KeyboardEvent) => {
+		if (event.key === 'Escape' && viewerOpen) {
+			closeImageViewer();
+		}
+	};
+
+	onMount(() => {
+		activeSnapPoint = drawerSnapPoints[0];
+		drawerOpen = true;
+	});
+</script>
+
+<svelte:window onkeydown={handleWindowKeydown} />
+
+<svelte:head>
+	<style>
+		@media (max-width: 767.98px) {
+			html,
+			body {
+				background: #111111 !important;
+				height: 100dvh !important;
+				overflow: hidden !important;
+				padding-bottom: 0 !important;
+				scrollbar-width: none !important;
+				width: 100% !important;
+			}
+
+			html::-webkit-scrollbar,
+			body::-webkit-scrollbar {
+				display: none !important;
+			}
+
+			body header,
+			body.auxero-template-listing-details-3-html header,
+			body.auxero-template-listing-details-3-html .header,
+			body.auxero-template-listing-details-3-html .header-style-3,
+			body .mobile-bottom-nav,
+			body .progress-wrap,
+			body section.mb-22.background-light,
+			body .tf-spacing-style4 {
+				display: none !important;
+			}
+
+			body section.pb-100 {
+				padding-bottom: 0 !important;
+			}
+		}
+	</style>
+</svelte:head>
+
+<section
+	class="bohemcars-mobile-pdp"
+	data-mobile-pdp-root
+	aria-label={detail.title}
+	style:--drawer-resting-height="52dvh"
+>
+	<div class="bohemcars-mobile-pdp__hero" data-mobile-pdp-hero>
+		<button
+			type="button"
+			class="bohemcars-mobile-pdp__image-button"
+			aria-label={`${detail.mobileDrawer.photoLabel} ${selectedImageIndex + 1}`}
+			onclick={() => openImageViewer(selectedImageIndex)}
+		>
+			<img
+				class="bohemcars-mobile-pdp__image"
+				src={heroImage}
+				alt={detail.title}
+				onerror={useFallbackImage}
+			/>
+		</button>
+		<div class="bohemcars-mobile-pdp__shade"></div>
+
+		<div class="bohemcars-mobile-pdp__topbar" data-mobile-pdp-topbar>
+			<button type="button" aria-label={detail.mobileDrawer.backLabel} onclick={goBack}>
+				<ArrowLeft size={22} strokeWidth={2.35} aria-hidden="true" />
+			</button>
+
+			<div class="bohemcars-mobile-pdp__topbar-actions">
+				<button type="button" aria-label={detail.copy.callBohemcars} onclick={callPrimaryPhone}>
+					<PhoneCall size={20} strokeWidth={2.35} aria-hidden="true" />
+				</button>
+				<button type="button" aria-label={detail.mobileDrawer.shareLabel} onclick={shareVehicle}>
+					<Share2 size={21} strokeWidth={2.35} aria-hidden="true" />
+				</button>
+			</div>
+		</div>
+
+		{#if shareStatus}
+			<p class="bohemcars-mobile-pdp__toast" aria-live="polite">
+				<Check size={16} strokeWidth={2.4} aria-hidden="true" />
+				{shareStatus}
+			</p>
+		{/if}
+
+		{#if heroGalleryImages.length > 1}
+			<div class="bohemcars-mobile-pdp__hero-thumbs" aria-label={detail.mobileDrawer.photoLabel}>
+				{#each heroGalleryImages as image, index (image)}
+					<button
+						type="button"
+						class={selectedImageIndex === index ? 'active' : ''}
+						data-mobile-pdp-thumb
+						aria-current={selectedImageIndex === index ? 'true' : undefined}
+						aria-label={`${detail.mobileDrawer.photoLabel} ${index + 1}`}
+						onclick={() => {
+							selectedImageIndex = index;
+						}}
+					>
+						<img src={image} alt="" onerror={useFallbackImage} />
+					</button>
+				{/each}
+			</div>
+		{/if}
+	</div>
+
+	<Drawer.Root
+		bind:activeSnapPoint
+		bind:open={drawerOpen}
+		autoFocus={false}
+		direction="bottom"
+		dismissible={false}
+		handleOnly={true}
+		modal={false}
+		snapPoints={drawerSnapPoints}
+		snapToSequentialPoint={true}
+	>
+		<Drawer.Content class="bohemcars-mobile-pdp__drawer" data-mobile-pdp-drawer>
+			<Drawer.Handle class="bohemcars-mobile-pdp__handle" />
+
+			<div class="bohemcars-mobile-pdp__drawer-heading">
+				<div>
+					<p>{detail.priceLabel}</p>
+					<Drawer.Title>
+						<span class="bohemcars-mobile-pdp__drawer-title">{detail.title}</span>
+					</Drawer.Title>
+				</div>
+				<span>{detail.monthlyLabel}</span>
+			</div>
+
+			<div class="bohemcars-mobile-pdp__facts" aria-label={detail.copy.carOverview}>
+				{#each primaryFacts as item (item.label)}
+					<div>
+						<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
+						<span>{item.value}</span>
+					</div>
+				{/each}
+			</div>
+
+			<Drawer.Description>
+				<span class="bohemcars-mobile-pdp__drawer-description">{detail.description}</span>
+			</Drawer.Description>
+
+			<div class="bohemcars-mobile-pdp__tabs" aria-label={detail.copy.getToKnow} role="tablist">
+				{#each contentTabs as tab (tab.id)}
+					<button
+						type="button"
+						role="tab"
+						data-mobile-pdp-tab
+						class={['bohemcars-mobile-pdp__tab', activeTab === tab.id && 'active']}
+						aria-selected={activeTab === tab.id}
+						onclick={() => {
+							activeTab = tab.id;
+						}}
+					>
+						{tab.label}
+					</button>
+				{/each}
+			</div>
+
+			<div class="bohemcars-mobile-pdp__panel" role="tabpanel">
+				{#if activeTab === 'info'}
+					<div class="bohemcars-mobile-pdp__section">
+						<p class="bohemcars-mobile-pdp__eyebrow">{detail.copy.description}</p>
+						<p class="bohemcars-mobile-pdp__body-copy">{detail.description}</p>
+
+						<div class="bohemcars-mobile-pdp__finance">
+							<div>
+								<span>{detail.copy.cash}</span>
+								<strong>{detail.priceLabel}</strong>
+								<small>{detail.copy.priceIntro}</small>
+							</div>
+							<div>
+								<span>{detail.copy.finance}</span>
+								<strong>{detail.monthlyLabel}</strong>
+								<small>{detail.copy.financeTerms}</small>
+							</div>
+						</div>
+					</div>
+				{:else if activeTab === 'specs'}
+					<ul class="bohemcars-mobile-pdp__spec-list">
+						{#each specItems as item (item.label)}
+							<li>
+								<span>
+									<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
+									{item.label}
+								</span>
+								<strong>{item.value}</strong>
+							</li>
+						{/each}
+					</ul>
+				{:else if activeTab === 'features'}
+					<div class="bohemcars-mobile-pdp__feature-groups">
+						{#each featureGroups as group (group.label)}
+							<section>
+								<h2>{group.label}</h2>
+								<ul>
+									{#each group.items as feature, featureIndex (`${group.label}-${featureIndex}`)}
+										<li>
+											<Check size={16} strokeWidth={2.4} aria-hidden="true" />
+											{feature}
+										</li>
+									{/each}
+								</ul>
+							</section>
+						{/each}
+					</div>
+				{/if}
+			</div>
+
+			<div class="bohemcars-mobile-pdp__actions">
+				<a href={compareHref}>{detail.copy.compare}</a>
+				<a href={favoritesHref}>
+					<Heart size={18} strokeWidth={2.25} aria-hidden="true" />
+					{detail.copy.savePrefix}
+				</a>
+			</div>
+		</Drawer.Content>
+	</Drawer.Root>
+
+	{#if viewerOpen}
+		<div
+			class="bohemcars-mobile-pdp__viewer"
+			data-mobile-pdp-viewer
+			role="dialog"
+			aria-modal="true"
+			aria-label={detail.mobileDrawer.photoLabel}
+		>
+			<button
+				type="button"
+				class="bohemcars-mobile-pdp__viewer-close"
+				aria-label={detail.mobileDrawer.closeLabel}
+				onclick={closeImageViewer}
+			>
+				<X size={24} strokeWidth={2.35} aria-hidden="true" />
+			</button>
+
+			<p class="bohemcars-mobile-pdp__viewer-count">
+				{selectedImageIndex + 1} / {heroGalleryImages.length}
+			</p>
+
+			<div class="bohemcars-mobile-pdp__viewer-stage">
+				<img src={heroImage} alt={detail.title} onerror={useFallbackImage} />
+			</div>
+
+			<div class="bohemcars-mobile-pdp__viewer-thumbs" aria-label={detail.mobileDrawer.photoLabel}>
+				{#each heroGalleryImages as image, index (image)}
+					<button
+						type="button"
+						class={selectedImageIndex === index ? 'active' : ''}
+						aria-current={selectedImageIndex === index ? 'true' : undefined}
+						aria-label={`${detail.mobileDrawer.photoLabel} ${index + 1}`}
+						onclick={() => {
+							selectedImageIndex = index;
+						}}
+					>
+						<img src={image} alt="" onerror={useFallbackImage} />
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
+</section>
+
+<style>
+	.bohemcars-mobile-pdp {
+		display: none;
+	}
+
+	@media (max-width: 767.98px) {
+		.bohemcars-mobile-pdp {
+			position: fixed;
+			inset: 0;
+			z-index: 1000;
+			display: block;
+			width: 100%;
+			height: 100dvh;
+			max-height: 100dvh;
+			margin-left: 0;
+			overflow: hidden;
+			overscroll-behavior: none;
+			background: #f2f3ef;
+			color: #ffffff;
+			touch-action: manipulation;
+		}
+
+		.bohemcars-mobile-pdp__hero {
+			position: fixed;
+			top: 0;
+			right: 0;
+			left: 0;
+			z-index: 1001;
+			height: 58dvh;
+			min-height: 400px;
+			overflow: hidden;
+			background: #111111;
+		}
+
+		.bohemcars-mobile-pdp__image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+
+		.bohemcars-mobile-pdp__image-button {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: 0;
+			background: #111111;
+			cursor: zoom-in;
+			padding: 0;
+		}
+
+		.bohemcars-mobile-pdp__shade {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0) 18%);
+			pointer-events: none;
+		}
+
+		.bohemcars-mobile-pdp__topbar,
+		.bohemcars-mobile-pdp__toast {
+			position: absolute;
+			z-index: 1004;
+		}
+
+		.bohemcars-mobile-pdp__topbar {
+			top: calc(14px + env(safe-area-inset-top));
+			right: 14px;
+			left: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.bohemcars-mobile-pdp__topbar button {
+			display: flex;
+			width: 42px;
+			height: 42px;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.92);
+			color: #1c1c1c;
+			cursor: pointer;
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+		}
+
+		.bohemcars-mobile-pdp__topbar button:hover,
+		.bohemcars-mobile-pdp__topbar button:focus-visible {
+			background: #d9f275;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__topbar-actions {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.bohemcars-mobile-pdp__hero-thumbs {
+			position: absolute;
+			right: 14px;
+			bottom: 24px;
+			left: 14px;
+			z-index: 1003;
+			display: flex;
+			gap: 8px;
+			overflow-x: auto;
+			overflow-y: hidden;
+			padding-bottom: 2px;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.bohemcars-mobile-pdp__hero-thumbs::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-mobile-pdp__hero-thumbs button {
+			position: relative;
+			flex: 0 0 58px;
+			width: 58px;
+			height: 44px;
+			overflow: hidden;
+			border: 2px solid rgba(255, 255, 255, 0.72);
+			border-radius: 8px;
+			background: #ffffff;
+			cursor: pointer;
+			padding: 0;
+			box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+		}
+
+		.bohemcars-mobile-pdp__hero-thumbs button.active,
+		.bohemcars-mobile-pdp__hero-thumbs button:focus-visible {
+			border-color: #d9f275;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__hero-thumbs img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.bohemcars-mobile-pdp__facts {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			flex: 0 0 auto;
+			gap: 5px;
+			padding: 0 0 8px;
+		}
+
+		.bohemcars-mobile-pdp__facts div {
+			display: grid;
+			min-width: 0;
+			justify-items: center;
+			gap: 3px;
+			border-radius: 8px;
+			background: #f3f5f1;
+			color: #1c1c1c;
+			padding: 6px 3px 5px;
+		}
+
+		.bohemcars-mobile-pdp__facts img {
+			width: 17px;
+			height: 17px;
+			object-fit: contain;
+		}
+
+		.bohemcars-mobile-pdp__facts span {
+			max-width: 100%;
+			overflow: hidden;
+			font-size: 10.5px;
+			font-weight: 850;
+			line-height: 13px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp__toast {
+			right: 16px;
+			top: calc(66px + env(safe-area-inset-top));
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			margin: 0;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.92);
+			color: #1c1c1c;
+			padding: 8px 11px;
+			font-size: 12px;
+			font-weight: 900;
+			line-height: 16px;
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__drawer[data-vaul-drawer]) {
+			position: fixed;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 1002;
+			display: flex;
+			flex-direction: column;
+			height: 92dvh;
+			max-height: 92dvh;
+			overflow: hidden;
+			border: 0;
+			border-radius: 22px 22px 0 0;
+			background: #ffffff;
+			color: #1c1c1c;
+			box-shadow: 0 -20px 46px rgba(0, 0, 0, 0.22);
+			outline: 0;
+			padding: 7px 14px calc(12px + env(safe-area-inset-bottom));
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle) {
+			display: flex;
+			height: 14px;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle [data-vaul-handle-hitarea]) {
+			display: block;
+			width: 34px;
+			height: 3px;
+			border-radius: 999px;
+			background: #d7ddd5;
+		}
+
+		.bohemcars-mobile-pdp__drawer-heading {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 14px;
+			padding: 4px 0 10px;
+		}
+
+		.bohemcars-mobile-pdp__drawer-heading p,
+		.bohemcars-mobile-pdp__drawer-title {
+			margin: 0;
+			letter-spacing: 0;
+		}
+
+		.bohemcars-mobile-pdp__drawer-heading p {
+			margin-bottom: 3px;
+			color: #98bc2a;
+			font-size: 16px;
+			font-weight: 900;
+			line-height: 20px;
+		}
+
+		.bohemcars-mobile-pdp__drawer-title {
+			display: -webkit-box;
+			color: #1c1c1c;
+			overflow: hidden;
+			font-size: 20px;
+			font-weight: 900;
+			line-height: 24px;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+		}
+
+		.bohemcars-mobile-pdp__drawer-heading > span {
+			display: inline-flex;
+			min-height: 34px;
+			align-items: center;
+			flex: 0 0 auto;
+			border-radius: 8px;
+			background: #eef1f5;
+			color: #1c1c1c;
+			padding: 0 10px;
+			font-size: 12px;
+			font-weight: 900;
+			line-height: 15px;
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp__drawer-description {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp__tabs {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			align-items: center;
+			flex: 0 0 auto;
+			gap: 10px;
+			overflow: visible;
+			border-bottom: 1px solid #edf0ea;
+			padding: 2px 0 0;
+		}
+
+		.bohemcars-mobile-pdp__tab {
+			position: relative;
+			display: inline-flex;
+			width: 100%;
+			min-width: 0;
+			min-height: 40px;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			color: #1c1c1c;
+			cursor: pointer;
+			padding: 0 4px 12px;
+			font-size: 15px;
+			font-weight: 900;
+			line-height: 18px;
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp__tab.active,
+		.bohemcars-mobile-pdp__tab:hover,
+		.bohemcars-mobile-pdp__tab:focus-visible {
+			background: transparent;
+			color: #1c1c1c;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__tab::after {
+			position: absolute;
+			right: 8px;
+			bottom: -1px;
+			left: 8px;
+			height: 3px;
+			border-radius: 999px 999px 0 0;
+			background: transparent;
+			content: '';
+		}
+
+		.bohemcars-mobile-pdp__tab.active::after,
+		.bohemcars-mobile-pdp__tab:hover::after,
+		.bohemcars-mobile-pdp__tab:focus-visible::after {
+			background: #98bc2a;
+		}
+
+		.bohemcars-mobile-pdp__panel {
+			flex: 1 1 auto;
+			min-height: 0;
+			overflow-y: auto;
+			overflow-x: hidden;
+			overscroll-behavior: contain;
+			padding: 12px 0 12px;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.bohemcars-mobile-pdp__panel::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-mobile-pdp__section,
+		.bohemcars-mobile-pdp__feature-groups {
+			display: grid;
+			gap: 13px;
+		}
+
+		.bohemcars-mobile-pdp__eyebrow {
+			margin: 0;
+			color: #728093;
+			font-size: 12px;
+			font-weight: 900;
+			line-height: 16px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-mobile-pdp__body-copy {
+			margin: 0;
+			color: #5f6871;
+			font-size: 15px;
+			line-height: 24px;
+		}
+
+		.bohemcars-mobile-pdp__finance {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px;
+		}
+
+		.bohemcars-mobile-pdp__finance div,
+		.bohemcars-mobile-pdp__feature-groups section {
+			border-radius: 8px;
+			background: #f3f5f1;
+			padding: 12px;
+		}
+
+		.bohemcars-mobile-pdp__finance span,
+		.bohemcars-mobile-pdp__finance strong,
+		.bohemcars-mobile-pdp__finance small {
+			display: block;
+			min-width: 0;
+		}
+
+		.bohemcars-mobile-pdp__finance span {
+			color: #728093;
+			font-size: 12px;
+			font-weight: 900;
+			line-height: 16px;
+		}
+
+		.bohemcars-mobile-pdp__finance strong {
+			margin: 3px 0 5px;
+			font-size: 18px;
+			font-weight: 900;
+			line-height: 22px;
+		}
+
+		.bohemcars-mobile-pdp__finance small {
+			color: #5f6871;
+			font-size: 12px;
+			font-weight: 700;
+			line-height: 17px;
+		}
+
+		.bohemcars-mobile-pdp__spec-list,
+		.bohemcars-mobile-pdp__feature-groups ul {
+			display: grid;
+			gap: 8px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.bohemcars-mobile-pdp__spec-list li {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(96px, auto);
+			gap: 12px;
+			align-items: center;
+			border-bottom: 1px solid #e7ece4;
+			padding: 10px 0;
+		}
+
+		.bohemcars-mobile-pdp__spec-list span {
+			display: flex;
+			min-width: 0;
+			align-items: center;
+			gap: 8px;
+			color: #68727a;
+			font-size: 14px;
+			font-weight: 800;
+			line-height: 18px;
+		}
+
+		.bohemcars-mobile-pdp__spec-list img {
+			width: 23px;
+			height: 23px;
+			object-fit: contain;
+		}
+
+		.bohemcars-mobile-pdp__spec-list strong {
+			min-width: 0;
+			overflow-wrap: anywhere;
+			text-align: right;
+			font-size: 14px;
+			font-weight: 900;
+			line-height: 18px;
+		}
+
+		.bohemcars-mobile-pdp__feature-groups h2 {
+			margin: 0 0 9px;
+			color: #1c1c1c;
+			font-size: 15px;
+			font-weight: 900;
+			line-height: 19px;
+		}
+
+		.bohemcars-mobile-pdp__feature-groups li {
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			color: #4c565f;
+			font-size: 14px;
+			font-weight: 750;
+			line-height: 20px;
+		}
+
+		.bohemcars-mobile-pdp__feature-groups li :global(svg) {
+			flex: 0 0 auto;
+			color: #98bc2a;
+			margin-top: 2px;
+		}
+
+		.bohemcars-mobile-pdp__actions {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 9px;
+		}
+
+		.bohemcars-mobile-pdp__actions a {
+			display: inline-flex;
+			min-height: 44px;
+			align-items: center;
+			justify-content: center;
+			gap: 7px;
+			border: 0;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 900;
+			line-height: 18px;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		.bohemcars-mobile-pdp__actions a:first-child {
+			background: #98bc2a;
+			color: #ffffff;
+		}
+
+		.bohemcars-mobile-pdp__actions a:last-child {
+			background: #eef1f5;
+			color: #1c1c1c;
+		}
+
+		.bohemcars-mobile-pdp__actions a:hover,
+		.bohemcars-mobile-pdp__actions a:focus-visible {
+			background: #1c1c1c;
+			color: #ffffff;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__actions {
+			border-top: 1px solid #e7ece4;
+			padding-top: 10px;
+		}
+
+		.bohemcars-mobile-pdp__viewer {
+			position: fixed;
+			inset: 0;
+			z-index: 1010;
+			display: grid;
+			grid-template-rows: auto minmax(0, 1fr) auto;
+			background: #050505;
+			color: #ffffff;
+			padding: calc(14px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
+		}
+
+		.bohemcars-mobile-pdp__viewer-close {
+			position: absolute;
+			top: calc(14px + env(safe-area-inset-top));
+			right: 14px;
+			z-index: 2;
+			display: flex;
+			width: 44px;
+			height: 44px;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.94);
+			color: #111111;
+			cursor: pointer;
+		}
+
+		.bohemcars-mobile-pdp__viewer-count {
+			align-self: start;
+			justify-self: start;
+			margin: 0;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.13);
+			color: #ffffff;
+			padding: 10px 13px;
+			font-size: 13px;
+			font-weight: 900;
+			line-height: 16px;
+		}
+
+		.bohemcars-mobile-pdp__viewer-stage {
+			display: flex;
+			min-height: 0;
+			align-items: center;
+			justify-content: center;
+			padding: 54px 0 20px;
+		}
+
+		.bohemcars-mobile-pdp__viewer-stage img {
+			display: block;
+			width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.bohemcars-mobile-pdp__viewer-thumbs {
+			display: flex;
+			gap: 9px;
+			overflow-x: auto;
+			overflow-y: hidden;
+			padding: 4px 0 0;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.bohemcars-mobile-pdp__viewer-thumbs::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-mobile-pdp__viewer-thumbs button {
+			flex: 0 0 66px;
+			width: 66px;
+			height: 50px;
+			overflow: hidden;
+			border: 2px solid rgba(255, 255, 255, 0.28);
+			border-radius: 8px;
+			background: #111111;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-mobile-pdp__viewer-thumbs button.active,
+		.bohemcars-mobile-pdp__viewer-thumbs button:focus-visible {
+			border-color: #d9f275;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__viewer-thumbs img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	@media (max-width: 380px) {
+		.bohemcars-mobile-pdp__facts {
+			gap: 4px;
+		}
+
+		.bohemcars-mobile-pdp__drawer-heading > span {
+			display: none;
+		}
+
+		.bohemcars-mobile-pdp__tabs {
+			gap: 4px;
+		}
+
+		.bohemcars-mobile-pdp__tab {
+			font-size: 13px;
+		}
+	}
+</style>

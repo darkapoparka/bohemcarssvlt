@@ -45,6 +45,8 @@
 	.bohemcars-budget-section {
 		background: #ffffff;
 		color: #1c1c1c;
+		padding-top: 84px;
+		padding-bottom: 88px;
 	}
 
 	.bohemcars-home-section-surface {

@@ -9,5 +9,6 @@
 	afterDetailHtml={data.afterDetailHtml}
 	beforeDetailHtml={data.beforeDetailHtml}
 	detail={data.detail}
+	detailHtml={data.detailHtml}
 	pageDocument={data.pageDocument}
 />

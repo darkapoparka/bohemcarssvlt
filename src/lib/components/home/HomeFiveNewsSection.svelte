@@ -67,6 +67,11 @@
 {/if}
 
 <style>
+	.bohemcars-news-section {
+		padding-top: 82px;
+		padding-bottom: 86px;
+	}
+
 	.bohemcars-news-grid {
 		display: grid;
 		gap: 24px;
@@ -189,6 +194,11 @@
 	}
 
 	@media (max-width: 767px) {
+		.bohemcars-news-section {
+			padding-top: 28px;
+			padding-bottom: 32px;
+		}
+
 		.bohemcars-news-section :global(.title-section) {
 			align-items: flex-start;
 			justify-content: flex-start;

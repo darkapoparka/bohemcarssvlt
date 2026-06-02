@@ -49,7 +49,7 @@
 						placeholder={field.placeholder}
 						required={field.required}
 						type={field.type}
-						value=""
+						value={field.value ?? ''}
 					/>
 				{:else if field.kind === 'select'}
 					<select class={field.className} id={field.id} name={field.name} required={field.required}>

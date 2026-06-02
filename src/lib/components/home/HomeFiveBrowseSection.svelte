@@ -103,6 +103,8 @@
 <style>
 	.bohemcars-browse-section {
 		overflow: hidden;
+		padding-top: 84px;
+		padding-bottom: 84px;
 	}
 
 	.bohemcars-browse-section__surface {
@@ -148,7 +150,7 @@
 	}
 
 	.bohemcars-type-gallery {
-		margin-top: 70px;
+		margin-top: 58px;
 	}
 
 	.bohemcars-type-gallery__cta {
@@ -191,10 +193,14 @@
 		overflow: hidden;
 		padding: 8px 10px 0;
 		text-align: center;
+		border-radius: 14px;
+		transition:
+			background-color 0.2s ease,
+			box-shadow 0.2s ease;
 	}
 
 	.bohemcars-type-card:hover {
-		color: #98bc2a;
+		background-color: #eef0ec;
 		transform: none;
 	}
 
@@ -241,7 +247,7 @@
 	@media (max-width: 767px) {
 		.bohemcars-browse-section {
 			background: #ffffff;
-			padding-top: 28px;
+			padding-top: 12px;
 			padding-bottom: 26px;
 		}
 

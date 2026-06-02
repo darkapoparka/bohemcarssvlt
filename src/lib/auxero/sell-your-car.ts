@@ -8,6 +8,7 @@ export type AuxeroSellCarInputField = {
 	placeholder?: string;
 	required?: boolean;
 	type: 'tel' | 'text';
+	value?: string;
 };
 
 export type AuxeroSellCarFormData = {
@@ -79,3 +80,10 @@ export const sellCarFormData: AuxeroSellCarFormData = {
 	],
 	submitLabel: 'Request Review'
 };
+
+export const sellCarFormDataWithPrefill = (vin = ''): AuxeroSellCarFormData => ({
+	...sellCarFormData,
+	fields: sellCarFormData.fields.map((field) =>
+		field.name === 'vin' ? { ...field, value: vin } : { ...field }
+	)
+});

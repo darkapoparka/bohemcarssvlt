@@ -12,8 +12,15 @@
 		rel="preload"
 		as="image"
 		fetchpriority="high"
-		href="/assets/bohemcars/hero/home-hero-available-inventory-wow.webp"
-		type="image/webp"
+		href="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png"
+		type="image/png"
+	/>
+	<link
+		rel="preload"
+		as="image"
+		fetchpriority="high"
+		href="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png"
+		type="image/png"
 	/>
 </svelte:head>
 

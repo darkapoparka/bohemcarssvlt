@@ -1090,6 +1090,7 @@ if (document.querySelector(".swiper-btn.navigation-next") && document.querySelec
 
 var swiperSingle = new Swiper(".sw-single", {
     loop: true,
+    effect: "fade",
     speed: 1000,
     fadeEffect: {
         crossFade: true,
@@ -1102,7 +1103,7 @@ var swiperSingle = new Swiper(".sw-single", {
         delay: 3000,
         disableOnInteraction: false,
     },
-    parallax: true, 
+    parallax: false,
     navigation: navConfig,
     on: {
         init: function () {
@@ -1115,7 +1116,7 @@ var swiperSingle = new Swiper(".sw-single", {
                     
                     // Set parallax
                     $bg.attr({
-                        "data-swiper-parallax": 0.75 * swiper.width,
+                        "data-swiper-parallax": 0,
                     });
                     
                     // Set background-image from data-background
@@ -1135,6 +1136,7 @@ var swiperSingle = new Swiper(".sw-single", {
   // Only initialize thumb slider if element exists
 if (document.querySelector(".sw-single-thumb")) {
     swiperThumb = new Swiper(".sw-single-thumb", {
+        loop: true,
         effect: "fade",
         fadeEffect: {
             crossFade: true

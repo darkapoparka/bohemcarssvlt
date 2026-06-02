@@ -45,12 +45,11 @@ export type HomeFiveFooterLink = {
 
 export type HomeFiveFooterSocial = {
 	href: string;
-	icon: 'facebook' | 'x' | 'instagram' | 'youtube';
+	icon: 'facebook' | 'x' | 'instagram' | 'youtube' | 'viber';
 	label: string;
 };
 
 export type HomeFiveFooterData = {
-	appLinks: Array<HomeFiveFooterLink & { image: string }>;
 	buyingLinks: HomeFiveFooterLink[];
 	contact: {
 		address: string;
@@ -62,7 +61,6 @@ export type HomeFiveFooterData = {
 	labels: {
 		buyingSelling: string;
 		emailPlaceholder: string;
-		online: string;
 		openingHours: string;
 		quickLinks: string;
 		subscribe: string;
@@ -270,7 +268,35 @@ export type HomeFiveHeroTab = {
 	label: string;
 };
 
+export type HomeFiveHeroActionMode = 'buy' | 'import' | 'sell';
+
+export type HomeFiveHeroActionTabHref =
+	| '/'
+	| '/?intent=import'
+	| '/?intent=sell'
+	| '/?lang=en'
+	| '/?lang=en&intent=import'
+	| '/?lang=en&intent=sell';
+
+export type HomeFiveHeroAction = {
+	actionHref: '/inventory' | '/import' | '/sell-your-car';
+	drawerKicker: string;
+	drawerTitle: string;
+	helper: string;
+	inputName: 'q' | 'vehicle' | 'vin';
+	label: string;
+	mobileHeading: string;
+	mode: HomeFiveHeroActionMode;
+	placeholder: string;
+	secondaryHref: '/inventory' | '/import' | '/sell-your-car';
+	secondaryLabel: string;
+	submitLabel: string;
+	tabHref: HomeFiveHeroActionTabHref;
+};
+
 export type HomeFiveHeroData = {
+	activeMode: HomeFiveHeroActionMode;
+	actions: HomeFiveHeroAction[];
 	advancedFilters: HomeFiveHeroSelect[];
 	backgroundImages: string[];
 	checksTitle: string;
@@ -683,18 +709,6 @@ export const homeFiveNewsPostsFromPosts = (posts: BlogPost[]): HomeFiveNewsPost[
 	}));
 
 export const homeFiveFooterData: HomeFiveFooterData = {
-	appLinks: [
-		{
-			href: '/contact',
-			image: '/assets/images/brand/app-store-dark.png',
-			label: 'Contact on mobile'
-		},
-		{
-			href: '/contact',
-			image: '/assets/images/brand/google-play-dark.png',
-			label: 'Message Bohemcars'
-		}
-	],
 	buyingLinks: [
 		{ href: '/services', label: 'Services' },
 		{ href: '/inventory', label: 'Find a Car' },
@@ -714,7 +728,6 @@ export const homeFiveFooterData: HomeFiveFooterData = {
 	labels: {
 		buyingSelling: 'BUYING & SELLING',
 		emailPlaceholder: 'Enter your e-mail',
-		online: 'Bohemcars Online',
 		openingHours: 'Opening Hours:',
 		quickLinks: 'QUICK LINKS',
 		subscribe: 'Subscribe'
@@ -739,12 +752,9 @@ export const homeFiveFooterData: HomeFiveFooterData = {
 		{ href: '/contact', label: 'Contact Bohemcars' }
 	],
 	socialLinks: [
-		{ href: '/contact', icon: 'facebook', label: 'Contact' },
-		{ href: '/blog', icon: 'youtube', label: 'Blog' },
-		{ href: '/reviews', icon: 'facebook', label: 'Reviews' },
-		{ href: '/services', icon: 'youtube', label: 'Services' },
-		{ href: '/agents', icon: 'x', label: 'Consultants' },
-		{ href: '/inventory', icon: 'instagram', label: 'Inventory' }
+		{ href: bohemcarsContact.facebookHref, icon: 'facebook', label: 'Facebook' },
+		{ href: bohemcarsContact.youtubeHref, icon: 'youtube', label: 'YouTube' },
+		{ href: bohemcarsContact.viberHref, icon: 'viber', label: 'Viber' }
 	]
 };
 
@@ -753,18 +763,6 @@ export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData 
 
 	return {
 		...homeFiveFooterData,
-		appLinks: [
-			{
-				href: '/contact',
-				image: '/assets/images/brand/app-store-dark.png',
-				label: 'Контакт през телефон'
-			},
-			{
-				href: '/contact',
-				image: '/assets/images/brand/google-play-dark.png',
-				label: 'Пиши на Bohemcars'
-			}
-		],
 		buyingLinks: [
 			{ href: '/services', label: 'Услуги' },
 			{ href: '/inventory', label: 'Намери автомобил' },
@@ -779,7 +777,6 @@ export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData 
 		labels: {
 			buyingSelling: 'ПОКУПКА И ПРОДАЖБА',
 			emailPlaceholder: 'Въведете имейл',
-			online: 'Bohemcars онлайн',
 			openingHours: 'Работно време:',
 			quickLinks: 'БЪРЗИ ВРЪЗКИ',
 			subscribe: 'Абонирай се'
@@ -799,12 +796,9 @@ export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData 
 			{ href: '/contact', label: 'Контакт с Bohemcars' }
 		],
 		socialLinks: [
-			{ href: '/contact', icon: 'facebook', label: 'Контакт' },
-			{ href: '/blog', icon: 'youtube', label: 'Блог' },
-			{ href: '/reviews', icon: 'facebook', label: 'Отзиви' },
-			{ href: '/services', icon: 'youtube', label: 'Услуги' },
-			{ href: '/agents', icon: 'x', label: 'Консултанти' },
-			{ href: '/inventory', icon: 'instagram', label: 'Автомобили' }
+			{ href: bohemcarsContact.facebookHref, icon: 'facebook', label: 'Facebook' },
+			{ href: bohemcarsContact.youtubeHref, icon: 'youtube', label: 'YouTube' },
+			{ href: bohemcarsContact.viberHref, icon: 'viber', label: 'Viber' }
 		]
 	};
 };
@@ -1024,9 +1018,114 @@ const heroTextSlidesForLocale = (locale: Locale): Omit<HomeFiveHeroTextSlide, 'i
 				}
 			];
 
+const heroActionsForLocale = (locale: Locale): HomeFiveHeroAction[] =>
+	locale === 'bg'
+		? [
+				{
+					actionHref: '/inventory',
+					drawerKicker: 'Търсене',
+					drawerTitle: 'Намери автомобил',
+					helper: 'Филтрирай наличните автомобили по марка, модел, купе, бюджет и гориво.',
+					inputName: 'q',
+					label: 'Купи',
+					mobileHeading: 'Намери автомобила си.',
+					mode: 'buy',
+					placeholder: 'Търси марка, модел, цена...',
+					secondaryHref: '/inventory',
+					secondaryLabel: 'Разгледай всички',
+					submitLabel: 'Покажи автомобили',
+					tabHref: '/'
+				},
+				{
+					actionHref: '/import',
+					drawerKicker: 'Внос от Канада',
+					drawerTitle: 'Изпрати линк за проверка',
+					helper:
+						'Постави линк към обява от Канада или VIN. Bohemcars ще провери история, снимки, пробег и ориентировъчна крайна цена.',
+					inputName: 'vehicle',
+					label: 'Внос',
+					mobileHeading: 'Внеси автомобил от Канада.',
+					mode: 'import',
+					placeholder: 'Линк към обява или VIN...',
+					secondaryHref: '/import',
+					secondaryLabel: 'Пълна заявка за внос',
+					submitLabel: 'Провери линка',
+					tabHref: '/?intent=import'
+				},
+				{
+					actionHref: '/sell-your-car',
+					drawerKicker: 'Продай автомобил',
+					drawerTitle: 'Започни оценка',
+					helper:
+						'Изпрати VIN или линк към обява. След това допълни пробег, очаквана цена и телефон в страницата за оценка.',
+					inputName: 'vin',
+					label: 'Продай',
+					mobileHeading: 'Продай автомобила си.',
+					mode: 'sell',
+					placeholder: 'VIN номер или линк към обява...',
+					secondaryHref: '/sell-your-car',
+					secondaryLabel: 'Пълна форма за продажба',
+					submitLabel: 'Заяви оценка',
+					tabHref: '/?intent=sell'
+				}
+			]
+		: [
+				{
+					actionHref: '/inventory',
+					drawerKicker: 'Search',
+					drawerTitle: 'Find a car',
+					helper: 'Filter available vehicles by brand, model, body type, budget, and fuel.',
+					inputName: 'q',
+					label: 'Buy',
+					mobileHeading: 'Find your car.',
+					mode: 'buy',
+					placeholder: 'Search brand, model, price...',
+					secondaryHref: '/inventory',
+					secondaryLabel: 'Browse all',
+					submitLabel: 'Show vehicles',
+					tabHref: '/?lang=en'
+				},
+				{
+					actionHref: '/import',
+					drawerKicker: 'Import from Canada',
+					drawerTitle: 'Send a listing link',
+					helper:
+						'Paste a Canadian listing URL or VIN. Bohemcars will review history, photos, mileage, and estimated landed cost.',
+					inputName: 'vehicle',
+					label: 'Import',
+					mobileHeading: 'Import from Canada.',
+					mode: 'import',
+					placeholder: 'Listing URL or VIN...',
+					secondaryHref: '/import',
+					secondaryLabel: 'Full import request',
+					submitLabel: 'Check the link',
+					tabHref: '/?lang=en&intent=import'
+				},
+				{
+					actionHref: '/sell-your-car',
+					drawerKicker: 'Sell your car',
+					drawerTitle: 'Start a valuation',
+					helper:
+						'Send a VIN or listing link first, then add mileage, expected price, and phone on the valuation page.',
+					inputName: 'vin',
+					label: 'Sell',
+					mobileHeading: 'Sell your vehicle.',
+					mode: 'sell',
+					placeholder: 'VIN number or listing link...',
+					secondaryHref: '/sell-your-car',
+					secondaryLabel: 'Full sell form',
+					submitLabel: 'Request valuation',
+					tabHref: '/?lang=en&intent=sell'
+				}
+			];
+
+export const resolveHomeFiveHeroActionMode = (value: string | null): HomeFiveHeroActionMode =>
+	value === 'import' || value === 'sell' ? value : 'buy';
+
 export function homeFiveHeroDataFromVehicles(
 	vehicles: Vehicle[],
-	locale: Locale = 'en'
+	locale: Locale = 'en',
+	activeMode: HomeFiveHeroActionMode = 'buy'
 ): HomeFiveHeroData {
 	const t = getMessages(locale).hero;
 	const textSlides: HomeFiveHeroTextSlide[] = heroTextSlidesForLocale(locale).map(
@@ -1037,6 +1136,8 @@ export function homeFiveHeroDataFromVehicles(
 	);
 
 	return {
+		activeMode,
+		actions: heroActionsForLocale(locale),
 		advancedFilters: [
 			{
 				defaultLabel: t.filters.allFuelTypes,

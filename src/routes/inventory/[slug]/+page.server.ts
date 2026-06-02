@@ -33,6 +33,7 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		auxeroFullPage: true,
 		beforeDetailHtml: detailSlot.beforeHtml,
 		detail: vehicleDetailFromVehicle(vehicle, locale),
+		detailHtml: detailSlot.sectionHtml,
 		pageDocument
 	};
 };

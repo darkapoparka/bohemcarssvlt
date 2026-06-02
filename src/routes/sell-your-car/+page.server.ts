@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { sellCarFormData } from '$lib/auxero/sell-your-car';
+import { sellCarFormDataWithPrefill } from '$lib/auxero/sell-your-car';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -22,7 +22,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterSellFormHtml: sellFormSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeSellFormHtml: sellFormSlot.beforeHtml,
-		form: sellCarFormData,
+		form: sellCarFormDataWithPrefill(url.searchParams.get('vin') ?? ''),
 		pageDocument
 	};
 };

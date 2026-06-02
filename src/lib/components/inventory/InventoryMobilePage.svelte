@@ -364,7 +364,7 @@
 		align-items: center;
 		gap: 12px;
 		border: 1px solid #dce3dc;
-		border-radius: 12px;
+		border-radius: 999px;
 		background: #eef1f5;
 		padding: 5px 5px 5px 15px;
 		color: #1c1c1c;
@@ -409,7 +409,7 @@
 		justify-content: center;
 		flex: 0 0 42px;
 		border: 0 !important;
-		border-radius: 10px;
+		border-radius: 999px;
 		background: #1c1c1c;
 		box-shadow: none !important;
 		color: #ffffff;
@@ -788,7 +788,7 @@
 		min-height: 50px;
 		align-items: center;
 		gap: 10px;
-		border-radius: 12px;
+		border-radius: 999px;
 		background: #eef1f5;
 		padding: 0 13px;
 		color: #111111;

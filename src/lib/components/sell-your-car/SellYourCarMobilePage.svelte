@@ -57,6 +57,7 @@
 							placeholder={placeholderFor(field)}
 							required={field.required}
 							autocomplete={autocompleteFor(field)}
+							value={field.value ?? ''}
 						/>
 					</label>
 				{/each}
@@ -86,9 +87,10 @@
 		</nav>
 
 		<section class="bohemcars-sell-mobile__steps" aria-label="Стъпки">
+			<p class="bohemcars-sell-mobile__steps-title">Как работи</p>
 			{#each steps as step, index (step.title)}
 				<article>
-					<span>Стъпка {index + 1}</span>
+					<span class="bohemcars-sell-mobile__step-num" aria-hidden="true">{index + 1}</span>
 					<div>
 						<h2>{step.title}</h2>
 						<p>{step.text}</p>
@@ -282,53 +284,44 @@
 
 	.bohemcars-sell-mobile__steps {
 		display: grid;
-		gap: 9px;
+		gap: 8px;
+	}
+
+	.bohemcars-sell-mobile__steps-title {
+		margin: 4px 0 2px;
+		color: #111111;
+		font-size: 12px;
+		font-weight: 900;
+		letter-spacing: 0;
+		line-height: 16px;
+		text-transform: uppercase;
 	}
 
 	.bohemcars-sell-mobile__steps article {
 		display: grid;
-		gap: 4px;
-		min-height: 76px;
-		align-content: center;
+		grid-template-columns: 34px minmax(0, 1fr);
+		gap: 12px;
+		align-items: center;
+		min-height: 62px;
 		border: 0;
-		border-radius: 8px;
-		background: #111111;
-		padding: 13px 14px;
-		color: #ffffff;
-	}
-
-	.bohemcars-sell-mobile__steps article:nth-child(2) {
-		background: #d9f275;
+		border-radius: 10px;
+		background: #f1f4ee;
+		padding: 11px 14px;
 		color: #111111;
 	}
 
-	.bohemcars-sell-mobile__steps article:nth-child(3) {
-		background: #eef1f5;
-		color: #111111;
-	}
-
-	.bohemcars-sell-mobile__steps article:first-child > span {
-		color: #d9f275 !important;
-		opacity: 1;
-	}
-
-	.bohemcars-sell-mobile__steps article:first-child h2 {
-		color: #ffffff !important;
-	}
-
-	.bohemcars-sell-mobile__steps article:first-child p {
-		color: rgba(255, 255, 255, 0.86) !important;
-		opacity: 1;
-	}
-
-	.bohemcars-sell-mobile__steps article > span {
-		display: block;
-		color: inherit;
-		font-size: 11px;
+	.bohemcars-sell-mobile__step-num {
+		display: flex;
+		width: 34px;
+		height: 34px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		background: #1c1c1c;
+		color: #d9f275;
+		font-size: 15px;
 		font-weight: 900;
-		line-height: 14px;
-		opacity: 0.72;
-		text-transform: uppercase;
+		line-height: 1;
 	}
 
 	.bohemcars-sell-mobile__steps h2,
@@ -338,17 +331,17 @@
 	}
 
 	.bohemcars-sell-mobile__steps h2 {
-		color: inherit;
-		font-size: 16px;
+		color: #111111;
+		font-size: 15px;
 		font-weight: 900;
-		line-height: 20px;
+		line-height: 19px;
 	}
 
 	.bohemcars-sell-mobile__steps p {
-		color: inherit;
+		margin-top: 2px;
+		color: #56635a;
 		font-size: 13px;
 		font-weight: 700;
-		line-height: 18px;
-		opacity: 0.78;
+		line-height: 17px;
 	}
 </style>
