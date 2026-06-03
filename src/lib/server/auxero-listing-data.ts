@@ -151,6 +151,30 @@ const inventoryFuelPills = fuels
 		return right.count - left.count || left.label.localeCompare(right.label, 'en');
 	});
 
+const popularFeatureOptions = [
+	'Навигация',
+	'Парктроник',
+	'Подгряване на седалките',
+	'Безключово палене',
+	'Сервизна книжка',
+	'Климатроник',
+	'Система ISOFIX'
+].filter((feature) => vehicles.some((vehicle) => vehicle.features.includes(feature)));
+
+const priceFilterOptions = [
+	{ label: 'Up to 30 000 EUR', value: '30000' },
+	{ label: 'Up to 50 000 EUR', value: '50000' },
+	{ label: 'Up to 70 000 EUR', value: '70000' },
+	{ label: 'Up to 100 000 EUR', value: '100000' }
+];
+
+const mileageFilterOptions = [
+	{ label: 'Up to 50 000 km', value: '50000' },
+	{ label: 'Up to 80 000 km', value: '80000' },
+	{ label: 'Up to 100 000 km', value: '100000' },
+	{ label: 'Up to 150 000 km', value: '150000' }
+];
+
 const viewIcon = (view: InventoryView) => {
 	if (view === '4') {
 		return `<svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -238,9 +262,6 @@ const inventoryQuickUrl = (
 const inventoryAllStockUrl = (state: InventoryState) =>
 	inventoryQuickUrl(state, { bodyType: null, brand: null, fuel: null });
 
-const inventoryBrandUrl = (state: InventoryState, brand: string) =>
-	inventoryQuickUrl(state, { brand });
-
 const inventoryBodyTypeUrl = (state: InventoryState, bodyType: string) =>
 	inventoryQuickUrl(state, {
 		bodyType: state.filters.bodyType?.toLowerCase() === bodyType.toLowerCase() ? null : bodyType
@@ -251,16 +272,80 @@ const inventoryFuelUrl = (state: InventoryState, fuel: string) =>
 		fuel: state.filters.fuel?.toLowerCase() === fuel.toLowerCase() ? null : fuel
 	});
 
+const selectedSearchQuery = (state: InventoryState) =>
+	state.searchParams.get('q') ??
+	state.searchParams.get('query') ??
+	state.searchParams.get('keyword') ??
+	'';
+
+const selectedModel = (state: InventoryState) => {
+	const model = state.searchParams.get('model');
+
+	if (model) return model;
+	if (selectedSearchQuery(state)) return '';
+
+	return modelOptions.includes(state.filters.query ?? '') ? (state.filters.query ?? '') : '';
+};
+
+const selectedNumber = (value?: number) => (value ? String(value) : '');
+
+const selectOptions = (
+	options: Array<string | { label: string; value: string }>,
+	selected?: string | number
+) => {
+	const selectedValue = selected ? String(selected).toLowerCase() : '';
+
+	return options
+		.map((option) => {
+			const value = typeof option === 'string' ? option : option.value;
+			const label = typeof option === 'string' ? option : option.label;
+
+			return `<option value="${escapeHtml(value)}" ${
+				selectedValue === value.toLowerCase() ? 'selected' : ''
+			}>${escapeHtml(label)}</option>`;
+		})
+		.join('');
+};
+
+const inventoryFilterSelect = (
+	name: string,
+	label: string,
+	placeholder: string,
+	options: Array<string | { label: string; value: string }>,
+	selected?: string | number
+) => `<label class="bohemcars-inventory-filter-field">
+	<span>${escapeHtml(label)}</span>
+	<select name="${escapeHtml(name)}" aria-label="${escapeHtml(label)}">
+		<option value="">${escapeHtml(placeholder)}</option>
+		${selectOptions(options, selected)}
+	</select>
+</label>`;
+
 const inventorySearchHiddenInputs = (state: InventoryState) =>
 	[
-		state.filters.brand
-			? `<input type="hidden" name="brand" value="${escapeHtml(state.filters.brand)}">`
+		state.filters.condition
+			? `<input type="hidden" name="condition" value="${escapeHtml(state.filters.condition)}">`
 			: '',
-		state.filters.bodyType
-			? `<input type="hidden" name="bodyType" value="${escapeHtml(state.filters.bodyType)}">`
+		state.filters.location
+			? `<input type="hidden" name="location" value="${escapeHtml(state.filters.location)}">`
 			: '',
-		state.filters.fuel
-			? `<input type="hidden" name="fuel" value="${escapeHtml(state.filters.fuel)}">`
+		state.filters.minMileage
+			? `<input type="hidden" name="minMileage" value="${state.filters.minMileage}">`
+			: '',
+		state.filters.minPrice
+			? `<input type="hidden" name="minPrice" value="${state.filters.minPrice}">`
+			: '',
+		state.filters.minYear
+			? `<input type="hidden" name="minYear" value="${state.filters.minYear}">`
+			: '',
+		state.filters.maxYear
+			? `<input type="hidden" name="maxYear" value="${state.filters.maxYear}">`
+			: '',
+		state.filters.sourceId
+			? `<input type="hidden" name="sourceId" value="${escapeHtml(state.filters.sourceId)}">`
+			: '',
+		state.filters.status
+			? `<input type="hidden" name="status" value="${escapeHtml(state.filters.status)}">`
 			: '',
 		state.view !== '4' ? `<input type="hidden" name="view" value="${state.view}">` : '',
 		state.sortParam !== 'best-match'
@@ -268,91 +353,199 @@ const inventorySearchHiddenInputs = (state: InventoryState) =>
 			: ''
 	].join('');
 
+type InventoryFilterKey = keyof InventoryState['filters'];
+
+const filterLabels: Record<InventoryFilterKey, string> = {
+	bodyType: 'Body',
+	brand: 'Brand',
+	condition: 'Condition',
+	feature: 'Feature',
+	fuel: 'Fuel',
+	location: 'Location',
+	maxMileage: 'Max mileage',
+	maxPrice: 'Max price',
+	maxYear: 'Max year',
+	minMileage: 'Min mileage',
+	minPrice: 'Min price',
+	minYear: 'Min year',
+	query: 'Search',
+	sourceId: 'Stock',
+	status: 'Status',
+	transmission: 'Transmission'
+};
+
+const filterParamAliases: Record<InventoryFilterKey, string[]> = {
+	bodyType: ['body', 'bodyType', 'bodystyle'],
+	brand: ['brand'],
+	condition: ['condition'],
+	feature: ['feature', 'features', 'extra', 'equipment'],
+	fuel: ['fuel', 'FuelType'],
+	location: ['location', 'city', 'area'],
+	maxMileage: ['maxMileage', 'mileageTo'],
+	maxPrice: ['maxPrice', 'priceTo', 'price'],
+	maxYear: ['maxYear', 'yearTo'],
+	minMileage: ['minMileage', 'mileageFrom'],
+	minPrice: ['minPrice', 'priceFrom'],
+	minYear: ['minYear', 'yearFrom'],
+	query: ['q', 'query', 'keyword', 'model'],
+	sourceId: ['sourceId', 'source', 'stockNumber', 'vin'],
+	status: ['status'],
+	transmission: ['transmission', 'Transmission', 'gearbox']
+};
+
+const inventoryUrlFromParams = (params: URLSearchParams) => {
+	const query = params.toString();
+
+	return `/inventory${query ? `?${query}` : ''}`;
+};
+
+const inventoryUrlWithoutFilter = (state: InventoryState, filter: InventoryFilterKey) => {
+	const params = new URLSearchParams(state.searchParams);
+
+	for (const alias of filterParamAliases[filter]) {
+		params.delete(alias);
+	}
+
+	return inventoryUrlFromParams(params);
+};
+
+const inventoryClearFiltersUrl = (state: InventoryState) => {
+	const params = new URLSearchParams();
+
+	if (state.view !== '4') params.set('view', state.view);
+	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
+
+	return inventoryUrlFromParams(params);
+};
+
+const filterValueLabel = (value: string | number) =>
+	typeof value === 'number'
+		? value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')
+		: escapeHtml(value);
+
+const inventoryActiveFilters = (state: InventoryState) => {
+	const entries = Object.entries(state.filters) as Array<[InventoryFilterKey, string | number]>;
+
+	if (!entries.length) return '';
+
+	const chips = entries
+		.map(
+			([key, value]) => `<a class="bohemcars-active-filter" href="${inventoryUrlWithoutFilter(
+				state,
+				key
+			)}" aria-label="Remove ${escapeHtml(filterLabels[key])} filter">
+				${escapeHtml(filterLabels[key])}: ${filterValueLabel(value)}
+				<span aria-hidden="true">×</span>
+			</a>`
+		)
+		.join('');
+
+	return `<div class="bohemcars-inventory-active-filters" aria-label="Active inventory filters">
+		<p class="bohemcars-inventory-active-filters__summary">${state.selected.length} ${state.selected.length === 1 ? 'match' : 'matches'}</p>
+		<div class="bohemcars-inventory-active-filters__chips">
+			${chips}
+			<a class="bohemcars-active-filter bohemcars-active-filter--clear" href="${inventoryClearFiltersUrl(state)}">
+				Clear filters
+				<span aria-hidden="true">×</span>
+			</a>
+		</div>
+	</div>`;
+};
+
 const inventorySearchSurface = (state: InventoryState) => {
-	const selectedBrand = state.filters.brand?.toLowerCase();
 	const selectedBodyType = state.filters.bodyType?.toLowerCase();
 	const selectedFuel = state.filters.fuel?.toLowerCase();
-	const brandPills = inventoryBrandPills
+	const searchQuery = selectedSearchQuery(state);
+	const quickPills = [
+		{
+			active: Object.keys(state.filters).length === 0,
+			href: inventoryAllStockUrl(state),
+			label: 'All vehicles'
+		},
+		{
+			active: selectedBodyType === 'suv',
+			href: inventoryBodyTypeUrl(state, 'SUV'),
+			label: 'SUV'
+		},
+		{
+			active: selectedBodyType === 'sedan',
+			href: inventoryBodyTypeUrl(state, 'Sedan'),
+			label: 'Sedan'
+		},
+		{
+			active: selectedFuel === 'petrol',
+			href: inventoryFuelUrl(state, 'Petrol'),
+			label: 'Petrol'
+		},
+		{
+			active: selectedFuel === 'plug-in хибрид',
+			href: inventoryFuelUrl(state, 'Plug-in хибрид'),
+			label: 'Plug-in Hybrid'
+		},
+		{
+			active: state.filters.maxPrice === 50000,
+			href: inventoryUrl(state, { priceTo: '50000' }),
+			label: 'Under 50 000 EUR'
+		}
+	]
 		.map(
-			(brand) => `<li class="bohemcars-quick-pill bohemcars-brand-pill car-box ${
-				selectedBrand === brand.value.toLowerCase() ? 'active' : ''
-			}">
-				<a href="${inventoryBrandUrl(state, brand.value)}" aria-label="Browse ${escapeHtml(brand.value)} vehicles">
-					<img src="${brand.image}" alt="${escapeHtml(brand.label)}">
-					<span>${escapeHtml(brand.label)}</span>
-				</a>
-			</li>`
-		)
-		.join('');
-	const typePills = inventoryBodyTypePills
-		.map(
-			(bodyType) => `<li class="bohemcars-quick-pill bohemcars-type-pill car-box ${
-				selectedBodyType === bodyType.value.toLowerCase() ? 'active' : ''
-			}">
-				<a href="${inventoryBodyTypeUrl(state, bodyType.value)}" aria-label="Browse ${escapeHtml(bodyType.label)} vehicles">
-					<span>${escapeHtml(bodyType.label)}</span>
-				</a>
-			</li>`
-		)
-		.join('');
-	const fuelPills = inventoryFuelPills
-		.map(
-			(fuel) => `<li class="bohemcars-quick-pill bohemcars-fuel-pill car-box ${
-				selectedFuel === fuel.value.toLowerCase() ? 'active' : ''
-			}">
-				<a href="${inventoryFuelUrl(state, fuel.value)}" aria-label="Browse ${escapeHtml(fuel.label)} vehicles">
-					<span>${escapeHtml(fuel.label)}</span>
+			(pill) => `<li class="bohemcars-quick-pill car-box ${pill.active ? 'active' : ''}">
+				<a href="${pill.href}" aria-label="${escapeHtml(pill.label)}">
+					<span>${escapeHtml(pill.label)}</span>
 				</a>
 			</li>`
 		)
 		.join('');
 
-	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" data-bohemcars-search-form="inventory">
+	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" role="search" aria-label="Search Bohemcars inventory" data-bohemcars-search-form="inventory">
 		${inventorySearchHiddenInputs(state)}
 		<div class="bohemcars-inventory-searchbar__row">
-			<button class="btn-filter bohemcars-inventory-searchbar__filter" id="filterSidebarToggle" type="button" aria-label="Open filters">
+			<button class="btn-filter bohemcars-inventory-searchbar__filter" id="filterSidebarToggle" type="button" aria-label="Open filters" aria-controls="filterSidebar">
 				<img src="/assets/icons/filter.svg" alt="">
 				<span>Filters</span>
 			</button>
 			<div class="bohemcars-inventory-searchbar__primary">
 				<label class="bohemcars-inventory-searchbar__search">
 					<img src="/assets/icons/search.svg" alt="">
-					<input type="text" name="q" value="${escapeHtml(state.filters.query ?? '')}" placeholder="Search brand, model, stock #" autocomplete="off">
+					<input type="text" name="q" value="${escapeHtml(searchQuery)}" placeholder="Search make, model, year, fuel, extras..." autocomplete="off">
 				</label>
 				<button class="bohemcars-inventory-searchbar__submit" type="submit">Search</button>
 			</div>
 		</div>
-		<div class="bohemcars-inventory-brand-pills">
+		<div class="bohemcars-inventory-filter-grid">
+			${inventoryFilterSelect('brand', 'Make', 'Make', inventoryBrandPills, state.filters.brand)}
+			${inventoryFilterSelect('model', 'Model', 'Model', modelOptions, selectedModel(state))}
+			${inventoryFilterSelect('priceTo', 'Price', 'Price', priceFilterOptions, selectedNumber(state.filters.maxPrice))}
+			${inventoryFilterSelect('mileageTo', 'Mileage', 'Mileage', mileageFilterOptions, selectedNumber(state.filters.maxMileage))}
+			${inventoryFilterSelect('fuel', 'Fuel', 'Fuel', inventoryFuelPills, state.filters.fuel)}
+			${inventoryFilterSelect('transmission', 'Transmission', 'Gearbox', transmissionOptions, state.filters.transmission)}
+			${inventoryFilterSelect('bodyType', 'Body', 'Body', inventoryBodyTypePills, state.filters.bodyType)}
+			${inventoryFilterSelect('feature', 'Extras', 'Extras', popularFeatureOptions, state.filters.feature)}
+		</div>
+		<div class="bohemcars-inventory-quick-pills">
 			<ul class="menu-tab menu-tab-style2 gap-10">
-				<li class="bohemcars-quick-pill bohemcars-brand-pill bohemcars-brand-pill--all car-box ${selectedBrand || selectedBodyType || selectedFuel ? '' : 'active'}">
-					<a href="${inventoryAllStockUrl(state)}" aria-label="Browse all Bohemcars vehicles">
-						<span>All Stock</span>
-					</a>
-				</li>
-				${brandPills}
-				<li class="bohemcars-quick-pill-divider" aria-hidden="true"></li>
-				${typePills}
-				<li class="bohemcars-quick-pill-divider" aria-hidden="true"></li>
-				${fuelPills}
+				${quickPills}
 			</ul>
 		</div>
+		${inventoryActiveFilters(state)}
 	</form>`;
 };
 
-const inventoryBanner = (state: InventoryState) => {
-	const hasFilters = Object.keys(state.filters).length > 0;
-	const countLabel = `${state.selected.length} ${hasFilters ? 'matching ' : ''}${state.selected.length === 1 ? 'vehicle' : 'vehicles'}`;
-
-	return `<section class="bohemcars-inventory-banner">
-		<div class="container">
-			<div class="bohemcars-inventory-banner__content">
-				<p class="bohemcars-inventory-banner__eyebrow">Bohemcars current stock</p>
-				<h1>Browse inventory</h1>
-				<p>${escapeHtml(countLabel)} available with appointment viewings and source checks.</p>
-			</div>
+const inventoryBanner = (state: InventoryState) =>
+	`<section class="bohemcars-inventory-banner" aria-label="Bohemcars inventory showcase">
+	<div class="container">
+		<div class="bohemcars-inventory-banner__copy">
+			<h1 id="bohemcars-inventory-title" class="bohemcars-sr-only">Bohemcars Inventory</h1>
 		</div>
-	</section>`;
-};
+		<div class="bohemcars-inventory-banner__cars" aria-hidden="true">
+			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--x5" src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png" alt="" loading="eager" decoding="async">
+			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--sq5" src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png" alt="" loading="eager" decoding="async">
+		</div>
+		<div class="bohemcars-inventory-banner__buybox">
+			${inventorySearchSurface(state)}
+		</div>
+	</div>
+</section>`;
 
 const highlightClass = (vehicle: Vehicle, index: number) => {
 	if (vehicle.isClientVehicle) return 'bg-primary-2';
@@ -528,36 +721,39 @@ const replaceInventoryToolbar = (html: string, state: InventoryState) => {
 			: `Showing 0 of ${vehicles.length} Bohemcars Listings`;
 	const selectedSort = sortLabels[state.sortParam] ?? 'Best Match';
 
-	return html
-		.replace(/Showing 1\s*(?:–|-)\s*30 of 118 Listings/g, showingText)
-		.replace(
-			/(<div class="container mb-40 flat-tabs" data-custom="true">\s*)<div class="row(?: mb-24)?">/,
-			`$1<div class="row mb-24 bohemcars-inventory-toolbar-row">`
-		)
-		.replace(
-			/<div class="flex items-center gap-16">\s*<button class="btn-filter" id="filterSidebarToggle">[\s\S]*?<\/button>\s*<p class="md-hidden">([\s\S]*?)<\/p>\s*<\/div>/,
-			`<div class="flex items-center gap-16 bohemcars-inventory-result-count"><p class="md-hidden">$1</p></div>`
-		)
-		.replace(
-			/<span id="filterMatchesCount">\s*\d+\s*<\/span>/g,
-			`<span id="filterMatchesCount">${state.selected.length} </span>`
-		)
-		.replace(/Show 1,029 Matches/g, `Show ${state.selected.length} Matches`)
-		.replace(
-			/<div class="flex items-center gap-12 py-12 justify-center listing-tabs menu-tab">[\s\S]*?<\/div>/,
-			`<div class="flex items-center gap-12 py-12 justify-center listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}</div>`
-		)
-		.replace(
-			/<span class="core-dropdown__selected">[\s\S]*?<\/span>/,
-			`<span class="core-dropdown__selected">${selectedSort}</span>`
-		)
-		.replace(/<ul class="core-dropdown__list">[\s\S]*?<\/ul>/, sortDropdown(state));
+	const tabsStart = html.indexOf('data-custom="true"');
+	const rowStart = html.indexOf('<div class="row', tabsStart);
+	const toolbar = `<div class="bohemcars-inventory-toolbar-row">
+		<div class="bohemcars-inventory-result-count">
+			<p class="md-hidden">${showingText}</p>
+		</div>
+		<div class="listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}</div>
+		<div class="bohemcars-inventory-sort">
+			<span class="bohemcars-inventory-sort__label">Sort Vehicles by</span>
+			<div class="core-dropdown">
+				<button type="button" class="core-dropdown__button">
+					<span class="core-dropdown__selected">${selectedSort}</span>
+					<img src="/assets/icons/chevron-down-black.svg" alt="">
+				</button>
+				<div class="core-dropdown__menu">${sortDropdown(state)}</div>
+			</div>
+		</div>
+	</div>`;
+	let next = replaceDivBlock(html, rowStart, toolbar);
+	const filterSpacer = /\s*<div class="mb-8 col-md-12"><\/div>\s*/u;
+
+	next = next.replace(filterSpacer, '\n');
+
+	const filterMarker = next.indexOf('id="filterResults"', tabsStart);
+	const filterStart = filterMarker >= 0 ? next.lastIndexOf('<div', filterMarker) : -1;
+
+	return replaceDivBlock(next, filterStart, '');
 };
 
-const replaceInventorySearchSurface = (html: string, state: InventoryState) =>
+const replaceInventorySearchSurface = (html: string) =>
 	html.replace(
 		/<div class="container">\s*<h2>Listing Grid(?: 3 Columns| 4 Columns| Half Map)<\/h2>\s*<\/div>/,
-		`<div class="container">${inventorySearchSurface(state)}</div>`
+		''
 	);
 
 const replaceInventoryBreadcrumb = (html: string, state: InventoryState) =>
@@ -1113,7 +1309,7 @@ export const applyInventoryData = (
 ) => {
 	const state = getInventoryState(templateFile, options);
 	let next = replaceInventoryBreadcrumb(html, state);
-	next = replaceInventorySearchSurface(next, state);
+	next = replaceInventorySearchSurface(next);
 	next = replaceInventoryToolbar(next, state);
 	next = replaceInventoryContent(next, state);
 	next = replaceFilterSidebar(next, state);

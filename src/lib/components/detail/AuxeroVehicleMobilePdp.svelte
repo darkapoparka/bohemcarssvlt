@@ -3,22 +3,23 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import type { AuxeroVehicleDetailData, AuxeroVehicleDetailDrawerTabId } from '$lib/auxero/detail';
-	import { ArrowLeft, Check, Heart, PhoneCall, Share2, X } from '@lucide/svelte';
-	import { onMount } from 'svelte';
+	import { ArrowLeft, Check, GitCompare, Heart, PhoneCall, Send, Share2, X } from '@lucide/svelte';
 	import { Drawer } from 'vaul-svelte';
+	import { fade, fly } from 'svelte/transition';
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
 
 	const compareHref = resolve('/compare');
 	const favoritesHref = resolve('/account/favorites');
-	const drawerSnapPoints: (number | string)[] = [0.52, 0.9];
 
 	let activeTab = $state<AuxeroVehicleDetailDrawerTabId>('info');
 	let drawerOpen = $state(true);
-	let activeSnapPoint = $state<number | string | null>(0.52);
 	let selectedImageIndex = $state(0);
 	let shareStatus = $state('');
 	let viewerOpen = $state(false);
+	let inquiryOpen = $state(false);
+	let inquiryStatus = $state('');
+	let inquirySubmitting = $state(false);
 
 	const heroGalleryImages = $derived(Array.from(new Set(detail.galleryImages)));
 	const heroImage = $derived(heroGalleryImages[selectedImageIndex] ?? detail.image);
@@ -71,10 +72,39 @@
 		}
 	};
 
-	const callPrimaryPhone = () => {
-		if (!browser) return;
+	const openInquiry = () => {
+		inquiryOpen = true;
+	};
 
-		window.location.href = detail.contact.primaryPhoneHref;
+	const closeInquiry = () => {
+		inquiryOpen = false;
+	};
+
+	const submitInquiry = async (event: SubmitEvent) => {
+		event.preventDefault();
+
+		const form = event.currentTarget as HTMLFormElement;
+		const payload = Object.fromEntries(new FormData(form).entries());
+
+		inquirySubmitting = true;
+
+		try {
+			await fetch('/api/inquiries', {
+				body: JSON.stringify({
+					...payload,
+					source: 'vehicle-detail-mobile',
+					vehicleSlug: detail.slug
+				}),
+				headers: { 'content-type': 'application/json' },
+				method: 'POST'
+			});
+		} catch {
+			// The prototype still confirms local capture if the API is unavailable.
+		}
+
+		inquirySubmitting = false;
+		inquiryStatus = detail.copy.inquirySuccess;
+		form.reset();
 	};
 
 	const openImageViewer = (index: number) => {
@@ -87,15 +117,14 @@
 	};
 
 	const handleWindowKeydown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape' && viewerOpen) {
+		if (event.key !== 'Escape') return;
+
+		if (viewerOpen) {
 			closeImageViewer();
+		} else if (inquiryOpen) {
+			closeInquiry();
 		}
 	};
-
-	onMount(() => {
-		activeSnapPoint = drawerSnapPoints[0];
-		drawerOpen = true;
-	});
 </script>
 
 <svelte:window onkeydown={handleWindowKeydown} />
@@ -140,7 +169,7 @@
 	class="bohemcars-mobile-pdp"
 	data-mobile-pdp-root
 	aria-label={detail.title}
-	style:--drawer-resting-height="52dvh"
+	style:--drawer-resting-height="60dvh"
 >
 	<div class="bohemcars-mobile-pdp__hero" data-mobile-pdp-hero>
 		<button
@@ -164,9 +193,12 @@
 			</button>
 
 			<div class="bohemcars-mobile-pdp__topbar-actions">
-				<button type="button" aria-label={detail.copy.callBohemcars} onclick={callPrimaryPhone}>
-					<PhoneCall size={20} strokeWidth={2.35} aria-hidden="true" />
-				</button>
+				<a href={compareHref} aria-label={detail.copy.compare}>
+					<GitCompare size={20} strokeWidth={2.35} aria-hidden="true" />
+				</a>
+				<a href={favoritesHref} aria-label={detail.copy.savePrefix}>
+					<Heart size={20} strokeWidth={2.35} aria-hidden="true" />
+				</a>
 				<button type="button" aria-label={detail.mobileDrawer.shareLabel} onclick={shareVehicle}>
 					<Share2 size={21} strokeWidth={2.35} aria-hidden="true" />
 				</button>
@@ -201,15 +233,11 @@
 	</div>
 
 	<Drawer.Root
-		bind:activeSnapPoint
 		bind:open={drawerOpen}
-		autoFocus={false}
 		direction="bottom"
 		dismissible={false}
 		handleOnly={true}
 		modal={false}
-		snapPoints={drawerSnapPoints}
-		snapToSequentialPoint={true}
 	>
 		<Drawer.Content class="bohemcars-mobile-pdp__drawer" data-mobile-pdp-drawer>
 			<Drawer.Handle class="bohemcars-mobile-pdp__handle" />
@@ -217,7 +245,7 @@
 			<div class="bohemcars-mobile-pdp__drawer-heading">
 				<div>
 					<p>{detail.priceLabel}</p>
-					<Drawer.Title>
+					<Drawer.Title level={1}>
 						<span class="bohemcars-mobile-pdp__drawer-title">{detail.title}</span>
 					</Drawer.Title>
 				</div>
@@ -305,14 +333,107 @@
 			</div>
 
 			<div class="bohemcars-mobile-pdp__actions">
-				<a href={compareHref}>{detail.copy.compare}</a>
-				<a href={favoritesHref}>
-					<Heart size={18} strokeWidth={2.25} aria-hidden="true" />
-					{detail.copy.savePrefix}
+				<button
+					type="button"
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--primary"
+					onclick={openInquiry}
+				>
+					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.inquiryCta}
+				</button>
+				<a
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
+					href={detail.contact.primaryPhoneHref}
+				>
+					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.callCta}
 				</a>
 			</div>
 		</Drawer.Content>
 	</Drawer.Root>
+
+	{#if inquiryOpen}
+		<div
+			class="bohemcars-mobile-pdp__inquiry"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="bohemcarsMobilePdpInquiryTitle"
+		>
+			<button
+				type="button"
+				class="bohemcars-mobile-pdp__inquiry-backdrop"
+				aria-label={detail.mobileDrawer.closeLabel}
+				onclick={closeInquiry}
+				transition:fade={{ duration: 180 }}
+			></button>
+
+			<div class="bohemcars-mobile-pdp__inquiry-panel" transition:fly={{ y: 64, duration: 240 }}>
+				<span class="bohemcars-mobile-pdp__inquiry-handle" aria-hidden="true"></span>
+
+				<div class="bohemcars-mobile-pdp__inquiry-head">
+					<div>
+						<p>{detail.title}</p>
+						<strong id="bohemcarsMobilePdpInquiryTitle">{detail.copy.inquiryTitle}</strong>
+					</div>
+					<button
+						type="button"
+						class="bohemcars-mobile-pdp__inquiry-close"
+						aria-label={detail.mobileDrawer.closeLabel}
+						onclick={closeInquiry}
+					>
+						<X size={20} strokeWidth={2.35} aria-hidden="true" />
+					</button>
+				</div>
+
+				<p class="bohemcars-mobile-pdp__inquiry-intro">{detail.copy.inquiryIntro}</p>
+
+				<form class="bohemcars-mobile-pdp__inquiry-form" onsubmit={submitInquiry}>
+					<label>
+						<span>{detail.copy.name}</span>
+						<input name="name" type="text" autocomplete="name" required />
+					</label>
+					<label>
+						<span>{detail.copy.phone}</span>
+						<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
+					</label>
+					<label>
+						<span>{detail.copy.subject}</span>
+						<select name="subject">
+							<option>{detail.copy.subjectViewing}</option>
+							<option>{detail.copy.subjectAvailability}</option>
+							<option>{detail.copy.subjectDocuments}</option>
+						</select>
+					</label>
+					<label>
+						<span>{detail.copy.message}</span>
+						<textarea name="message" rows="3" placeholder={detail.copy.messagePlaceholder}
+						></textarea>
+					</label>
+
+					<button
+						type="submit"
+						class="bohemcars-mobile-pdp__inquiry-submit"
+						disabled={inquirySubmitting}
+					>
+						<Send size={18} strokeWidth={2.3} aria-hidden="true" />
+						{detail.copy.sendInquiry}
+					</button>
+
+					<p class="bohemcars-mobile-pdp__inquiry-status" aria-live="polite">
+						{#if inquiryStatus}
+							<Check size={16} strokeWidth={2.4} aria-hidden="true" />
+						{/if}
+						{inquiryStatus}
+					</p>
+				</form>
+
+				<a class="bohemcars-mobile-pdp__inquiry-call" href={detail.contact.primaryPhoneHref}>
+					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.contact.primaryPhoneLabel}
+				</a>
+			</div>
+		</div>
+	{/if}
 
 	{#if viewerOpen}
 		<div
@@ -431,7 +552,8 @@
 			justify-content: space-between;
 		}
 
-		.bohemcars-mobile-pdp__topbar button {
+		.bohemcars-mobile-pdp__topbar button,
+		.bohemcars-mobile-pdp__topbar a {
 			display: flex;
 			width: 42px;
 			height: 42px;
@@ -442,11 +564,14 @@
 			background: rgba(255, 255, 255, 0.92);
 			color: #1c1c1c;
 			cursor: pointer;
+			text-decoration: none;
 			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 		}
 
 		.bohemcars-mobile-pdp__topbar button:hover,
-		.bohemcars-mobile-pdp__topbar button:focus-visible {
+		.bohemcars-mobile-pdp__topbar button:focus-visible,
+		.bohemcars-mobile-pdp__topbar a:hover,
+		.bohemcars-mobile-pdp__topbar a:focus-visible {
 			background: #d9f275;
 			outline: 0;
 		}
@@ -562,7 +687,7 @@
 			z-index: 1002;
 			display: flex;
 			flex-direction: column;
-			height: 92dvh;
+			height: var(--drawer-resting-height, 60dvh);
 			max-height: 92dvh;
 			overflow: hidden;
 			border: 0;
@@ -572,6 +697,11 @@
 			box-shadow: 0 -20px 46px rgba(0, 0, 0, 0.22);
 			outline: 0;
 			padding: 7px 14px calc(12px + env(safe-area-inset-bottom));
+		}
+
+		.bohemcars-mobile-pdp
+			:global(.bohemcars-mobile-pdp__drawer[data-vaul-drawer][data-state='open']) {
+			transform: translate3d(0, 0, 0) !important;
 		}
 
 		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle) {
@@ -851,45 +981,262 @@
 
 		.bohemcars-mobile-pdp__actions {
 			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-columns: 1.45fr 1fr;
 			gap: 9px;
+			border-top: 1px solid #e7ece4;
+			padding-top: 10px;
 		}
 
-		.bohemcars-mobile-pdp__actions a {
+		.bohemcars-mobile-pdp__cta {
 			display: inline-flex;
-			min-height: 44px;
+			min-height: 50px;
 			align-items: center;
 			justify-content: center;
-			gap: 7px;
+			gap: 8px;
 			border: 0;
-			border-radius: 8px;
-			font-size: 14px;
+			border-radius: 10px;
+			font-size: 15px;
 			font-weight: 900;
 			line-height: 18px;
 			text-align: center;
+			text-decoration: none;
 			cursor: pointer;
+			transition:
+				background-color 0.18s ease,
+				color 0.18s ease,
+				transform 0.12s ease;
 		}
 
-		.bohemcars-mobile-pdp__actions a:first-child {
-			background: #98bc2a;
-			color: #ffffff;
+		.bohemcars-mobile-pdp__cta:active {
+			transform: translateY(1px);
 		}
 
-		.bohemcars-mobile-pdp__actions a:last-child {
-			background: #eef1f5;
-			color: #1c1c1c;
+		.bohemcars-mobile-pdp__cta--primary {
+			background: #b9ee39;
+			color: #14210a;
 		}
 
-		.bohemcars-mobile-pdp__actions a:hover,
-		.bohemcars-mobile-pdp__actions a:focus-visible {
-			background: #1c1c1c;
-			color: #ffffff;
+		.bohemcars-mobile-pdp__cta--primary:hover,
+		.bohemcars-mobile-pdp__cta--primary:focus-visible {
+			background: #a6dd1f;
 			outline: 0;
 		}
 
-		.bohemcars-mobile-pdp__actions {
-			border-top: 1px solid #e7ece4;
-			padding-top: 10px;
+		.bohemcars-mobile-pdp__cta--call {
+			background: #1c1c1c;
+			color: #ffffff;
+		}
+
+		.bohemcars-mobile-pdp__cta--call:hover,
+		.bohemcars-mobile-pdp__cta--call:focus-visible {
+			background: #000000;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry {
+			position: fixed;
+			inset: 0;
+			z-index: 1008;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-backdrop {
+			position: absolute;
+			inset: 0;
+			border: 0;
+			background: rgba(10, 12, 8, 0.5);
+			appearance: none;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-panel {
+			position: relative;
+			display: grid;
+			gap: 12px;
+			width: 100%;
+			max-height: 90dvh;
+			overflow-y: auto;
+			border-radius: 22px 22px 0 0;
+			background: #ffffff;
+			color: #1c1c1c;
+			padding: 10px 16px calc(18px + env(safe-area-inset-bottom));
+			box-shadow: 0 -22px 50px rgba(0, 0, 0, 0.3);
+			scrollbar-width: none;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-panel::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-handle {
+			width: 42px;
+			height: 4px;
+			justify-self: center;
+			border-radius: 999px;
+			background: #d7ddd5;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-head {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 12px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-head p {
+			margin: 0 0 2px;
+			overflow: hidden;
+			color: #728093;
+			font-size: 12px;
+			font-weight: 800;
+			line-height: 16px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-head strong {
+			display: block;
+			color: #1c1c1c;
+			font-size: 19px;
+			font-weight: 900;
+			line-height: 23px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-close {
+			display: flex;
+			width: 40px;
+			height: 40px;
+			flex: 0 0 auto;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			border-radius: 999px;
+			background: #eef1f5;
+			color: #1c1c1c;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-intro {
+			margin: -2px 0 2px;
+			color: #5f6871;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form {
+			display: grid;
+			gap: 10px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form label {
+			display: grid;
+			gap: 6px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form label span {
+			color: #1c1c1c;
+			font-size: 12.5px;
+			font-weight: 800;
+			line-height: 16px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form input,
+		.bohemcars-mobile-pdp__inquiry-form select,
+		.bohemcars-mobile-pdp__inquiry-form textarea {
+			width: 100%;
+			border: 1px solid #e2e7dd;
+			border-radius: 10px;
+			background: #f6f8f3;
+			color: #1c1c1c;
+			padding: 12px 13px;
+			font: inherit;
+			font-size: 15px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form textarea {
+			resize: none;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-form input:focus,
+		.bohemcars-mobile-pdp__inquiry-form select:focus,
+		.bohemcars-mobile-pdp__inquiry-form textarea:focus {
+			border-color: #98bc2a;
+			background: #ffffff;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-submit {
+			display: inline-flex;
+			min-height: 50px;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			margin-top: 2px;
+			border: 0;
+			border-radius: 10px;
+			background: #b9ee39;
+			color: #14210a;
+			cursor: pointer;
+			font-size: 15px;
+			font-weight: 900;
+			line-height: 19px;
+			transition: background-color 0.18s ease;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-submit:hover,
+		.bohemcars-mobile-pdp__inquiry-submit:focus-visible {
+			background: #a6dd1f;
+			outline: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-submit:disabled {
+			opacity: 0.65;
+			cursor: progress;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-status {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			min-height: 18px;
+			margin: 0;
+			color: #4c5a14;
+			font-size: 13px;
+			font-weight: 800;
+			line-height: 18px;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-status :global(svg) {
+			color: #6ba80f;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-call {
+			display: inline-flex;
+			min-height: 48px;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			border: 1px solid #e2e7dd;
+			border-radius: 10px;
+			background: #ffffff;
+			color: #1c1c1c;
+			font-size: 15px;
+			font-weight: 900;
+			line-height: 19px;
+			text-decoration: none;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-call:hover,
+		.bohemcars-mobile-pdp__inquiry-call:focus-visible {
+			border-color: #1c1c1c;
+			outline: 0;
 		}
 
 		.bohemcars-mobile-pdp__viewer {

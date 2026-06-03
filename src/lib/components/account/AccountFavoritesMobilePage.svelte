@@ -44,7 +44,7 @@
 	};
 	const mobileImage = (card: AuxeroFavoriteVehicleCard) =>
 		card.slug === '21764342419542174'
-			? '/assets/bohemcars/hero/home-hero-available-inventory-wow.webp'
+			? '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
 			: card.image;
 </script>
 

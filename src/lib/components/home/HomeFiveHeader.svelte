@@ -7,7 +7,10 @@
 	} from '$lib/auxero/home-five';
 	import { MapPin, PhoneCall } from '@lucide/svelte';
 
-	let { header }: { header?: HomeFiveHeaderData } = $props();
+	let {
+		header,
+		hideMobileLogo = false
+	}: { header?: HomeFiveHeaderData; hideMobileLogo?: boolean } = $props();
 
 	const addListingHref = '/admin/inventory/new';
 
@@ -28,22 +31,29 @@
 		<header class="header header-style-4 bg-white" id="header_main">
 			<div class="header-top-bar bg-primary relative">
 				<div class="topbar-container header-spacing md-w-full md-min-w-full max-w-1920">
-					<div class="flex gap-24">
+					<div class="flex items-center gap-24">
 						<div class="md-gap-8 md flex gap-24">
 							<a
 								href={resolve(header.contact.addressHref as '/')}
-								class="effect-svg-hover md-text-0 flex items-center gap-8 text-sm text-white"
+								class="bohemcars-top-contact-link effect-svg-hover md-text-0 flex items-center gap-8 text-sm text-white"
 							>
-								{@render mapPinIcon()}
+								<span class="bohemcars-top-contact-icon" aria-hidden="true">
+									<MapPin size={20} strokeWidth={2.25} aria-hidden="true" />
+								</span>
 								{header.contact.addressLabel}
 							</a>
 
 							<a
-								href={resolve(header.contact.emailHref as '/')}
-								class="effect-svg-hover md-text-0 flex items-center gap-8 text-sm text-white"
+								href={resolve(header.contact.phoneHref as '/')}
+								class="bohemcars-top-contact-link effect-svg-hover h7 md-text-0 flex items-center gap-8 text-white"
 							>
-								{@render mailIcon()}
-								{header.contact.emailLabel}
+								<span
+									class="bohemcars-top-contact-icon bohemcars-top-contact-icon--accent"
+									aria-hidden="true"
+								>
+									<PhoneCall size={18} strokeWidth={2.2} aria-hidden="true" />
+								</span>
+								{header.contact.phoneLabel}
 							</a>
 						</div>
 
@@ -68,14 +78,17 @@
 						</div>
 					</div>
 
-					<div class="header-top-bar--socical-wrapper flex items-center gap-24">
+					<div
+						class="bohemcars-topbar-right header-top-bar--socical-wrapper flex items-center gap-24"
+					>
 						<a
-							href={resolve(header.contact.phoneHref as '/')}
-							class="effect-svg-hover h7 md-text-0 flex items-center gap-8 text-white"
+							href={resolve(header.contact.emailHref as '/')}
+							class="effect-svg-hover md-text-0 flex items-center gap-8 text-sm text-white"
 						>
-							{@render phoneIcon()}
-							{header.contact.phoneLabel}
+							{@render mailIcon()}
+							{header.contact.emailLabel}
 						</a>
+
 						<ul class="header-top-bar--socical pl-24">
 							{#each header.socialLinks as link (link.label)}
 								<li>
@@ -100,7 +113,12 @@
 							<img src={header.logo.src} alt={header.logo.alt} />
 						</a>
 					</div>
-					<div class="logo-mobile">
+					<div
+						class="logo-mobile"
+						hidden={hideMobileLogo}
+						aria-hidden={hideMobileLogo ? 'true' : undefined}
+						style={hideMobileLogo ? 'display: none !important; visibility: hidden !important;' : ''}
+					>
 						<a href={resolve(header.logo.href as '/')}>
 							<img src={header.logo.mobileSrc} alt={header.logo.alt} />
 						</a>
@@ -352,28 +370,10 @@
 	</svg>
 {/snippet}
 
-{#snippet mapPinIcon()}
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M10 5.15625C9.41284 5.15625 8.83886 5.33036 8.35065 5.65657C7.86244 5.98278 7.48193 6.44644 7.25723 6.98891C7.03254 7.53138 6.97374 8.12829 7.08829 8.70417C7.20284 9.28006 7.48559 9.80904 7.90078 10.2242C8.31596 10.6394 8.84494 10.9222 9.42083 11.0367C9.99671 11.1513 10.5936 11.0925 11.1361 10.8678C11.6786 10.6431 12.1422 10.2626 12.4684 9.77435C12.7946 9.28614 12.9688 8.71216 12.9688 8.125C12.9688 7.33764 12.656 6.58253 12.0992 6.02578C11.5425 5.46903 10.7874 5.15625 10 5.15625ZM10 10.1562C9.59826 10.1562 9.20554 10.0371 8.8715 9.81392C8.53746 9.59073 8.27711 9.27349 8.12337 8.90233C7.96963 8.53116 7.9294 8.12275 8.00778 7.72872C8.08616 7.3347 8.27961 6.97276 8.56369 6.68869C8.84776 6.40461 9.2097 6.21116 9.60372 6.13278C9.99775 6.0544 10.4062 6.09463 10.7773 6.24837C11.1485 6.40211 11.4657 6.66246 11.6889 6.9965C11.9121 7.33054 12.0312 7.72326 12.0312 8.125C12.0312 8.66372 11.8172 9.18038 11.4363 9.56131C11.0554 9.94224 10.5387 10.1562 10 10.1562ZM10 1.40625C8.21871 1.40832 6.51097 2.11685 5.25141 3.37641C3.99185 4.63597 3.28332 6.34371 3.28125 8.125C3.28125 10.5398 4.40156 13.1047 6.52109 15.5422C7.47774 16.6478 8.55442 17.6435 9.73125 18.5109C9.81003 18.5661 9.90385 18.5956 10 18.5956C10.0961 18.5956 10.19 18.5661 10.2688 18.5109C11.4456 17.6435 12.5223 16.6478 13.4789 15.5422C15.5984 13.1047 16.7188 10.5422 16.7188 8.125C16.7167 6.34371 16.0082 4.63597 14.7486 3.37641C13.489 2.11685 11.7813 1.40832 10 1.40625ZM10 17.5398C8.82812 16.6352 4.21875 12.7828 4.21875 8.125C4.21875 6.59172 4.82784 5.12123 5.91204 4.03704C6.99623 2.95284 8.46672 2.34375 10 2.34375C11.5333 2.34375 13.0038 2.95284 14.088 4.03704C15.1722 5.12123 15.7812 6.59172 15.7812 8.125C15.7812 12.7828 11.1719 16.6352 10 17.5398Z"
-			fill="white"
-		/>
-	</svg>
-{/snippet}
-
 {#snippet mailIcon()}
 	<svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M15.4688 0H0.46875C0.34443 0 0.225201 0.049386 0.137294 0.137294C0.049386 0.225201 0 0.34443 0 0.46875V11.0938C0 11.3838 0.115234 11.662 0.320352 11.8671C0.52547 12.0723 0.803669 12.1875 1.09375 12.1875H14.8438C15.1338 12.1875 15.412 12.0723 15.6171 11.8671C15.8223 11.662 15.9375 11.3838 15.9375 11.0938V0.46875C15.9375 0.34443 15.8881 0.225201 15.8002 0.137294C15.7123 0.049386 15.5931 0 15.4688 0ZM7.96875 6.70781L1.67344 0.9375H14.2641L7.96875 6.70781ZM5.91172 6.09375L0.9375 10.6531V1.53437L5.91172 6.09375ZM6.60547 6.72969L7.65625 7.68906C7.74266 7.76812 7.85554 7.81196 7.97266 7.81196C8.08978 7.81196 8.20265 7.76812 8.28906 7.68906L9.33594 6.72969L14.2641 11.25H1.67422L6.60547 6.72969ZM10.0258 6.09375L15 1.53437V10.6531L10.0258 6.09375Z"
-			fill="white"
-		/>
-	</svg>
-{/snippet}
-
-{#snippet phoneIcon()}
-	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M9.39063 0.972052C9.4065 0.912527 9.43395 0.856715 9.47141 0.807805C9.50886 0.758896 9.55559 0.717849 9.60892 0.687012C9.66225 0.656175 9.72113 0.636153 9.78221 0.62809C9.84328 0.620026 9.90535 0.624081 9.96485 0.640021C11.097 0.935349 12.13 1.52718 12.9574 2.35454C13.7847 3.1819 14.3766 4.21487 14.6719 5.34705C14.6878 5.40656 14.6919 5.46862 14.6838 5.5297C14.6758 5.59077 14.6557 5.64965 14.6249 5.70298C14.5941 5.75631 14.553 5.80304 14.5041 5.8405C14.4552 5.87795 14.3994 5.9054 14.3399 5.92127C14.3004 5.93179 14.2596 5.93704 14.2188 5.9369C14.1155 5.93696 14.0151 5.90291 13.9331 5.84004C13.8512 5.77718 13.7923 5.68901 13.7656 5.58924C13.5121 4.61673 13.0038 3.72942 12.2931 3.01877C11.5825 2.30811 10.6952 1.79982 9.72266 1.54627C9.66314 1.5304 9.60733 1.50295 9.55842 1.4655C9.50951 1.42804 9.46846 1.38131 9.43762 1.32798C9.40679 1.27465 9.38677 1.21577 9.3787 1.1547C9.37064 1.09362 9.37469 1.03156 9.39063 0.972052ZM15.3039 11.6244C15.1701 12.6457 14.6689 13.5833 13.8941 14.2619C13.1192 14.9405 12.1238 15.3138 11.0938 15.3119C4.97657 15.3119 0 10.3353 0 4.21815C-0.00196546 3.18849 0.370961 2.19333 1.04913 1.41855C1.72729 0.643772 2.66431 0.142365 3.68516 0.00798942C3.92016 -0.0205687 4.15808 0.027887 4.36319 0.146079C4.56831 0.264271 4.72953 0.44582 4.82266 0.663458L6.4711 4.34315C6.54389 4.50973 6.574 4.69183 6.55872 4.87298C6.54345 5.05412 6.48326 5.2286 6.3836 5.38065C6.37355 5.39612 6.36259 5.41099 6.35079 5.42518L4.7047 7.38299C4.6947 7.40328 4.6895 7.4256 4.6895 7.44822C4.6895 7.47085 4.6947 7.49316 4.7047 7.51346C5.30313 8.73846 6.58751 10.0135 7.8297 10.6111C7.85044 10.6206 7.87309 10.6251 7.89587 10.6243C7.91865 10.6234 7.94093 10.6173 7.96094 10.6064L9.88985 8.9658C9.90362 8.95382 9.91824 8.94285 9.9336 8.93299C10.085 8.83207 10.2591 8.7705 10.4403 8.75386C10.6214 8.73722 10.8039 8.76603 10.9711 8.83768L14.6617 10.4916C14.8765 10.5868 15.0549 10.7485 15.1705 10.953C15.2862 11.1574 15.333 11.3937 15.3039 11.6267V11.6244Z"
 			fill="white"
 		/>
 	</svg>
@@ -577,6 +577,57 @@
 {/snippet}
 
 <style>
+	.bohemcars-top-contact-link {
+		transition:
+			color 180ms ease,
+			opacity 180ms ease;
+	}
+
+	.bohemcars-top-contact-icon {
+		display: inline-flex;
+		width: 22px;
+		height: 22px;
+		flex: 0 0 22px;
+		align-items: center;
+		justify-content: center;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		box-shadow: none;
+		color: #d9f275;
+		transition: color 180ms ease;
+	}
+
+	.bohemcars-top-contact-icon--accent {
+		color: #d9f275;
+	}
+
+	.bohemcars-top-contact-icon :global(svg) {
+		display: block;
+		width: 20px;
+		height: 20px;
+		color: #d9f275;
+		stroke: #d9f275;
+	}
+
+	.bohemcars-top-contact-icon :global(svg *) {
+		stroke: #d9f275 !important;
+	}
+
+	.bohemcars-top-contact-link:hover .bohemcars-top-contact-icon,
+	.bohemcars-top-contact-link:focus-visible .bohemcars-top-contact-icon {
+		color: #ffffff;
+	}
+
+	.bohemcars-top-contact-link:hover .bohemcars-top-contact-icon :global(svg *),
+	.bohemcars-top-contact-link:focus-visible .bohemcars-top-contact-icon :global(svg *) {
+		stroke: #ffffff !important;
+	}
+
+	.bohemcars-topbar-right {
+		justify-content: flex-end;
+	}
+
 	.bohemcars-mobile-call,
 	.bohemcars-mobile-map {
 		display: none;
@@ -973,21 +1024,28 @@
 		.bohemcars-mobile-call,
 		.bohemcars-mobile-map {
 			display: flex;
-			width: 38px;
-			height: 38px;
+			width: 40px;
+			height: 40px;
 			align-items: center;
 			justify-content: center;
+			border: 1px solid rgba(28, 28, 28, 0.08);
 			border-radius: 999px;
-			background: #edf2e8;
+			background:
+				linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(237, 242, 232, 0.72)), #edf2e8;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 			color: #1c1c1c;
 			cursor: pointer;
+			-webkit-backdrop-filter: blur(8px);
+			backdrop-filter: blur(8px);
 		}
 
 		.bohemcars-mobile-call:hover,
 		.bohemcars-mobile-call:focus-visible,
 		.bohemcars-mobile-map:hover,
 		.bohemcars-mobile-map:focus-visible {
-			background: #d9f275;
+			border-color: rgba(79, 112, 18, 0.22);
+			background:
+				linear-gradient(145deg, rgba(217, 242, 117, 0.96), rgba(237, 242, 232, 0.76)), #d9f275;
 			color: #1c1c1c;
 			outline: 0;
 		}
@@ -1005,12 +1063,15 @@
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
-			width: 34px !important;
-			height: 34px !important;
-			border: 1px solid rgba(255, 255, 255, 0.2);
-			background: rgba(255, 255, 255, 0.22) !important;
+			width: 36px !important;
+			height: 36px !important;
+			border: 1px solid rgba(255, 255, 255, 0.24);
+			background:
+				linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(217, 242, 117, 0.12)),
+				rgba(79, 112, 18, 0.28) !important;
 			box-sizing: border-box;
-			color: #1c1c1c !important;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+			color: #ffffff !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
@@ -1021,14 +1082,25 @@
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
-			background: rgba(255, 255, 255, 0.3) !important;
-			color: #1c1c1c !important;
+			border-color: rgba(217, 242, 117, 0.42);
+			background:
+				linear-gradient(145deg, rgba(217, 242, 117, 0.28), rgba(255, 255, 255, 0.1)),
+				rgba(79, 112, 18, 0.38) !important;
+			color: #ffffff !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
 			width: 18px !important;
 			height: 18px !important;
+			color: #ffffff !important;
+			stroke: #ffffff !important;
+		}
+
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg *),
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg *) {
+			color: #ffffff !important;
+			stroke: #ffffff !important;
 		}
 	}
 </style>

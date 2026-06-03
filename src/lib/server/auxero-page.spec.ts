@@ -38,7 +38,8 @@ describe('splitAuxeroDocument', () => {
 			}
 		);
 
-		expect(pageDocument.bodyClass).toBe('inner-page');
+		expect(pageDocument.bodyClass).toContain('inner-page');
+		expect(pageDocument.bodyClass).toContain('auxero-template-compare-html');
 		expect(slotDocument.headHtml).toBe(pageDocument.headHtml);
 		expect(slot.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
 		expect(slot.sectionHtml).toContain('data-bohemcars-compare-table');

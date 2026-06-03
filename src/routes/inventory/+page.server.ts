@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { inventoryCardsFromVehicles } from '$lib/auxero/inventory';
+import { homeFiveHeaderDataForLocale } from '$lib/auxero/home-five';
 import { inventoryMobileDataFromState } from '$lib/auxero/inventory-mobile';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import {
@@ -7,7 +8,7 @@ import {
 	inventoryTemplateForView,
 	resolveInventoryView
 } from '$lib/server/inventory-state';
-import { renderAuxeroPageDocument, splitAuxeroDivBlockByMarker } from '$lib/server/auxero-page';
+import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
@@ -24,20 +25,22 @@ export const load: PageServerLoad = ({ request, url }) => {
 		renderOptions,
 		'Inventory template could not be rendered'
 	);
-	const inventorySlot = splitAuxeroDivBlockByMarker(
+	const headerSlot = splitAuxeroBodySection(
 		pageDocument.bodyHtml,
-		'bohemcars-inventory-content'
+		'<!-- Header -->',
+		'<!-- Header -->'
 	);
 	const inventoryState = getInventoryState(templateFile, renderOptions);
 
 	return {
-		afterInventoryHtml: inventorySlot?.afterHtml ?? '',
 		auxeroFullPage: true,
-		beforeInventoryHtml: inventorySlot?.beforeHtml ?? pageDocument.bodyHtml,
-		cards: inventorySlot ? inventoryCardsFromVehicles(inventoryState.selected, locale) : [],
+		cards: inventoryCardsFromVehicles(inventoryState.selected, locale),
 		copy: getMessages(locale).inventory,
+		desktopHtml: headerSlot ? headerSlot.afterHtml : '',
+		header: headerSlot ? homeFiveHeaderDataForLocale(locale, '/inventory') : undefined,
 		mobile: inventoryMobileDataFromState(inventoryState, locale),
-		pageDocument,
+		pageDocument: headerSlot ? { ...pageDocument, bodyHtml: headerSlot.beforeHtml } : pageDocument,
+		seoTitle: locale === 'bg' ? 'Автомобили — Bohemcars' : 'Cars — Bohemcars',
 		view: inventoryState.view
 	};
 };

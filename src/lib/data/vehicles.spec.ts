@@ -12,6 +12,11 @@ describe('vehicle data helpers', () => {
 		expect(getVehicleBySlug('21764342419542174')?.title).toBe('BMW X5 40i M Sport Shadow Line');
 	});
 
+	it('uses a stable local image for known broken feed photos', () => {
+		expect(getVehicleBySlug('21764342419542174')?.image).toBe('/assets/images/card/card-48.jpg');
+		expect(getVehicleBySlug('21778068579001193')?.image).toBe('/assets/images/card/card-55.jpg');
+	});
+
 	it('filters by search, source id, location, status, gearbox, price, year, mileage, and facets', () => {
 		const vehicle = getVehicleBySlug('21764342419542174');
 		expect(vehicle).toBeDefined();

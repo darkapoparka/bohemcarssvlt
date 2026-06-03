@@ -29,6 +29,13 @@
 
 	const inputClass = (field: InquiryInputField) => `${field.active ? 'active ' : ''}input-large`;
 
+	const inputModeFor = (field: InquiryInputField) => {
+		if (field.type === 'tel') return 'tel' as const;
+		if (field.type === 'number') return 'numeric' as const;
+		if (field.type === 'email') return 'email' as const;
+		return undefined;
+	};
+
 	function submitInquiry(event: SubmitEvent) {
 		event.preventDefault();
 		status = statusMessage;
@@ -49,6 +56,7 @@
 						placeholder={field.placeholder}
 						required={field.required}
 						type={field.type}
+						inputmode={inputModeFor(field)}
 						value={field.value ?? ''}
 					/>
 				{:else if field.kind === 'select'}

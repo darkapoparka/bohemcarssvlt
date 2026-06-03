@@ -116,7 +116,11 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 		afterModalsHtml: modalSlot?.afterHtml ?? '',
 		auxeroFullPage: true,
 		brandCards: homeFiveBrandCardsForLocale(locale),
-		budgetVehicles: homeFiveVehicleCardsFromVehicles(vehicles, 8, locale),
+		budgetVehicles: homeFiveVehicleCardsFromVehicles(
+			[...vehicles].sort((a, b) => a.monthly - b.monthly),
+			8,
+			locale
+		),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		copy: messages.home,
 		featuredVehicles: featuredVehiclesSlot

@@ -6,11 +6,11 @@
 </script>
 
 <InventoryTemplatePage
-	afterInventoryHtml={data.afterInventoryHtml}
-	beforeInventoryHtml={data.beforeInventoryHtml}
 	cards={data.cards}
 	copy={data.copy}
+	desktopHtml={data.desktopHtml}
+	header={data.header}
 	mobile={data.mobile}
 	pageDocument={data.pageDocument}
-	view={data.view}
+	seoTitle={data.seoTitle}
 />

@@ -37,7 +37,6 @@
 	afterReviewsSectionHtml={data.afterReviewsSectionHtml}
 	afterTypeGalleryHtml={data.afterTypeGalleryHtml}
 	brandCards={data.brandCards}
-	budgetVehicles={data.budgetVehicles}
 	copy={data.copy}
 	featuredVehicles={data.featuredVehicles}
 	footer={data.footer}

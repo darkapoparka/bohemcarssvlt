@@ -122,7 +122,11 @@
 </script>
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
+<svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html pageDocument.headHtml.replace(/<title>[\s\S]*?<\/title>/i, '')}
+	<title>{detail.title} — Bohemcars</title>
+</svelte:head>
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 <div onsubmit={handleRenderedSubmit}>{@html renderedPageHtml}</div>
 <AuxeroVehicleMobileIsland {detail} />

@@ -26,6 +26,11 @@
 		fieldCopy[field.name]?.placeholder ?? field.placeholder ?? '';
 	const autocompleteFor = (field: AuxeroSellCarInputField) =>
 		field.name === 'phone' ? 'tel' : 'off';
+	const inputModeFor = (field: AuxeroSellCarInputField): 'tel' | 'numeric' | undefined => {
+		if (field.name === 'phone') return 'tel';
+		if (field.name === 'mileage' || field.name === 'price') return 'numeric';
+		return undefined;
+	};
 	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 		submitted = true;
@@ -57,6 +62,7 @@
 							placeholder={placeholderFor(field)}
 							required={field.required}
 							autocomplete={autocompleteFor(field)}
+							inputmode={inputModeFor(field)}
 							value={field.value ?? ''}
 						/>
 					</label>

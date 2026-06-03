@@ -49,6 +49,7 @@ export type InventoryFilters = {
 	maxYear?: number;
 	minMileage?: number;
 	maxMileage?: number;
+	feature?: string;
 	fuel?: string;
 	location?: string;
 	sourceId?: string;

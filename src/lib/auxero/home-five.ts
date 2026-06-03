@@ -243,8 +243,14 @@ export type HomeFiveVehicleCardData = {
 };
 
 export type HomeFiveHeroSelectOption = {
+	brand?: string;
+	countLabel?: string;
+	image?: string;
 	label: string;
+	series?: string;
+	shortLabel?: string;
 	value: string;
+	variant?: string;
 };
 
 export type HomeFiveHeroSelect = {
@@ -317,8 +323,16 @@ export type HomeFiveHeroData = {
 
 const brokenHomeImageSlugs = new Set(['21779200396408437']);
 
+// Some listings carry a remote primary photo that does not match the model (e.g. the
+// X5 shipped a sedan-looking shot). Use the same curated cutout the PDP and mega-menu
+// use so the card thumbnail and the detail hero stay consistent.
+const cardImageOverrides: Record<string, string> = {
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
+};
+
 export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
-	brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image;
+	cardImageOverrides[vehicle.slug] ??
+	(brokenHomeImageSlugs.has(vehicle.slug) ? bohemcarsAssets.hero : vehicle.image);
 
 const inventoryMegaMenuVehicles = [
 	{
@@ -618,7 +632,16 @@ export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[]
 		count: localizeCount(locale, card.count)
 	}));
 
-export const homeFiveHeaderDataForLocale = (locale: Locale): HomeFiveHeaderData => {
+const isHeaderNavActive = (activePath: string, href: string) => {
+	if (href === '/') return activePath === '/';
+
+	return activePath === href || activePath.startsWith(`${href}/`);
+};
+
+export const homeFiveHeaderDataForLocale = (
+	locale: Locale,
+	activePath = '/'
+): HomeFiveHeaderData => {
 	const t = getMessages(locale);
 
 	return {
@@ -656,7 +679,7 @@ export const homeFiveHeaderDataForLocale = (locale: Locale): HomeFiveHeaderData 
 		navigation: mainNavigation.map<HomeFiveHeaderNavigationItem>((item) => ({
 			...item,
 			label: t.nav[item.href as keyof typeof t.nav],
-			active: item.href === '/',
+			active: isHeaderNavActive(activePath, item.href),
 			megaMenu:
 				item.href === '/inventory'
 					? inventoryMegaMenuForLocale(locale)
@@ -965,12 +988,120 @@ export const homeFiveVehiclePillsForLocale = (locale: Locale): HomeFiveVehiclePi
 const uniqueSortedValues = (items: string[]) =>
 	Array.from(new Set(items.filter(Boolean))).sort((left, right) => left.localeCompare(right));
 
+const countBy = (items: string[]) =>
+	items.reduce((counts, item) => {
+		if (!item) return counts;
+		counts.set(item, (counts.get(item) ?? 0) + 1);
+		return counts;
+	}, new Map<string, number>());
+
+const modalBrandLogos: Record<string, string> = {
+	Audi: '/assets/bohemcars/brands/audi.png',
+	BMW: '/assets/bohemcars/brands/bmw.png',
+	Ford: '/assets/bohemcars/brands/ford.png',
+	Mazda: '/assets/bohemcars/brands/mazda.png',
+	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
+	Porsche: '/assets/bohemcars/brands/porsche.png',
+	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+};
+
+const compactModelLabel = (value: string) =>
+	value
+		.replace(/\s+(M Sport Shadow Line|Black Optic|Technik Black Optic)$/i, '')
+		.replace(/\s+(Carbon Package|Night Package|Sport Chrono|Signature)$/i, '')
+		.replace(/\s+(xDrive|quattro|4MATIC|4M)\b/i, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+
+const modelSeriesLabel = (brand: string, model: string) => {
+	const clean = compactModelLabel(model);
+	const firstToken = clean.split(/\s+/)[0] ?? clean;
+
+	if (brand === 'BMW') {
+		if (/^XM$/i.test(firstToken)) return 'XM';
+		if (/^X\d/i.test(firstToken)) return firstToken.toUpperCase();
+		if (/^M\d/i.test(firstToken)) return firstToken.toUpperCase();
+		const numericSeries = firstToken.match(/^([1-8])\d{2}/);
+		if (numericSeries) return `${numericSeries[1]} Series`;
+	}
+
+	if (brand === 'Mercedes-Benz') {
+		const mercedesFamily = firstToken.match(/^(GLA|GLB|GLC|GLE|GLS|CLA|CLS|A|B|C|E|G|S|SL)\b/i);
+		if (mercedesFamily) return mercedesFamily[1].toUpperCase();
+	}
+
+	if (brand === 'Audi') {
+		const audiFamily = firstToken.match(/^(RS\d|SQ\d|Q\d|A\d|S\d|TT|R8)\b/i);
+		if (audiFamily) return audiFamily[1].toUpperCase();
+	}
+
+	if (brand === 'Mazda') {
+		const mazdaFamily = firstToken.match(/^CX-\d/i);
+		if (mazdaFamily) return mazdaFamily[0].toUpperCase();
+	}
+
+	return firstToken;
+};
+
+const modelVariantLabel = (brand: string, model: string, series: string) => {
+	const clean = compactModelLabel(model);
+	let variant: string;
+
+	if (brand === 'BMW') {
+		if (/^\d Series$/.test(series)) return clean;
+		variant = clean.replace(
+			new RegExp(`^${series.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i'),
+			''
+		);
+	} else {
+		variant = clean.replace(
+			new RegExp(`^${series.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i'),
+			''
+		);
+	}
+
+	return variant.trim() || clean;
+};
+
+const modelSelectOptions = (vehicles: Vehicle[]): HomeFiveHeroSelectOption[] => {
+	const counts = countBy(vehicles.map((vehicle) => `${vehicle.brand}|||${vehicle.model}`));
+	const options = new Map<string, HomeFiveHeroSelectOption>();
+
+	for (const vehicle of vehicles) {
+		const key = `${vehicle.brand}|||${vehicle.model}`;
+
+		if (!options.has(key)) {
+			const count = counts.get(key) ?? 0;
+			const series = modelSeriesLabel(vehicle.brand, vehicle.model);
+
+			options.set(key, {
+				brand: vehicle.brand,
+				countLabel: count > 1 ? String(count) : undefined,
+				label: vehicle.model,
+				series,
+				shortLabel: compactModelLabel(vehicle.model),
+				value: vehicle.model,
+				variant: modelVariantLabel(vehicle.brand, vehicle.model, series)
+			});
+		}
+	}
+
+	return Array.from(options.values()).sort((left, right) =>
+		left.brand === right.brand
+			? left.label.localeCompare(right.label)
+			: (left.brand ?? '').localeCompare(right.brand ?? '')
+	);
+};
+
 const selectOptions = (
 	locale: Locale,
 	values: string[],
-	group?: keyof PublicMessages['vehicleTerms']
+	group?: keyof PublicMessages['vehicleTerms'],
+	counts?: Map<string, number>
 ): HomeFiveHeroSelectOption[] =>
 	uniqueSortedValues(values).map((value) => ({
+		countLabel: counts?.get(value) ? String(counts.get(value)) : undefined,
 		label: group ? translateVehicleTerm(locale, group, value) : value,
 		value
 	}));
@@ -1134,6 +1265,7 @@ export function homeFiveHeroDataFromVehicles(
 			...slide
 		})
 	);
+	const brandCounts = countBy(vehicles.map((vehicle) => vehicle.brand));
 
 	return {
 		activeMode,
@@ -1183,15 +1315,21 @@ export function homeFiveHeroDataFromVehicles(
 				name: 'brand',
 				options: selectOptions(
 					locale,
-					vehicles.map((vehicle) => vehicle.brand)
-				),
+					vehicles.map((vehicle) => vehicle.brand),
+					undefined,
+					brandCounts
+				).map((option) => ({
+					...option,
+					image: modalBrandLogos[option.value],
+					shortLabel: option.value === 'Mercedes-Benz' ? 'Mercedes' : option.value
+				})),
 				title: t.filters.selectBrand
 			},
 			{
 				defaultLabel: t.filters.allModel,
 				id: 'Home05ModelSelectToggle',
 				name: 'q',
-				options: selectOptions(locale, vehicles.map((vehicle) => vehicle.model).slice(0, 8)),
+				options: modelSelectOptions(vehicles),
 				title: t.filters.selectModel
 			},
 			{
@@ -1246,7 +1384,7 @@ export const homeFiveVehicleCardFromVehicle = (
 ): HomeFiveVehicleCardData => ({
 	brand: vehicle.brand,
 	fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
-	highlightClass: index % 2 === 0 ? 'bg-primary-2' : 'bg-green',
+	highlightClass: 'bg-primary-2',
 	image: imageForHomeFiveVehicle(vehicle),
 	mileageLabel: formatKm(vehicle.mileage),
 	monthlyLabel: formatMonthly(vehicle.monthly, locale),

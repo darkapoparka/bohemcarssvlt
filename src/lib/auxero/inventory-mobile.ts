@@ -1,6 +1,7 @@
 import { bodyTypes, brands, fuels, vehicles, type InventoryFilters } from '$lib/data/vehicles';
 import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
 import type { InventoryState } from '$lib/server/inventory-state';
+import { formatMileage, formatPrice } from '$lib/utils/format';
 
 export type InventoryMobilePill = {
 	active: boolean;
@@ -14,6 +15,7 @@ export type InventoryMobileOption = {
 	active: boolean;
 	countLabel?: string;
 	href: string;
+	image?: string;
 	label: string;
 	value: string;
 };
@@ -22,23 +24,38 @@ export type InventoryMobileData = {
 	activeFilters: InventoryMobilePill[];
 	applyLabel: string;
 	bodyLabel: string;
+	bodyRailLabel: string;
 	bodyOptions: InventoryMobileOption[];
 	brandOptions: InventoryMobileOption[];
 	brandLabel: string;
+	brandSearchPlaceholder: string;
 	brandValue: string;
 	clearHref: string;
 	closeLabel: string;
 	countLabel: string;
 	doneLabel: string;
 	drawerTitle: string;
+	showResultsLabel: string;
+	extrasLabel: string;
+	featureOptions: InventoryMobileOption[];
+	featureValue: string;
 	filterLabel: string;
 	fuelLabel: string;
 	fuelOptions: InventoryMobileOption[];
+	fuelValue: string;
 	hiddenInputs: Array<{ name: string; value: string }>;
+	mileageLabel: string;
+	mileageOptions: InventoryMobileOption[];
+	mileageValue: string;
 	modelLabel: string;
 	modelOptions: InventoryMobileOption[];
 	modelOptionsByBrand: Record<string, InventoryMobileOption[]>;
+	modelSearchPlaceholder: string;
 	modelValue: string;
+	noMatchesLabel: string;
+	priceLabel: string;
+	priceOptions: InventoryMobileOption[];
+	priceValue: string;
 	quickPills: InventoryMobilePill[];
 	searchDrawerTitle: string;
 	searchLabel: string;
@@ -46,7 +63,14 @@ export type InventoryMobileData = {
 	searchValue: string;
 	sortLabel: string;
 	sortOptions: InventoryMobileOption[];
+	sortValue: string;
+	transmissionLabel: string;
+	transmissionOptions: InventoryMobileOption[];
+	transmissionValue: string;
 	totalPill: InventoryMobilePill;
+	yearLabel: string;
+	yearOptions: InventoryMobileOption[];
+	yearValue: string;
 };
 
 const brandLogos: Record<string, string> = {
@@ -60,23 +84,58 @@ const brandLogos: Record<string, string> = {
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
 };
 
+const featuredExtras = [
+	'4x4',
+	'Панорамен люк',
+	'LED фарове',
+	'Apple CarPlay \\ Android Auto',
+	'360 camera \\ Задна камера',
+	'Head up display',
+	'Подгряване на седалките',
+	'Безключово палене'
+] as const;
+
+const featureLabels: Record<string, Partial<Record<Locale, string>>> = {
+	'360 camera \\ Задна камера': { bg: '360 камера', en: '360 camera' },
+	'Apple CarPlay \\ Android Auto': { bg: 'CarPlay / Android Auto', en: 'CarPlay / Android Auto' },
+	'Безключово палене': { bg: 'Безключово', en: 'Keyless start' },
+	'Панорамен люк': { bg: 'Панорама', en: 'Panorama' },
+	'Подгряване на седалките': { bg: 'Подгрев', en: 'Heated seats' },
+	'LED фарове': { bg: 'LED фарове', en: 'LED headlights' },
+	'Head up display': { bg: 'Head-up', en: 'Head-up' },
+	'4x4': { bg: '4x4', en: '4x4' }
+};
+
 const labels = (locale: Locale) =>
 	locale === 'bg'
 		? {
 				all: 'Всички',
 				allBodyTypes: 'Всички типове',
 				allBrands: 'Всички марки',
+				allExtras: 'Всички екстри',
+				allMileage: 'Всеки пробег',
+				allPrices: 'Всички цени',
+				allTransmissions: 'Всички скорости',
+				allYears: 'Всички години',
 				allWithCount: (count: number) => `Всички ${count}`,
 				apply: 'Приложи',
+				showResults: (count: number) => `Виж ${count} автомобила`,
 				body: 'Тип купе',
+				bodyShort: 'Тип',
 				brand: 'Марка',
+				brandSearchPlaceholder: 'Търси марка',
 				clear: 'Изчисти',
 				close: 'Затвори',
 				done: 'Готово',
 				drawerTitle: 'Филтри',
+				extras: 'Екстри',
 				filters: 'Филтри',
 				fuel: 'Гориво',
+				mileage: 'Пробег',
 				model: 'Модел',
+				modelSearchPlaceholder: 'Търси модел',
+				noMatches: 'Няма съвпадения',
+				price: 'Цена',
 				search: 'Търси',
 				searchDrawerTitle: 'Намери автомобил',
 				searchPlaceholder: 'Търси автомобили',
@@ -88,23 +147,38 @@ const labels = (locale: Locale) =>
 					'lowest-price': 'Най-ниска цена',
 					'newest-listed': 'Най-нови обяви',
 					'newest-year': 'Най-нова година'
-				}
+				},
+				transmission: 'Скорости',
+				year: 'Година'
 			}
 		: {
 				all: 'All',
 				allBodyTypes: 'All body types',
 				allBrands: 'All brands',
+				allExtras: 'All extras',
+				allMileage: 'Any mileage',
+				allPrices: 'All prices',
+				allTransmissions: 'All transmissions',
+				allYears: 'All years',
 				allWithCount: (count: number) => `All ${count}`,
 				apply: 'Apply',
+				showResults: (count: number) => `Show ${count} cars`,
 				body: 'Body type',
+				bodyShort: 'Type',
 				brand: 'Brand',
+				brandSearchPlaceholder: 'Search make',
 				clear: 'Clear',
 				close: 'Close',
 				done: 'Done',
 				drawerTitle: 'Filters',
+				extras: 'Extras',
 				filters: 'Filters',
 				fuel: 'Fuel',
+				mileage: 'Mileage',
 				model: 'Model',
+				modelSearchPlaceholder: 'Search model',
+				noMatches: 'No matches',
+				price: 'Price',
 				search: 'Search',
 				searchDrawerTitle: 'Find a car',
 				searchPlaceholder: 'Search cars',
@@ -116,7 +190,9 @@ const labels = (locale: Locale) =>
 					'lowest-price': 'Lowest Price',
 					'newest-listed': 'Newest Listed',
 					'newest-year': 'Newest Year'
-				}
+				},
+				transmission: 'Transmission',
+				year: 'Year'
 			};
 
 const countBy = (values: string[]) =>
@@ -125,6 +201,45 @@ const countBy = (values: string[]) =>
 
 		return counts;
 	}, new Map<string, number>());
+
+const rangeValue = (min?: number, max?: number) => `${min ?? ''}-${max ?? ''}`;
+
+const parseRangeValue = (value: string) => {
+	const [min, max] = value.split('-');
+
+	return {
+		max: max ? Number(max) : undefined,
+		min: min ? Number(min) : undefined
+	};
+};
+
+const matchesRange = (value: number, range: string) => {
+	const { max, min } = parseRangeValue(range);
+
+	return (!min || value >= min) && (!max || value <= max);
+};
+
+const activeRangeValue = (min?: number, max?: number) => (min || max ? rangeValue(min, max) : '');
+
+const optionForRange = ({
+	activeValue,
+	count,
+	href,
+	label,
+	value
+}: {
+	activeValue: string;
+	count: number;
+	href: string;
+	label: string;
+	value: string;
+}): InventoryMobileOption => ({
+	active: activeValue === value,
+	countLabel: String(count),
+	href,
+	label,
+	value
+});
 
 const inventoryUrl = (state: InventoryState, overrides: Record<string, string | null>) => {
 	const params = new URLSearchParams(state.searchParams);
@@ -178,7 +293,15 @@ const hiddenInputs = (filters: InventoryFilters, sortParam: string) =>
 	[
 		filters.brand ? { name: 'brand', value: filters.brand } : undefined,
 		filters.bodyType ? { name: 'bodyType', value: filters.bodyType } : undefined,
+		filters.feature ? { name: 'feature', value: filters.feature } : undefined,
 		filters.fuel ? { name: 'fuel', value: filters.fuel } : undefined,
+		filters.maxMileage ? { name: 'maxMileage', value: String(filters.maxMileage) } : undefined,
+		filters.maxPrice ? { name: 'maxPrice', value: String(filters.maxPrice) } : undefined,
+		filters.maxYear ? { name: 'maxYear', value: String(filters.maxYear) } : undefined,
+		filters.minMileage ? { name: 'minMileage', value: String(filters.minMileage) } : undefined,
+		filters.minPrice ? { name: 'minPrice', value: String(filters.minPrice) } : undefined,
+		filters.minYear ? { name: 'minYear', value: String(filters.minYear) } : undefined,
+		filters.transmission ? { name: 'transmission', value: filters.transmission } : undefined,
 		sortParam !== 'best-match' ? { name: 'sort', value: sortParam } : undefined
 	].filter((input): input is { name: string; value: string } => Boolean(input));
 
@@ -190,10 +313,17 @@ export const inventoryMobileDataFromState = (
 	const brandCounts = countBy(vehicles.map((vehicle) => vehicle.brand));
 	const bodyCounts = countBy(vehicles.map((vehicle) => vehicle.bodyType));
 	const fuelCounts = countBy(vehicles.map((vehicle) => vehicle.fuel));
+	const transmissionCounts = countBy(vehicles.map((vehicle) => vehicle.transmission));
+	const featureCounts = countBy(vehicles.flatMap((vehicle) => vehicle.features));
 	const selectedBrand = state.filters.brand?.toLowerCase();
 	const selectedBody = state.filters.bodyType?.toLowerCase();
+	const selectedFeature = state.filters.feature?.toLowerCase();
 	const selectedFuel = state.filters.fuel?.toLowerCase();
 	const selectedQuery = state.filters.query?.toLowerCase();
+	const selectedTransmission = state.filters.transmission?.toLowerCase();
+	const selectedMileageRange = activeRangeValue(state.filters.minMileage, state.filters.maxMileage);
+	const selectedPriceRange = activeRangeValue(state.filters.minPrice, state.filters.maxPrice);
+	const selectedYearRange = activeRangeValue(state.filters.minYear, state.filters.maxYear);
 	const buildModelOptions = (brand = '') => {
 		const selectedBrandMatches = brand ? selectedBrand === brand.toLowerCase() : !selectedBrand;
 		const modelVehicles = brand
@@ -238,6 +368,7 @@ export const inventoryMobileDataFromState = (
 				count: brandCounts.get(brand) ?? 0,
 				countLabel: String(brandCounts.get(brand) ?? 0),
 				href: quickUrl(state, { brand }),
+				image: brandLogos[brand],
 				label: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
 				value: brand
 			}))
@@ -302,6 +433,7 @@ export const inventoryMobileDataFromState = (
 		.map((fuel) => ({
 			active: selectedFuel === fuel.toLowerCase(),
 			count: fuelCounts.get(fuel) ?? 0,
+			countLabel: String(fuelCounts.get(fuel) ?? 0),
 			href: quickUrl(state, {
 				fuel: selectedFuel === fuel.toLowerCase() ? null : fuel
 			}),
@@ -310,6 +442,177 @@ export const inventoryMobileDataFromState = (
 		}))
 		.filter((option) => option.count > 0 && option.label !== '340 к.с.')
 		.slice(0, 8);
+	const transmissionOptions: InventoryMobileOption[] = [
+		{
+			active: !selectedTransmission,
+			countLabel: String(vehicles.length),
+			href: inventoryUrl(state, { Transmission: null, gearbox: null, transmission: null }),
+			label: text.allTransmissions,
+			value: ''
+		},
+		...Array.from(transmissionCounts.entries())
+			.map(([transmission, count]) => ({
+				active: selectedTransmission === transmission.toLowerCase(),
+				count,
+				countLabel: String(count),
+				href: inventoryUrl(state, { Transmission: null, gearbox: null, transmission }),
+				label: translateVehicleTerm(locale, 'transmissions', transmission),
+				value: transmission
+			}))
+			.filter((option) => option.count > 0)
+			.sort((left, right) => right.count - left.count)
+	];
+	const priceRanges = [
+		{
+			label: `${locale === 'bg' ? 'До' : 'Up to'} ${formatPrice(30000)}`,
+			value: rangeValue(undefined, 30000)
+		},
+		{ label: `${formatPrice(30000)} - ${formatPrice(50000)}`, value: rangeValue(30000, 50000) },
+		{ label: `${formatPrice(50000)} - ${formatPrice(80000)}`, value: rangeValue(50000, 80000) },
+		{
+			label: `${locale === 'bg' ? 'Над' : 'Over'} ${formatPrice(80000)}`,
+			value: rangeValue(80000, undefined)
+		}
+	];
+	const priceOptions: InventoryMobileOption[] = [
+		{
+			active: !selectedPriceRange,
+			countLabel: String(vehicles.length),
+			href: inventoryUrl(state, {
+				maxPrice: null,
+				minPrice: null,
+				price: null,
+				priceFrom: null,
+				priceTo: null
+			}),
+			label: text.allPrices,
+			value: ''
+		},
+		...priceRanges.map((range) => {
+			const { max, min } = parseRangeValue(range.value);
+
+			return optionForRange({
+				activeValue: selectedPriceRange,
+				count: vehicles.filter((vehicle) => matchesRange(vehicle.price, range.value)).length,
+				href: inventoryUrl(state, {
+					maxPrice: max ? String(max) : null,
+					minPrice: min ? String(min) : null,
+					price: null,
+					priceFrom: null,
+					priceTo: null
+				}),
+				label: range.label,
+				value: range.value
+			});
+		})
+	];
+	const mileageRanges = [
+		{
+			label: `${locale === 'bg' ? 'До' : 'Up to'} ${formatMileage(80000)}`,
+			value: rangeValue(undefined, 80000)
+		},
+		{
+			label: `${locale === 'bg' ? 'До' : 'Up to'} ${formatMileage(120000)}`,
+			value: rangeValue(undefined, 120000)
+		},
+		{
+			label: `${locale === 'bg' ? 'До' : 'Up to'} ${formatMileage(160000)}`,
+			value: rangeValue(undefined, 160000)
+		},
+		{
+			label: `${locale === 'bg' ? 'Над' : 'Over'} ${formatMileage(160000)}`,
+			value: rangeValue(160000, undefined)
+		}
+	];
+	const mileageOptions: InventoryMobileOption[] = [
+		{
+			active: !selectedMileageRange,
+			countLabel: String(vehicles.length),
+			href: inventoryUrl(state, {
+				maxMileage: null,
+				mileageFrom: null,
+				mileageTo: null,
+				minMileage: null
+			}),
+			label: text.allMileage,
+			value: ''
+		},
+		...mileageRanges.map((range) => {
+			const { max, min } = parseRangeValue(range.value);
+
+			return optionForRange({
+				activeValue: selectedMileageRange,
+				count: vehicles.filter((vehicle) => matchesRange(vehicle.mileage, range.value)).length,
+				href: inventoryUrl(state, {
+					maxMileage: max ? String(max) : null,
+					mileageFrom: null,
+					mileageTo: null,
+					minMileage: min ? String(min) : null
+				}),
+				label: range.label,
+				value: range.value
+			});
+		})
+	];
+	const yearRanges = [
+		{ label: `${locale === 'bg' ? 'От' : 'From'} 2023`, value: rangeValue(2023, undefined) },
+		{ label: `${locale === 'bg' ? 'От' : 'From'} 2021`, value: rangeValue(2021, undefined) },
+		{ label: `${locale === 'bg' ? 'От' : 'From'} 2019`, value: rangeValue(2019, undefined) }
+	];
+	const yearOptions: InventoryMobileOption[] = [
+		{
+			active: !selectedYearRange,
+			countLabel: String(vehicles.length),
+			href: inventoryUrl(state, { maxYear: null, minYear: null, yearFrom: null, yearTo: null }),
+			label: text.allYears,
+			value: ''
+		},
+		...yearRanges.map((range) => {
+			const { max, min } = parseRangeValue(range.value);
+
+			return optionForRange({
+				activeValue: selectedYearRange,
+				count: vehicles.filter((vehicle) => matchesRange(vehicle.year, range.value)).length,
+				href: inventoryUrl(state, {
+					maxYear: max ? String(max) : null,
+					minYear: min ? String(min) : null,
+					yearFrom: null,
+					yearTo: null
+				}),
+				label: range.label,
+				value: range.value
+			});
+		})
+	];
+	const featureOptions: InventoryMobileOption[] = [
+		{
+			active: !selectedFeature,
+			countLabel: String(vehicles.length),
+			href: inventoryUrl(state, {
+				equipment: null,
+				extra: null,
+				feature: null,
+				features: null
+			}),
+			label: text.allExtras,
+			value: ''
+		},
+		...featuredExtras
+			.map((feature) => ({
+				active: selectedFeature === feature.toLowerCase(),
+				count: featureCounts.get(feature) ?? 0,
+				countLabel: String(featureCounts.get(feature) ?? 0),
+				href: inventoryUrl(state, {
+					equipment: null,
+					extra: null,
+					feature,
+					features: null
+				}),
+				label: featureLabels[feature]?.[locale] ?? feature,
+				value: feature
+			}))
+			.filter((option) => option.count > 0)
+	];
 	const activeFilters: InventoryMobilePill[] = [];
 
 	if (state.filters.brand) {
@@ -336,6 +639,48 @@ export const inventoryMobileDataFromState = (
 		});
 	}
 
+	if (state.filters.maxMileage || state.filters.minMileage) {
+		activeFilters.push({
+			active: true,
+			href: without(state, ['maxMileage', 'mileageFrom', 'mileageTo', 'minMileage']),
+			label: mileageOptions.find((option) => option.active)?.label ?? text.mileage
+		});
+	}
+
+	if (state.filters.maxPrice || state.filters.minPrice) {
+		activeFilters.push({
+			active: true,
+			href: without(state, ['maxPrice', 'minPrice', 'price', 'priceFrom', 'priceTo']),
+			label: priceOptions.find((option) => option.active)?.label ?? text.price
+		});
+	}
+
+	if (state.filters.minYear || state.filters.maxYear) {
+		activeFilters.push({
+			active: true,
+			href: without(state, ['maxYear', 'minYear', 'yearFrom', 'yearTo']),
+			label: yearOptions.find((option) => option.active)?.label ?? text.year
+		});
+	}
+
+	if (state.filters.transmission) {
+		activeFilters.push({
+			active: true,
+			href: without(state, ['Transmission', 'gearbox', 'transmission']),
+			label: translateVehicleTerm(locale, 'transmissions', state.filters.transmission)
+		});
+	}
+
+	if (state.filters.feature) {
+		activeFilters.push({
+			active: true,
+			href: without(state, ['equipment', 'extra', 'feature', 'features']),
+			label:
+				featureOptions.find((option) => option.value === state.filters.feature)?.label ??
+				state.filters.feature
+		});
+	}
+
 	if (state.filters.query) {
 		activeFilters.push({
 			active: true,
@@ -344,39 +689,65 @@ export const inventoryMobileDataFromState = (
 		});
 	}
 
+	const sortOptions = Object.entries(text.sortOptions).map(([value, label]) => ({
+		active: state.sortParam === value,
+		href: inventoryUrl(state, { sort: value }),
+		label,
+		value
+	}));
+
 	return {
 		activeFilters,
 		applyLabel: text.apply,
 		bodyLabel: text.body,
+		bodyRailLabel: text.bodyShort,
 		bodyOptions,
 		brandOptions,
 		brandLabel: text.brand,
+		brandSearchPlaceholder: text.brandSearchPlaceholder,
 		brandValue: state.filters.brand ?? text.all,
 		clearHref: '/inventory',
 		closeLabel: text.close,
 		countLabel: text.allWithCount(state.selected.length),
 		doneLabel: text.done,
+		showResultsLabel: text.showResults(state.selected.length),
 		drawerTitle: text.drawerTitle,
+		extrasLabel: text.extras,
+		featureOptions,
+		featureValue:
+			featureOptions.find((option) => option.value === state.filters.feature)?.label ?? text.all,
 		filterLabel: text.filters,
 		fuelLabel: text.fuel,
 		fuelOptions,
+		fuelValue: fuelOptions.find((option) => option.active && option.value)?.label ?? text.all,
 		hiddenInputs: hiddenInputs(state.filters, state.sortParam),
+		mileageLabel: text.mileage,
+		mileageOptions,
+		mileageValue: mileageOptions.find((option) => option.active && option.value)?.label ?? text.all,
 		modelLabel: text.model,
 		modelOptions,
 		modelOptionsByBrand,
+		modelSearchPlaceholder: text.modelSearchPlaceholder,
 		modelValue: state.filters.query ?? text.all,
+		noMatchesLabel: text.noMatches,
+		priceLabel: text.price,
+		priceOptions,
+		priceValue: priceOptions.find((option) => option.active && option.value)?.label ?? text.all,
 		quickPills: [totalPill, ...brandPills, ...bodyPills],
 		searchDrawerTitle: text.searchDrawerTitle,
 		searchLabel: text.search,
 		searchPlaceholder: text.searchPlaceholder,
 		searchValue: state.filters.query ?? '',
 		sortLabel: text.sort,
-		sortOptions: Object.entries(text.sortOptions).map(([value, label]) => ({
-			active: state.sortParam === value,
-			href: inventoryUrl(state, { sort: value }),
-			label,
-			value
-		})),
-		totalPill
+		sortOptions,
+		sortValue: sortOptions.find((option) => option.active)?.label ?? text.sortOptions['best-match'],
+		totalPill,
+		transmissionLabel: text.transmission,
+		transmissionOptions,
+		transmissionValue:
+			transmissionOptions.find((option) => option.active && option.value)?.label ?? text.all,
+		yearLabel: text.year,
+		yearOptions,
+		yearValue: yearOptions.find((option) => option.active && option.value)?.label ?? text.all
 	};
 };

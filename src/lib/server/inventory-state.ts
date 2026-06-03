@@ -111,6 +111,7 @@ export const getInventoryState = (
 		maxMileage: getNumberParam(searchParams, 'maxMileage', 'mileageTo'),
 		maxPrice: getNumberParam(searchParams, 'maxPrice', 'priceTo', 'price'),
 		maxYear: getNumberParam(searchParams, 'maxYear', 'yearTo'),
+		feature: getParam(searchParams, 'feature', 'features', 'extra', 'equipment'),
 		minMileage: getNumberParam(searchParams, 'minMileage', 'mileageFrom'),
 		minPrice: getNumberParam(searchParams, 'minPrice', 'priceFrom'),
 		minYear: getNumberParam(searchParams, 'minYear', 'yearFrom'),

@@ -1,4 +1,4 @@
-import { bohemcarsAssets, bohemcarsVehicles } from './bohemcars';
+import { bohemcarsVehicles } from './bohemcars';
 import type { InventoryFilters, SortKey, Vehicle, VehicleCondition } from '$lib/types/vehicle';
 
 export type { InventoryFilters, SortKey, Vehicle, VehicleCondition } from '$lib/types/vehicle';
@@ -20,9 +20,18 @@ const conditionForStatus = (status: string, isClientVehicle: boolean): VehicleCo
 	return 'Used';
 };
 
-const knownBrokenImageIds = new Set(['21779200396408437', '11775058343987884']);
+const knownBrokenImageFallbacks: Record<string, string> = {
+	'21764342419542174': '/assets/images/card/card-48.jpg',
+	'21778068579001193': '/assets/images/card/card-55.jpg',
+	'21779200396408437': '/assets/images/card/card-38.jpg',
+	'21779117876725419': '/assets/images/card/card-3.jpg',
+	'21750419064369634': '/assets/images/card/card-48.jpg',
+	'11766312659396823': '/assets/images/card/card-6.jpg',
+	'11768743659815066': '/assets/images/card/card-5.jpg',
+	'11775058343987884': '/assets/images/card/card-5.jpg'
+};
 const imageForVehicle = (vehicle: { id: string; image: string }) =>
-	knownBrokenImageIds.has(vehicle.id) ? bohemcarsAssets.hero : vehicle.image;
+	knownBrokenImageFallbacks[vehicle.id] ?? vehicle.image;
 
 export const vehicles: Vehicle[] = bohemcarsVehicles.map((vehicle, index) => ({
 	slug: vehicle.id,
@@ -167,12 +176,14 @@ export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 	const maxYear = filters.maxYear;
 	const minMileage = filters.minMileage;
 	const maxMileage = filters.maxMileage;
+	const feature = normalizeFilterValue(filters.feature);
 
 	return source.filter((vehicle) => {
-		const matchesFeatureQuery =
-			query === '4x4' && vehicle.features.some((value) => normalizeFilterValue(value) === query);
-		const matchesQuery =
-			!query || containsFilterValue(vehicleSearchText(vehicle), query) || matchesFeatureQuery;
+		const matchesQuery = !query || containsFilterValue(vehicleSearchText(vehicle), query);
+		const matchesFeature =
+			!feature ||
+			vehicle.features.some((value) => containsFilterValue(value, feature)) ||
+			containsFilterValue(vehicleSearchText(vehicle), feature);
 		const matchesSourceId =
 			!sourceId ||
 			[vehicle.slug, vehicle.vin, vehicle.stockNumber, vehicle.sourceUrl].some((value) =>
@@ -199,6 +210,7 @@ export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 
 		return (
 			matchesQuery &&
+			matchesFeature &&
 			matchesSourceId &&
 			matchesBrand &&
 			matchesType &&

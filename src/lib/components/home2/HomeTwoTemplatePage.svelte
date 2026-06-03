@@ -49,6 +49,10 @@
 	let bodyClassScript = $derived(
 		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
 	);
+
+	$effect(() => {
+		document.body.className = pageDocument.bodyClass;
+	});
 </script>
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->

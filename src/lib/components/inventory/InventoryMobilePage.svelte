@@ -2,12 +2,15 @@
 	import { resolve } from '$app/paths';
 	import {
 		ArrowUpDown,
+		BadgeEuro,
 		Car,
 		ChevronDown,
 		Fuel,
 		Gauge,
 		Search,
+		Shapes,
 		SlidersHorizontal,
+		Sparkles,
 		X
 	} from '@lucide/svelte';
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
@@ -16,14 +19,29 @@
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Drawer } from 'vaul-svelte';
 
-	type FilterDrawerMode = 'all' | 'brand' | 'model' | 'sort';
+	type FilterDrawerMode =
+		| 'all'
+		| 'brand'
+		| 'model'
+		| 'sort'
+		| 'fuel'
+		| 'mileage'
+		| 'body'
+		| 'price'
+		| 'extras';
 	type FilterDraft = {
 		body: string;
 		brand: string;
+		feature: string;
 		fuel: string;
+		mileage: string;
 		model: string;
+		price: string;
 		sort: string;
+		transmission: string;
+		year: string;
 	};
+	type InventoryMobileOption = InventoryMobileData['brandOptions'][number];
 
 	let {
 		cards,
@@ -35,65 +53,100 @@
 		mobile: InventoryMobileData;
 	} = $props();
 
-	const searchDrawerSnapPoints: (number | string)[] = [0.64, 0.92];
-	const fullFilterDrawerSnapPoints: (number | string)[] = [1];
-	const focusedFilterDrawerSnapPoints: (number | string)[] = [1];
 	const filterDrawerIds = {
 		all: 'bohemcars-inventory-mobile-filter-drawer',
+		body: 'bohemcars-inventory-mobile-body-drawer',
 		brand: 'bohemcars-inventory-mobile-brand-drawer',
+		extras: 'bohemcars-inventory-mobile-extras-drawer',
+		fuel: 'bohemcars-inventory-mobile-fuel-drawer',
+		mileage: 'bohemcars-inventory-mobile-mileage-drawer',
 		model: 'bohemcars-inventory-mobile-model-drawer',
+		price: 'bohemcars-inventory-mobile-price-drawer',
 		sort: 'bohemcars-inventory-mobile-sort-drawer'
 	} as const;
 	const activeOptionValue = (options: InventoryMobileData['brandOptions']) =>
 		options.find((option) => option.active)?.value ?? '';
+	const normalizedOptionQuery = (value: string) => value.trim().toLocaleLowerCase();
+	const optionSearchText = (option: InventoryMobileOption) =>
+		`${option.label} ${option.value}`.toLocaleLowerCase();
+	const rangeParams = (value: string) => {
+		const [min, max] = value.split('-');
+
+		return {
+			max: max ? Number(max) : undefined,
+			min: min ? Number(min) : undefined
+		};
+	};
 	const currentFilterDraft = (): FilterDraft => ({
 		body: activeOptionValue(mobile.bodyOptions),
 		brand: activeOptionValue(mobile.brandOptions),
+		feature: activeOptionValue(mobile.featureOptions),
 		fuel: activeOptionValue(mobile.fuelOptions),
+		mileage: activeOptionValue(mobile.mileageOptions),
 		model: activeOptionValue(mobile.modelOptions) || mobile.searchValue,
-		sort: activeOptionValue(mobile.sortOptions) || 'best-match'
+		price: activeOptionValue(mobile.priceOptions),
+		sort: activeOptionValue(mobile.sortOptions) || 'best-match',
+		transmission: activeOptionValue(mobile.transmissionOptions),
+		year: activeOptionValue(mobile.yearOptions)
 	});
 
 	let searchDrawerOpen = $state(false);
 	let filterDrawerOpen = $state(false);
 	let filterDrawerMode = $state<FilterDrawerMode>('all');
-	let searchDrawerSnapPoint = $state<number | string | null>(searchDrawerSnapPoints[0]);
-	let filterDrawerSnapPoint = $state<number | string | null>(fullFilterDrawerSnapPoints[0]);
 	let filterDraft = $state<FilterDraft>(currentFilterDraft());
+	let brandDrawerQuery = $state('');
+	let modelDrawerQuery = $state('');
 
 	const brandSelected = $derived(
 		mobile.brandOptions.some((option) => option.active && option.value)
 	);
 	const modelSelected = $derived(Boolean(mobile.searchValue));
 	const bodySelected = $derived(mobile.bodyOptions.some((option) => option.active && option.value));
+	const bodyValue = $derived(
+		mobile.bodyOptions.find((option) => option.active && option.value)?.label ?? mobile.countLabel
+	);
+	const extrasSelected = $derived(
+		mobile.featureOptions.some((option) => option.active && option.value)
+	);
 	const fuelSelected = $derived(mobile.fuelOptions.some((option) => option.active && option.value));
-	const drawerFilterSelected = $derived(bodySelected || fuelSelected);
+	const mileageSelected = $derived(
+		mobile.mileageOptions.some((option) => option.active && option.value)
+	);
+	const priceSelected = $derived(
+		mobile.priceOptions.some((option) => option.active && option.value)
+	);
+	const transmissionSelected = $derived(
+		mobile.transmissionOptions.some((option) => option.active && option.value)
+	);
+	const yearSelected = $derived(mobile.yearOptions.some((option) => option.active && option.value));
+	const drawerFilterSelected = $derived(
+		bodySelected ||
+			extrasSelected ||
+			fuelSelected ||
+			mileageSelected ||
+			priceSelected ||
+			transmissionSelected ||
+			yearSelected
+	);
 	const sortSelected = $derived(
 		mobile.sortOptions.some((option) => option.active && option.value !== 'best-match')
 	);
 	const hasActiveFilters = $derived(mobile.activeFilters.length > 0);
-	const filterDrawerSnapPoints = $derived(
-		filterDrawerMode === 'all' ? fullFilterDrawerSnapPoints : focusedFilterDrawerSnapPoints
-	);
 	const filterDrawerId = $derived(filterDrawerIds[filterDrawerMode]);
 	const filterDrawerKicker = $derived(
 		filterDrawerMode === 'sort' ? mobile.sortLabel : mobile.filterLabel
 	);
 	const filterDrawerTitle = $derived.by(() => {
+		if (filterDrawerMode === 'body') return mobile.bodyLabel;
 		if (filterDrawerMode === 'brand') return mobile.brandLabel;
+		if (filterDrawerMode === 'extras') return mobile.extrasLabel;
+		if (filterDrawerMode === 'fuel') return mobile.fuelLabel;
+		if (filterDrawerMode === 'mileage') return mobile.mileageLabel;
 		if (filterDrawerMode === 'model') return mobile.modelLabel;
+		if (filterDrawerMode === 'price') return mobile.priceLabel;
 		if (filterDrawerMode === 'sort') return mobile.sortLabel;
 
 		return mobile.drawerTitle;
-	});
-	const visibleQuickPills = $derived.by(() => {
-		const quickPills = mobile.quickPills.slice(1);
-		const activePills = quickPills.filter((pill) => pill.active && pill.kind !== 'brand');
-		const inactivePills = quickPills.filter((pill) => !pill.active);
-
-		return hasActiveFilters
-			? [mobile.totalPill, ...activePills, ...inactivePills]
-			: [mobile.totalPill, ...inactivePills];
 	});
 	const stagedModelOptions = $derived.by(() => {
 		const options =
@@ -106,6 +159,22 @@
 			active: filterDraft.model === option.value
 		}));
 	});
+	const visibleBrandOptions = $derived.by(() => {
+		const query = normalizedOptionQuery(brandDrawerQuery);
+
+		return mobile.brandOptions.filter((option) => {
+			if (!option.value) return !query;
+
+			return !query || optionSearchText(option).includes(query);
+		});
+	});
+	const visibleStagedModelOptions = $derived.by(() => {
+		const query = normalizedOptionQuery(modelDrawerQuery);
+
+		return stagedModelOptions.filter(
+			(option) => !query || optionSearchText(option).includes(query)
+		);
+	});
 	const filterDraftChanged = $derived.by(() => {
 		const current = currentFilterDraft();
 
@@ -113,8 +182,13 @@
 			filterDraft.brand !== current.brand ||
 			filterDraft.model !== current.model ||
 			filterDraft.body !== current.body ||
+			filterDraft.feature !== current.feature ||
 			filterDraft.fuel !== current.fuel ||
-			filterDraft.sort !== current.sort
+			filterDraft.mileage !== current.mileage ||
+			filterDraft.price !== current.price ||
+			filterDraft.sort !== current.sort ||
+			filterDraft.transmission !== current.transmission ||
+			filterDraft.year !== current.year
 		);
 	});
 
@@ -125,6 +199,7 @@
 		if (key === 'brand') {
 			filterDraft.brand = filterDraft.brand === value ? '' : value;
 			filterDraft.model = '';
+			modelDrawerQuery = '';
 			return;
 		}
 
@@ -154,21 +229,38 @@
 		params.delete('body');
 		params.delete('bodystyle');
 		setParam('bodyType', filterDraft.body);
+		params.delete('equipment');
+		params.delete('extra');
+		params.delete('features');
+		setParam('feature', filterDraft.feature);
 		params.delete('FuelType');
 		setParam('fuel', filterDraft.fuel);
+		params.delete('mileageFrom');
+		params.delete('mileageTo');
+		const mileage = rangeParams(filterDraft.mileage);
+		setParam('minMileage', mileage.min ? String(mileage.min) : '');
+		setParam('maxMileage', mileage.max ? String(mileage.max) : '');
+		params.delete('price');
+		params.delete('priceFrom');
+		params.delete('priceTo');
+		const price = rangeParams(filterDraft.price);
+		setParam('minPrice', price.min ? String(price.min) : '');
+		setParam('maxPrice', price.max ? String(price.max) : '');
 		setParam('sort', filterDraft.sort, 'best-match');
+		params.delete('Transmission');
+		params.delete('gearbox');
+		setParam('transmission', filterDraft.transmission);
+		params.delete('yearFrom');
+		params.delete('yearTo');
+		const year = rangeParams(filterDraft.year);
+		setParam('minYear', year.min ? String(year.min) : '');
+		setParam('maxYear', year.max ? String(year.max) : '');
 
 		const query = params.toString();
 
 		return `/inventory${query ? `?${query}` : ''}`;
 	};
-	const applyFilterDraft = () => {
-		if (!filterDraftChanged) {
-			closeFilterDrawer();
-			return;
-		}
-
-		const href = filterDraftHref();
+	const navigateToFilterDraft = (href = filterDraftHref()) => {
 		const queryStart = href.indexOf('?');
 		filterDrawerOpen = false;
 
@@ -176,10 +268,31 @@
 			`${resolve('/inventory')}${queryStart === -1 ? '' : href.slice(queryStart)}`
 		);
 	};
+	const applyFilterDraft = () => {
+		if (!filterDraftChanged) {
+			closeFilterDrawer();
+			return;
+		}
+
+		navigateToFilterDraft();
+	};
+	const selectFilterOption = (key: keyof FilterDraft, value: string) => {
+		const previousHref = filterDraftHref();
+		selectDraftOption(key, value);
+
+		if (filterDrawerMode === 'all') return;
+
+		const nextHref = filterDraftHref();
+		if (nextHref === previousHref) {
+			closeFilterDrawer();
+			return;
+		}
+
+		navigateToFilterDraft(nextHref);
+	};
 
 	const openSearchDrawer = () => {
 		filterDrawerOpen = false;
-		searchDrawerSnapPoint = searchDrawerSnapPoints[0];
 		searchDrawerOpen = true;
 	};
 	const closeSearchDrawer = () => {
@@ -189,24 +302,22 @@
 		searchDrawerOpen = false;
 		filterDrawerMode = mode;
 		resetFilterDraft();
-		filterDrawerSnapPoint =
-			mode === 'all' ? fullFilterDrawerSnapPoints[0] : focusedFilterDrawerSnapPoints[0];
+		if (mode === 'brand') brandDrawerQuery = '';
+		if (mode === 'model') modelDrawerQuery = '';
 		filterDrawerOpen = true;
 	};
 	const closeFilterDrawer = () => {
 		filterDrawerOpen = false;
 	};
+	const fallbackImage = '/assets/images/card/card-48.jpg';
 	const useFallbackImage = (event: Event) => {
 		const image = event.currentTarget as HTMLImageElement;
 
-		if (!image.src.endsWith('/assets/bohemcars/hero/home-hero-available-inventory-wow.webp')) {
-			image.src = '/assets/bohemcars/hero/home-hero-available-inventory-wow.webp';
+		if (!image.src.endsWith(fallbackImage)) {
+			image.src = fallbackImage;
 		}
 	};
-	const mobileImage = (card: AuxeroInventoryVehicleCard) =>
-		card.slug === '21764342419542174'
-			? '/assets/bohemcars/hero/home-hero-available-inventory-wow.webp'
-			: card.image;
+	const mobileImage = (card: AuxeroInventoryVehicleCard) => card.image;
 </script>
 
 <div class="bohemcars-inventory-mobile">
@@ -243,6 +354,37 @@
 			<button
 				type="button"
 				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={drawerFilterSelected}
+				aria-haspopup="dialog"
+				aria-controls={filterDrawerIds.all}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'all'}
+				onclick={() => openFilterDrawer('all')}
+			>
+				<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.filterLabel}</span>
+				{#if hasActiveFilters}
+					<strong>{mobile.activeFilters.length}</strong>
+				{/if}
+			</button>
+			<button
+				type="button"
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={sortSelected}
+				aria-label={`${mobile.sortLabel}: ${mobile.sortValue}`}
+				aria-haspopup="dialog"
+				aria-controls={filterDrawerIds.sort}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'sort'}
+				onclick={() => openFilterDrawer('sort')}
+			>
+				<ArrowUpDown size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.sortLabel}</span>
+				{#if sortSelected}
+					<strong>{mobile.sortValue}</strong>
+				{/if}
+			</button>
+			<button
+				type="button"
+				class="bohemcars-inventory-mobile__tool-choice"
 				class:active={brandSelected}
 				aria-label={`${mobile.brandLabel}: ${mobile.brandValue}`}
 				aria-haspopup="dialog"
@@ -250,6 +392,7 @@
 				aria-expanded={filterDrawerOpen && filterDrawerMode === 'brand'}
 				onclick={() => openFilterDrawer('brand')}
 			>
+				<Car size={18} strokeWidth={2.2} aria-hidden="true" />
 				<span>{mobile.brandLabel}</span>
 				{#if brandSelected}
 					<strong>{mobile.brandValue}</strong>
@@ -274,41 +417,89 @@
 			</button>
 			<button
 				type="button"
-				class:active={drawerFilterSelected}
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={fuelSelected}
+				aria-label={`${mobile.fuelLabel}: ${mobile.fuelValue}`}
 				aria-haspopup="dialog"
-				aria-controls={filterDrawerIds.all}
-				aria-expanded={filterDrawerOpen && filterDrawerMode === 'all'}
-				onclick={() => openFilterDrawer('all')}
+				aria-controls={filterDrawerIds.fuel}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'fuel'}
+				onclick={() => openFilterDrawer('fuel')}
 			>
-				<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
-				{mobile.filterLabel}
+				<Fuel size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.fuelLabel}</span>
+				{#if fuelSelected}
+					<strong>{mobile.fuelValue}</strong>
+				{/if}
+				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
 			</button>
 			<button
 				type="button"
-				class:active={sortSelected}
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={mileageSelected}
+				aria-label={`${mobile.mileageLabel}: ${mobile.mileageValue}`}
 				aria-haspopup="dialog"
-				aria-controls={filterDrawerIds.sort}
-				aria-expanded={filterDrawerOpen && filterDrawerMode === 'sort'}
-				onclick={() => openFilterDrawer('sort')}
+				aria-controls={filterDrawerIds.mileage}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'mileage'}
+				onclick={() => openFilterDrawer('mileage')}
 			>
-				<ArrowUpDown size={18} strokeWidth={2.2} aria-hidden="true" />
-				{mobile.sortLabel}
+				<Gauge size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.mileageLabel}</span>
+				{#if mileageSelected}
+					<strong>{mobile.mileageValue}</strong>
+				{/if}
+				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
 			</button>
-			{#each visibleQuickPills as pill (`${pill.label}-${pill.href}`)}
-				<a
-					class:active={pill.active}
-					href={resolve(pill.href as '/inventory')}
-					aria-current={pill.active ? 'page' : undefined}
-				>
-					{#if pill === mobile.totalPill}
-						<Car size={18} strokeWidth={2.2} aria-hidden="true" />
-					{/if}
-					{#if pill.image}
-						<img src={pill.image} alt="" aria-hidden="true" />
-					{/if}
-					{pill.label}
-				</a>
-			{/each}
+			<button
+				type="button"
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={bodySelected}
+				aria-label={`${mobile.bodyLabel}: ${bodyValue}`}
+				aria-haspopup="dialog"
+				aria-controls={filterDrawerIds.body}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'body'}
+				onclick={() => openFilterDrawer('body')}
+			>
+				<Shapes size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.bodyRailLabel}</span>
+				{#if bodySelected}
+					<strong>{bodyValue}</strong>
+				{/if}
+				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
+			</button>
+			<button
+				type="button"
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={priceSelected}
+				aria-label={`${mobile.priceLabel}: ${mobile.priceValue}`}
+				aria-haspopup="dialog"
+				aria-controls={filterDrawerIds.price}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'price'}
+				onclick={() => openFilterDrawer('price')}
+			>
+				<BadgeEuro size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.priceLabel}</span>
+				{#if priceSelected}
+					<strong>{mobile.priceValue}</strong>
+				{/if}
+				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
+			</button>
+			<button
+				type="button"
+				class="bohemcars-inventory-mobile__tool-choice"
+				class:active={extrasSelected}
+				aria-label={`${mobile.extrasLabel}: ${mobile.featureValue}`}
+				aria-haspopup="dialog"
+				aria-controls={filterDrawerIds.extras}
+				aria-expanded={filterDrawerOpen && filterDrawerMode === 'extras'}
+				onclick={() => openFilterDrawer('extras')}
+			>
+				<Sparkles size={18} strokeWidth={2.2} aria-hidden="true" />
+				<span>{mobile.extrasLabel}</span>
+				{#if extrasSelected}
+					<strong>{mobile.featureValue}</strong>
+				{/if}
+				<ChevronDown size={17} strokeWidth={2.1} aria-hidden="true" />
+			</button>
 			{#if hasActiveFilters}
 				<a
 					class="bohemcars-inventory-mobile__tool-clear"
@@ -354,14 +545,7 @@
 		</section>
 	</main>
 
-	<Drawer.Root
-		bind:activeSnapPoint={searchDrawerSnapPoint}
-		bind:open={searchDrawerOpen}
-		autoFocus={false}
-		direction="bottom"
-		snapPoints={searchDrawerSnapPoints}
-		snapToSequentialPoint={true}
-	>
+	<Drawer.Root bind:open={searchDrawerOpen} direction="bottom">
 		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
 			<span>{mobile.closeLabel}</span>
 		</Drawer.Overlay>
@@ -396,8 +580,9 @@
 				{#each mobile.hiddenInputs as input (`${input.name}-${input.value}`)}
 					<input type="hidden" name={input.name} value={input.value} />
 				{/each}
-				<div class="bohemcars-inventory-mobile-drawer__search-box">
-					<Search size={20} strokeWidth={2.15} aria-hidden="true" />
+				<div
+					class="bohemcars-inventory-mobile-drawer__search-box bohemcars-inventory-mobile-drawer__search-box--submit"
+				>
 					<input
 						name="q"
 						type="search"
@@ -406,8 +591,14 @@
 						autocomplete="off"
 						aria-label={mobile.searchPlaceholder}
 					/>
+					<button
+						type="submit"
+						class="bohemcars-inventory-mobile-drawer__search-submit"
+						aria-label={mobile.searchLabel}
+					>
+						<span>{mobile.searchLabel}</span>
+					</button>
 				</div>
-				<button type="submit">{mobile.searchLabel}</button>
 			</form>
 			<div class="bohemcars-inventory-mobile-drawer__group">
 				<p>{mobile.brandLabel}</p>
@@ -443,14 +634,7 @@
 		</Drawer.Content>
 	</Drawer.Root>
 
-	<Drawer.Root
-		bind:activeSnapPoint={filterDrawerSnapPoint}
-		bind:open={filterDrawerOpen}
-		autoFocus={false}
-		direction="bottom"
-		snapPoints={filterDrawerSnapPoints}
-		snapToSequentialPoint={true}
-	>
+	<Drawer.Root bind:open={filterDrawerOpen} direction="bottom">
 		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
 			<span>{mobile.closeLabel}</span>
 		</Drawer.Overlay>
@@ -479,45 +663,91 @@
 			</Drawer.Description>
 			{#if filterDrawerMode === 'brand'}
 				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.brandLabel}</p>
-					<div>
-						{#each mobile.brandOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.brand === option.value}
-								aria-pressed={filterDraft.brand === option.value}
-								onclick={() => selectDraftOption('brand', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
-					</div>
+					<label class="bohemcars-inventory-mobile-drawer__search-box">
+						<Search size={19} strokeWidth={2.15} aria-hidden="true" />
+						<input
+							type="search"
+							bind:value={brandDrawerQuery}
+							placeholder={mobile.brandSearchPlaceholder}
+							autocomplete="off"
+							autocapitalize="none"
+							spellcheck="false"
+							enterkeyhint="search"
+							aria-label={mobile.brandSearchPlaceholder}
+						/>
+					</label>
+					{#if visibleBrandOptions.length}
+						<div>
+							{#each visibleBrandOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.brand === option.value}
+									aria-pressed={filterDraft.brand === option.value}
+									onclick={() => selectFilterOption('brand', option.value)}
+								>
+									{#if option.image}
+										<img
+											class="bohemcars-inventory-mobile-drawer__brand-logo"
+											src={option.image}
+											alt=""
+											aria-hidden="true"
+											loading="lazy"
+											decoding="async"
+										/>
+									{/if}
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
+					{:else}
+						<span class="bohemcars-inventory-mobile-drawer__empty-option">
+							{mobile.noMatchesLabel}
+						</span>
+					{/if}
 				</div>
 			{/if}
 			{#if filterDrawerMode === 'model'}
 				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.modelLabel}</p>
-					<div>
-						{#each stagedModelOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={option.active}
-								aria-pressed={option.active}
-								onclick={() => selectDraftOption('model', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
-					</div>
+					<label class="bohemcars-inventory-mobile-drawer__search-box">
+						<Search size={19} strokeWidth={2.15} aria-hidden="true" />
+						<input
+							type="search"
+							bind:value={modelDrawerQuery}
+							placeholder={mobile.modelSearchPlaceholder}
+							autocomplete="off"
+							autocapitalize="none"
+							spellcheck="false"
+							enterkeyhint="search"
+							aria-label={mobile.modelSearchPlaceholder}
+						/>
+					</label>
+					{#if visibleStagedModelOptions.length}
+						<div>
+							{#each visibleStagedModelOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={option.active}
+									aria-pressed={option.active}
+									onclick={() => selectFilterOption('model', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
+					{:else}
+						<span class="bohemcars-inventory-mobile-drawer__empty-option">
+							{mobile.noMatchesLabel}
+						</span>
+					{/if}
 				</div>
 			{/if}
-			{#if filterDrawerMode === 'all'}
+			{#if filterDrawerMode === 'all' || filterDrawerMode === 'body'}
 				<div class="bohemcars-inventory-mobile-drawer__group">
 					<p>{mobile.bodyLabel}</p>
 					<div>
@@ -526,7 +756,7 @@
 								type="button"
 								class:active={filterDraft.body === option.value}
 								aria-pressed={filterDraft.body === option.value}
-								onclick={() => selectDraftOption('body', option.value)}
+								onclick={() => selectFilterOption('body', option.value)}
 							>
 								<span>{option.label}</span>
 								{#if option.countLabel}
@@ -546,7 +776,7 @@
 								type="button"
 								class:active={filterDraft.sort === option.value}
 								aria-pressed={filterDraft.sort === option.value}
-								onclick={() => selectDraftOption('sort', option.value)}
+								onclick={() => selectFilterOption('sort', option.value)}
 							>
 								<span>{option.label}</span>
 							</button>
@@ -554,7 +784,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if filterDrawerMode === 'all'}
+			{#if filterDrawerMode === 'all' || filterDrawerMode === 'fuel'}
 				<div class="bohemcars-inventory-mobile-drawer__group">
 					<p>{mobile.fuelLabel}</p>
 					<div>
@@ -563,7 +793,7 @@
 								type="button"
 								class:active={filterDraft.fuel === option.value}
 								aria-pressed={filterDraft.fuel === option.value}
-								onclick={() => selectDraftOption('fuel', option.value)}
+								onclick={() => selectFilterOption('fuel', option.value)}
 							>
 								<span>{option.label}</span>
 								{#if option.countLabel}
@@ -574,18 +804,121 @@
 					</div>
 				</div>
 			{/if}
-			<div class="bohemcars-inventory-mobile-drawer__actions">
-				<a class="bohemcars-inventory-mobile-drawer__clear" href={resolve(mobile.clearHref as '/')}>
-					{copy.reset}
-				</a>
-				<button
-					type="button"
-					class="bohemcars-inventory-mobile-drawer__done"
-					onclick={applyFilterDraft}
-				>
-					{filterDraftChanged ? mobile.applyLabel : mobile.doneLabel}
-				</button>
-			</div>
+			{#if filterDrawerMode === 'all' || filterDrawerMode === 'mileage'}
+				<div class="bohemcars-inventory-mobile-drawer__group">
+					<p>{mobile.mileageLabel}</p>
+					<div>
+						{#each mobile.mileageOptions as option (option.value)}
+							<button
+								type="button"
+								class:active={filterDraft.mileage === option.value}
+								aria-pressed={filterDraft.mileage === option.value}
+								onclick={() => selectFilterOption('mileage', option.value)}
+							>
+								<span>{option.label}</span>
+								{#if option.countLabel}
+									<small>{option.countLabel}</small>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
+			{#if filterDrawerMode === 'all' || filterDrawerMode === 'price'}
+				<div class="bohemcars-inventory-mobile-drawer__group">
+					<p>{mobile.priceLabel}</p>
+					<div>
+						{#each mobile.priceOptions as option (option.value)}
+							<button
+								type="button"
+								class:active={filterDraft.price === option.value}
+								aria-pressed={filterDraft.price === option.value}
+								onclick={() => selectFilterOption('price', option.value)}
+							>
+								<span>{option.label}</span>
+								{#if option.countLabel}
+									<small>{option.countLabel}</small>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
+			{#if filterDrawerMode === 'all'}
+				<div class="bohemcars-inventory-mobile-drawer__group">
+					<p>{mobile.yearLabel}</p>
+					<div>
+						{#each mobile.yearOptions as option (option.value)}
+							<button
+								type="button"
+								class:active={filterDraft.year === option.value}
+								aria-pressed={filterDraft.year === option.value}
+								onclick={() => selectFilterOption('year', option.value)}
+							>
+								<span>{option.label}</span>
+								{#if option.countLabel}
+									<small>{option.countLabel}</small>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				</div>
+				<div class="bohemcars-inventory-mobile-drawer__group">
+					<p>{mobile.transmissionLabel}</p>
+					<div>
+						{#each mobile.transmissionOptions as option (option.value)}
+							<button
+								type="button"
+								class:active={filterDraft.transmission === option.value}
+								aria-pressed={filterDraft.transmission === option.value}
+								onclick={() => selectFilterOption('transmission', option.value)}
+							>
+								<span>{option.label}</span>
+								{#if option.countLabel}
+									<small>{option.countLabel}</small>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
+			{#if filterDrawerMode === 'all' || filterDrawerMode === 'extras'}
+				<div class="bohemcars-inventory-mobile-drawer__group">
+					<p>{mobile.extrasLabel}</p>
+					<div>
+						{#each mobile.featureOptions as option (option.value)}
+							<button
+								type="button"
+								class:active={filterDraft.feature === option.value}
+								aria-pressed={filterDraft.feature === option.value}
+								onclick={() => selectFilterOption('feature', option.value)}
+							>
+								<span>{option.label}</span>
+								{#if option.countLabel}
+									<small>{option.countLabel}</small>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
+			{#if filterDrawerMode === 'all'}
+				<div class="bohemcars-inventory-mobile-drawer__actions">
+					<a
+						class="bohemcars-inventory-mobile-drawer__clear"
+						href={resolve(mobile.clearHref as '/')}
+					>
+						{copy.reset}
+					</a>
+					<button
+						type="button"
+						class="bohemcars-inventory-mobile-drawer__done"
+						onclick={applyFilterDraft}
+					>
+						{filterDraftChanged ? mobile.applyLabel : mobile.showResultsLabel}
+					</button>
+				</div>
+			{/if}
 		</Drawer.Content>
 	</Drawer.Root>
 </div>
@@ -623,7 +956,7 @@
 	.bohemcars-inventory-mobile__search-label {
 		display: flex;
 		min-width: 0;
-		height: 42px !important;
+		height: 44px !important;
 		flex: 1 1 auto;
 		align-items: center;
 		gap: 12px;
@@ -657,11 +990,11 @@
 
 	.bohemcars-inventory-mobile__search-action {
 		display: flex;
-		width: 42px;
-		height: 42px;
+		width: 44px;
+		height: 44px;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 42px;
+		flex: 0 0 44px;
 		border: 0 !important;
 		border-radius: 999px;
 		background: #1c1c1c;
@@ -699,7 +1032,7 @@
 	.bohemcars-inventory-mobile__tools button {
 		display: inline-flex;
 		flex: 0 0 auto;
-		min-height: 42px;
+		min-height: 44px;
 		align-items: center;
 		gap: 8px;
 		border: 0;
@@ -716,7 +1049,6 @@
 		white-space: nowrap;
 	}
 
-	.bohemcars-inventory-mobile__tools a.active,
 	.bohemcars-inventory-mobile__tools button.active {
 		background: #d9f275;
 		box-shadow: inset 0 0 0 1px rgba(87, 118, 13, 0.08);
@@ -766,12 +1098,6 @@
 
 	.bohemcars-inventory-mobile__tool-choice :global(svg) {
 		flex: 0 0 auto;
-	}
-
-	.bohemcars-inventory-mobile__tools img {
-		width: 24px;
-		height: 20px;
-		object-fit: contain;
 	}
 
 	.bohemcars-inventory-mobile__tool-clear {
@@ -933,7 +1259,7 @@
 		position: fixed;
 		inset: 0;
 		display: block;
-		z-index: 80;
+		z-index: 1200;
 		border: 0;
 		background: rgba(17, 17, 17, 0.34);
 		cursor: pointer;
@@ -954,9 +1280,9 @@
 		bottom: 0;
 		left: 0;
 		display: grid;
-		z-index: 81;
-		height: 100dvh;
-		max-height: 100dvh;
+		z-index: 1201;
+		height: min(86dvh, 720px);
+		max-height: min(86dvh, 720px);
 		align-content: start;
 		gap: 16px;
 		grid-auto-rows: max-content;
@@ -967,6 +1293,24 @@
 		padding: 10px 16px max(22px, env(safe-area-inset-bottom));
 		-webkit-overflow-scrolling: touch;
 		scrollbar-width: none;
+	}
+
+	.bohemcars-inventory-mobile
+		:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]) {
+		height: min(76dvh, 640px);
+		max-height: min(76dvh, 640px);
+	}
+
+	.bohemcars-inventory-mobile
+		:global(.bohemcars-inventory-mobile-drawer__sheet--filters[data-vaul-drawer]) {
+		height: min(90dvh, 760px);
+		max-height: min(90dvh, 760px);
+		padding-bottom: 0;
+	}
+
+	.bohemcars-inventory-mobile
+		:global(.bohemcars-inventory-mobile-drawer__sheet[data-vaul-drawer][data-state='open']) {
+		transform: translate3d(0, 0, 0) !important;
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet[data-vaul-drawer]::-webkit-scrollbar) {
@@ -1049,6 +1393,10 @@
 		color: #111111;
 	}
 
+	.bohemcars-inventory-mobile-drawer__search-box--submit {
+		padding-right: 6px;
+	}
+
 	.bohemcars-inventory-mobile-drawer__search-box input {
 		min-width: 0;
 		width: 100%;
@@ -1067,19 +1415,46 @@
 		appearance: none;
 	}
 
-	.bohemcars-inventory-mobile-drawer__search-form button {
-		min-height: 46px;
-		border: 0;
-		border-radius: 10px;
-		background: #1c1c1c;
-		color: #ffffff;
-		font-size: 15px;
-		font-weight: 900;
-		line-height: 20px;
-		cursor: pointer;
+	.bohemcars-inventory-mobile-drawer__search-box input::-webkit-search-cancel-button {
+		appearance: none;
 	}
 
-	.bohemcars-inventory-mobile-drawer__search-form button:focus-visible,
+	.bohemcars-inventory-mobile-drawer__search-box:focus-within {
+		outline: 2px solid #1c1c1c;
+		outline-offset: 2px;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-submit {
+		display: inline-flex;
+		min-width: 58px;
+		height: 38px;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		border: 0;
+		border-radius: 999px;
+		background: #1c1c1c;
+		appearance: none;
+		color: #ffffff;
+		cursor: pointer;
+		font-size: 12px;
+		font-weight: 900;
+		line-height: 16px;
+		padding: 0 13px;
+		text-transform: uppercase;
+	}
+
+	:global(.bohemcars-inventory-mobile-drawer__search-submit span) {
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: 900;
+		letter-spacing: 0;
+		line-height: 16px;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.bohemcars-inventory-mobile-drawer__search-submit:focus-visible,
 	.bohemcars-inventory-mobile-drawer__group a:focus-visible,
 	.bohemcars-inventory-mobile-drawer__group button:focus-visible,
 	.bohemcars-inventory-mobile-drawer__clear:focus-visible,
@@ -1133,6 +1508,13 @@
 		background: #d9f275;
 	}
 
+	.bohemcars-inventory-mobile-drawer__brand-logo {
+		width: 24px;
+		height: 20px;
+		flex: 0 0 24px;
+		object-fit: contain;
+	}
+
 	.bohemcars-inventory-mobile-drawer__group button span {
 		min-width: 0;
 		overflow: hidden;
@@ -1154,36 +1536,55 @@
 		line-height: 21px;
 	}
 
+	.bohemcars-inventory-mobile-drawer__empty-option {
+		display: inline-flex;
+		min-height: 40px;
+		align-items: center;
+		border-radius: 9px;
+		background: #f5f7fa;
+		color: #728093;
+		font-size: 14px;
+		font-weight: 800;
+		line-height: 18px;
+		padding: 0 12px;
+	}
+
 	.bohemcars-inventory-mobile-drawer__actions {
+		position: sticky;
+		bottom: 0;
+		z-index: 3;
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-columns: 1fr 1.5fr;
 		gap: 9px;
-		margin-top: 2px;
-		border-top: 1px solid #eef1f5;
+		margin: 2px -16px 0;
+		border-top: 1px solid #e6ebdf;
 		background: #ffffff;
-		padding-top: 12px;
+		padding: 12px 16px max(14px, env(safe-area-inset-bottom));
+		box-shadow: 0 -14px 22px rgba(255, 255, 255, 0.95);
 	}
 
 	.bohemcars-inventory-mobile-drawer__clear {
 		justify-content: center;
-		background: #1c1c1c;
-		color: #ffffff;
+		min-height: 50px;
+		border-radius: 10px;
+		background: #eef1f5;
+		color: #1c1c1c;
 	}
 
 	.bohemcars-inventory-mobile-drawer__done {
 		display: inline-flex;
-		min-height: 44px;
+		min-height: 50px;
 		align-items: center;
 		justify-content: center;
 		border: 0;
-		border-radius: 9px;
-		background: #d9f275;
+		border-radius: 10px;
+		background: #b9ee39;
 		appearance: none;
-		color: #111111;
+		color: #14210a;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 900;
-		line-height: 18px;
+		line-height: 19px;
 	}
 
 	@media (max-width: 399px) {

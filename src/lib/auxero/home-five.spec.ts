@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { homeFiveHeaderData, homeFiveVehiclePills } from './home-five';
+import { homeFiveHeaderData, homeFiveHeaderDataForLocale, homeFiveVehiclePills } from './home-five';
 
 describe('homeFiveVehiclePills', () => {
 	it('keeps the Home 05 quick-search pills as shared typed route data', () => {
@@ -163,5 +163,17 @@ describe('homeFiveHeaderData', () => {
 				{ href: '/blog', label: 'Bohemcars Notes' }
 			])
 		);
+	});
+
+	it('marks the supplied public route active in the shared header data', () => {
+		const inventoryHeader = homeFiveHeaderDataForLocale('bg', '/inventory');
+		const activeLabels = inventoryHeader.navigation
+			.filter((item) => item.active)
+			.map((item) => item.label);
+
+		expect(activeLabels).toEqual(['Автомобили']);
+		expect(
+			inventoryHeader.navigation.find((item) => item.href === '/inventory')?.megaMenu?.variant
+		).toBe('inventory');
 	});
 });

@@ -26,7 +26,10 @@
 				/>
 			</a>
 
-			<a class="bohemcars-action-card bohemcars-action-card--buy" href={resolve('/inventory')}>
+			<a
+				class="bohemcars-action-card bohemcars-action-card--consultation"
+				href={resolve('/contact')}
+			>
 				<span class="bohemcars-action-card__copy">
 					<strong>{copy.actionBand.buyTitle}</strong>
 					<span class="bohemcars-action-card__body">{copy.actionBand.buyBody}</span>
@@ -36,8 +39,8 @@
 					</em>
 				</span>
 				<img
-					class="bohemcars-action-card__img"
-					src="/assets/bohemcars/home2/home2-action-buy.png"
+					class="bohemcars-action-card__img bohemcars-action-card__img--consultant"
+					src="/assets/bohemcars/home2/home2-action-consultant.png"
 					alt=""
 					loading="lazy"
 				/>
@@ -49,8 +52,8 @@
 <style>
 	.bohemcars-action-band {
 		background: #f6f7f3;
-		padding-top: 84px;
-		padding-bottom: 84px;
+		padding-top: 38px;
+		padding-bottom: 30px;
 	}
 
 	.bohemcars-action-grid {
@@ -61,12 +64,12 @@
 
 	.bohemcars-action-card {
 		align-items: stretch;
-		border-radius: 14px;
+		border-radius: 8px;
 		display: grid;
 		isolation: isolate;
-		min-height: 232px;
+		min-height: 188px;
 		overflow: hidden;
-		padding: 38px 42px;
+		padding: 30px 34px;
 		position: relative;
 		transition:
 			background-color 0.2s ease,
@@ -88,12 +91,12 @@
 		color: #1a2a16;
 	}
 
-	.bohemcars-action-card--buy {
+	.bohemcars-action-card--consultation {
 		background: #1a2a16;
 		color: #ffffff;
 	}
 
-	.bohemcars-action-card--buy:hover {
+	.bohemcars-action-card--consultation:hover {
 		background: #14210f;
 		color: #ffffff;
 	}
@@ -107,11 +110,20 @@
 		z-index: 2;
 	}
 
+	.bohemcars-action-card--consultation .bohemcars-action-card__copy {
+		width: min(68%, 440px);
+		max-width: none;
+	}
+
 	.bohemcars-action-card__copy strong {
 		color: inherit;
 		font-size: clamp(24px, 2vw, 32px);
 		font-weight: 800;
 		line-height: 1.08;
+	}
+
+	.bohemcars-action-card--consultation .bohemcars-action-card__copy strong {
+		white-space: nowrap;
 	}
 
 	.bohemcars-action-card__body {
@@ -125,16 +137,20 @@
 	.bohemcars-action-card__cta {
 		align-items: center;
 		display: inline-flex;
-		width: fit-content;
-		min-height: 44px;
-		margin-top: 16px;
-		padding: 0 20px;
+		justify-content: center;
+		width: 168px;
+		height: 40px;
+		min-height: 40px;
+		margin-top: 12px;
+		padding: 0 18px;
 		border-radius: 999px;
-		font-size: 15px;
+		font-size: 14px;
 		font-style: normal;
 		font-weight: 800;
 		gap: 8px;
+		line-height: 1;
 		transition: background-color 0.18s ease;
+		white-space: nowrap;
 	}
 
 	.bohemcars-action-card--import .bohemcars-action-card__cta {
@@ -146,12 +162,12 @@
 		background: #0d160a;
 	}
 
-	.bohemcars-action-card--buy .bohemcars-action-card__cta {
+	.bohemcars-action-card--consultation .bohemcars-action-card__cta {
 		background: #d9f275;
 		color: #14210f;
 	}
 
-	.bohemcars-action-card--buy:hover .bohemcars-action-card__cta {
+	.bohemcars-action-card--consultation:hover .bohemcars-action-card__cta {
 		background: #c8e85a;
 	}
 
@@ -171,10 +187,10 @@
 		stroke: #ffffff !important;
 	}
 
-	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(svg),
-	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(path),
-	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(line),
-	.bohemcars-action-card--buy .bohemcars-action-card__cta :global(polyline) {
+	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(path),
+	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(line),
+	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(polyline) {
 		color: #14210f !important;
 		stroke: #14210f !important;
 	}
@@ -184,13 +200,20 @@
 	}
 
 	.bohemcars-action-card__img {
-		bottom: -18px;
+		bottom: -34px;
 		height: auto;
 		max-width: none;
 		position: absolute;
-		right: -38px;
-		width: 326px;
+		right: -68px;
+		width: 398px;
 		z-index: 1;
+	}
+
+	.bohemcars-action-card__img--consultant {
+		bottom: auto;
+		right: -8px;
+		top: -4px;
+		width: 188px;
 	}
 
 	@media (max-width: 991px) {
@@ -201,12 +224,17 @@
 		.bohemcars-action-card__copy {
 			max-width: 62%;
 		}
+
+		.bohemcars-action-card--consultation .bohemcars-action-card__copy {
+			width: min(72%, 440px);
+			max-width: none;
+		}
 	}
 
 	@media (max-width: 767px) {
 		.bohemcars-action-band {
-			padding-top: 26px;
-			padding-bottom: 26px;
+			padding-top: 18px;
+			padding-bottom: 22px;
 		}
 
 		.bohemcars-action-grid {
@@ -216,20 +244,30 @@
 
 	@media (max-width: 575px) {
 		.bohemcars-action-card {
-			min-height: 208px;
+			min-height: 184px;
 			padding: 20px 22px;
-			border-radius: 16px;
+			border-radius: 8px;
 		}
 
 		/* Title runs full width across the top; only the sub-copy sits in a
 		   left column so the car can take the whole right side of the card. */
 		.bohemcars-action-card__copy {
+			width: auto;
 			max-width: 100%;
 			gap: 7px;
 		}
 
+		.bohemcars-action-card--consultation .bohemcars-action-card__copy {
+			width: auto;
+			max-width: 100%;
+		}
+
 		.bohemcars-action-card__copy strong {
 			font-size: 24px;
+		}
+
+		.bohemcars-action-card--consultation .bohemcars-action-card__copy strong {
+			white-space: normal;
 		}
 
 		.bohemcars-action-card__body {
@@ -238,9 +276,11 @@
 		}
 
 		.bohemcars-action-card__cta {
-			min-height: 42px;
+			width: 164px;
+			height: 40px;
+			min-height: 40px;
 			margin-top: 14px;
-			padding: 0 18px;
+			padding: 0 16px;
 			font-size: 14px;
 		}
 
@@ -248,10 +288,16 @@
 		   card's rounded overflow) so it fills the side, no empty gap, no FX. */
 		.bohemcars-action-card__img {
 			opacity: 1;
-			right: -42px;
-			bottom: -8px;
-			width: 230px;
+			right: -48px;
+			bottom: -10px;
+			width: 248px;
 			filter: none;
+		}
+
+		.bohemcars-action-card__img--consultant {
+			right: -16px;
+			top: 15px;
+			width: 172px;
 		}
 	}
 </style>

@@ -45,9 +45,12 @@ const injectedBodyClass = (bodyHtml: string) => {
 export function splitAuxeroDocument(html: string): AuxeroPageDocument {
 	const head = tagContents(html, 'head');
 	const body = tagContents(html, 'body');
+	const bodyClasses = [attributeValue(body.attributes, 'class'), injectedBodyClass(body.content)]
+		.filter(Boolean)
+		.join(' ');
 
 	return {
-		bodyClass: attributeValue(body.attributes, 'class') || injectedBodyClass(body.content),
+		bodyClass: bodyClasses,
 		bodyHtml: body.content,
 		headHtml: head.content
 	};

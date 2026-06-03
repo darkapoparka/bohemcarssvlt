@@ -73,6 +73,10 @@ export type DetailCopy = {
 	formTermsLink: string;
 	getToKnow: string;
 	inquiryTitle: string;
+	inquiryCta: string;
+	inquiryIntro: string;
+	inquirySuccess: string;
+	callCta: string;
 	name: string;
 	phone: string;
 	playVideo: string;
@@ -183,9 +187,9 @@ export const messages: Record<Locale, PublicMessages> = {
 		},
 		home: {
 			actionBand: {
-				buyBody: 'Available cars with clear origin and inspection before the deal.',
-				buyCta: 'View inventory',
-				buyTitle: 'Available Cars',
+				buyBody: 'Discuss import, documents, viewing and next steps with a Bohemcars consultant.',
+				buyCta: 'Book time',
+				buyTitle: 'Book A Consultation',
 				importBody: 'Selection, inspection, documents and delivery from Canada.',
 				importCta: 'See the process',
 				importTitle: 'Import From Canada'
@@ -285,6 +289,10 @@ export const messages: Record<Locale, PublicMessages> = {
 			formTermsLink: 'Visitor Agreement.',
 			getToKnow: 'Get To Know this car',
 			inquiryTitle: 'Send Inquiry about Vehicle',
+			inquiryCta: 'Inquire',
+			inquiryIntro: 'Leave your details and Bohemcars will get back to you about this car.',
+			inquirySuccess: 'Done — Bohemcars will be in touch as soon as possible.',
+			callCta: 'Call',
 			message: 'Message',
 			messagePlaceholder: 'Comment',
 			name: 'Name',
@@ -329,9 +337,9 @@ export const messages: Record<Locale, PublicMessages> = {
 		},
 		home: {
 			actionBand: {
-				buyBody: 'Налични автомобили с ясен произход и оглед преди сделка.',
-				buyCta: 'Виж наличните',
-				buyTitle: 'Налични автомобили',
+				buyBody: 'Уточни внос, документи, оглед и следващи стъпки с консултант.',
+				buyCta: 'Запази час',
+				buyTitle: 'Запази консултация',
 				importBody: 'Подбор, проверка, документи и доставка от Канада.',
 				importCta: 'Виж процеса',
 				importTitle: 'Внос от Канада'
@@ -432,6 +440,10 @@ export const messages: Record<Locale, PublicMessages> = {
 			formTermsLink: 'потребителско споразумение.',
 			getToKnow: 'Опознай автомобила',
 			inquiryTitle: 'Изпрати запитване за автомобила',
+			inquiryCta: 'Запитване',
+			inquiryIntro: 'Остави данните си и ще се свържем с теб за този автомобил.',
+			inquirySuccess: 'Готово — ще се свържем с теб възможно най-скоро.',
+			callCta: 'Обади се',
 			message: 'Съобщение',
 			messagePlaceholder: 'Коментар',
 			name: 'Име',
@@ -547,10 +559,34 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 		/(\d+) vehicles available with appointment viewings and source checks\./g,
 		'$1 налични автомобила с оглед по уговорка и проверен произход.'
 	],
+	[
+		/(\d+) matching vehicles available with appointment viewings and source checks\./g,
+		'$1 съвпадащи автомобила с оглед по уговорка и проверен произход.'
+	],
 	[/Search Bohemcars inventory/g, 'Търси в Bohemcars'],
 	[/Search brand, model, stock #/g, 'Търси марка, модел, номер #'],
+	[
+		/Search make, model, year, fuel, extras\.\.\./g,
+		'Търси по марка, модел, година, гориво, екстри...'
+	],
 	[/Search for anything/g, 'Търси каквото и да е'],
+	[/Bohemcars Inventory/g, 'Инвентар'],
 	[/\bFilters\b/g, 'Филтри'],
+	[/\bMake\b/g, 'Марка'],
+	[/\bModel\b/g, 'Модел'],
+	[/\bGearbox\b/g, 'Скорости'],
+	[/\bBody\b/g, 'Купе'],
+	[/\bExtras\b/g, 'Екстри'],
+	[/All vehicles/g, 'Всички'],
+	[/Under 50 000 EUR/g, 'До 50 000 EUR'],
+	[/Up to 30 000 EUR/g, 'До 30 000 EUR'],
+	[/Up to 50 000 EUR/g, 'До 50 000 EUR'],
+	[/Up to 70 000 EUR/g, 'До 70 000 EUR'],
+	[/Up to 100 000 EUR/g, 'До 100 000 EUR'],
+	[/Up to 50 000 km/g, 'До 50 000 км'],
+	[/Up to 80 000 km/g, 'До 80 000 км'],
+	[/Up to 100 000 km/g, 'До 100 000 км'],
+	[/Up to 150 000 km/g, 'До 150 000 км'],
 	[/\bSedan\b/g, 'Седан'],
 	[/\bCabriolet\b/g, 'Кабрио'],
 	[/\bConvertible\b/g, 'Кабрио'],
@@ -599,6 +635,25 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Advanced Search/g, 'Разширено търсене'],
 	[/All Stock/g, 'Всички автомобили'],
 	[/No accidents/gi, 'Без катастрофи'],
+	[/Clear filters/g, 'Изчисти филтрите'],
+	[/(\d+) matches\b/g, '$1 съвпадения'],
+	[/(\d+) match\b/g, '$1 съвпадение'],
+	[/Brand:/g, 'Марка:'],
+	[/Body:/g, 'Купе:'],
+	[/Condition:/g, 'Състояние:'],
+	[/Feature:/g, 'Екстра:'],
+	[/Fuel:/g, 'Гориво:'],
+	[/Location:/g, 'Локация:'],
+	[/Max mileage:/g, 'Макс. пробег:'],
+	[/Max price:/g, 'Макс. цена:'],
+	[/Max year:/g, 'До година:'],
+	[/Min mileage:/g, 'Мин. пробег:'],
+	[/Min price:/g, 'Мин. цена:'],
+	[/Min year:/g, 'От година:'],
+	[/Search:/g, 'Търсене:'],
+	[/Stock:/g, 'Номер:'],
+	[/Status:/g, 'Статус:'],
+	[/Transmission:/g, 'Скорости:'],
 	[/Financing Calculator/g, 'Калкулатор за финансиране'],
 	[/Monthly Payment:/g, 'Месечна вноска:'],
 	[/Down Payment/g, 'Първоначална вноска'],
@@ -729,7 +784,9 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Diesel/g, 'Дизел'],
 	[/Hybrid/g, 'Хибрид'],
 	[/Automatic/g, 'Автомат'],
-	[/Manual/g, 'Ръчни']
+	[/Manual/g, 'Ръчни'],
+	[/Enter your e-mail/g, 'Въведете имейл'],
+	[/Enter your email/g, 'Въведете имейл']
 ];
 
 const localizeAuxeroHtmlSegment = (html: string) =>

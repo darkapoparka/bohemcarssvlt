@@ -70,6 +70,10 @@
     /* Mobile Navigation
     ----------------------------------------------------------------------------*/
     var mobileNav = function () {
+        if ($(".bohemcars-inventory-desktop-route .header-wrapper-style-4").length) {
+            return;
+        }
+
         var mobile = window.matchMedia("(max-width: 1199px)");
         var headerRight = $(".main-nav-wrapper");
         var logo = $(".logo-mobile")

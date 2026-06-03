@@ -18,6 +18,42 @@ const expectBohemcarsShell = async (page: Page) => {
 	await expect(page.locator('body')).not.toContainText('Search Cars Near You');
 };
 
+const visibleAuxeroModalIds = async (page: Page) => {
+	try {
+		return await page.evaluate(() => {
+			const modalIds = [
+				'CardModal',
+				'LoginModal',
+				'ForgotPasswordModal',
+				'SignUpModal',
+				'CompareModal'
+			];
+
+			return modalIds.filter((id) => {
+				const element = document.getElementById(id);
+				if (!element) return false;
+
+				const style = getComputedStyle(element);
+				const rect = element.getBoundingClientRect();
+
+				return (
+					style.display !== 'none' &&
+					style.visibility !== 'hidden' &&
+					Number(style.opacity || '1') > 0.01 &&
+					rect.width > 0 &&
+					rect.height > 0
+				);
+			});
+		});
+	} catch (error) {
+		if (String(error).includes('Execution context was destroyed')) {
+			return [];
+		}
+
+		throw error;
+	}
+};
+
 test('homepage preserves Home 05 and routes hero search to inventory', async ({ page }) => {
 	await page.goto('/');
 
@@ -138,29 +174,51 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(
 		homeHero.locator('.search-cars__filters > .search-cars__select-wrapper')
 	).toHaveCount(4);
+	await expect(homeHero.locator('#filterToggle')).toHaveCount(0);
+	await expect(page.locator('#bohemcars-desktop-search-panel')).toHaveCount(0);
 	await expect(homeHero.locator('.search-cars__advanced .search-cars__select-wrapper')).toHaveCount(
 		3
 	);
 	await expect(homeHero.locator('.search-cars__features-grid .form-group')).toHaveCount(8);
+	const homeActionBand = page.locator('.bohemcars-action-band');
 	const homeFeaturedSection = page.locator('[data-bohemcars-home-vehicles]');
+	await expect(homeActionBand.locator('.bohemcars-action-card')).toHaveCount(2);
+	await expect(homeActionBand.locator('a.bohemcars-action-card--import')).toHaveAttribute(
+		'href',
+		/^\.?\/services$/
+	);
+	const consultationActionCard = homeActionBand.locator('a.bohemcars-action-card--consultation');
+	await expect(consultationActionCard).toHaveAttribute('href', /^\.?\/contact$/);
+	await expect(consultationActionCard).toContainText('Запази консултация');
+	const heroBox = await homeHero.boundingBox();
+	const actionBandBox = await homeActionBand.boundingBox();
+	const featuredSectionBox = await homeFeaturedSection.boundingBox();
+	expect(actionBandBox?.y ?? 0).toBeGreaterThan(heroBox?.y ?? 0);
+	expect(featuredSectionBox?.y ?? 0).toBeGreaterThan(actionBandBox?.y ?? 0);
 	await expect(homeFeaturedSection.locator('h2')).toHaveText('Най-нови автомобили');
 	await expect(homeFeaturedSection).not.toContainText('Актуална наличност');
 	await expect(homeFeaturedSection).not.toContainText('Подбрани автомобили с проверен произход');
+	await expect(homeFeaturedSection.locator('.bohemcars-newest-shell')).toHaveCount(1);
+	await expect(homeFeaturedSection.locator('.bohemcars-newest-banner')).toHaveCount(1);
+	await expect(homeFeaturedSection.locator('.bohemcars-newest-banner__media')).toHaveCount(0);
+	await expect(homeFeaturedSection.locator('.bohemcars-newest-band')).toHaveCount(0);
+	await expect(homeFeaturedSection.locator('.bohemcars-newest-banner__car')).toHaveCount(0);
 	const featuredCta = homeFeaturedSection.locator(
-		'.bohemcars-newest-footer-cta .bohemcars-section-cta'
+		'.bohemcars-newest-heading .bohemcars-section-cta'
 	);
 	await expect(featuredCta).toContainText('Виж всички');
 	await expect(featuredCta).toHaveClass(/btn-primary-3/);
 	await expect(featuredCta).toHaveAttribute('href', /^\.?\/inventory$/);
 	await featuredCta.hover();
 	await expect(featuredCta).toHaveCSS('transform', 'none');
-	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(12);
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(8);
+	await expect(homeFeaturedSection.locator('.bohemcars-price-pill')).toHaveCount(3);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-type-pill')
 	).toHaveCount(4);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-spec-pill')
-	).toHaveCount(5);
+	).toHaveCount(1);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-brand-pill')
 	).toHaveCount(3);
@@ -169,11 +227,22 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		'background-color',
 		'rgb(217, 242, 117)'
 	);
-	await expect(homeFeaturedSection).toContainText('Автомат');
-	await expect(homeFeaturedSection).toContainText('4x4');
-	await expect(homeFeaturedSection).toContainText('Бензин');
-	await expect(homeFeaturedSection).toContainText('2021+');
-	await expect(homeFeaturedSection).toContainText('до 120k');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).toContainText('4x4');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText(
+		'Автомат'
+	);
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText('Бензин');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText('2021+');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText(
+		'до 120k'
+	);
+	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤ 10k');
+	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤ 20k');
+	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤ 30k');
+	await expect(homeFeaturedSection.locator('.bohemcars-price-pill a').first()).toHaveAttribute(
+		'href',
+		/^\.?\/inventory\?maxPrice=10000$/
+	);
 	await expect(homeFeaturedSection).toContainText('BMW');
 	await expect(homeFeaturedSection).toContainText('Audi');
 	await expect(homeFeaturedSection).toContainText('Mercedes');
@@ -182,7 +251,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--sedan')).toHaveCount(1);
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--coupe')).toHaveCount(1);
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--luxury')).toHaveCount(1);
-	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--spec')).toHaveCount(5);
+	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--spec')).toHaveCount(1);
 	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--brand')).toHaveCount(3);
 	const featuredPillRows = await homeFeaturedSection
 		.locator('.bohemcars-vehicle-pill')
@@ -193,6 +262,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	expect(featuredPillRows).toBeLessThanOrEqual(2);
 	const featuredGrid = homeFeaturedSection.locator('.bohemcars-home-vehicle-grid');
 	await expect(featuredGrid).toBeVisible();
+	await expect(
+		homeFeaturedSection.locator('.bohemcars-newest-shell .bohemcars-home-vehicle-grid')
+	).toBeVisible();
 	await expect(featuredGrid).toHaveClass(/grid-cols-4/);
 	await expect(featuredGrid.locator('.card-box-style-1')).toHaveCount(8);
 	await expect(homeFeaturedSection.locator('ul.tag.style2')).toHaveCount(0);
@@ -311,52 +383,16 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(
 		homeBrowseSection.locator('img[src*="/assets/images/card/card-27.png"]')
 	).toBeVisible();
-	const homeActionBand = page.locator('.bohemcars-action-band');
 	await expect(homeActionBand).toHaveCSS('background-color', 'rgb(246, 247, 243)');
 	await expect(homeActionBand.locator('.bohemcars-action-card')).toHaveCount(2);
 	await expect(homeActionBand.locator('a.bohemcars-action-card--import')).toHaveAttribute(
 		'href',
 		/^\.?\/services$/
 	);
-	await expect(homeActionBand.locator('a.bohemcars-action-card--buy')).toHaveAttribute(
-		'href',
-		/^\.?\/inventory$/
-	);
-	const homeBudgetSection = page.locator('section', { hasText: 'Автомобили по бюджет' });
-	await expect(homeBudgetSection).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-	await expect(homeBudgetSection.locator('.bohemcars-home-section-surface')).toHaveCSS(
-		'background-color',
-		'rgb(251, 252, 248)'
-	);
-	await expect(homeBudgetSection.locator('.bohemcars-home-section-surface')).toHaveCSS(
-		'border-top-left-radius',
-		'14px'
-	);
-	await expect(homeBudgetSection.locator('.menu-tab-style2 .car-box')).toHaveCount(5);
-	await expect(homeBudgetSection.locator('.content-inner.active > .grid')).toHaveClass(
-		/grid-cols-4/
-	);
-	await expect(homeBudgetSection.locator('.card-box-style-1')).toHaveCount(8);
-	await expect(homeBudgetSection.locator('ul.tag.style2')).toHaveCount(8);
-	const budgetCard = homeBudgetSection.locator('.card-box-style-1').first();
-	await expect(budgetCard.locator('.top .highlight')).toHaveText(/km$/);
-	const budgetSpecs = budgetCard.locator('.bohemcars-card-specs');
-	await expect(budgetSpecs.locator('li')).toHaveCount(3);
-	const budgetMileageText = await budgetCard.locator('.top .highlight').innerText();
-	await expect(budgetSpecs).not.toContainText(budgetMileageText);
-	const budgetActionOffsets = await homeBudgetSection
-		.locator('.content-inner.active > .grid > [data-bohemcars-slug]')
-		.evaluateAll((cards) =>
-			cards.slice(0, 4).map((card) => {
-				const cardBox = card.getBoundingClientRect();
-				const action = card.querySelector('.bohemcars-card-actions')?.getBoundingClientRect();
-
-				return Math.round((action?.top ?? 0) - cardBox.top);
-			})
-		);
-	expect(Math.max(...budgetActionOffsets) - Math.min(...budgetActionOffsets)).toBeLessThanOrEqual(
-		1
-	);
+	await expect(consultationActionCard).toHaveAttribute('href', /^\.?\/contact$/);
+	const homeBudgetSection = page.locator('.bohemcars-budget-section');
+	await expect(homeBudgetSection).toHaveCount(0);
+	await expect(page.locator('body')).not.toContainText('Автомобили по бюджет');
 	const homeReviewsSection = page.locator('section', { hasText: 'Отзиви от клиенти' });
 	await expect(homeReviewsSection).toHaveCSS('background-color', 'rgb(255, 255, 255)');
 	const reviewsPanel = homeReviewsSection.locator('.bohemcars-reviews-panel');
@@ -443,6 +479,173 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(page.locator('.bohemcars-inventory-searchbar')).toBeVisible();
 });
 
+test('mobile bottom navigation returns home without leaving the Auxero preloader visible', async ({
+	page
+}) => {
+	const hydrationWarnings: string[] = [];
+	page.on('console', (message) => {
+		const text = message.text();
+
+		if (
+			(message.type() === 'warning' || message.type() === 'error') &&
+			text.includes('Failed to hydrate')
+		) {
+			hydrationWarnings.push(text);
+		}
+	});
+
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const bottomNav = page.locator('.mobile-bottom-nav');
+	await expect(bottomNav).toBeVisible();
+	await expect(page.locator('body')).toHaveClass(/auxero-template-home-05-html/);
+	await expect(bottomNav.getByRole('link', { name: 'Начало' })).toHaveAttribute(
+		'data-sveltekit-reload',
+		''
+	);
+
+	await bottomNav.getByRole('link', { name: 'Коли' }).click();
+	await expect(page).toHaveURL(/\/inventory$/);
+	await expect(page.locator('.bohemcars-inventory-mobile-card').first()).toBeVisible();
+	expect(hydrationWarnings).toEqual([]);
+
+	await bottomNav.getByRole('link', { name: 'Начало' }).click();
+	await expect(page).toHaveURL(/\/$/);
+	await expect(page.locator('body')).toHaveClass(/auxero-template-home-05-html/);
+	await expect(page.locator('.header-wrapper-style-4 .logo img')).toBeVisible();
+	await expect(page.locator('.header-wrapper-style-4 .logo-mobile')).toBeHidden();
+	await expect(page.locator('.bohemcars-mobile-hero__copy h1')).toBeVisible();
+	await expect(page.locator('.preload')).toBeHidden();
+	expect(hydrationWarnings).toEqual([]);
+});
+
+test('mobile primary routes do not expose desktop shells or fallback chrome', async ({ page }) => {
+	const visibleChromeLeaks = async () =>
+		page.evaluate(() => {
+			const visible = (element: Element) => {
+				const styles = window.getComputedStyle(element);
+				const rect = element.getBoundingClientRect();
+
+				return (
+					styles.display !== 'none' &&
+					styles.visibility !== 'hidden' &&
+					Number(styles.opacity) > 0 &&
+					rect.width > 0 &&
+					rect.height > 0
+				);
+			};
+			const visibleMatches = (selector: string) =>
+				Array.from(document.querySelectorAll(selector))
+					.filter(visible)
+					.map((element) => element.id || element.className);
+
+			return {
+				desktopShells: visibleMatches(
+					'.bohemcars-inventory-desktop-route, .bohemcars-sell-desktop-route, .bohemcars-favorites-desktop-route'
+				),
+				homeFallbackLogoVisible:
+					window.location.pathname === '/' &&
+					visibleMatches('.header-wrapper-style-4 .logo-mobile').length > 0,
+				mobileDrawer: visibleMatches('#main-nav-mobile'),
+				modals: visibleMatches('.modal, [id$="Modal"]'),
+				preloaders: visibleMatches('.preload')
+			};
+		});
+	const expectNoChromeLeaks = async () => {
+		expect(await visibleChromeLeaks()).toEqual({
+			desktopShells: [],
+			homeFallbackLogoVisible: false,
+			mobileDrawer: [],
+			modals: [],
+			preloaders: []
+		});
+	};
+
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/inventory');
+
+	const bottomNav = page.locator('.mobile-bottom-nav');
+	await expect(bottomNav).toBeVisible();
+	await expectNoChromeLeaks();
+
+	await bottomNav.getByRole('link', { name: 'Начало' }).click();
+	await expect(page).toHaveURL(/\/$/);
+	await expect(page.locator('.bohemcars-mobile-hero__copy h1')).toBeVisible();
+	await expectNoChromeLeaks();
+
+	await bottomNav.getByRole('link', { name: 'Коли' }).click();
+	await expect(page).toHaveURL(/\/inventory$/);
+	await expect(page.locator('.bohemcars-inventory-mobile-card').first()).toBeVisible();
+	await expectNoChromeLeaks();
+
+	await bottomNav.getByRole('link', { name: 'Продай' }).click();
+	await expect(page).toHaveURL(/\/sell-your-car$/);
+	await expect(page.locator('.bohemcars-sell-mobile__form')).toBeVisible();
+	await expectNoChromeLeaks();
+
+	await bottomNav.getByRole('link', { name: 'Любими' }).click();
+	await expect(page).toHaveURL(/\/account\/favorites$/);
+	await expect(page.locator('.bohemcars-favorites-mobile')).toBeVisible();
+	await expectNoChromeLeaks();
+
+	await bottomNav.getByRole('link', { name: 'Начало' }).click();
+	await expect(page).toHaveURL(/\/$/);
+	await expect(page.locator('.header-wrapper-style-4 .logo-mobile')).toBeHidden();
+	await expectNoChromeLeaks();
+});
+
+test('desktop inventory navigation returns home without flashing Auxero modals', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1917, height: 940 });
+	await page.goto('/inventory');
+
+	await expect(page.locator('.bohemcars-inventory-searchbar')).toBeVisible();
+	await expect(page.locator('body')).toHaveClass(/auxero-template-listing-grid/);
+	await expect(
+		page.locator('.header-wrapper-style-4 #menu-primary-menu > li > a', { hasText: 'Начало' })
+	).toHaveCount(1);
+
+	await page.evaluate(() => {
+		const homeLink = [
+			...document.querySelectorAll<HTMLAnchorElement>(
+				'.header-wrapper-style-4 #menu-primary-menu > li > a'
+			)
+		].find(
+			(link) => link.textContent?.includes('Начало') && link.getBoundingClientRect().width > 0
+		);
+
+		if (!homeLink) throw new Error('Expected visible desktop home link');
+
+		homeLink.click();
+	});
+
+	const visibleModalSamples: Array<{ ms: number; ids: string[] }> = [];
+	let previousMark = 0;
+
+	for (const mark of [0, 25, 50, 75, 100, 125, 150, 200, 300, 500]) {
+		await page.waitForTimeout(mark - previousMark);
+		previousMark = mark;
+
+		const ids = await visibleAuxeroModalIds(page);
+		if (ids.length > 0) {
+			visibleModalSamples.push({ ms: mark, ids });
+		}
+	}
+
+	await expect(page).toHaveURL(/\/$/);
+	await expect(page.locator('body')).toHaveClass(/auxero-template-home-05-html/);
+	const activeHeroTitle = page.locator(
+		'.page-title-style-4 .swiper-slide-active h1.search-cars__title'
+	);
+	await expect(activeHeroTitle).toBeVisible();
+	await expect(activeHeroTitle).toHaveCSS('color', 'rgb(255, 255, 255)');
+	const heroBox = await page.locator('.page-title-style-4').boundingBox();
+	expect(heroBox?.height ?? 0).toBeLessThan(430);
+	expect(visibleModalSamples).toEqual([]);
+});
+
 test('header, garage, and inquiry flows keep Auxero behavior', async ({ page }) => {
 	await page.goto('/');
 
@@ -517,20 +720,46 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('body')).toContainText('Показани 1 – 42 от 42 обяви');
 	await expect(page.locator('section.background-light.mb-32')).toHaveCount(0);
 	await expect(page.locator('.breadcrumb')).toHaveCount(0);
+	const inventoryHeader = page.locator(
+		'.bohemcars-inventory-desktop-route .header-wrapper-style-4 .header-style-4'
+	);
+	await expect(inventoryHeader).toHaveCount(1);
+	await expect(inventoryHeader.locator('.header-top-bar')).toBeVisible();
+	await expect(
+		page.locator('.bohemcars-inventory-desktop-route .header-wrapper .header-style-1')
+	).toHaveCount(0);
+	await expect(inventoryHeader.locator('#menu-primary-menu > .current-menu-item')).toContainText(
+		'Автомобили'
+	);
+	await expect(inventoryHeader.locator('#menu-primary-menu > .current-menu-item')).toHaveClass(
+		/menu-item-has-children/
+	);
 	await expect(page.locator('.bohemcars-inventory-banner')).toBeVisible();
-	await expect(page.locator('.bohemcars-inventory-banner')).toContainText(
-		'Разгледай наличните автомобили'
+	await expect(page.locator('.bohemcars-inventory-banner')).toHaveAttribute(
+		'aria-label',
+		'Bohemcars inventory showcase'
 	);
 	await expect(page.locator('section.pb-100 > .container > h2')).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-searchbar')).toHaveCount(1);
+	await expect(
+		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-searchbar')
+	).toHaveCount(1);
+	await expect(page.locator('section.pb-100 .bohemcars-inventory-searchbar')).toHaveCount(0);
+	await expect(page.locator('.bohemcars-inventory-searchbar')).toHaveAttribute('role', 'search');
+	await expect(page.locator('.bohemcars-inventory-banner h1')).toHaveClass(/bohemcars-sr-only/);
 	await expect(page.locator('.bohemcars-inventory-searchbar input[name="q"]')).toHaveAttribute(
 		'placeholder',
-		'Търси марка, модел, номер #'
+		'Търси по марка, модел, година, гориво, екстри...'
 	);
-	await expect(page.locator('.bohemcars-inventory-brand-pills .bohemcars-brand-pill')).toHaveCount(
+	await expect(page.locator('.bohemcars-inventory-filter-grid select')).toHaveCount(8);
+	await expect(page.locator('.bohemcars-inventory-filter-grid select[name="brand"]')).toBeVisible();
+	await expect(page.locator('.bohemcars-inventory-filter-grid select[name="model"]')).toBeVisible();
+	await expect(
+		page.locator('.bohemcars-inventory-filter-grid select[name="mileageTo"]')
+	).toBeVisible();
+	await expect(page.locator('.bohemcars-inventory-quick-pills .bohemcars-quick-pill')).toHaveCount(
 		6
 	);
-	await expect(page.locator('.bohemcars-inventory-brand-pills img')).toHaveCount(5);
 	await expect(page.locator('.bohemcars-inventory-searchbar #filterSidebarToggle')).toBeVisible();
 	await expect(page.locator('section.pb-100')).toHaveCSS('background-color', 'rgb(246, 247, 243)');
 	await expect(page.locator('.bohemcars-inventory-content > .content-inner.active')).toHaveCSS(
@@ -542,10 +771,10 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		'none'
 	);
 	await expect(
-		page.locator('.bohemcars-inventory-brand-pills .bohemcars-quick-pill').first()
+		page.locator('.bohemcars-inventory-quick-pills .bohemcars-quick-pill').first()
 	).toHaveCSS('transition-duration', '0s');
 	await expect(
-		page.locator('.bohemcars-inventory-brand-pills .bohemcars-quick-pill a').first()
+		page.locator('.bohemcars-inventory-quick-pills .bohemcars-quick-pill a').first()
 	).toHaveCSS('transition-duration', '0s');
 	await expect(page.locator('.bohemcars-inventory-searchbar__primary')).toHaveCSS(
 		'transition-duration',
@@ -586,7 +815,11 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		'background-color',
 		'rgb(255, 255, 255)'
 	);
-	await expect(page.locator('.bohemcars-inventory-content')).toHaveCSS('border-radius', '8px');
+	await expect(page.locator('.bohemcars-inventory-content')).toHaveCSS('border-top-width', '0px');
+	await expect(page.locator('.bohemcars-inventory-content')).toHaveCSS(
+		'border-radius',
+		'0px 0px 8px 8px'
+	);
 	await expect(page.locator('.bohemcars-view-toggle .item-menu')).toHaveCount(3);
 	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
 		'aria-label',
@@ -602,6 +835,16 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	const refreshedFirstTitleBox = await refreshedFirstCard.locator('.card-box__title').boundingBox();
 	expect(refreshedFirstTitleBox?.height ?? 0).toBeGreaterThanOrEqual(50);
 	await expect(refreshedFirstCard.locator('.top .highlight')).toHaveText('140 000 km');
+	await expect(refreshedFirstCard.locator('.card--img')).toHaveAttribute(
+		'src',
+		/\/assets\/images\/card\/card-48\.jpg/
+	);
+	await expect(refreshedFirstCard.locator('.card--img')).not.toHaveAttribute('src', /hero/);
+	await expect(refreshedFirstCard.locator('.top .highlight')).toHaveCSS(
+		'background-color',
+		'rgb(255, 255, 255)'
+	);
+	await expect(refreshedFirstCard.locator('.top .highlight')).toHaveCSS('color', 'rgb(28, 28, 28)');
 	const compactSpecs = refreshedFirstCard.locator('.bohemcars-card-specs');
 	await expect(compactSpecs.locator('li')).toHaveCount(3);
 	await expect(compactSpecs).toContainText('2019');
@@ -628,6 +871,8 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		'background-color',
 		'rgb(255, 255, 255)'
 	);
+	await expect(refreshedFirstCard).toHaveCSS('border-top-width', '0px');
+	await expect(refreshedFirstCard).toHaveCSS('background-color', 'rgb(242, 244, 238)');
 	await expect(refreshedFirstCard.locator('.bohemcars-card-price__finance')).toBeVisible();
 	const inventoryMonthlyBox = await refreshedFirstCard
 		.locator('.bohemcars-card-price__monthly')

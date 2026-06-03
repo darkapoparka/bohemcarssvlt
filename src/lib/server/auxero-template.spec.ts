@@ -83,7 +83,7 @@ describe('Auxero template Bohemcars adapter', () => {
 
 		expect(home).toContain('Browse, Compare, Drive');
 		expect(inventory).toContain('bohemcars-inventory-searchbar');
-		expect(inventory).toContain('bohemcars-inventory-brand-pills');
+		expect(inventory).toContain('bohemcars-inventory-filter-grid');
 		expect(detail).toContain(vehicles[0].title);
 		expect(detail).toContain('Bohemcars Consultant');
 
@@ -351,13 +351,24 @@ describe('Auxero template Bohemcars adapter', () => {
 		const html = await response.text();
 
 		expect(html).toContain('bohemcars-inventory-banner');
-		expect(html).toContain('Browse inventory');
+		expect(html).toContain('Bohemcars inventory showcase');
+		expect(html).toContain('/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png');
+		expect(html).toContain('/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png');
+		expect(html).not.toContain('/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png');
+		expect(html).not.toContain('Bohemcars current stock');
 		expect(html).not.toContain('class="background-light mb-32"');
 		expect(html).not.toContain('class="breadcrumb"');
+		expect(html).toContain('bohemcars-inventory-banner__buybox');
 		expect(html).toContain('class="bohemcars-inventory-searchbar"');
-		expect(html).toContain('bohemcars-inventory-brand-pills');
-		expect(html).toContain('/assets/bohemcars/brands/');
-		expect(html).toContain('Search brand, model, stock #');
+		expect(html).toContain('bohemcars-inventory-filter-grid');
+		expect(html).toContain('bohemcars-inventory-quick-pills');
+		expect(html).toContain('Search make, model, year, fuel, extras...');
+		expect(html).toContain('name="mileageTo"');
+		expect(html).toContain('name="feature"');
+		expect(html).toContain('role="search" aria-label="Search Bohemcars inventory"');
+		expect(html).toContain('aria-controls="filterSidebar"');
+		expect(html).toContain('id="bohemcars-inventory-title"');
+		expect(html).toContain('class="bohemcars-sr-only"');
 		expect(html).toContain(`value="${vehicle.model}"`);
 		expect(html).toContain('bohemcars-inventory-toolbar-row');
 		expect(html).toContain('matching Bohemcars Listings');
@@ -365,7 +376,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-content .content-inner.active'
 		);
 		expect(html).toContain(
-			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-brand-pills *'
+			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-filter-grid *'
 		);
 		expect(html).toContain('transition: none !important;');
 		expect(html).toContain(`name="brand" value="${vehicle.brand}" checked`);

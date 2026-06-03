@@ -1,3 +1,24 @@
+.modal {
+	position: fixed !important;
+	top: 0 !important;
+	left: 0 !important;
+	z-index: 101 !important;
+	display: flex !important;
+	width: 100% !important;
+	height: 100% !important;
+	align-items: center !important;
+	justify-content: center !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+	visibility: hidden !important;
+}
+
+.modal.active {
+	opacity: 1 !important;
+	pointer-events: auto !important;
+	visibility: visible !important;
+}
+
 .bohemcars-no-image-zoom.card-box.active .card--img,
 .bohemcars-no-image-zoom.card-box:hover .card--img,
 .bohemcars-no-image-zoom.card-box-style-1.active .card--img,
@@ -107,6 +128,18 @@
 /* Comfortable >=44px touch targets for the compact header controls
    (search, compare, wishlist, hamburger) on phones. */
 @media (max-width: 767.98px) {
+	body.auxero-template-home-05-html .header-wrapper-style-4 .logo-mobile,
+	body.auxero-template-home-05-html .header-wrapper-style-4 #main-nav-mobile .logo-mobile {
+		display: none !important;
+		visibility: hidden !important;
+	}
+
+	.bohemcars-inventory-desktop-route,
+	.bohemcars-sell-desktop-route,
+	.bohemcars-favorites-desktop-route {
+		display: none !important;
+	}
+
 	.header-wrapper-style-4 .mobile-button,
 	.header-wrapper-style-4 #searchToggle,
 	.header-wrapper-style-4 .header-action-btn.header-action-icon {

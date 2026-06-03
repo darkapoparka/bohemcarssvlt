@@ -47,6 +47,12 @@ export const inventoryGridClassForView = (view: AuxeroInventoryView) => {
 	return 'grid grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
 };
 
+// Mirror the PDP/mega-menu image override so the card thumbnail matches the detail
+// hero when a listing's remote primary photo is unreliable or off-model (e.g. the X5).
+const inventoryCardImageOverrides: Record<string, string> = {
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
+};
+
 export const inventoryCardsFromVehicles = (
 	vehicles: Vehicle[],
 	locale: Locale = 'en'
@@ -57,7 +63,7 @@ export const inventoryCardsFromVehicles = (
 		description: localizeVehicleTermsInText(locale, vehicle.description),
 		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
 		highlightClass: inventoryCardHighlightClass(vehicle, index),
-		image: vehicle.image,
+		image: inventoryCardImageOverrides[vehicle.slug] ?? vehicle.image,
 		imagesCount: vehicle.images.length || 1,
 		mileageLabel: formatInventoryKm(vehicle.mileage),
 		monthlyLabel: formatInventoryMonthly(vehicle.monthly, locale),
