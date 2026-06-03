@@ -17,7 +17,15 @@ function collectPageErrors(page: Page): string[] {
 	return errors;
 }
 
-const STATIC_ROUTES = ['/', '/inventory', '/about', '/contact', '/agents', '/calculator', '/compare'];
+const STATIC_ROUTES = [
+	'/',
+	'/inventory',
+	'/about',
+	'/contact',
+	'/agents',
+	'/calculator',
+	'/compare'
+];
 
 for (const path of STATIC_ROUTES) {
 	test(`smoke: ${path} renders the Bohemcars shell without uncaught errors`, async ({ page }) => {

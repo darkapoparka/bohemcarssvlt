@@ -6,7 +6,7 @@
 
 ## Goals & success criteria
 
-- **Zero regressions (hard gate, top priority):** no existing desktop *or* mobile behavior, layout, or styling may break. Every change is verified against a baseline before it is accepted. This overrides ambition — when a change can't be proven safe, we make it smaller, not riskier.
+- **Zero regressions (hard gate, top priority):** no existing desktop _or_ mobile behavior, layout, or styling may break. Every change is verified against a baseline before it is accepted. This overrides ambition — when a change can't be proven safe, we make it smaller, not riskier.
 - **Elevate to a distinctive premium aesthetic** (not merely fix flaws) — the site is a showcase of what's possible.
 - **Ship-ready:** visual polish + responsive (no desktop→mobile regressions) + accessibility + performance, all verified.
 - **Consistency** across every in-scope page via one shared design system, so 8 pages read as one premium product.
@@ -26,7 +26,7 @@ Home `/`, Inventory `/inventory`, PDP `/inventory/[slug]`, About `/about`, Conta
 2. **Localization copy:** assistant drafts idiomatic Bulgarian for all English strings; user reviews/approves before implementation.
 3. **Listing images:** replace remote `focus.bg` hot-links with curated, optimized **local** demo images.
 4. **Layout/structure changes** are permitted where they measurably improve the result **and** are verified not to regress existing behavior or visuals (see Regression safety). Default to the smallest change that achieves the elevation.
-5. **No-regression is the top priority** (per user): the existing polished work — especially the QA-passed Inventory and the Home page — must be protected. The goal is a *finalized, perfect* result without breaking anything that already works.
+5. **No-regression is the top priority** (per user): the existing polished work — especially the QA-passed Inventory and the Home page — must be protected. The goal is a _finalized, perfect_ result without breaking anything that already works.
 
 ## Current-state evidence (what the QA found)
 
@@ -37,7 +37,7 @@ Captured via Chrome DevTools at 1920×1080 against the dev server, plus a full-r
 - **Incomplete localization — English leaking into a Bulgarian site.** Calculator page is almost entirely English (input labels, cost summary, budget cards, FAQ, subtitle); Contact has English headings + form labels ("Reach Out To Bohemcars", "Get In Touch", "Working Time", "Send Message", all fields); Agents role subtitles are English; PDP shows "Customer Reviews" / "Add a Review"; breadcrumb middle crumb renders "Pages"; Calculator has mixed "View Автомобили". **This is the single biggest hit to perceived quality.**
 - **Two diverging vehicle-card components.** `src/lib/components/home/HomeFiveVehicleCard.svelte` and `src/lib/components/inventory/AuxeroInventoryVehicleCard.svelte` render nearly the same card but differ in spec-chip style (home = sage-green pills; inventory = plain), hover, photo/video counts (inventory only), broken-image fallback (inventory only), and badge source.
 - **Off-brand purple mileage badges** on Home (alternating green/purple via per-vehicle `highlightClass`) — already neutralized on `/inventory`, so the two pages literally disagree.
-- **Legacy jQuery/WOW.js debt** leaking through injected Auxero HTML blobs: a `code.jquery.com` `<script>` and `wow fadeIn` / `data-wow-delay` classes, only *guarded* by `src/routes/auxero-guards.css`.
+- **Legacy jQuery/WOW.js debt** leaking through injected Auxero HTML blobs: a `code.jquery.com` `<script>` and `wow fadeIn` / `data-wow-delay` classes, only _guarded_ by `src/routes/auxero-guards.css`.
 - **Remote `focus.bg` listing images** (Home 9, Inventory 68, Compare 4, PDP) — slow/unreliable from outside Bulgaria; they prevented the live pages from reaching network-idle during QA.
 - **Accessibility:** heart/compare controls are `<p role="button" tabindex="0">` (Svelte a11y warnings suppressed) instead of real `<button>`s; each card exposes 3 redundant same-destination links.
 - **SEO / document structure:** generic `<title>Bohemcars</title>` on 7 of 8 pages; missing `<h1>` on PDP, Agents, Calculator, Compare; Home has two `<h1>`.
@@ -46,16 +46,16 @@ Captured via Chrome DevTools at 1920×1080 against the dev server, plus a full-r
 
 ### Per-page metrics (HTTP sweep)
 
-| Route | KB | Title | H1 | Remote imgs |
-|---|---|---|---|---|
-| `/` | 396 | descriptive ✓ | 2 | 9 |
-| `/inventory` | 911 | generic | 1 | 68 |
-| `/inventory/[slug]` | 591 | generic | 0 | 2+client |
-| `/about` | 199 | generic | 1 | 0 |
-| `/contact` | 175 | generic | 1 | 0 |
-| `/agents` | 164 | generic | 0 | 0 |
-| `/calculator` | 169 | generic | 0 | 0 |
-| `/compare` | 173 | generic | 0 | 4 |
+| Route               | KB  | Title         | H1  | Remote imgs |
+| ------------------- | --- | ------------- | --- | ----------- |
+| `/`                 | 396 | descriptive ✓ | 2   | 9           |
+| `/inventory`        | 911 | generic       | 1   | 68          |
+| `/inventory/[slug]` | 591 | generic       | 0   | 2+client    |
+| `/about`            | 199 | generic       | 1   | 0           |
+| `/contact`          | 175 | generic       | 1   | 0           |
+| `/agents`           | 164 | generic       | 0   | 0           |
+| `/calculator`       | 169 | generic       | 0   | 0           |
+| `/compare`          | 173 | generic       | 0   | 4           |
 
 ## Design language (the premium target)
 
@@ -73,14 +73,14 @@ A small token system every page inherits:
 
 No-regression is the #1 success criterion. We protect the existing work — especially the QA-passed Inventory and the polished Home — with these guardrails:
 
-1. **Baseline first.** Before touching code: capture *before* screenshots of all in-scope pages at desktop (1920) and mobile (~390px), and record the current test state — `npm run check`, `npm run lint`, `npm run test:unit -- --run`, `npm run test:e2e`, `npm run build`. That is the reference every change is diffed against.
+1. **Baseline first.** Before touching code: capture _before_ screenshots of all in-scope pages at desktop (1920) and mobile (~390px), and record the current test state — `npm run check`, `npm run lint`, `npm run test:unit -- --run`, `npm run test:e2e`, `npm run build`. That is the reference every change is diffed against.
 2. **Pin behavior before refactoring shared code.** The repo already has fidelity guards and specs (`home-five.spec.ts`, `vehicles.spec.ts`, `auxero-page.spec.ts`, `auxero-template.spec.ts`, `project1.e2e.ts`). Extend characterization tests around anything shared we touch — above all the unified `VehicleCard` — so its output/behavior is locked before the swap.
 3. **Smallest safe step, then verify.** No big-bang rewrites. Introduce new shared components behind the existing props so call sites are unchanged; migrate one call site at a time; re-run checks + visual diff after each.
 4. **High-risk areas — handle explicitly:**
-   - **jQuery/WOW removal vs the Compare modal.** Compare/favorite use `open-modal` + `data-modal-id="#CompareModal"` (legacy jQuery). Replace with a native Svelte interaction and verify the modal + compare flow work *before* removing jQuery — never drop the dependency while anything still relies on it.
-   - **Card unification** (Home, Inventory, Compare, related, favorites) — baseline + visual-diff each surface. *Lower-risk fallback:* if a full structural merge proves risky, first align the two existing cards to identical tokens/styling (visual consistency now) and defer the merge.
+   - **jQuery/WOW removal vs the Compare modal.** Compare/favorite use `open-modal` + `data-modal-id="#CompareModal"` (legacy jQuery). Replace with a native Svelte interaction and verify the modal + compare flow work _before_ removing jQuery — never drop the dependency while anything still relies on it.
+   - **Card unification** (Home, Inventory, Compare, related, favorites) — baseline + visual-diff each surface. _Lower-risk fallback:_ if a full structural merge proves risky, first align the two existing cards to identical tokens/styling (visual consistency now) and defer the merge.
    - **Global tokens** — apply incrementally; diff after each step.
-5. **Per-change definition of done:** existing tests still green (no *new* failures vs baseline), build passes, lint/check clean, and the page's visual diff shows only the intended change — at both desktop *and* mobile.
+5. **Per-change definition of done:** existing tests still green (no _new_ failures vs baseline), build passes, lint/check clean, and the page's visual diff shows only the intended change — at both desktop _and_ mobile.
 6. **Branch + reversible commits.** Work on a feature branch (not `main`); small, focused, revertible commits; integrate via PR.
 
 ## Phase 1 — Foundation (root-cause fixes)

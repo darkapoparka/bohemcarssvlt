@@ -19,3 +19,7 @@ PROJECT_PLAN.md
 tmp-vite*.log
 .tmp-*.log
 .tmp-*.png
+
+# Local QA snapshots and Claude tooling config (not project source)
+/.claude/
+inv-snap*.md

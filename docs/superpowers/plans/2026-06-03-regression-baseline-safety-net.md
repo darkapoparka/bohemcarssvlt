@@ -23,6 +23,7 @@
 ### Task 1: Feature branch + baseline manifest
 
 **Files:**
+
 - Create: `docs/superpowers/plans/baseline-2026-06-03.md`
 
 - [ ] **Step 1: Create the feature branch**
@@ -40,13 +41,13 @@ Create `docs/superpowers/plans/baseline-2026-06-03.md`:
 
 Branch base: `c99cf9c`. Measured via the project's own scripts.
 
-| Gate | Command | Result |
-|---|---|---|
-| Types/Svelte | `npm run check` | PASS |
-| Unit | `npm run test:unit -- --run` | PASS (27 files, 183 tests) |
-| Build | `npm run build` | PASS |
-| Lint | `npm run lint` | ESLint PASS; Prettier flags only `.claude/settings.local.json`, `inv-snapshot.md`, `docs/superpowers/specs/2026-06-03-desktop-polish-design.md` (formatting, non-code) |
-| E2E | `npm run test:e2e` | 9 PASS / 1 FAIL |
+| Gate         | Command                      | Result                                                                                                                                                                 |
+| ------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Types/Svelte | `npm run check`              | PASS                                                                                                                                                                   |
+| Unit         | `npm run test:unit -- --run` | PASS (27 files, 183 tests)                                                                                                                                             |
+| Build        | `npm run build`              | PASS                                                                                                                                                                   |
+| Lint         | `npm run lint`               | ESLint PASS; Prettier flags only `.claude/settings.local.json`, `inv-snapshot.md`, `docs/superpowers/specs/2026-06-03-desktop-polish-design.md` (formatting, non-code) |
+| E2E          | `npm run test:e2e`           | 9 PASS / 1 FAIL                                                                                                                                                        |
 
 Pre-existing e2e failure (NOT caused by this work, out of desktop-polish scope):
 `project1.e2e.ts:1083 › account and admin routes are role-aware and branded` —
@@ -68,6 +69,7 @@ git commit -m "docs: desktop polish spec + plan + measured regression baseline"
 ### Task 2: Smoke net for the 8 in-scope pages
 
 **Files:**
+
 - Create: `src/routes/desktop-polish-smoke.e2e.ts`
 - Test command: `npx playwright test desktop-polish-smoke`
 
@@ -95,7 +97,15 @@ function collectPageErrors(page: Page): string[] {
 	return errors;
 }
 
-const STATIC_ROUTES = ['/', '/inventory', '/about', '/contact', '/agents', '/calculator', '/compare'];
+const STATIC_ROUTES = [
+	'/',
+	'/inventory',
+	'/about',
+	'/contact',
+	'/agents',
+	'/calculator',
+	'/compare'
+];
 
 for (const path of STATIC_ROUTES) {
 	test(`smoke: ${path} renders the Bohemcars shell without uncaught errors`, async ({ page }) => {
@@ -154,6 +164,7 @@ Expected: `check` PASS · unit 183 PASS · build PASS · e2e now **17 passed / 1
 ### Task 4 (optional tidy — "finalized" polish): make `npm run lint` green
 
 **Files:**
+
 - Create: `.prettierignore`
 
 - [ ] **Step 1: Exclude local artifacts from Prettier**
