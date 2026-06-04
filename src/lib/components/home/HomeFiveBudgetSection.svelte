@@ -37,7 +37,7 @@
 
 <style>
 	.bohemcars-budget-section {
-		background: #ffffff;
+		background: var(--bc-bg);
 		color: #1c1c1c;
 		padding-top: 64px;
 		padding-bottom: 74px;
@@ -48,9 +48,9 @@
 		grid-template-columns: minmax(230px, 0.32fr) minmax(0, 1fr);
 		align-items: center;
 		gap: 28px;
-		border: 1px solid #e2e8dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #f6f7f3;
+		background: var(--bc-surface-soft);
 		padding: 26px 28px;
 		box-shadow: none;
 	}
@@ -94,9 +94,9 @@
 		min-height: 54px;
 		align-items: stretch;
 		justify-content: center;
-		border: 1px solid #dfe5d8 !important;
+		border: 1px solid var(--bc-border) !important;
 		border-radius: 8px !important;
-		background: #ffffff !important;
+		background: var(--bc-surface) !important;
 		color: #1c1c1c;
 		padding: 0 !important;
 		text-align: center;

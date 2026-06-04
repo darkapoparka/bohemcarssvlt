@@ -120,8 +120,13 @@
 {@html afterModalsHtml}
 
 <style>
+	:global(#main-content) {
+		background: var(--bc-bg);
+	}
+
 	@media (max-width: 767px) {
 		:global(#main-content) {
+			background: var(--bc-bg);
 			display: flex;
 			flex-direction: column;
 		}

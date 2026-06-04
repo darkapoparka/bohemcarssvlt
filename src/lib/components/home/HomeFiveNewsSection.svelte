@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveNewsPost } from '$lib/auxero/home-five';
+	import { bohemcarsAssets } from '$lib/data/bohemcars';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 	import { ArrowRight } from '@lucide/svelte';
 	import HomeSectionCta from './HomeSectionCta.svelte';
@@ -19,13 +20,38 @@
 	const readAllBlogEyebrow = $derived(
 		copy.newsTitle === 'Bohemcars notes' ? 'Bohemcars blog' : 'Bohemcars блог'
 	);
+	const brandedNewsTitle = $derived(/bohemcars/i.test(copy.newsTitle));
+	const brandFirstNewsTitle = $derived(copy.newsTitle.toLowerCase().startsWith('bohemcars'));
+	const newsTitleWithoutBrand = $derived(copy.newsTitle.replace(/bohemcars/i, '').trim());
 </script>
 
 {#if cards.length}
 	<section class="bohemcars-news-section py-100">
 		<div class="container">
-			<div class="title-section wow fadeInDown mb-40" data-wow-delay="0.1s">
-				<h2>{copy.newsTitle}</h2>
+			<div class="title-section bohemcars-news-banner wow fadeInDown mb-40" data-wow-delay="0.1s">
+				<h2>
+					{#if brandedNewsTitle}
+						{#if brandFirstNewsTitle}
+							<picture class="bohemcars-news-banner__brand">
+								<source media="(max-width: 767px)" srcset={bohemcarsAssets.logoLight} />
+								<img src={bohemcarsAssets.logoDark} alt="Bohemcars" loading="lazy" />
+							</picture>
+							{#if newsTitleWithoutBrand}
+								<span>{newsTitleWithoutBrand}</span>
+							{/if}
+						{:else}
+							{#if newsTitleWithoutBrand}
+								<span>{newsTitleWithoutBrand}</span>
+							{/if}
+							<picture class="bohemcars-news-banner__brand">
+								<source media="(max-width: 767px)" srcset={bohemcarsAssets.logoLight} />
+								<img src={bohemcarsAssets.logoDark} alt="Bohemcars" loading="lazy" />
+							</picture>
+						{/if}
+					{:else}
+						{copy.newsTitle}
+					{/if}
+				</h2>
 				<HomeSectionCta href="/blog" label={copy.commonCta} />
 			</div>
 			<div class="bohemcars-news-grid wow fadeInUp" data-wow-delay="0.1s">
@@ -68,8 +94,49 @@
 
 <style>
 	.bohemcars-news-section {
+		background-color: var(--bc-bg);
 		padding-top: 82px;
 		padding-bottom: 86px;
+	}
+
+	.bohemcars-news-banner {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		overflow: hidden;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		background: linear-gradient(135deg, #14210f 0%, #1f3318 58%, #0f190c 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		padding: 24px 28px;
+	}
+
+	.bohemcars-news-banner h2 {
+		display: inline-flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 14px;
+		color: #ffffff;
+		margin: 0;
+	}
+
+	.bohemcars-news-banner h2 span {
+		color: inherit !important;
+		font: inherit;
+		line-height: inherit;
+	}
+
+	.bohemcars-news-banner__brand {
+		display: inline-flex;
+		width: clamp(198px, 18vw, 286px);
+		line-height: 1;
+	}
+
+	.bohemcars-news-banner__brand img {
+		display: block;
+		width: 100%;
+		height: auto;
 	}
 
 	.bohemcars-news-grid {
@@ -206,17 +273,33 @@
 			text-align: left;
 		}
 
+		.bohemcars-news-banner {
+			overflow: visible;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			box-shadow: none;
+			padding: 0;
+		}
+
 		.bohemcars-news-section :global(.title-section a) {
 			display: none !important;
 		}
 
 		.bohemcars-news-section :global(.title-section h2) {
+			gap: 9px;
+			color: #1c1c1c;
 			margin: 0;
 			font-size: 26px;
 			font-weight: 800;
 			letter-spacing: 0;
 			line-height: 32px;
 			text-align: left;
+		}
+
+		.bohemcars-news-banner__brand {
+			width: min(45vw, 174px);
+			transform: translateY(1px);
 		}
 
 		.bohemcars-news-all-card {
@@ -227,13 +310,13 @@
 			gap: 10px;
 			overflow: hidden;
 			border-radius: 16px;
-			background: #eef1ed;
+			background: var(--bc-surface);
 			color: #1c1c1c;
 			padding: 22px;
 		}
 
 		.bohemcars-news-all-card:hover {
-			background: #e4eadf;
+			background: var(--bc-surface-hover);
 			color: #1c1c1c;
 			transform: none;
 		}

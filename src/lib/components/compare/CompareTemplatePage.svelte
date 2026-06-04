@@ -63,6 +63,52 @@
 	}
 
 	@media (max-width: 767px) {
+		:global(body.auxero-template-compare-html #wrapper),
+		:global(body.auxero-template-compare-html section.pb-100) {
+			background: var(--bc-bg) !important;
+			background-color: var(--bc-bg) !important;
+		}
+
+		:global(body.auxero-template-compare-html section.pb-100) {
+			padding-top: 20px !important;
+			padding-bottom: 92px !important;
+		}
+
+		:global(body.auxero-template-compare-html section.pb-100 .tf-spacing-style3) {
+			display: none !important;
+		}
+
+		:global(body.auxero-template-compare-html section.pb-100 > .container) {
+			width: 100% !important;
+			max-width: none !important;
+			padding-right: 14px !important;
+			padding-left: 14px !important;
+		}
+
+		:global(body.auxero-template-compare-html section.pb-100 h2) {
+			margin-bottom: 8px !important;
+			color: #111111 !important;
+			font-size: 28px !important;
+			font-weight: 850 !important;
+			line-height: 33px !important;
+			text-align: left !important;
+		}
+
+		:global(body.auxero-template-compare-html section.pb-100 h2 + p) {
+			margin-bottom: 18px !important;
+			text-align: left !important;
+			font-size: 15px !important;
+			line-height: 22px !important;
+		}
+
+		:global(body.auxero-template-compare-html .card-details) {
+			overflow: hidden !important;
+			border: 1px solid var(--bc-border) !important;
+			border-radius: 8px !important;
+			background: var(--bc-surface) !important;
+			padding: 8px !important;
+		}
+
 		:global(.bohemcars-dashboard-compare .bohemcars-compare-table) {
 			min-width: 560px;
 		}

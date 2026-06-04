@@ -8,6 +8,13 @@
 	--muted: #777b80;
 	--line: #e8ece4;
 	--soft: #f3f6ed;
+	--bc-bg: #fbfcfa;
+	--bc-surface: #eef1ed;
+	--bc-surface-soft: #f6f7f3;
+	--bc-surface-hover: #e4eadf;
+	--bc-border: #dde5d8;
+	--bc-control: #eef1ed;
+	--bc-control-hover: #e4eadf;
 	--dark: #030403;
 	--dark-2: #0b0d09;
 	--dark-card: #11130f;
@@ -25,7 +32,7 @@
 		'Segoe UI',
 		sans-serif;
 	color: var(--ink);
-	background: var(--white);
+	background: var(--bc-bg);
 }
 
 * {
@@ -39,7 +46,7 @@ html {
 body {
 	margin: 0;
 	min-width: 320px;
-	background: var(--white);
+	background: var(--bc-bg);
 	color: var(--ink);
 }
 

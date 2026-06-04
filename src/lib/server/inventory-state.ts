@@ -48,6 +48,18 @@ const getParam = (params: URLSearchParams, ...keys: string[]) => {
 	return undefined;
 };
 
+const getParamList = (params: URLSearchParams, ...keys: string[]) => {
+	const values = keys.flatMap((key) =>
+		params
+			.getAll(key)
+			.flatMap((value) => value.split(','))
+			.map((value) => value.trim())
+			.filter(Boolean)
+	);
+
+	return values.length ? Array.from(new Set(values)).join(',') : undefined;
+};
+
 const getNumberParam = (params: URLSearchParams, ...keys: string[]) => {
 	const value = getParam(params, ...keys);
 	const parsed = value ? Number(value.replace(/[^\d.-]/g, '')) : Number.NaN;
@@ -104,7 +116,7 @@ export const getInventoryState = (
 	const sort = sortParamToKey[sortParam] ?? 'template';
 	const filters: InventoryFilters = {
 		bodyType: getParam(searchParams, 'body', 'bodyType', 'bodystyle'),
-		brand: getParam(searchParams, 'brand'),
+		brand: getParamList(searchParams, 'brand'),
 		condition: getParam(searchParams, 'condition') as InventoryFilters['condition'],
 		fuel: getParam(searchParams, 'fuel', 'FuelType'),
 		location: getParam(searchParams, 'location', 'city', 'area'),

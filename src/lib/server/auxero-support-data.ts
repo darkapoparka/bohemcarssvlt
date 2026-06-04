@@ -64,10 +64,10 @@ const checkList = (items: string[], white = false) =>
 
 const statsGrid = () => {
 	const stats = [
-		{ value: String(vehicles.length), suffix: '', label: 'Bohemcars Listings' },
-		{ value: String(brands.length), suffix: '', label: 'Brands In Stock' },
-		{ value: '98', suffix: '%', label: 'Facebook Recommendations' },
-		{ value: '157', suffix: '', label: 'Public Reviews' }
+		{ value: String(vehicles.length), suffix: '', label: 'Автомобила в наличност' },
+		{ value: String(brands.length), suffix: '', label: 'Марки в инвентара' },
+		{ value: '98', suffix: '%', label: 'Препоръки във Facebook' },
+		{ value: '157', suffix: '', label: 'Публични отзива' }
 	];
 
 	return `<div class="grid grid-cols-4 gap-130 md-grid-cols-2 counter-spacing">
@@ -508,7 +508,7 @@ const applyAboutData = (html: string) => {
 </section>
 <div class="tf-spacing"></div>
 <section>
-	<h2 class="mb-40 text-center">Bohemcars Consultants</h2>
+	<h2 class="mb-40 text-center">Екипът зад процеса</h2>
 	<div class="container">${consultantGrid()}</div>
 </section></div>`;
 
@@ -790,7 +790,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 			<div class="mb-32">
 				<div class="listing-details--contact-dealer style-3 mb-20">
 					<img src="${escapeHtml(agents[1]?.image ?? bohemcarsConsultants[1].image)}" alt="Bohemcars consultant">
-					<div class="content"><a href="/agents/bohemcars-import" class="h4 mb-8 font-weight-600">Bohemcars Import</a><p class="text-secondary">Canada import consultant</p></div>
+					<div class="content"><a href="/agents/bohemcars-import" class="h4 mb-8 font-weight-600">Внос от Канада</a><p class="text-secondary">Подбор, транспорт и крайни разходи</p></div>
 				</div>
 				<p class="mb-16">Send a VIN, listing link, budget, or timeline and Bohemcars will review the exact case.</p>
 			</div>

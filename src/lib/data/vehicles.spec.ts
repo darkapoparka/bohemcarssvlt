@@ -59,6 +59,20 @@ describe('vehicle data helpers', () => {
 		expect(result.every((vehicle) => vehicle.brand === 'Audi')).toBe(true);
 	});
 
+	it('treats comma-separated brands and model searches as OR filters', () => {
+		const brandResult = filterVehicles(vehicles, { brand: 'BMW,Audi' });
+		const modelResult = filterVehicles(vehicles, { query: 'X5,Q8' });
+
+		expect(brandResult.length).toBeGreaterThan(0);
+		expect(brandResult.every((vehicle) => ['BMW', 'Audi'].includes(vehicle.brand))).toBe(true);
+		expect(modelResult.length).toBeGreaterThan(0);
+		expect(
+			modelResult.every((vehicle) =>
+				`${vehicle.title} ${vehicle.model}`.toLowerCase().match(/x5|q8/)
+			)
+		).toBe(true);
+	});
+
 	it('sorts vehicles by lowest price', () => {
 		const sorted = sortVehicles(vehicles, 'lowest');
 		expect(sorted[0].price).toBeLessThanOrEqual(sorted[1].price);

@@ -36,11 +36,13 @@
 	@media (max-width: 767.98px) {
 		:global(body.auxero-template-my-favorites-html) {
 			overflow: auto !important;
-			background: #ffffff !important;
+			background: var(--bc-bg) !important;
+			background-color: var(--bc-bg) !important;
 		}
 
 		:global(body.auxero-template-my-favorites-html #wrapper) {
-			background: #ffffff !important;
+			background: var(--bc-bg) !important;
+			background-color: var(--bc-bg) !important;
 		}
 
 		.bohemcars-favorites-desktop-route {

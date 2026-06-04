@@ -113,8 +113,14 @@ const hasNumberFilter = (value?: number): value is number =>
 const containsFilterValue = (value: string | number | undefined, query: string) =>
 	normalizeFilterValue(value).includes(query);
 
+const splitFilterValues = (filter?: string) =>
+	normalizeFilterValue(filter)
+		.split(',')
+		.map((value) => value.trim())
+		.filter(Boolean);
+
 const matchesOption = (value: string, filter?: string) =>
-	isAllFilter(filter) || normalizeFilterValue(value) === normalizeFilterValue(filter);
+	isAllFilter(filter) || splitFilterValues(filter).includes(normalizeFilterValue(value));
 
 const vehicleSearchText = (vehicle: Vehicle) =>
 	[
@@ -168,6 +174,7 @@ const matchesStatusFilter = (vehicle: Vehicle, status?: string) => {
 
 export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 	const query = normalizeFilterValue(filters.query);
+	const queryValues = splitFilterValues(filters.query);
 	const location = normalizeFilterValue(filters.location);
 	const sourceId = normalizeFilterValue(filters.sourceId);
 	const minPrice = filters.minPrice;
@@ -179,7 +186,9 @@ export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 	const feature = normalizeFilterValue(filters.feature);
 
 	return source.filter((vehicle) => {
-		const matchesQuery = !query || containsFilterValue(vehicleSearchText(vehicle), query);
+		const matchesQuery =
+			!query ||
+			queryValues.some((queryValue) => containsFilterValue(vehicleSearchText(vehicle), queryValue));
 		const matchesFeature =
 			!feature ||
 			vehicle.features.some((value) => containsFilterValue(value, feature)) ||

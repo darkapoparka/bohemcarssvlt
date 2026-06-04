@@ -35,3 +35,18 @@
 		submitLabel={form.submitLabel}
 	/>
 </div>
+
+<style>
+	.services-center-form {
+		border: 1px solid var(--bc-border);
+		background: var(--bc-surface) !important;
+	}
+
+	.services-center-form :global(input),
+	.services-center-form :global(select),
+	.services-center-form :global(textarea) {
+		border-color: var(--bc-border) !important;
+		background: #ffffff !important;
+		box-shadow: none !important;
+	}
+</style>

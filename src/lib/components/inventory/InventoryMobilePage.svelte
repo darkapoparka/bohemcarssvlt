@@ -66,9 +66,36 @@
 	} as const;
 	const activeOptionValue = (options: InventoryMobileData['brandOptions']) =>
 		options.find((option) => option.active)?.value ?? '';
+	const activeOptionValues = (options: InventoryMobileData['brandOptions']) =>
+		options
+			.filter((option) => option.active && option.value)
+			.map((option) => option.value)
+			.join(',');
 	const normalizedOptionQuery = (value: string) => value.trim().toLocaleLowerCase();
 	const optionSearchText = (option: InventoryMobileOption) =>
 		`${option.label} ${option.value}`.toLocaleLowerCase();
+	const splitDraftValues = (value: string) =>
+		value
+			.split(',')
+			.map((item) => item.trim())
+			.filter(Boolean);
+	const joinDraftValues = (values: string[]) =>
+		Array.from(new Set(values.filter(Boolean))).join(',');
+	const hasDraftValue = (current: string, value: string) =>
+		splitDraftValues(current).some(
+			(item) => item.toLocaleLowerCase() === value.toLocaleLowerCase()
+		);
+	const toggleDraftValue = (current: string, value: string) => {
+		if (!value) return '';
+
+		const values = splitDraftValues(current);
+
+		return joinDraftValues(
+			hasDraftValue(current, value)
+				? values.filter((item) => item.toLocaleLowerCase() !== value.toLocaleLowerCase())
+				: [...values, value]
+		);
+	};
 	const rangeParams = (value: string) => {
 		const [min, max] = value.split('-');
 
@@ -79,11 +106,11 @@
 	};
 	const currentFilterDraft = (): FilterDraft => ({
 		body: activeOptionValue(mobile.bodyOptions),
-		brand: activeOptionValue(mobile.brandOptions),
+		brand: activeOptionValues(mobile.brandOptions),
 		feature: activeOptionValue(mobile.featureOptions),
 		fuel: activeOptionValue(mobile.fuelOptions),
 		mileage: activeOptionValue(mobile.mileageOptions),
-		model: activeOptionValue(mobile.modelOptions) || mobile.searchValue,
+		model: mobile.searchValue || activeOptionValue(mobile.modelOptions),
 		price: activeOptionValue(mobile.priceOptions),
 		sort: activeOptionValue(mobile.sortOptions) || 'best-match',
 		transmission: activeOptionValue(mobile.transmissionOptions),
@@ -133,6 +160,9 @@
 	);
 	const hasActiveFilters = $derived(mobile.activeFilters.length > 0);
 	const filterDrawerId = $derived(filterDrawerIds[filterDrawerMode]);
+	const filterDrawerHasActions = $derived(
+		filterDrawerMode === 'all' || filterDrawerMode === 'brand' || filterDrawerMode === 'model'
+	);
 	const filterDrawerKicker = $derived(
 		filterDrawerMode === 'sort' ? mobile.sortLabel : mobile.filterLabel
 	);
@@ -156,7 +186,7 @@
 
 		return options.map((option) => ({
 			...option,
-			active: filterDraft.model === option.value
+			active: hasDraftValue(filterDraft.model, option.value)
 		}));
 	});
 	const visibleBrandOptions = $derived.by(() => {
@@ -197,9 +227,14 @@
 	};
 	const selectDraftOption = (key: keyof FilterDraft, value: string) => {
 		if (key === 'brand') {
-			filterDraft.brand = filterDraft.brand === value ? '' : value;
+			filterDraft.brand = toggleDraftValue(filterDraft.brand, value);
 			filterDraft.model = '';
 			modelDrawerQuery = '';
+			return;
+		}
+
+		if (key === 'model') {
+			filterDraft.model = toggleDraftValue(filterDraft.model, value);
 			return;
 		}
 
@@ -260,6 +295,25 @@
 
 		return `/inventory${query ? `?${query}` : ''}`;
 	};
+	const clearFilterDraft = () => {
+		if (filterDrawerMode === 'all') {
+			navigateToFilterDraft(mobile.clearHref);
+			return;
+		}
+
+		if (filterDrawerMode === 'brand') {
+			filterDraft.brand = '';
+			filterDraft.model = '';
+			brandDrawerQuery = '';
+			modelDrawerQuery = '';
+			return;
+		}
+
+		if (filterDrawerMode === 'model') {
+			filterDraft.model = '';
+			modelDrawerQuery = '';
+		}
+	};
 	const navigateToFilterDraft = (href = filterDraftHref()) => {
 		const queryStart = href.indexOf('?');
 		filterDrawerOpen = false;
@@ -280,7 +334,13 @@
 		const previousHref = filterDraftHref();
 		selectDraftOption(key, value);
 
-		if (filterDrawerMode === 'all') return;
+		if (
+			filterDrawerMode === 'all' ||
+			filterDrawerMode === 'brand' ||
+			filterDrawerMode === 'model'
+		) {
+			return;
+		}
 
 		const nextHref = filterDraftHref();
 		if (nextHref === previousHref) {
@@ -505,7 +565,7 @@
 					class="bohemcars-inventory-mobile__tool-clear"
 					href={resolve(mobile.clearHref as '/inventory')}
 				>
-					{copy.reset}
+					{mobile.clearLabel}
 				</a>
 			{/if}
 		</nav>
@@ -640,7 +700,7 @@
 		</Drawer.Overlay>
 		<Drawer.Content
 			id={filterDrawerId}
-			class="bohemcars-inventory-mobile-drawer__sheet bohemcars-inventory-mobile-drawer__sheet--filters"
+			class={`bohemcars-inventory-mobile-drawer__sheet bohemcars-inventory-mobile-drawer__sheet--filters ${filterDrawerMode === 'all' ? 'bohemcars-inventory-mobile-drawer__sheet--full' : ''} ${filterDrawerHasActions ? 'bohemcars-inventory-mobile-drawer__sheet--with-actions' : ''}`}
 		>
 			<Drawer.Handle class="bohemcars-inventory-mobile-drawer__handle" />
 			<header>
@@ -661,40 +721,104 @@
 					{mobile.countLabel}
 				</span>
 			</Drawer.Description>
-			{#if filterDrawerMode === 'brand'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<label class="bohemcars-inventory-mobile-drawer__search-box">
-						<Search size={19} strokeWidth={2.15} aria-hidden="true" />
-						<input
-							type="search"
-							bind:value={brandDrawerQuery}
-							placeholder={mobile.brandSearchPlaceholder}
-							autocomplete="off"
-							autocapitalize="none"
-							spellcheck="false"
-							enterkeyhint="search"
-							aria-label={mobile.brandSearchPlaceholder}
-						/>
-					</label>
-					{#if visibleBrandOptions.length}
+			<div class="bohemcars-inventory-mobile-drawer__body">
+				{#if filterDrawerMode === 'brand'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<label class="bohemcars-inventory-mobile-drawer__search-box">
+							<Search size={19} strokeWidth={2.15} aria-hidden="true" />
+							<input
+								type="search"
+								bind:value={brandDrawerQuery}
+								placeholder={mobile.brandSearchPlaceholder}
+								autocomplete="off"
+								autocapitalize="none"
+								spellcheck="false"
+								enterkeyhint="search"
+								aria-label={mobile.brandSearchPlaceholder}
+							/>
+						</label>
+						{#if visibleBrandOptions.length}
+							<div>
+								{#each visibleBrandOptions as option (option.value)}
+									<button
+										type="button"
+										class:active={hasDraftValue(filterDraft.brand, option.value)}
+										aria-pressed={hasDraftValue(filterDraft.brand, option.value)}
+										onclick={() => selectFilterOption('brand', option.value)}
+									>
+										{#if option.image}
+											<img
+												class="bohemcars-inventory-mobile-drawer__brand-logo"
+												src={option.image}
+												alt=""
+												aria-hidden="true"
+												loading="lazy"
+												decoding="async"
+											/>
+										{/if}
+										<span>{option.label}</span>
+										{#if option.countLabel}
+											<small>{option.countLabel}</small>
+										{/if}
+									</button>
+								{/each}
+							</div>
+						{:else}
+							<span class="bohemcars-inventory-mobile-drawer__empty-option">
+								{mobile.noMatchesLabel}
+							</span>
+						{/if}
+					</div>
+				{/if}
+				{#if filterDrawerMode === 'model'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<label class="bohemcars-inventory-mobile-drawer__search-box">
+							<Search size={19} strokeWidth={2.15} aria-hidden="true" />
+							<input
+								type="search"
+								bind:value={modelDrawerQuery}
+								placeholder={mobile.modelSearchPlaceholder}
+								autocomplete="off"
+								autocapitalize="none"
+								spellcheck="false"
+								enterkeyhint="search"
+								aria-label={mobile.modelSearchPlaceholder}
+							/>
+						</label>
+						{#if visibleStagedModelOptions.length}
+							<div>
+								{#each visibleStagedModelOptions as option (option.value)}
+									<button
+										type="button"
+										class:active={option.active}
+										aria-pressed={option.active}
+										onclick={() => selectFilterOption('model', option.value)}
+									>
+										<span>{option.label}</span>
+										{#if option.countLabel}
+											<small>{option.countLabel}</small>
+										{/if}
+									</button>
+								{/each}
+							</div>
+						{:else}
+							<span class="bohemcars-inventory-mobile-drawer__empty-option">
+								{mobile.noMatchesLabel}
+							</span>
+						{/if}
+					</div>
+				{/if}
+				{#if filterDrawerMode === 'all' || filterDrawerMode === 'body'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.bodyLabel}</p>
 						<div>
-							{#each visibleBrandOptions as option (option.value)}
+							{#each mobile.bodyOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={filterDraft.brand === option.value}
-									aria-pressed={filterDraft.brand === option.value}
-									onclick={() => selectFilterOption('brand', option.value)}
+									class:active={filterDraft.body === option.value}
+									aria-pressed={filterDraft.body === option.value}
+									onclick={() => selectFilterOption('body', option.value)}
 								>
-									{#if option.image}
-										<img
-											class="bohemcars-inventory-mobile-drawer__brand-logo"
-											src={option.image}
-											alt=""
-											aria-hidden="true"
-											loading="lazy"
-											decoding="async"
-										/>
-									{/if}
 									<span>{option.label}</span>
 									{#if option.countLabel}
 										<small>{option.countLabel}</small>
@@ -702,36 +826,35 @@
 								</button>
 							{/each}
 						</div>
-					{:else}
-						<span class="bohemcars-inventory-mobile-drawer__empty-option">
-							{mobile.noMatchesLabel}
-						</span>
-					{/if}
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'model'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<label class="bohemcars-inventory-mobile-drawer__search-box">
-						<Search size={19} strokeWidth={2.15} aria-hidden="true" />
-						<input
-							type="search"
-							bind:value={modelDrawerQuery}
-							placeholder={mobile.modelSearchPlaceholder}
-							autocomplete="off"
-							autocapitalize="none"
-							spellcheck="false"
-							enterkeyhint="search"
-							aria-label={mobile.modelSearchPlaceholder}
-						/>
-					</label>
-					{#if visibleStagedModelOptions.length}
+					</div>
+				{/if}
+				{#if filterDrawerMode === 'sort'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.sortLabel}</p>
 						<div>
-							{#each visibleStagedModelOptions as option (option.value)}
+							{#each mobile.sortOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={option.active}
-									aria-pressed={option.active}
-									onclick={() => selectFilterOption('model', option.value)}
+									class:active={filterDraft.sort === option.value}
+									aria-pressed={filterDraft.sort === option.value}
+									onclick={() => selectFilterOption('sort', option.value)}
+								>
+									<span>{option.label}</span>
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/if}
+				{#if filterDrawerMode === 'all' || filterDrawerMode === 'fuel'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.fuelLabel}</p>
+						<div>
+							{#each mobile.fuelOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.fuel === option.value}
+									aria-pressed={filterDraft.fuel === option.value}
+									onclick={() => selectFilterOption('fuel', option.value)}
 								>
 									<span>{option.label}</span>
 									{#if option.countLabel}
@@ -740,176 +863,116 @@
 								</button>
 							{/each}
 						</div>
-					{:else}
-						<span class="bohemcars-inventory-mobile-drawer__empty-option">
-							{mobile.noMatchesLabel}
-						</span>
-					{/if}
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all' || filterDrawerMode === 'body'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.bodyLabel}</p>
-					<div>
-						{#each mobile.bodyOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.body === option.value}
-								aria-pressed={filterDraft.body === option.value}
-								onclick={() => selectFilterOption('body', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
 					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'sort'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.sortLabel}</p>
-					<div>
-						{#each mobile.sortOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.sort === option.value}
-								aria-pressed={filterDraft.sort === option.value}
-								onclick={() => selectFilterOption('sort', option.value)}
-							>
-								<span>{option.label}</span>
-							</button>
-						{/each}
+				{/if}
+				{#if filterDrawerMode === 'all' || filterDrawerMode === 'mileage'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.mileageLabel}</p>
+						<div>
+							{#each mobile.mileageOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.mileage === option.value}
+									aria-pressed={filterDraft.mileage === option.value}
+									onclick={() => selectFilterOption('mileage', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all' || filterDrawerMode === 'fuel'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.fuelLabel}</p>
-					<div>
-						{#each mobile.fuelOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.fuel === option.value}
-								aria-pressed={filterDraft.fuel === option.value}
-								onclick={() => selectFilterOption('fuel', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
+				{/if}
+				{#if filterDrawerMode === 'all' || filterDrawerMode === 'price'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.priceLabel}</p>
+						<div>
+							{#each mobile.priceOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.price === option.value}
+									aria-pressed={filterDraft.price === option.value}
+									onclick={() => selectFilterOption('price', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all' || filterDrawerMode === 'mileage'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.mileageLabel}</p>
-					<div>
-						{#each mobile.mileageOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.mileage === option.value}
-								aria-pressed={filterDraft.mileage === option.value}
-								onclick={() => selectFilterOption('mileage', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
+				{/if}
+				{#if filterDrawerMode === 'all'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.yearLabel}</p>
+						<div>
+							{#each mobile.yearOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.year === option.value}
+									aria-pressed={filterDraft.year === option.value}
+									onclick={() => selectFilterOption('year', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all' || filterDrawerMode === 'price'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.priceLabel}</p>
-					<div>
-						{#each mobile.priceOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.price === option.value}
-								aria-pressed={filterDraft.price === option.value}
-								onclick={() => selectFilterOption('price', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.transmissionLabel}</p>
+						<div>
+							{#each mobile.transmissionOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.transmission === option.value}
+									aria-pressed={filterDraft.transmission === option.value}
+									onclick={() => selectFilterOption('transmission', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.yearLabel}</p>
-					<div>
-						{#each mobile.yearOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.year === option.value}
-								aria-pressed={filterDraft.year === option.value}
-								onclick={() => selectFilterOption('year', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
+				{/if}
+				{#if filterDrawerMode === 'all' || filterDrawerMode === 'extras'}
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.extrasLabel}</p>
+						<div>
+							{#each mobile.featureOptions as option (option.value)}
+								<button
+									type="button"
+									class:active={filterDraft.feature === option.value}
+									aria-pressed={filterDraft.feature === option.value}
+									onclick={() => selectFilterOption('feature', option.value)}
+								>
+									<span>{option.label}</span>
+									{#if option.countLabel}
+										<small>{option.countLabel}</small>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
-				</div>
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.transmissionLabel}</p>
-					<div>
-						{#each mobile.transmissionOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.transmission === option.value}
-								aria-pressed={filterDraft.transmission === option.value}
-								onclick={() => selectFilterOption('transmission', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
-					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all' || filterDrawerMode === 'extras'}
-				<div class="bohemcars-inventory-mobile-drawer__group">
-					<p>{mobile.extrasLabel}</p>
-					<div>
-						{#each mobile.featureOptions as option (option.value)}
-							<button
-								type="button"
-								class:active={filterDraft.feature === option.value}
-								aria-pressed={filterDraft.feature === option.value}
-								onclick={() => selectFilterOption('feature', option.value)}
-							>
-								<span>{option.label}</span>
-								{#if option.countLabel}
-									<small>{option.countLabel}</small>
-								{/if}
-							</button>
-						{/each}
-					</div>
-				</div>
-			{/if}
-			{#if filterDrawerMode === 'all'}
+				{/if}
+			</div>
+			{#if filterDrawerHasActions}
 				<div class="bohemcars-inventory-mobile-drawer__actions">
-					<a
+					<button
+						type="button"
 						class="bohemcars-inventory-mobile-drawer__clear"
-						href={resolve(mobile.clearHref as '/')}
+						onclick={clearFilterDraft}
 					>
-						{copy.reset}
-					</a>
+						{mobile.clearLabel}
+					</button>
 					<button
 						type="button"
 						class="bohemcars-inventory-mobile-drawer__done"
@@ -924,9 +987,14 @@
 </div>
 
 <style>
+	:global(body.auxero-template-listing-grid4-columns-html) {
+		background: var(--bc-bg) !important;
+		background-color: var(--bc-bg) !important;
+	}
+
 	.bohemcars-inventory-mobile {
 		min-height: 100vh;
-		background: #ffffff;
+		background: var(--bc-bg);
 		color: #111111;
 	}
 
@@ -946,9 +1014,9 @@
 		min-width: 0;
 		align-items: center;
 		gap: 12px;
-		border: 1px solid #dce3dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 999px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		padding: 5px 5px 5px 15px;
 		color: #1c1c1c;
 	}
@@ -1037,7 +1105,7 @@
 		gap: 8px;
 		border: 0;
 		border-radius: 11px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		padding: 0 13px;
 		appearance: none;
 		color: #1c1c1c;
@@ -1101,10 +1169,10 @@
 	}
 
 	.bohemcars-inventory-mobile__tool-clear {
-		min-height: 34px;
-		border: 1px solid #d7ded7;
+		min-height: 44px;
+		border: 1px solid var(--bc-border);
 		border-radius: 999px;
-		background: #ffffff;
+		background: var(--bc-surface);
 		font-size: 13px;
 	}
 
@@ -1119,9 +1187,9 @@
 		grid-template-columns: 132px minmax(0, 1fr);
 		min-height: 154px;
 		overflow: hidden;
-		border: 1px solid #d8e0dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 	}
 
 	.bohemcars-inventory-mobile-card__image {
@@ -1184,6 +1252,8 @@
 	}
 
 	.bohemcars-inventory-mobile-card__body h2 a {
+		display: block;
+		min-height: 44px;
 		color: inherit;
 		font-size: inherit;
 		font-weight: 500;
@@ -1235,7 +1305,7 @@
 
 	.bohemcars-inventory-mobile__empty {
 		border-radius: 8px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		padding: 18px;
 	}
 
@@ -1281,14 +1351,14 @@
 		left: 0;
 		display: grid;
 		z-index: 1201;
-		height: min(86dvh, 720px);
+		height: auto;
 		max-height: min(86dvh, 720px);
 		align-content: start;
 		gap: 16px;
 		grid-auto-rows: max-content;
-		overflow-y: auto;
+		overflow: hidden;
 		border-radius: 18px 18px 0 0;
-		background: #ffffff;
+		background: var(--bc-bg);
 		outline: 0;
 		padding: 10px 16px max(22px, env(safe-area-inset-bottom));
 		-webkit-overflow-scrolling: touch;
@@ -1297,15 +1367,23 @@
 
 	.bohemcars-inventory-mobile
 		:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]) {
-		height: min(76dvh, 640px);
 		max-height: min(76dvh, 640px);
 	}
 
 	.bohemcars-inventory-mobile
 		:global(.bohemcars-inventory-mobile-drawer__sheet--filters[data-vaul-drawer]) {
-		height: min(90dvh, 760px);
 		max-height: min(90dvh, 760px);
 		padding-bottom: 0;
+	}
+
+	.bohemcars-inventory-mobile
+		:global(.bohemcars-inventory-mobile-drawer__sheet--full[data-vaul-drawer]) {
+		height: min(90dvh, 760px);
+	}
+
+	.bohemcars-inventory-mobile
+		:global(.bohemcars-inventory-mobile-drawer__sheet--with-actions[data-vaul-drawer]) {
+		grid-template-rows: max-content max-content minmax(0, 1fr) max-content;
 	}
 
 	.bohemcars-inventory-mobile
@@ -1322,7 +1400,7 @@
 		height: 5px;
 		justify-self: center;
 		border-radius: 999px;
-		background: #d7ded7;
+		background: var(--bc-border);
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet header) {
@@ -1364,14 +1442,14 @@
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet header button) {
 		display: flex;
-		width: 38px;
-		height: 38px;
+		width: 44px;
+		height: 44px;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 38px;
+		flex: 0 0 44px;
 		border: 0;
 		border-radius: 50%;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		color: #111111;
 		cursor: pointer;
 		padding: 0;
@@ -1388,7 +1466,7 @@
 		align-items: center;
 		gap: 10px;
 		border-radius: 999px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		padding: 0 13px;
 		color: #111111;
 	}
@@ -1427,7 +1505,7 @@
 	.bohemcars-inventory-mobile-drawer__search-submit {
 		display: inline-flex;
 		min-width: 58px;
-		height: 38px;
+		min-height: 44px;
 		align-items: center;
 		justify-content: center;
 		flex: 0 0 auto;
@@ -1463,6 +1541,20 @@
 		outline-offset: 2px;
 	}
 
+	.bohemcars-inventory-mobile-drawer__body {
+		display: grid;
+		min-height: 0;
+		overflow-y: auto;
+		gap: 16px;
+		padding-bottom: 2px;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.bohemcars-inventory-mobile-drawer__body::-webkit-scrollbar {
+		display: none;
+	}
+
 	.bohemcars-inventory-mobile-drawer__group {
 		display: grid;
 		gap: 9px;
@@ -1487,12 +1579,12 @@
 	.bohemcars-inventory-mobile-drawer__group button,
 	.bohemcars-inventory-mobile-drawer__clear {
 		display: inline-flex;
-		min-height: 38px;
+		min-height: 44px;
 		align-items: center;
 		gap: 7px;
 		border: 0;
 		border-radius: 9px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		padding: 0 12px;
 		appearance: none;
 		color: #111111;
@@ -1538,10 +1630,10 @@
 
 	.bohemcars-inventory-mobile-drawer__empty-option {
 		display: inline-flex;
-		min-height: 40px;
+		min-height: 44px;
 		align-items: center;
 		border-radius: 9px;
-		background: #f5f7fa;
+		background: var(--bc-surface-soft);
 		color: #728093;
 		font-size: 14px;
 		font-weight: 800;
@@ -1558,16 +1650,16 @@
 		gap: 9px;
 		margin: 2px -16px 0;
 		border-top: 1px solid #e6ebdf;
-		background: #ffffff;
+		background: var(--bc-bg);
 		padding: 12px 16px max(14px, env(safe-area-inset-bottom));
-		box-shadow: 0 -14px 22px rgba(255, 255, 255, 0.95);
+		box-shadow: 0 -14px 22px rgba(251, 252, 250, 0.95);
 	}
 
 	.bohemcars-inventory-mobile-drawer__clear {
 		justify-content: center;
 		min-height: 50px;
 		border-radius: 10px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		color: #1c1c1c;
 	}
 

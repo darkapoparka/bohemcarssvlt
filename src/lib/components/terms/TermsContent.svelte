@@ -24,3 +24,13 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	@media (max-width: 767.98px) {
+		.term-page--nav a {
+			display: flex;
+			min-height: 44px;
+			align-items: center;
+		}
+	}
+</style>

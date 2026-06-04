@@ -6,7 +6,7 @@
 	let { reviews }: { reviews: AuxeroReviewCardData[] } = $props();
 </script>
 
-<section>
+<section class="bohemcars-about-reviews">
 	<div class="wow fadeIn container" data-wow-delay="0.3s">
 		<div class="title-section mb-40">
 			<h2>Отзиви от клиенти</h2>
@@ -29,3 +29,31 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.bohemcars-about-reviews {
+		padding-top: 54px;
+	}
+
+	.bohemcars-about-reviews :global(.container) {
+		max-width: 1010px;
+	}
+
+	.bohemcars-about-reviews :global(.title-section) {
+		align-items: center;
+		margin-bottom: 28px;
+	}
+
+	.bohemcars-about-reviews :global(.testimonior-box) {
+		border: 1px solid var(--bc-border);
+		background: var(--bc-surface);
+	}
+
+	@media (max-width: 767px) {
+		.bohemcars-about-reviews :global(.title-section) {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 14px;
+		}
+	}
+</style>

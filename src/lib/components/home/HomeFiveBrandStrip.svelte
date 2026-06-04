@@ -48,8 +48,8 @@
 	}
 
 	.bohemcars-brand-strip__surface {
-		background: #ffffff;
-		border: 1px solid #e7e7e7;
+		background: var(--bc-surface-soft);
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
 		padding: 42px 40px 36px;
 	}
@@ -66,8 +66,8 @@
 	}
 
 	.bohemcars-brand-strip :global(.out-brand-2) {
-		background-color: #f8f9f6 !important;
-		border: 1px solid #e7e7e7;
+		background-color: var(--bc-surface) !important;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
 		box-shadow: none !important;
 		min-height: 178px;
@@ -75,8 +75,8 @@
 
 	.bohemcars-brand-strip :global(.out-brand-2:hover),
 	.bohemcars-brand-strip :global(.out-brand-2.active) {
-		background-color: #eef0ec !important;
-		border-color: #d6dbd1;
+		background-color: var(--bc-surface-hover) !important;
+		border-color: var(--bc-border);
 		box-shadow: none !important;
 	}
 

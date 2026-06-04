@@ -72,7 +72,7 @@
 		.bohemcars-compare-scroll {
 			overflow-x: auto;
 			overflow-y: hidden;
-			padding-bottom: 8px;
+			padding-bottom: 6px;
 			-webkit-overflow-scrolling: touch;
 			scrollbar-width: thin;
 		}
@@ -85,26 +85,32 @@
 		}
 
 		:global(.bohemcars-compare-table td) {
-			width: 148px;
-			max-width: 148px;
-			padding: 12px 10px;
+			width: 136px;
+			max-width: 136px;
+			padding: 9px 8px;
 			vertical-align: top;
 			text-align: left;
 			white-space: normal;
 			overflow-wrap: anywhere;
+			background: #ffffff;
 		}
 
 		:global(.bohemcars-compare-table td:first-child) {
 			position: sticky;
 			left: 0;
 			z-index: 2;
-			width: 124px;
-			min-width: 124px;
-			max-width: 124px;
+			width: 114px;
+			min-width: 114px;
+			max-width: 114px;
 			padding-left: 2px;
 			overflow-wrap: normal;
-			background: #ffffff;
+			background: var(--bc-surface-soft);
 			box-shadow: 8px 0 14px rgba(28, 28, 28, 0.05);
+		}
+
+		:global(.bohemcars-compare-table tr:first-child td:first-child) {
+			background: var(--bc-surface);
+			box-shadow: none;
 		}
 
 		:global(.bohemcars-compare-table td:first-child span) {
@@ -114,13 +120,24 @@
 		}
 
 		:global(.bohemcars-compare-table .image) {
-			width: 118px !important;
-			height: auto;
+			width: 112px !important;
+			height: 148px !important;
 			margin-bottom: 8px;
+			object-fit: cover;
 		}
 
 		:global(.bohemcars-compare-table .top) {
-			width: 118px;
+			width: 112px;
+		}
+
+		:global(.bohemcars-compare-table .compare-item-remove-table) {
+			display: flex;
+			width: 44px;
+			height: 44px;
+			min-width: 44px;
+			min-height: 44px;
+			align-items: center;
+			justify-content: center;
 		}
 
 		:global(.bohemcars-compare-table .top p),
@@ -128,6 +145,14 @@
 			white-space: normal;
 			font-size: 13px;
 			line-height: 17px;
+		}
+
+		:global(.bohemcars-compare-table .top p a) {
+			display: inline-flex;
+			min-height: 44px;
+			align-items: center;
+			margin-block: -5px;
+			padding-block: 5px;
 		}
 	}
 </style>

@@ -22,7 +22,7 @@
 		Wrench
 	} from '@lucide/svelte';
 
-	const heroImage = '/assets/bohemcars/offer/offer-hero-workspace.png';
+	const heroImage = '/assets/bohemcars/offer/offer-poster-background.png';
 	const logo = '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png';
 
 	const stats = [
@@ -350,6 +350,7 @@
 	.offer-header__logo {
 		display: flex;
 		width: 190px;
+		min-height: 44px;
 		align-items: center;
 	}
 
@@ -369,6 +370,9 @@
 
 	.offer-header__meta span,
 	.offer-header__meta a {
+		display: inline-flex;
+		min-height: 44px;
+		align-items: center;
 		border-radius: 8px;
 		background: rgba(255, 255, 255, 0.12);
 		padding: 10px 13px;
@@ -398,7 +402,7 @@
 				rgba(17, 20, 15, 0.78) 42%,
 				rgba(17, 20, 15, 0.34)
 			),
-			url('/assets/bohemcars/offer/offer-hero-workspace.png') center / cover;
+			url('/assets/bohemcars/offer/offer-poster-background.png') center / cover;
 		content: '';
 	}
 
@@ -850,7 +854,7 @@
 					rgba(17, 20, 15, 0.86) 46%,
 					rgba(17, 20, 15, 0.56)
 				),
-				url('/assets/bohemcars/offer/offer-hero-workspace.png') center / cover;
+				url('/assets/bohemcars/offer/offer-poster-background.png') center / cover;
 		}
 
 		.offer-hero__visual {

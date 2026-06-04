@@ -654,7 +654,7 @@ export const homeFiveHeaderDataForLocale = (
 			addressLabel: bohemcarsContact.addressLabel,
 			emailHref: '/contact',
 			emailLabel: bohemcarsContact.emailLabel,
-			phoneHref: '/contact',
+			phoneHref: bohemcarsContact.primaryPhoneHref,
 			phoneLabel: bohemcarsContact.primaryPhoneLabel
 		},
 		language: {

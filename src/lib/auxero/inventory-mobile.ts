@@ -31,6 +31,7 @@ export type InventoryMobileData = {
 	brandSearchPlaceholder: string;
 	brandValue: string;
 	clearHref: string;
+	clearLabel: string;
 	closeLabel: string;
 	countLabel: string;
 	doneLabel: string;
@@ -221,6 +222,30 @@ const matchesRange = (value: number, range: string) => {
 
 const activeRangeValue = (min?: number, max?: number) => (min || max ? rangeValue(min, max) : '');
 
+const splitFilterValues = (value?: string | null) =>
+	String(value ?? '')
+		.split(',')
+		.map((item) => item.trim())
+		.filter(Boolean);
+
+const uniqueFilterValues = (values: string[]) => Array.from(new Set(values.filter(Boolean)));
+
+const joinFilterValues = (values: string[]) => uniqueFilterValues(values).join(',');
+
+const hasFilterValue = (values: string[], value: string) =>
+	values.some((item) => item.toLowerCase() === value.toLowerCase());
+
+const toggleFilterValue = (current: string | undefined, value: string) => {
+	if (!value) return '';
+
+	const values = splitFilterValues(current);
+	const nextValues = hasFilterValue(values, value)
+		? values.filter((item) => item.toLowerCase() !== value.toLowerCase())
+		: [...values, value];
+
+	return joinFilterValues(nextValues);
+};
+
 const optionForRange = ({
 	activeValue,
 	count,
@@ -262,7 +287,11 @@ const quickUrl = (
 	overrides: { bodyType?: string | null; brand?: string | null; fuel?: string | null } = {}
 ) => {
 	const params = new URLSearchParams();
-	const brand = Object.hasOwn(overrides, 'brand') ? overrides.brand : state.filters.brand;
+	const brand = Object.hasOwn(overrides, 'brand')
+		? overrides.brand === null
+			? ''
+			: toggleFilterValue(state.filters.brand, overrides.brand ?? '')
+		: state.filters.brand;
 	const bodyType = Object.hasOwn(overrides, 'bodyType')
 		? overrides.bodyType
 		: state.filters.bodyType;
@@ -283,6 +312,25 @@ const without = (state: InventoryState, keys: string[]) => {
 	const params = new URLSearchParams(state.searchParams);
 
 	for (const key of keys) params.delete(key);
+
+	const query = params.toString();
+
+	return `/inventory${query ? `?${query}` : ''}`;
+};
+
+const withoutFilterValue = (state: InventoryState, keys: string | string[], value: string) => {
+	const params = new URLSearchParams(state.searchParams);
+	const keyList = Array.isArray(keys) ? keys : [keys];
+	const primaryKey = keyList[0];
+	const values = keyList
+		.flatMap((key) => splitFilterValues(params.get(key)))
+		.filter((item) => item.toLowerCase() !== value.toLowerCase());
+
+	for (const key of keyList) params.delete(key);
+
+	if (values.length) {
+		params.set(primaryKey, joinFilterValues(values));
+	}
 
 	const query = params.toString();
 
@@ -315,29 +363,37 @@ export const inventoryMobileDataFromState = (
 	const fuelCounts = countBy(vehicles.map((vehicle) => vehicle.fuel));
 	const transmissionCounts = countBy(vehicles.map((vehicle) => vehicle.transmission));
 	const featureCounts = countBy(vehicles.flatMap((vehicle) => vehicle.features));
-	const selectedBrand = state.filters.brand?.toLowerCase();
+	const selectedBrands = splitFilterValues(state.filters.brand);
 	const selectedBody = state.filters.bodyType?.toLowerCase();
 	const selectedFeature = state.filters.feature?.toLowerCase();
 	const selectedFuel = state.filters.fuel?.toLowerCase();
-	const selectedQuery = state.filters.query?.toLowerCase();
+	const selectedQueries = splitFilterValues(state.filters.query);
 	const selectedTransmission = state.filters.transmission?.toLowerCase();
 	const selectedMileageRange = activeRangeValue(state.filters.minMileage, state.filters.maxMileage);
 	const selectedPriceRange = activeRangeValue(state.filters.minPrice, state.filters.maxPrice);
 	const selectedYearRange = activeRangeValue(state.filters.minYear, state.filters.maxYear);
-	const buildModelOptions = (brand = '') => {
-		const selectedBrandMatches = brand ? selectedBrand === brand.toLowerCase() : !selectedBrand;
-		const modelVehicles = brand
-			? vehicles.filter((vehicle) => vehicle.brand.toLowerCase() === brand.toLowerCase())
+	const brandValueLabel =
+		selectedBrands.length > 2
+			? `${selectedBrands.length} ${locale === 'bg' ? 'марки' : 'makes'}`
+			: selectedBrands.join(' + ') || text.all;
+	const buildModelOptions = (brandFilter = '') => {
+		const modelBrandValues = splitFilterValues(brandFilter);
+		const selectedBrandMatches =
+			modelBrandValues.length > 0
+				? modelBrandValues.every((brand) => hasFilterValue(selectedBrands, brand))
+				: selectedBrands.length === 0;
+		const modelVehicles = modelBrandValues.length
+			? vehicles.filter((vehicle) => hasFilterValue(modelBrandValues, vehicle.brand))
 			: vehicles;
 		const modelCounts = countBy(modelVehicles.map((vehicle) => vehicle.model).filter(Boolean));
 
 		return Array.from(modelCounts.entries())
 			.map(([model, count]) => ({
-				active: selectedBrandMatches && selectedQuery === model.toLowerCase(),
+				active: selectedBrandMatches && hasFilterValue(selectedQueries, model),
 				countLabel: String(count),
 				href: inventoryUrl(state, {
-					brand: brand || null,
-					q: selectedBrandMatches && selectedQuery === model.toLowerCase() ? null : model
+					brand: brandFilter || null,
+					q: selectedBrandMatches ? toggleFilterValue(state.filters.query, model) : model
 				}),
 				label: model,
 				value: model
@@ -349,14 +405,14 @@ export const inventoryMobileDataFromState = (
 			});
 	};
 	const totalPill = {
-		active: !selectedBrand && !selectedBody && !selectedFuel && !selectedQuery,
+		active: !selectedBrands.length && !selectedBody && !selectedFuel && !selectedQueries.length,
 		href: quickUrl(state, { bodyType: null, brand: null, fuel: null }),
 		kind: 'total' as const,
 		label: text.allWithCount(state.selected.length)
 	};
 	const brandOptions: InventoryMobileOption[] = [
 		{
-			active: !selectedBrand,
+			active: !selectedBrands.length,
 			countLabel: String(vehicles.length),
 			href: quickUrl(state, { brand: null }),
 			label: text.allBrands,
@@ -364,7 +420,7 @@ export const inventoryMobileDataFromState = (
 		},
 		...brands
 			.map((brand) => ({
-				active: selectedBrand === brand.toLowerCase(),
+				active: hasFilterValue(selectedBrands, brand),
 				count: brandCounts.get(brand) ?? 0,
 				countLabel: String(brandCounts.get(brand) ?? 0),
 				href: quickUrl(state, { brand }),
@@ -377,7 +433,7 @@ export const inventoryMobileDataFromState = (
 	];
 	const brandPills = brands
 		.map((brand) => ({
-			active: selectedBrand === brand.toLowerCase(),
+			active: hasFilterValue(selectedBrands, brand),
 			count: brandCounts.get(brand) ?? 0,
 			href: quickUrl(state, { brand }),
 			image: brandLogos[brand],
@@ -615,11 +671,11 @@ export const inventoryMobileDataFromState = (
 	];
 	const activeFilters: InventoryMobilePill[] = [];
 
-	if (state.filters.brand) {
+	for (const brand of selectedBrands) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['brand']),
-			label: state.filters.brand
+			href: withoutFilterValue(state, 'brand', brand),
+			label: brand
 		});
 	}
 
@@ -681,11 +737,11 @@ export const inventoryMobileDataFromState = (
 		});
 	}
 
-	if (state.filters.query) {
+	for (const query of selectedQueries) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['q', 'query', 'keyword', 'model']),
-			label: state.filters.query
+			href: withoutFilterValue(state, ['q', 'query', 'keyword', 'model'], query),
+			label: query
 		});
 	}
 
@@ -705,8 +761,9 @@ export const inventoryMobileDataFromState = (
 		brandOptions,
 		brandLabel: text.brand,
 		brandSearchPlaceholder: text.brandSearchPlaceholder,
-		brandValue: state.filters.brand ?? text.all,
+		brandValue: brandValueLabel,
 		clearHref: '/inventory',
+		clearLabel: text.clear,
 		closeLabel: text.close,
 		countLabel: text.allWithCount(state.selected.length),
 		doneLabel: text.done,

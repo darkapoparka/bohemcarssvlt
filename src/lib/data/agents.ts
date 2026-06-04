@@ -5,11 +5,11 @@ export type { Agent } from '$lib/types/agent';
 
 const bios: Record<string, string> = {
 	'bohemcars-sales':
-		'Helps buyers choose between available cars, client vehicles, viewings, and next-step offers.',
+		'Помага с налични автомобили, огледи, клиентски автомобили и следващата практична стъпка.',
 	'bohemcars-import':
-		'Coordinates Canada import requests, source checks, transport context, and realistic delivery steps.',
+		'Координира запитвания за внос от Канада, проверка на източника, транспорт и ориентир за крайна цена.',
 	'bohemcars-inspection':
-		'Reviews history, documents, registration readiness, technical checks, and service context.'
+		'Преглежда история, документи, готовност за регистрация, технически детайли и контекст за обслужване.'
 };
 
 export const agents: Agent[] = bohemcarsConsultants.map((consultant, index) => ({

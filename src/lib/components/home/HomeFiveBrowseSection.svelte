@@ -20,11 +20,14 @@
 	const mobileTypeTitle = $derived(copy.typeTitle === 'Browse By Type' ? 'Body type' : 'Тип купе');
 </script>
 
-<section class="bohemcars-browse-section bg-white py-100">
+<section class="bohemcars-browse-section py-100">
 	<div class="container">
 		<div class="bohemcars-browse-section__surface">
 			<div class="bohemcars-brand-strip">
-				<div class="title-section wow fadeInDown mb-34" data-wow-delay="0.1s">
+				<div
+					class="title-section bohemcars-section-banner bohemcars-section-banner--brand wow fadeInDown mb-34"
+					data-wow-delay="0.1s"
+				>
 					<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileBrandTitle}>
 						{copy.brandTitle}
 					</h2>
@@ -61,7 +64,10 @@
 			{/if}
 
 			<div class="bohemcars-type-gallery">
-				<div class="title-section wow fadeInDown mb-42" data-wow-delay="0.1s">
+				<div
+					class="title-section bohemcars-section-banner bohemcars-section-banner--type wow fadeInDown mb-42"
+					data-wow-delay="0.1s"
+				>
 					<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileTypeTitle}>
 						{copy.typeTitle}
 					</h2>
@@ -103,6 +109,7 @@
 <style>
 	.bohemcars-browse-section {
 		overflow: hidden;
+		background-color: var(--bc-bg) !important;
 		padding-top: 84px;
 		padding-bottom: 84px;
 	}
@@ -124,14 +131,37 @@
 		justify-content: space-between;
 	}
 
+	.bohemcars-section-banner {
+		position: relative;
+		overflow: hidden;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		background: linear-gradient(135deg, #14210f 0%, #1f3318 58%, #0f190c 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		padding: 24px 28px;
+	}
+
+	.bohemcars-section-banner h2 {
+		color: #ffffff;
+		margin: 0;
+	}
+
+	.bohemcars-section-banner--brand {
+		margin-bottom: 26px !important;
+	}
+
+	.bohemcars-section-banner--type {
+		margin-bottom: 30px !important;
+	}
+
 	.bohemcars-browse-section :global(.swiper-outbrand-3) {
 		margin: 0;
 		padding: 0;
 	}
 
 	.bohemcars-browse-section :global(.out-brand-2) {
-		background-color: #f8f9f6 !important;
-		border: 1px solid #e7e7e7;
+		background-color: var(--bc-surface) !important;
+		border: 0;
 		border-radius: 8px;
 		box-shadow: none !important;
 		min-height: 168px;
@@ -144,8 +174,8 @@
 
 	.bohemcars-browse-section :global(.out-brand-2:hover),
 	.bohemcars-browse-section :global(.out-brand-2.active) {
-		background-color: #eef0ec !important;
-		border-color: #d6dbd1;
+		background-color: var(--bc-surface-hover) !important;
+		border-color: transparent;
 		box-shadow: none !important;
 	}
 
@@ -186,6 +216,7 @@
 
 	.bohemcars-type-card {
 		align-items: center;
+		background: var(--bc-surface);
 		color: #1c1c1c;
 		display: flex;
 		flex-direction: column;
@@ -193,14 +224,14 @@
 		overflow: hidden;
 		padding: 8px 10px 0;
 		text-align: center;
-		border-radius: 14px;
+		border-radius: 8px;
 		transition:
 			background-color 0.2s ease,
 			box-shadow 0.2s ease;
 	}
 
 	.bohemcars-type-card:hover {
-		background-color: #eef0ec;
+		background-color: var(--bc-surface-hover);
 		transform: none;
 	}
 
@@ -246,7 +277,7 @@
 
 	@media (max-width: 767px) {
 		.bohemcars-browse-section {
-			background: #ffffff;
+			background-color: var(--bc-bg) !important;
 			padding-top: 12px;
 			padding-bottom: 26px;
 		}
@@ -257,6 +288,19 @@
 			justify-content: flex-start;
 			margin-bottom: 12px !important;
 			text-align: left;
+		}
+
+		.bohemcars-section-banner {
+			overflow: visible;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			box-shadow: none;
+			padding: 0;
+		}
+
+		.bohemcars-section-banner h2 {
+			color: #1c1c1c;
 		}
 
 		.bohemcars-mobile-title-swap {
@@ -311,8 +355,8 @@
 		.bohemcars-browse-section :global(.out-brand-2) {
 			min-height: 104px;
 			border: 0 !important;
-			border-radius: 10px;
-			background-color: #eef1ed !important;
+			border-radius: 8px;
+			background-color: var(--bc-surface) !important;
 			padding: 12px 8px !important;
 		}
 
@@ -357,8 +401,8 @@
 		.bohemcars-type-card {
 			min-height: 118px;
 			align-items: flex-start;
-			border-radius: 10px;
-			background: #eef1ed;
+			border-radius: 8px;
+			background: var(--bc-surface);
 			padding: 12px;
 			text-align: left;
 		}

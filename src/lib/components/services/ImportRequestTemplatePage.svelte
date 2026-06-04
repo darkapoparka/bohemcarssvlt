@@ -63,7 +63,11 @@
 
 <style>
 	.bohemcars-import-page {
-		background: #ffffff;
+		background: var(--bc-bg);
+	}
+
+	.bohemcars-import-page :global(.background-light) {
+		background: var(--bc-bg) !important;
 	}
 
 	.bohemcars-import-page__copy {
@@ -104,14 +108,14 @@
 	}
 
 	.bohemcars-import-page__steps article {
-		border: 1px solid #dce3dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface);
 		padding: 18px;
 	}
 
 	.bohemcars-import-page__steps article:hover {
-		background: #f8fbef;
+		background: var(--bc-surface-hover);
 	}
 
 	.bohemcars-import-page__steps span {

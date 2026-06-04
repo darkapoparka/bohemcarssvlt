@@ -160,7 +160,8 @@
 		font-weight: 800;
 		justify-content: center;
 		line-height: 20px;
-		min-height: 38px;
+		min-width: 44px;
+		min-height: 44px;
 		padding: 8px 2px 12px;
 		position: relative;
 		text-align: center;
@@ -249,9 +250,13 @@
 	}
 
 	.home2-search p a {
+		align-items: center;
 		border: 0;
 		color: #101514;
+		display: inline-flex;
 		font-weight: 800;
+		min-height: 44px;
+		margin-block: -12px;
 		padding: 0;
 	}
 

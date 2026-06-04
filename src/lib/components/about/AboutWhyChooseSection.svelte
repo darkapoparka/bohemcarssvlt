@@ -6,7 +6,7 @@
 	let { about }: { about: AuxeroAboutContent } = $props();
 </script>
 
-<section class="background-light py-100">
+<section class="bohemcars-about-why background-light">
 	<div class="container">
 		<div class="why-choose-us style2 style3">
 			<div class="wow fadeIn" data-wow-delay="0.1s">
@@ -23,3 +23,32 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.bohemcars-about-why {
+		padding: 64px 0;
+	}
+
+	.bohemcars-about-why :global(.container) {
+		max-width: 1010px;
+	}
+
+	.bohemcars-about-why :global(.why-choose-us) {
+		border-radius: 8px;
+		padding: 34px;
+	}
+
+	.bohemcars-about-why :global(.why-choose-us img) {
+		border-radius: 8px;
+	}
+
+	@media (max-width: 767px) {
+		.bohemcars-about-why {
+			padding: 44px 0;
+		}
+
+		.bohemcars-about-why :global(.why-choose-us) {
+			padding: 18px;
+		}
+	}
+</style>

@@ -38,6 +38,16 @@ describe('inventory-state', () => {
 		expect(state.selected.every((vehicle) => vehicle.fuel === 'Petrol')).toBe(true);
 	});
 
+	it('normalizes repeated brand params as a multi-brand OR filter', () => {
+		const state = getInventoryState('listing-grid3-columns.html', {
+			searchParams: new URLSearchParams('brand=BMW&brand=Audi')
+		});
+
+		expect(state.filters.brand).toBe('BMW,Audi');
+		expect(state.selected.length).toBeGreaterThan(0);
+		expect(state.selected.every((vehicle) => ['BMW', 'Audi'].includes(vehicle.brand))).toBe(true);
+	});
+
 	it('sorts selected vehicles from typed state rather than adapter markup', () => {
 		const state = getInventoryState('listing-grid3-columns.html', {
 			searchParams: new URLSearchParams('sort=lowest-price')

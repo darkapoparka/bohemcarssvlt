@@ -34,6 +34,11 @@
 	}
 
 	@media (max-width: 767.98px) {
+		:global(body[class*='auxero-template-'] #wrapper) {
+			background: var(--bc-bg) !important;
+			background-color: var(--bc-bg) !important;
+		}
+
 		.bohemcars-sell-desktop-route {
 			display: none;
 		}

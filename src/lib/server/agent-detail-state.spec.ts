@@ -19,8 +19,8 @@ describe('agent-detail-state', () => {
 	it('resolves the requested agent detail slug', () => {
 		const agent = getAgentDetailBySlug('bohemcars-import');
 
-		expect(agent?.name).toBe('Bohemcars Import');
-		expect(agent?.title).toBe('Canada Import Consultant');
+		expect(agent?.name).toBe('Внос от Канада');
+		expect(agent?.title).toBe('Подбор, транспорт и крайни разходи');
 	});
 
 	it('keeps raw template fallback deterministic for compatibility routes', () => {

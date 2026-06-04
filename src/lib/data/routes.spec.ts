@@ -9,7 +9,9 @@ describe('route lookup helpers', () => {
 	});
 
 	it('finds sales agent detail records', () => {
-		expect(getAgentBySlug('bohemcars-sales')?.title).toBe('Vehicle Consultant');
+		expect(getAgentBySlug('bohemcars-sales')?.title).toBe(
+			'Налични автомобили и клиентски запитвания'
+		);
 	});
 
 	it('finds blog detail records', () => {

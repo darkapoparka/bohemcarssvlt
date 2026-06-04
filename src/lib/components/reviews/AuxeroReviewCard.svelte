@@ -21,3 +21,21 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.testimonior-box {
+		border-color: var(--bc-border);
+		background: var(--bc-surface);
+	}
+
+	.testimonior-box:hover {
+		background: var(--bc-surface-hover);
+		border-color: var(--primary);
+	}
+
+	@media (max-width: 767.98px) {
+		.testimonior-box {
+			border-radius: 8px;
+		}
+	}
+</style>

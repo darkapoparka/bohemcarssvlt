@@ -188,8 +188,8 @@ export const bohemcarsContact = {
 	facebookHref: 'https://www.facebook.com/people/BohemCars/100090502502398/',
 	reviewsHref: 'https://www.facebook.com/people/BohemCars/100090502502398/?sk=reviews',
 	youtubeHref: 'https://www.youtube.com/@BobbyDiv',
-	addressLabel: 'Plovdiv, South Industrial Zone',
-	appointmentNote: 'Vehicle viewings by appointment'
+	addressLabel: 'Пловдив, Южна индустриална зона',
+	appointmentNote: 'Огледи с предварителна уговорка'
 } as const;
 
 export const bohemcarsBrand = {
@@ -197,7 +197,7 @@ export const bohemcarsBrand = {
 	displayName: 'BOHEM CARS',
 	bulgarianName: 'Бохем Карс',
 	domain: 'bohemcars.net',
-	tagline: 'Canada-sourced vehicles with verified history',
+	tagline: 'Внос от Канада, проверена история и оглед с уговорка',
 	legalNote:
 		'Proposal build reflects current public Bohemcars contact channels and appointment viewing.'
 } as const;
@@ -213,20 +213,20 @@ export const bohemcarsAssets = {
 export const bohemcarsConsultants = [
 	{
 		slug: 'bohemcars-sales',
-		name: 'Bohemcars Sales',
-		title: 'Vehicle Consultant',
+		name: 'Продажби и огледи',
+		title: 'Налични автомобили и клиентски запитвания',
 		image: '/assets/bohemcars/team/avatar-sales.jpg'
 	},
 	{
 		slug: 'bohemcars-import',
-		name: 'Bohemcars Import',
-		title: 'Canada Import Consultant',
+		name: 'Внос от Канада',
+		title: 'Подбор, транспорт и крайни разходи',
 		image: '/assets/bohemcars/team/avatar-logistics.jpg'
 	},
 	{
 		slug: 'bohemcars-inspection',
-		name: 'Bohemcars Inspection',
-		title: 'Inspection & Documents Consultant',
+		name: 'Проверка и документи',
+		title: 'VIN, история, регистрация и предаване',
 		image: '/assets/bohemcars/team/avatar-inspection.jpg'
 	}
 ] as const;

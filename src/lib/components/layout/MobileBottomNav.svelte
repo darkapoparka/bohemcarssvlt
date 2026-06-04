@@ -1,41 +1,59 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import {
+		ArrowRight,
 		Calculator,
-		Car,
-		CircleDollarSign,
+		CarFront,
 		GitCompare,
-		Heart,
-		Home,
 		Info,
-		Menu,
 		MessageCircle,
 		PhoneCall,
 		UserRound,
 		Wrench,
 		X
 	} from '@lucide/svelte';
+	import CarFilled from '@tabler/icons-svelte/icons/car-filled';
+	import HeartFilled from '@tabler/icons-svelte/icons/heart-filled';
+	import HomeFilled from '@tabler/icons-svelte/icons/home-filled';
+	import Menu2 from '@tabler/icons-svelte/icons/menu-2';
+	import TagFilled from '@tabler/icons-svelte/icons/tag-filled';
 
 	let { pathname = '/' }: { pathname?: string } = $props();
 
 	const mainItems = [
-		{ href: '/', label: 'Начало', icon: Home, exact: true },
-		{ href: '/inventory', label: 'Коли', icon: Car, exact: false, tone: 'commerce' },
 		{
-			href: '/sell-your-car',
-			label: 'Продай',
-			icon: CircleDollarSign,
+			href: '/',
+			label: 'Начало',
+			icon: HomeFilled,
+			exact: true
+		},
+		{
+			href: '/inventory',
+			label: 'Коли',
+			icon: CarFilled,
 			exact: false,
 			tone: 'commerce'
 		},
-		{ href: '/account/favorites', label: 'Любими', icon: Heart, exact: false }
+		{
+			href: '/sell-your-car',
+			label: 'Продай',
+			icon: TagFilled,
+			exact: false,
+			tone: 'commerce'
+		},
+		{
+			href: '/account/favorites',
+			label: 'Любими',
+			icon: HeartFilled,
+			exact: false
+		}
 	] as const;
 
 	const menuSections = [
 		{
 			title: 'Автомобили',
 			links: [
-				{ href: '/inventory', label: 'Всички коли', icon: Car },
+				{ href: '/inventory', label: 'Всички коли', icon: CarFront },
 				{ href: '/import', label: 'Внос от Канада', icon: Wrench },
 				{ href: '/compare', label: 'Сравни автомобили', icon: GitCompare },
 				{ href: '/calculator', label: 'Калкулатор за внос', icon: Calculator }
@@ -104,8 +122,10 @@
 				data-sveltekit-reload={usesDocumentNavigation(item.href) ? '' : undefined}
 				onclick={(event) => handleNavigationClick(event, item.href)}
 			>
-				<Icon size={22} strokeWidth={2.2} />
-				<span>{item.label}</span>
+				<span class="mobile-bottom-nav__icon" aria-hidden="true">
+					<Icon size={26} color="currentColor" stroke={2.4} />
+				</span>
+				<span class="mobile-bottom-nav__label">{item.label}</span>
 			</a>
 		{/each}
 		<label
@@ -114,8 +134,10 @@
 			aria-controls="mobile-bottom-menu"
 			aria-haspopup="dialog"
 		>
-			<Menu size={22} strokeWidth={2.2} aria-hidden="true" />
-			<span>Меню</span>
+			<span class="mobile-bottom-nav__icon mobile-bottom-nav__icon--menu" aria-hidden="true">
+				<Menu2 size={27} color="currentColor" stroke={2.6} />
+			</span>
+			<span class="mobile-bottom-nav__label">Меню</span>
 		</label>
 	</div>
 </nav>
@@ -155,11 +177,20 @@
 			data-sveltekit-reload=""
 			onclick={(event) => handleNavigationClick(event, '/sell-your-car')}
 		>
-			<span>
-				<CircleDollarSign size={21} strokeWidth={2.25} />
+			<div class="mobile-menu-sheet__sell-copy">
+				<strong>Продай автомобил</strong>
+				<small>Безплатна оценка за минута</small>
+			</div>
+			<span class="mobile-menu-sheet__sell-arrow" aria-hidden="true">
+				<ArrowRight size={18} strokeWidth={2.35} />
 			</span>
-			<strong>Продай автомобил</strong>
-			<small>Бърза заявка за оценка</small>
+			<img
+				class="mobile-menu-sheet__sell-consultant"
+				src="/assets/bohemcars/home2/home2-action-consultant.png"
+				alt=""
+				aria-hidden="true"
+				loading="lazy"
+			/>
 		</a>
 
 		<div class="mobile-menu-sheet__actions">
@@ -168,7 +199,7 @@
 				data-sveltekit-reload=""
 				onclick={(event) => handleNavigationClick(event, '/contact')}
 			>
-				<PhoneCall size={19} strokeWidth={2.25} />
+				<PhoneCall size={18} strokeWidth={2.1} />
 				Обади се
 			</a>
 			<a
@@ -176,7 +207,7 @@
 				data-sveltekit-reload=""
 				onclick={(event) => handleNavigationClick(event, '/contact')}
 			>
-				<MessageCircle size={19} strokeWidth={2.25} />
+				<MessageCircle size={18} strokeWidth={2.1} />
 				Пиши ни
 			</a>
 		</div>
@@ -195,7 +226,7 @@
 								data-sveltekit-reload={usesDocumentNavigation(link.href) ? '' : undefined}
 								onclick={(event) => handleNavigationClick(event, link.href)}
 							>
-								<Icon size={20} strokeWidth={2.15} />
+								<Icon size={19} strokeWidth={2} />
 								<span>{link.label}</span>
 							</a>
 						{/each}
@@ -239,6 +270,7 @@
 			opacity: 0;
 			cursor: pointer;
 			padding: 0;
+			pointer-events: none;
 		}
 
 		.mobile-bottom-nav {
@@ -268,21 +300,21 @@
 			position: relative;
 			display: flex;
 			min-width: 0;
-			min-height: 54px;
+			min-height: 56px;
 			align-items: center;
 			justify-content: center;
 			flex-direction: column;
-			gap: 1px;
+			gap: 2px;
 			border: 0;
 			border-radius: 0;
 			background: transparent;
 			appearance: none;
-			color: #4f554c;
+			color: #4c5149;
 			font-size: 11px;
-			font-weight: 800;
+			font-weight: 750;
 			line-height: 14px;
 			cursor: pointer;
-			padding: 4px 0 3px;
+			padding: 4px 0;
 			text-align: center;
 			text-decoration: none;
 			transition:
@@ -290,44 +322,61 @@
 				color 0.18s ease;
 		}
 
-		.mobile-bottom-nav span {
+		.mobile-bottom-nav__icon {
+			display: flex;
+			width: 38px;
+			height: 30px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
 			color: inherit;
-			font-size: 11px;
-			font-weight: 800;
+			line-height: 0;
+			transition:
+				background-color 0.18s ease,
+				color 0.18s ease;
+		}
+
+		.mobile-bottom-nav__label {
+			color: inherit;
+			font-size: 10.8px;
+			font-weight: 750;
 			line-height: 14px;
 		}
 
 		.mobile-bottom-nav a.mobile-bottom-nav__item--commerce {
-			color: #29331e;
+			color: #4c5149;
 		}
 
-		.mobile-bottom-nav a.mobile-bottom-nav__item--commerce span {
-			font-weight: 900;
+		.mobile-bottom-nav a.mobile-bottom-nav__item--commerce .mobile-bottom-nav__label {
+			font-weight: 750;
 		}
 
 		.mobile-bottom-nav a.active,
 		#mobile-bottom-menu-toggle:checked ~ .mobile-bottom-nav .mobile-bottom-nav__menu-trigger {
 			background: transparent;
-			color: #17280b;
+			color: #111111;
 		}
 
-		.mobile-bottom-nav a.active::before,
+		.mobile-bottom-nav a.active .mobile-bottom-nav__icon,
 		#mobile-bottom-menu-toggle:checked
 			~ .mobile-bottom-nav
-			.mobile-bottom-nav__menu-trigger::before {
-			position: absolute;
-			top: 0;
-			left: max(18px, 28%);
-			right: max(18px, 28%);
-			height: 3px;
-			border-radius: 0 0 999px 999px;
-			background: #8fc51d;
-			content: '';
+			.mobile-bottom-nav__menu-trigger
+			.mobile-bottom-nav__icon {
+			background: #d9f275;
+			color: #111111;
+		}
+
+		.mobile-bottom-nav a.active .mobile-bottom-nav__label,
+		#mobile-bottom-menu-toggle:checked
+			~ .mobile-bottom-nav
+			.mobile-bottom-nav__menu-trigger
+			.mobile-bottom-nav__label {
+			font-weight: 900;
 		}
 
 		.mobile-bottom-nav a:focus-visible,
 		#mobile-bottom-menu-toggle:focus-visible ~ .mobile-bottom-nav .mobile-bottom-nav__menu-trigger {
-			background: #f1f4ee;
+			background: var(--bc-surface);
 			color: #17280b;
 			outline: 2px solid #1c1c1c;
 			outline-offset: -2px;
@@ -339,14 +388,26 @@
 
 		.mobile-bottom-nav a:hover,
 		.mobile-bottom-nav__menu-trigger:hover {
-			background: #f6f8f3;
+			background: transparent;
 			color: #17280b;
+		}
+
+		.mobile-bottom-nav a:hover .mobile-bottom-nav__icon,
+		.mobile-bottom-nav__menu-trigger:hover .mobile-bottom-nav__icon {
+			background: var(--bc-surface-soft);
+		}
+
+		.mobile-bottom-nav a.active:hover .mobile-bottom-nav__icon,
+		#mobile-bottom-menu-toggle:checked
+			~ .mobile-bottom-nav
+			.mobile-bottom-nav__menu-trigger:hover
+			.mobile-bottom-nav__icon {
+			background: #d9f275;
 		}
 
 		.mobile-bottom-nav :global(svg) {
 			flex: 0 0 auto;
 			color: inherit;
-			stroke: currentColor;
 		}
 
 		.mobile-menu-sheet {
@@ -394,9 +455,9 @@
 			margin: 0;
 			padding: 10px 14px calc(18px + env(safe-area-inset-bottom));
 			border: 0;
-			border-top: 1px solid #dfe5dc;
+			border-top: 1px solid var(--bc-border);
 			border-radius: 22px 22px 0 0;
-			background: #ffffff;
+			background: var(--bc-bg);
 			box-shadow: 0 -18px 42px rgba(28, 28, 28, 0.18);
 			transform: translateY(var(--mobile-menu-panel-y));
 			transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -408,7 +469,7 @@
 			height: 5px;
 			justify-self: center;
 			border-radius: 999px;
-			background: #d7ded7;
+			background: var(--bc-border);
 		}
 
 		.mobile-menu-sheet__header {
@@ -442,13 +503,13 @@
 
 		.mobile-menu-sheet__close {
 			display: flex;
-			width: 42px;
-			height: 42px;
+			width: 44px;
+			height: 44px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
 			border-radius: 999px;
-			background: #e9ede6;
+			background: var(--bc-surface);
 			appearance: none;
 			color: #1c1c1c;
 			cursor: pointer;
@@ -456,26 +517,43 @@
 		}
 
 		.mobile-menu-sheet__sell {
-			display: grid;
-			grid-template-columns: 44px minmax(0, 1fr);
-			gap: 2px 10px;
+			position: relative;
+			isolation: isolate;
+			display: flex;
+			min-height: 68px;
 			align-items: center;
+			justify-content: space-between;
+			gap: 14px;
+			overflow: hidden;
 			border-radius: 8px;
-			background: #d9f275;
-			padding: 10px 12px;
-			color: #111111;
+			background: #1c1c1c;
+			padding: 12px 128px 12px 14px;
+			color: #ffffff;
+			transition:
+				background-color 0.18s ease,
+				color 0.18s ease;
 		}
 
-		.mobile-menu-sheet__sell span {
-			display: flex;
-			grid-row: 1 / span 2;
-			width: 44px;
-			height: 44px;
-			align-items: center;
-			justify-content: center;
-			border-radius: 8px;
-			background: rgba(255, 255, 255, 0.72);
-			color: #111111;
+		.mobile-menu-sheet__sell::after {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			background: linear-gradient(90deg, rgba(28, 28, 28, 0) 54%, rgba(17, 17, 17, 0.42) 100%);
+			content: '';
+		}
+
+		.mobile-menu-sheet__sell:hover,
+		.mobile-menu-sheet__sell:focus-visible {
+			background: #111111;
+			color: #ffffff;
+		}
+
+		.mobile-menu-sheet__sell-copy {
+			position: relative;
+			z-index: 1;
+			display: grid;
+			gap: 2px;
+			min-width: 0;
 		}
 
 		.mobile-menu-sheet__sell strong,
@@ -488,16 +566,54 @@
 		}
 
 		.mobile-menu-sheet__sell strong {
+			color: #ffffff;
 			font-size: 16px;
 			font-weight: 900;
 			line-height: 20px;
 		}
 
 		.mobile-menu-sheet__sell small {
-			color: #4c5a14;
+			color: #d9f275;
 			font-size: 12px;
 			font-weight: 800;
 			line-height: 15px;
+		}
+
+		.mobile-menu-sheet__sell-arrow {
+			position: absolute;
+			top: 50%;
+			right: 12px;
+			z-index: 2;
+			display: flex;
+			width: 30px;
+			height: 30px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
+			background: #d9f275;
+			color: #111111;
+			transform: translateY(-50%);
+		}
+
+		.mobile-menu-sheet__sell-arrow :global(svg) {
+			flex: 0 0 auto;
+			color: currentColor;
+			stroke: currentColor;
+		}
+
+		.mobile-menu-sheet__sell-consultant {
+			position: absolute;
+			right: 38px;
+			bottom: -11px;
+			z-index: 0;
+			display: block;
+			width: 82px;
+			height: 82px;
+			object-fit: contain;
+			object-position: right bottom;
+			opacity: 0.96;
+			pointer-events: none;
+			user-select: none;
 		}
 
 		.mobile-menu-sheet__actions {
@@ -512,12 +628,18 @@
 			align-items: center;
 			justify-content: center;
 			gap: 8px;
+			border: 1px solid var(--bc-border);
 			border-radius: 8px;
-			background: #b9ee39;
+			background: #ffffff;
 			color: #14210a;
 			font-size: 14px;
 			font-weight: 800;
 			line-height: 18px;
+		}
+
+		.mobile-menu-sheet__actions a:first-child {
+			border-color: #d9f275;
+			background: #d9f275;
 		}
 
 		.mobile-menu-sheet__actions a:hover,
@@ -538,7 +660,7 @@
 
 		.mobile-menu-sheet__sections h2 {
 			margin: 0;
-			color: #728093;
+			color: #626d7c;
 			font-size: 12px;
 			font-weight: 900;
 			letter-spacing: 0;
@@ -557,7 +679,7 @@
 			align-items: center;
 			gap: 10px;
 			border-radius: 8px;
-			background: #eef1f5;
+			background: var(--bc-surface);
 			padding: 0 13px;
 			color: #1c1c1c;
 			font-size: 15px;

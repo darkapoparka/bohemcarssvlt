@@ -11,6 +11,7 @@
 
 	const compareHref = resolve('/compare');
 	const favoritesHref = resolve('/account/favorites');
+	const externalHref = (href: string) => ({ href });
 
 	let activeTab = $state<AuxeroVehicleDetailDrawerTabId>('info');
 	let drawerOpen = $state(true);
@@ -343,7 +344,7 @@
 				</button>
 				<a
 					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
-					href={detail.contact.primaryPhoneHref}
+					{...externalHref(detail.contact.primaryPhoneHref)}
 				>
 					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
 					{detail.copy.callCta}
@@ -427,7 +428,10 @@
 					</p>
 				</form>
 
-				<a class="bohemcars-mobile-pdp__inquiry-call" href={detail.contact.primaryPhoneHref}>
+				<a
+					class="bohemcars-mobile-pdp__inquiry-call"
+					{...externalHref(detail.contact.primaryPhoneHref)}
+				>
 					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
 					{detail.contact.primaryPhoneLabel}
 				</a>
@@ -496,7 +500,7 @@
 			margin-left: 0;
 			overflow: hidden;
 			overscroll-behavior: none;
-			background: #f2f3ef;
+			background: var(--bc-bg);
 			color: #ffffff;
 			touch-action: manipulation;
 		}
@@ -555,8 +559,8 @@
 		.bohemcars-mobile-pdp__topbar button,
 		.bohemcars-mobile-pdp__topbar a {
 			display: flex;
-			width: 42px;
-			height: 42px;
+			width: 44px;
+			height: 44px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
@@ -642,7 +646,7 @@
 			justify-items: center;
 			gap: 3px;
 			border-radius: 8px;
-			background: #f3f5f1;
+			background: var(--bc-surface);
 			color: #1c1c1c;
 			padding: 6px 3px 5px;
 		}
@@ -716,7 +720,7 @@
 			width: 34px;
 			height: 3px;
 			border-radius: 999px;
-			background: #d7ddd5;
+			background: var(--bc-border);
 		}
 
 		.bohemcars-mobile-pdp__drawer-heading {
@@ -759,7 +763,7 @@
 			align-items: center;
 			flex: 0 0 auto;
 			border-radius: 8px;
-			background: #eef1f5;
+			background: var(--bc-surface);
 			color: #1c1c1c;
 			padding: 0 10px;
 			font-size: 12px;
@@ -784,7 +788,7 @@
 			flex: 0 0 auto;
 			gap: 10px;
 			overflow: visible;
-			border-bottom: 1px solid #edf0ea;
+			border-bottom: 1px solid var(--bc-border);
 			padding: 2px 0 0;
 		}
 
@@ -793,7 +797,7 @@
 			display: inline-flex;
 			width: 100%;
 			min-width: 0;
-			min-height: 40px;
+			min-height: 44px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
@@ -879,7 +883,7 @@
 		.bohemcars-mobile-pdp__finance div,
 		.bohemcars-mobile-pdp__feature-groups section {
 			border-radius: 8px;
-			background: #f3f5f1;
+			background: var(--bc-surface);
 			padding: 12px;
 		}
 
@@ -925,7 +929,7 @@
 			grid-template-columns: minmax(0, 1fr) minmax(96px, auto);
 			gap: 12px;
 			align-items: center;
-			border-bottom: 1px solid #e7ece4;
+			border-bottom: 1px solid var(--bc-border);
 			padding: 10px 0;
 		}
 
@@ -983,7 +987,7 @@
 			display: grid;
 			grid-template-columns: 1.45fr 1fr;
 			gap: 9px;
-			border-top: 1px solid #e7ece4;
+			border-top: 1px solid var(--bc-border);
 			padding-top: 10px;
 		}
 
@@ -1076,7 +1080,7 @@
 			height: 4px;
 			justify-self: center;
 			border-radius: 999px;
-			background: #d7ddd5;
+			background: var(--bc-border);
 		}
 
 		.bohemcars-mobile-pdp__inquiry-head {
@@ -1107,14 +1111,14 @@
 
 		.bohemcars-mobile-pdp__inquiry-close {
 			display: flex;
-			width: 40px;
-			height: 40px;
-			flex: 0 0 auto;
+			width: 44px;
+			height: 44px;
+			flex: 0 0 44px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
 			border-radius: 999px;
-			background: #eef1f5;
+			background: var(--bc-surface);
 			color: #1c1c1c;
 			cursor: pointer;
 			padding: 0;
@@ -1149,9 +1153,9 @@
 		.bohemcars-mobile-pdp__inquiry-form select,
 		.bohemcars-mobile-pdp__inquiry-form textarea {
 			width: 100%;
-			border: 1px solid #e2e7dd;
+			border: 1px solid var(--bc-border);
 			border-radius: 10px;
-			background: #f6f8f3;
+			background: var(--bc-surface-soft);
 			color: #1c1c1c;
 			padding: 12px 13px;
 			font: inherit;
@@ -1223,7 +1227,7 @@
 			align-items: center;
 			justify-content: center;
 			gap: 8px;
-			border: 1px solid #e2e7dd;
+			border: 1px solid var(--bc-border);
 			border-radius: 10px;
 			background: #ffffff;
 			color: #1c1c1c;

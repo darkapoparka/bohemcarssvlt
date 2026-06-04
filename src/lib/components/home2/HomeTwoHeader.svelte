@@ -133,17 +133,17 @@
 		border-radius: 999px;
 		color: #101514 !important;
 		display: flex;
-		height: 40px;
+		height: 44px;
 		justify-content: center;
 	}
 
 	.home2-header__icon-action {
-		width: 40px;
+		width: 44px;
 	}
 
 	.home2-header__sell {
 		padding: 0;
-		width: 40px;
+		width: 44px;
 	}
 
 	.home2-header__icon-action:hover,
@@ -188,9 +188,9 @@
 
 		.home2-header__icon-action,
 		.home2-header__sell {
-			height: 40px;
+			height: 44px;
 			padding: 0;
-			width: 40px;
+			width: 44px;
 		}
 	}
 </style>

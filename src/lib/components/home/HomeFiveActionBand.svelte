@@ -51,7 +51,7 @@
 
 <style>
 	.bohemcars-action-band {
-		background: #f6f7f3;
+		background: var(--bc-bg);
 		padding-top: 38px;
 		padding-bottom: 30px;
 	}
@@ -134,6 +134,12 @@
 		opacity: 0.82;
 	}
 
+	@media (min-width: 576px) {
+		.bohemcars-action-card--import .bohemcars-action-card__body {
+			max-width: min(52%, 320px);
+		}
+	}
+
 	.bohemcars-action-card__cta {
 		align-items: center;
 		display: inline-flex;
@@ -200,12 +206,12 @@
 	}
 
 	.bohemcars-action-card__img {
-		bottom: -34px;
+		bottom: -44px;
 		height: auto;
 		max-width: none;
 		position: absolute;
-		right: -68px;
-		width: 398px;
+		right: -70px;
+		width: 540px;
 		z-index: 1;
 	}
 
@@ -222,7 +228,7 @@
 		}
 
 		.bohemcars-action-card__copy {
-			max-width: 62%;
+			max-width: 58%;
 		}
 
 		.bohemcars-action-card--consultation .bohemcars-action-card__copy {
@@ -288,9 +294,9 @@
 		   card's rounded overflow) so it fills the side, no empty gap, no FX. */
 		.bohemcars-action-card__img {
 			opacity: 1;
-			right: -48px;
-			bottom: -10px;
-			width: 248px;
+			right: -90px;
+			bottom: -24px;
+			width: 340px;
 			filter: none;
 		}
 

@@ -143,7 +143,7 @@
 <style>
 	.bohemcars-favorites-mobile {
 		min-height: 100vh;
-		background: #ffffff;
+		background: var(--bc-bg);
 		color: #111111;
 	}
 
@@ -154,9 +154,9 @@
 	}
 
 	.bohemcars-favorites-mobile__empty {
-		border: 1px solid #dce3dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 	}
 
 	.bohemcars-favorites-mobile__hero {
@@ -206,7 +206,7 @@
 
 	.bohemcars-favorites-mobile__hero-row a {
 		display: inline-flex;
-		min-height: 42px;
+		min-height: 44px;
 		align-items: center;
 		gap: 7px;
 		flex: 0 0 auto;
@@ -259,14 +259,14 @@
 
 	.bohemcars-favorites-mobile__search button {
 		display: flex;
-		width: 38px;
-		height: 38px;
+		width: 44px;
+		height: 44px;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 38px;
+		flex: 0 0 44px;
 		border: 0;
 		border-radius: 999px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 		color: #111111;
 		padding: 0;
 	}
@@ -281,9 +281,9 @@
 		grid-template-columns: 132px minmax(0, 1fr);
 		min-height: 168px;
 		overflow: hidden;
-		border: 1px solid #d8e0dc;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #eef1f5;
+		background: var(--bc-surface);
 	}
 
 	.bohemcars-favorites-mobile-card__image {
@@ -360,6 +360,8 @@
 	}
 
 	.bohemcars-favorites-mobile-card__body h2 a {
+		display: block;
+		min-height: 44px;
 		color: inherit;
 	}
 
@@ -401,7 +403,7 @@
 
 	.bohemcars-favorites-mobile-card__details {
 		display: inline-flex;
-		min-height: 30px;
+		min-height: 44px;
 		align-items: center;
 		justify-content: center;
 		gap: 5px;
@@ -446,7 +448,7 @@
 
 	.bohemcars-favorites-mobile__empty a {
 		display: inline-flex;
-		min-height: 40px;
+		min-height: 44px;
 		align-items: center;
 		gap: 7px;
 		border-radius: 8px;
@@ -460,7 +462,7 @@
 
 	.bohemcars-favorites-mobile__empty button {
 		display: inline-flex;
-		min-height: 40px;
+		min-height: 44px;
 		align-items: center;
 		gap: 7px;
 		border: 0;

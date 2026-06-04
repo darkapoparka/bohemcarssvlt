@@ -627,6 +627,10 @@ var swiper = new Swiper(".swiper-card-8", {
 // Helper function to get initialSlide from data attribute
 function getInitialSlide(selector) {
     var element = document.querySelector(selector);
+    return getInitialSlideFromElement(element);
+}
+
+function getInitialSlideFromElement(element) {
     if (element) {
         var initialSlide = element.getAttribute('data-initial-slide') || element.getAttribute('data-set-initialSlide');
         if (initialSlide !== null) {
@@ -666,10 +670,25 @@ var swiperTestimoniorConfig = {
     }
 };
 
-// Get initialSlide from data attribute, default to 0
-swiperTestimoniorConfig.initialSlide = getInitialSlide(".swiper-testimonior");
+document.querySelectorAll(".swiper-testimonior").forEach(function(swiperEl) {
+    var isHomeMobileReviews =
+        swiperEl.closest &&
+        swiperEl.closest(".bohemcars-home-reviews") &&
+        window.matchMedia &&
+        window.matchMedia("(max-width: 767px)").matches;
 
-var swiper =  new Swiper(".swiper-testimonior", swiperTestimoniorConfig);
+    if (isHomeMobileReviews) {
+        swiperEl.classList.add("bohemcars-native-scroll");
+        return;
+    }
+
+    var swiperTestimoniorInstanceConfig = Object.assign({}, swiperTestimoniorConfig, {
+        initialSlide: getInitialSlideFromElement(swiperEl),
+        pagination: Object.assign({}, swiperTestimoniorConfig.pagination),
+    });
+
+    new Swiper(swiperEl, swiperTestimoniorInstanceConfig);
+});
  
 
 var swiper =  new Swiper(".swiper-testimonior-2", {

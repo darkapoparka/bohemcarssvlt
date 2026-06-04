@@ -4,7 +4,7 @@ export type AuxeroContactInputField = {
 	label: string;
 	name: string;
 	placeholder?: string;
-	type: 'number' | 'text';
+	type: 'email' | 'tel' | 'text';
 };
 
 export type AuxeroContactFormData = {
@@ -21,38 +21,39 @@ export const contactFormData: AuxeroContactFormData = {
 		{
 			active: true,
 			id: 'Firstname',
-			label: 'First Name',
+			label: 'Име',
 			name: 'Firstname',
+			placeholder: 'Вашето име',
 			type: 'text'
 		},
 		{
 			active: false,
 			id: 'Lastname',
-			label: 'Last Name',
+			label: 'Фамилия',
 			name: 'Lastname',
-			placeholder: 'Enter your last name',
+			placeholder: 'Вашата фамилия',
 			type: 'text'
 		},
 		{
 			active: false,
 			id: 'SendInquiryemail',
-			label: 'Email',
+			label: 'Имейл',
 			name: 'SendInquiryemail',
-			placeholder: 'Enter your email address',
-			type: 'text'
+			placeholder: 'bohemcars@gmail.com',
+			type: 'email'
 		},
 		{
 			active: false,
 			id: 'SendInquiryphone',
-			label: 'Phone Number',
+			label: 'Телефон',
 			name: 'SendInquiryphone',
-			placeholder: 'Enter your phone number',
-			type: 'number'
+			placeholder: '+359 893 588 680',
+			type: 'tel'
 		}
 	],
-	messageLabel: 'Message',
-	messagePlaceholder: 'Your Message*',
-	submitLabel: 'Send Message',
-	subtitle: 'Vehicle viewings by appointment',
-	title: 'get in touch'
+	messageLabel: 'Съобщение',
+	messagePlaceholder: 'Автомобил, VIN, линк към обява, бюджет или въпрос',
+	submitLabel: 'Изпрати съобщение',
+	subtitle: 'Огледи, внос от Канада, документи и продажба на автомобил - с уговорка.',
+	title: 'Пишете ни за автомобил'
 };

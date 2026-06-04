@@ -48,19 +48,19 @@ describe('Auxero template Bohemcars adapter', () => {
 
 	it('renders the planned Bohemcars route surfaces without opening a browser server', async () => {
 		const routeCases = [
-			['about', 'Ясна проверка преди избор на автомобил'],
+			['about', 'Екип за автомобили от Канада, проверка и спокойно предаване'],
 			['services', 'Bohemcars Services Center'],
 			['sell-your-car', 'Sell Your Car With Bohemcars'],
 			['compare', 'Compare Bohemcars Vehicles Side-by-Side'],
 			['agents', 'Bohemcars Consultants'],
-			['agents/bohemcars-import', 'Bohemcars Import'],
+			['agents/bohemcars-import', 'Внос от Канада'],
 			['reviews', 'Aleksandar Vytev'],
 			['calculator', 'Import Cost Calculator'],
 			['faqs', 'Why import a vehicle from Canada?'],
 			['terms', 'Bohemcars Terms Of Use'],
 			['blog', 'Bohemcars Blog'],
 			['blog/gotov-za-registracia', 'Какво означава „готов за регистрация“'],
-			['contact', 'Reach Out to Bohemcars'],
+			['contact', 'Свържете се с Bohemcars'],
 			['account', 'Account Dashboard', 'customer'],
 			['account/favorites', 'My Favorites', 'customer'],
 			['account/compare', 'Compare Bohemcars Vehicles Side-by-Side', 'customer'],
@@ -361,7 +361,15 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('bohemcars-inventory-banner__buybox');
 		expect(html).toContain('class="bohemcars-inventory-searchbar"');
 		expect(html).toContain('bohemcars-inventory-filter-grid');
-		expect(html).toContain('bohemcars-inventory-quick-pills');
+		expect(html).not.toContain('bohemcars-inventory-quick-pills');
+		expect(html).not.toContain('bohemcars-inventory-quick-pills--results');
+		expect(html).toContain('bohemcars-inventory-active-filters--results');
+		const bannerEnd = html.indexOf('</section>', html.indexOf('bohemcars-inventory-banner'));
+		expect(
+			html.indexOf(
+				'<div class="bohemcars-inventory-active-filters bohemcars-inventory-active-filters--results"'
+			)
+		).toBeGreaterThan(bannerEnd);
 		expect(html).toContain('Search make, model, year, fuel, extras...');
 		expect(html).toContain('name="mileageTo"');
 		expect(html).toContain('name="feature"');
@@ -451,7 +459,7 @@ describe('Auxero template Bohemcars adapter', () => {
 	it('rebrands contact page data and local form behavior', () => {
 		const html = renderAuxeroTemplate('contact-us.html');
 
-		expect(html).toContain('Reach Out to Bohemcars');
+		expect(html).toContain('Свържете се с Bohemcars');
 		expect(html).toContain(bohemcarsContact.addressLabel);
 		expect(html).toContain('bohemcars-contact-form');
 		expect(html).toContain(bohemcarsContact.primaryPhoneLabel);
@@ -572,6 +580,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('Admin dashboard');
 		expect(html).toContain('User Management');
 		expect(html).toContain('href="/inventory"');
+		expect(html).toContain('Bohemcars Автомобили');
 		expect(html).toContain('href="/admin"');
 		expect(html).not.toContain('sub-menu--main');
 		expect(html).not.toContain('>Pages<');
@@ -761,8 +770,8 @@ describe('Auxero template Bohemcars adapter', () => {
 		const about = renderAuxeroTemplate('about-us.html');
 		const reviews = renderAuxeroTemplate('clients-reviews.html');
 
-		expect(about).toContain('Ясна проверка преди избор на автомобил');
-		expect(about).toContain('Bohemcars Consultants');
+		expect(about).toContain('Екип за автомобили от Канада, проверка и спокойно предаване');
+		expect(about).toContain('Екипът зад процеса');
 		expect(about).toContain(agents[0].name);
 		expect(reviews).toContain('Aleksandar Vytev');
 		expect(reviews).toContain('Krasimir Georgiev');

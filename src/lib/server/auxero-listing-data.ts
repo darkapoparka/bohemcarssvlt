@@ -237,41 +237,6 @@ const sortDropdown = (state: InventoryState) => {
 	</ul>`;
 };
 
-const inventoryQuickUrl = (
-	state: InventoryState,
-	overrides: { bodyType?: string | null; brand?: string | null; fuel?: string | null } = {}
-) => {
-	const params = new URLSearchParams();
-	const brand = Object.hasOwn(overrides, 'brand') ? overrides.brand : state.filters.brand;
-	const bodyType = Object.hasOwn(overrides, 'bodyType')
-		? overrides.bodyType
-		: state.filters.bodyType;
-	const fuel = Object.hasOwn(overrides, 'fuel') ? overrides.fuel : state.filters.fuel;
-
-	if (state.view !== '4') params.set('view', state.view);
-	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
-	if (brand) params.set('brand', brand);
-	if (bodyType) params.set('bodyType', bodyType);
-	if (fuel) params.set('fuel', fuel);
-
-	const query = params.toString();
-
-	return `/inventory${query ? `?${query}` : ''}`;
-};
-
-const inventoryAllStockUrl = (state: InventoryState) =>
-	inventoryQuickUrl(state, { bodyType: null, brand: null, fuel: null });
-
-const inventoryBodyTypeUrl = (state: InventoryState, bodyType: string) =>
-	inventoryQuickUrl(state, {
-		bodyType: state.filters.bodyType?.toLowerCase() === bodyType.toLowerCase() ? null : bodyType
-	});
-
-const inventoryFuelUrl = (state: InventoryState, fuel: string) =>
-	inventoryQuickUrl(state, {
-		fuel: state.filters.fuel?.toLowerCase() === fuel.toLowerCase() ? null : fuel
-	});
-
 const selectedSearchQuery = (state: InventoryState) =>
 	state.searchParams.get('q') ??
 	state.searchParams.get('query') ??
@@ -423,7 +388,7 @@ const filterValueLabel = (value: string | number) =>
 		? value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')
 		: escapeHtml(value);
 
-const inventoryActiveFilters = (state: InventoryState) => {
+const inventoryActiveFilters = (state: InventoryState, modifierClass = '') => {
 	const entries = Object.entries(state.filters) as Array<[InventoryFilterKey, string | number]>;
 
 	if (!entries.length) return '';
@@ -440,7 +405,7 @@ const inventoryActiveFilters = (state: InventoryState) => {
 		)
 		.join('');
 
-	return `<div class="bohemcars-inventory-active-filters" aria-label="Active inventory filters">
+	return `<div class="bohemcars-inventory-active-filters ${modifierClass}" aria-label="Active inventory filters">
 		<p class="bohemcars-inventory-active-filters__summary">${state.selected.length} ${state.selected.length === 1 ? 'match' : 'matches'}</p>
 		<div class="bohemcars-inventory-active-filters__chips">
 			${chips}
@@ -452,61 +417,46 @@ const inventoryActiveFilters = (state: InventoryState) => {
 	</div>`;
 };
 
-const inventorySearchSurface = (state: InventoryState) => {
-	const selectedBodyType = state.filters.bodyType?.toLowerCase();
-	const selectedFuel = state.filters.fuel?.toLowerCase();
-	const searchQuery = selectedSearchQuery(state);
-	const quickPills = [
-		{
-			active: Object.keys(state.filters).length === 0,
-			href: inventoryAllStockUrl(state),
-			label: 'All vehicles'
-		},
-		{
-			active: selectedBodyType === 'suv',
-			href: inventoryBodyTypeUrl(state, 'SUV'),
-			label: 'SUV'
-		},
-		{
-			active: selectedBodyType === 'sedan',
-			href: inventoryBodyTypeUrl(state, 'Sedan'),
-			label: 'Sedan'
-		},
-		{
-			active: selectedFuel === 'petrol',
-			href: inventoryFuelUrl(state, 'Petrol'),
-			label: 'Petrol'
-		},
-		{
-			active: selectedFuel === 'plug-in хибрид',
-			href: inventoryFuelUrl(state, 'Plug-in хибрид'),
-			label: 'Plug-in Hybrid'
-		},
-		{
-			active: state.filters.maxPrice === 50000,
-			href: inventoryUrl(state, { priceTo: '50000' }),
-			label: 'Under 50 000 EUR'
-		}
-	]
-		.map(
-			(pill) => `<li class="bohemcars-quick-pill car-box ${pill.active ? 'active' : ''}">
-				<a href="${pill.href}" aria-label="${escapeHtml(pill.label)}">
-					<span>${escapeHtml(pill.label)}</span>
-				</a>
-			</li>`
-		)
-		.join('');
+const inventoryUtilityToolbar = (state: InventoryState) => {
+	const hasFilters = Object.keys(state.filters).length > 0;
+	const selectedCount = state.selected.length;
+	const showingText =
+		selectedCount > 0
+			? `Showing 1 - ${selectedCount} of ${selectedCount} ${hasFilters ? 'matching ' : ''}Bohemcars Listings`
+			: `Showing 0 of ${vehicles.length} Bohemcars Listings`;
+	const selectedSort = sortLabels[state.sortParam] ?? 'Best Match';
 
-	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" role="search" aria-label="Search Bohemcars inventory" data-bohemcars-search-form="inventory">
-		${inventorySearchHiddenInputs(state)}
-		<div class="bohemcars-inventory-searchbar__row">
+	return `<div class="bohemcars-inventory-toolbar-row bohemcars-inventory-searchbar__utility">
+		<div class="bohemcars-inventory-result-count">
 			<button class="btn-filter bohemcars-inventory-searchbar__filter" id="filterSidebarToggle" type="button" aria-label="Open filters" aria-controls="filterSidebar">
 				<img src="/assets/icons/filter.svg" alt="">
 				<span>Filters</span>
 			</button>
+			<p class="md-hidden">${showingText}</p>
+		</div>
+		<div class="listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}</div>
+		<div class="bohemcars-inventory-sort">
+			<span class="bohemcars-inventory-sort__label">Sort Vehicles by</span>
+			<div class="core-dropdown">
+				<button type="button" class="core-dropdown__button">
+					<span class="core-dropdown__selected">${selectedSort}</span>
+					<img src="/assets/icons/chevron-down-black.svg" alt="">
+				</button>
+				<div class="core-dropdown__menu">${sortDropdown(state)}</div>
+			</div>
+		</div>
+	</div>`;
+};
+
+const inventorySearchSurface = (state: InventoryState) => {
+	const searchQuery = selectedSearchQuery(state);
+
+	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" role="search" aria-label="Search Bohemcars inventory" data-bohemcars-search-form="inventory">
+		${inventorySearchHiddenInputs(state)}
+		<div class="bohemcars-inventory-searchbar__row">
 			<div class="bohemcars-inventory-searchbar__primary">
 				<label class="bohemcars-inventory-searchbar__search">
-					<img src="/assets/icons/search.svg" alt="">
+					<img src="/assets/icons/search-icon.svg" alt="">
 					<input type="text" name="q" value="${escapeHtml(searchQuery)}" placeholder="Search make, model, year, fuel, extras..." autocomplete="off">
 				</label>
 				<button class="bohemcars-inventory-searchbar__submit" type="submit">Search</button>
@@ -522,12 +472,7 @@ const inventorySearchSurface = (state: InventoryState) => {
 			${inventoryFilterSelect('bodyType', 'Body', 'Body', inventoryBodyTypePills, state.filters.bodyType)}
 			${inventoryFilterSelect('feature', 'Extras', 'Extras', popularFeatureOptions, state.filters.feature)}
 		</div>
-		<div class="bohemcars-inventory-quick-pills">
-			<ul class="menu-tab menu-tab-style2 gap-10">
-				${quickPills}
-			</ul>
-		</div>
-		${inventoryActiveFilters(state)}
+		${inventoryUtilityToolbar(state)}
 	</form>`;
 };
 
@@ -712,34 +657,10 @@ const inventoryContent = (state: InventoryState) => {
 	</div>`;
 };
 
-const replaceInventoryToolbar = (html: string, state: InventoryState) => {
-	const hasFilters = Object.keys(state.filters).length > 0;
-	const selectedCount = state.selected.length;
-	const showingText =
-		selectedCount > 0
-			? `Showing 1 - ${selectedCount} of ${selectedCount} ${hasFilters ? 'matching ' : ''}Bohemcars Listings`
-			: `Showing 0 of ${vehicles.length} Bohemcars Listings`;
-	const selectedSort = sortLabels[state.sortParam] ?? 'Best Match';
-
+const replaceInventoryToolbar = (html: string) => {
 	const tabsStart = html.indexOf('data-custom="true"');
 	const rowStart = html.indexOf('<div class="row', tabsStart);
-	const toolbar = `<div class="bohemcars-inventory-toolbar-row">
-		<div class="bohemcars-inventory-result-count">
-			<p class="md-hidden">${showingText}</p>
-		</div>
-		<div class="listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}</div>
-		<div class="bohemcars-inventory-sort">
-			<span class="bohemcars-inventory-sort__label">Sort Vehicles by</span>
-			<div class="core-dropdown">
-				<button type="button" class="core-dropdown__button">
-					<span class="core-dropdown__selected">${selectedSort}</span>
-					<img src="/assets/icons/chevron-down-black.svg" alt="">
-				</button>
-				<div class="core-dropdown__menu">${sortDropdown(state)}</div>
-			</div>
-		</div>
-	</div>`;
-	let next = replaceDivBlock(html, rowStart, toolbar);
+	let next = replaceDivBlock(html, rowStart, '\n');
 	const filterSpacer = /\s*<div class="mb-8 col-md-12"><\/div>\s*/u;
 
 	next = next.replace(filterSpacer, '\n');
@@ -756,17 +677,33 @@ const replaceInventorySearchSurface = (html: string) =>
 		''
 	);
 
-const replaceInventoryBreadcrumb = (html: string, state: InventoryState) =>
-	html.replace(
+const replaceInventoryBreadcrumb = (html: string, state: InventoryState) => {
+	const banner = inventoryBanner(state);
+	const withBreadcrumb = html.replace(
 		/<!-- breadcrumb -->\s*<section class="background-light mb-32">[\s\S]*?<\/section>\s*<!-- breadcrumb -->/,
-		inventoryBanner(state)
+		banner
 	);
+
+	if (withBreadcrumb !== html) return withBreadcrumb;
+
+	return html.replace(
+		/(\s*<!-- New Cars -->\s*<section class="max-w-1920 mx-auto">)/,
+		`\n${banner}$1`
+	);
+};
 
 const replaceInventoryContent = (html: string, state: InventoryState) => {
 	const tabsStart = html.indexOf('data-custom="true"');
 	const contentStart = html.indexOf('<div class="content-tab', tabsStart);
 
-	return replaceDivBlock(html, contentStart, inventoryContent(state));
+	return replaceDivBlock(
+		html,
+		contentStart,
+		`${inventoryActiveFilters(
+			state,
+			'bohemcars-inventory-active-filters--results'
+		)}${inventoryContent(state)}`
+	);
 };
 
 const optionCheckbox = (
@@ -1133,19 +1070,21 @@ export const applyContactData = (html: string) => {
 			/<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=[^"]*"/g,
 			`<iframe src="${bohemcarsMapEmbedSrc}"`
 		)
-		.replaceAll('Reach Out to Us', 'Reach Out to Bohemcars')
+		.replaceAll('Reach Out to Us', 'Свържете се с Bohemcars')
 		.replaceAll(
 			'We’re here to assist with any questions, concerns, or inquiries—contact us today!',
-			'Ask about inventory, Canada import requests, appointments, documents, or selling your car.'
+			'Пишете за наличен автомобил, внос от Канада, оглед, документи или продажба.'
 		)
-		.replaceAll('Address Business', 'Bohemcars Office')
+		.replaceAll('Address Business', 'Офис Bohemcars')
+		.replaceAll('Contact Bohemcars', 'Контакт с Bohemcars')
 		.replaceAll(
 			'6205 Peachtree Dunwoody Rd, Atlanta, GA 30328',
 			escapeHtml(bohemcarsContact.addressLabel)
 		)
-		.replaceAll('Week-Day: 8:00 - 18:00', 'Monday-Friday: 9:00 - 18:00')
-		.replaceAll('Sunday: Closed', 'Weekend: By appointment')
-		.replaceAll('Follow Us On social media:', 'Follow Bohemcars:')
+		.replaceAll('Week-Day: 8:00 - 18:00', 'Понеделник-петък: 9:00 - 18:00')
+		.replaceAll('Sunday: Closed', 'Уикенд: с уговорка')
+		.replaceAll('Working Time', 'Работно време')
+		.replaceAll('Follow Us On social media:', 'Последвайте Bohemcars:')
 		.replaceAll(
 			"We'd love to hear from you! If you have any questions",
 			bohemcarsContact.appointmentNote
@@ -1156,6 +1095,15 @@ export const applyContactData = (html: string) => {
 		.replaceAll('tel:1-333-123-6666', bohemcarsContact.marketplacePhoneHref)
 		.replaceAll('value="Tony"', 'value=""')
 		.replaceAll('placeholder="Enter your last name"', 'placeholder="Enter your last name"');
+
+	const contactInfoStart = next.indexOf('Офис Bohemcars');
+	const contactInfoLabelStart = next.indexOf('Контакт с Bohemcars', contactInfoStart);
+
+	if (contactInfoLabelStart >= 0) {
+		next = `${next.slice(0, contactInfoLabelStart)}Телефон Bohemcars${next.slice(
+			contactInfoLabelStart + 'Контакт с Bohemcars'.length
+		)}`;
+	}
 
 	const contactMapOverlay = `<div class="bohemcars-contact-map__overlay">
 		<p class="bohemcars-contact-map__eyebrow">Bohemcars Plovdiv</p>
@@ -1310,7 +1258,7 @@ export const applyInventoryData = (
 	const state = getInventoryState(templateFile, options);
 	let next = replaceInventoryBreadcrumb(html, state);
 	next = replaceInventorySearchSurface(next);
-	next = replaceInventoryToolbar(next, state);
+	next = replaceInventoryToolbar(next);
 	next = replaceInventoryContent(next, state);
 	next = replaceFilterSidebar(next, state);
 

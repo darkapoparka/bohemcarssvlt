@@ -305,3 +305,81 @@
 		</button>
 	</div>
 </form>
+
+<style>
+	@media (max-width: 767.98px) {
+		.bohemcars-profile-form {
+			display: grid;
+			gap: 14px;
+		}
+
+		.bohemcars-profile-form :global(.dashboard-box) {
+			margin-bottom: 0 !important;
+			border: 1px solid var(--bc-border) !important;
+			border-radius: 8px !important;
+			background: var(--bc-surface) !important;
+			padding: 20px 16px !important;
+		}
+
+		.bohemcars-profile-form :global(.dashboard-box > .h4) {
+			margin-bottom: 14px !important;
+			font-size: 24px !important;
+			font-weight: 850 !important;
+			line-height: 30px !important;
+		}
+
+		.bohemcars-profile-form :global(.hightlight-text) {
+			border: 1px solid var(--bc-border);
+			border-radius: 8px;
+			background: var(--bc-surface-soft);
+			padding: 12px;
+		}
+
+		.bohemcars-profile-form :global(.grid) {
+			grid-template-columns: 1fr !important;
+			gap: 14px !important;
+		}
+
+		.bohemcars-profile-form :global(.upload-section .flex),
+		.bohemcars-profile-form :global(.upload-preview--poster-wrapper) {
+			display: grid !important;
+			grid-template-columns: 1fr !important;
+			gap: 12px !important;
+		}
+
+		.bohemcars-profile-form :global(.upload-preview--avatar) {
+			width: 176px !important;
+			height: 176px !important;
+		}
+
+		.bohemcars-profile-form :global(.upload-preview--poster) {
+			width: 100% !important;
+			max-width: none !important;
+		}
+
+		.bohemcars-profile-form :global(input),
+		.bohemcars-profile-form :global(select),
+		.bohemcars-profile-form :global(textarea),
+		.bohemcars-profile-form :global(.filter-select-dropdown) {
+			border-color: var(--bc-border) !important;
+			border-radius: 8px !important;
+			background: #ffffff !important;
+			box-shadow: none !important;
+		}
+
+		.bohemcars-profile-form :global(.upload-btn) {
+			border: 0 !important;
+			border-radius: 8px !important;
+			background: var(--bc-surface-hover) !important;
+		}
+
+		.bohemcars-profile-form > .mt-24 {
+			margin-top: 0 !important;
+			justify-content: stretch !important;
+		}
+
+		.bohemcars-profile-form > .mt-24 :global(.btn) {
+			width: 100%;
+		}
+	}
+</style>

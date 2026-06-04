@@ -111,7 +111,11 @@
 
 <style>
 	.bohemcars-services-page {
-		background: #fff;
+		background: var(--bc-bg);
+	}
+
+	.bohemcars-services-page :global(.background-light) {
+		background: var(--bc-bg) !important;
 	}
 
 	.bohemcars-services-page__lead {
@@ -122,21 +126,31 @@
 
 	.bohemcars-service-card {
 		height: 100%;
+		border: 1px solid var(--bc-border);
+		background: var(--bc-surface);
 	}
 
 	.bohemcars-service-card:hover {
-		background: #f8fbef;
+		background: var(--bc-surface-hover);
 		border-color: var(--primary);
 	}
 
 	.bohemcars-service-card__media {
 		aspect-ratio: 16 / 9;
-		background: #f7f7f7;
+		background: var(--bc-surface-soft);
 	}
 
 	.bohemcars-service-card__media img {
 		height: 100%;
 		object-fit: cover;
+	}
+
+	.bohemcars-service-card > a {
+		display: inline-flex;
+		min-height: 44px;
+		align-items: center;
+		margin-block: -6px;
+		padding-block: 6px;
 	}
 
 	.bohemcars-services-contact {

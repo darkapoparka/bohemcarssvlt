@@ -123,3 +123,139 @@
 		<p class="text-secondary">{listings.footerText}</p>
 	{/if}
 </div>
+
+<style>
+	@media (max-width: 767.98px) {
+		.bohemcars-account-listings {
+			width: 100%;
+			overflow: visible;
+		}
+
+		.bohemcars-account-listings :global(.cart-header) {
+			display: none !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-items) {
+			display: grid;
+			gap: 10px;
+		}
+
+		.bohemcars-account-listings :global(.cart-item) {
+			display: grid !important;
+			width: 100% !important;
+			min-width: 0 !important;
+			min-height: 0 !important;
+			grid-template-columns: 88px minmax(0, 1fr) !important;
+			gap: 8px 12px !important;
+			align-items: start;
+			border: 1px solid var(--bc-border);
+			border-radius: 8px;
+			background: var(--bc-surface-soft);
+			padding: 10px;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__product) {
+			display: contents !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__image) {
+			width: 88px !important;
+			min-width: 88px !important;
+			max-width: 88px !important;
+			height: 88px !important;
+			overflow: hidden;
+			border-radius: 8px;
+			background: #ffffff;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__image img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__name) {
+			width: 100% !important;
+			min-width: 0;
+			max-width: 100%;
+			overflow: hidden;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__name .h4) {
+			margin-bottom: 4px !important;
+			font-size: 20px !important;
+			font-weight: 850 !important;
+			line-height: 24px !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__name .h5) {
+			font-size: 15px !important;
+			line-height: 20px !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__price),
+		.bohemcars-account-listings :global(.cart-item__year),
+		.bohemcars-account-listings :global(.cart-item__total),
+		.bohemcars-account-listings :global(.cart-item > div:nth-last-child(2)) {
+			display: inline-flex !important;
+			width: auto !important;
+			min-width: 0 !important;
+			max-width: 100% !important;
+			min-height: 30px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 8px;
+			background: #ffffff;
+			padding: 0 8px;
+			color: #4b5563;
+			font-size: 12px;
+			font-weight: 800;
+			line-height: 15px;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__price) {
+			grid-column: 1 / 2 !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__year) {
+			grid-column: 2 / 3 !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__total),
+		.bohemcars-account-listings :global(.cart-item > div:nth-last-child(2)) {
+			grid-column: 1 / -1 !important;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__action) {
+			display: flex !important;
+			width: auto !important;
+			min-width: 0 !important;
+			max-width: 100% !important;
+			grid-column: 1 / -1 !important;
+			justify-content: flex-end;
+			gap: 8px;
+		}
+
+		.bohemcars-account-listings :global(.cart-item__action .action) {
+			width: 44px;
+			height: 44px;
+			border-radius: 999px;
+			background: #ffffff;
+		}
+
+		.bohemcars-account-listings[data-bohemcars-submissions-table] :global(.cart-item__price),
+		.bohemcars-account-listings[data-bohemcars-submissions-table] :global(.cart-item__year) {
+			grid-column: 1 / -1 !important;
+		}
+
+		.bohemcars-account-listings :global(.divider) {
+			display: none;
+		}
+
+		.bohemcars-account-listings > :global(.text-secondary) {
+			margin-top: 10px;
+			font-size: 12px;
+			line-height: 17px;
+		}
+	}
+</style>

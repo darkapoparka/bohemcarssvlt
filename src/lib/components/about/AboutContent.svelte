@@ -11,31 +11,30 @@
 
 <div class="bohemcars-about-page" data-bohemcars-about>
 	<PageBanner banner={about.hero} />
-	<section class="bohemcars-about-page__intro bg-white py-100">
+	<section class="bohemcars-about-page__intro bg-white">
 		<AboutIntroSection {about} />
-		<div class="tf-spacing-style5"></div>
 		<AboutReviewsSection reviews={about.reviews} />
 	</section>
 	<AboutWhyChooseSection {about} />
-	<div class="tf-spacing"></div>
 	<AboutConsultantsSection consultants={about.consultants} />
 </div>
 
 <style>
 	.bohemcars-about-page {
-		background: #fff;
+		background: var(--bc-bg);
 	}
 
 	.bohemcars-about-page__intro {
 		overflow: hidden;
-		padding-top: 72px;
-		padding-bottom: 86px;
+		background: #ffffff !important;
+		padding-top: 56px;
+		padding-bottom: 62px;
 	}
 
 	@media (max-width: 767px) {
 		.bohemcars-about-page__intro {
-			padding-top: 52px;
-			padding-bottom: 64px;
+			padding-top: 36px;
+			padding-bottom: 48px;
 		}
 	}
 </style>

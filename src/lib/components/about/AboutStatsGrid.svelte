@@ -4,7 +4,7 @@
 	let { stats }: { stats: AuxeroAboutStat[] } = $props();
 </script>
 
-<div class="md-grid-cols-2 counter-spacing grid grid-cols-4 gap-130">
+<div class="bohemcars-about-stats md-grid-cols-2 grid grid-cols-4 gap-16">
 	{#each stats as stat, index (stat.label)}
 		<div
 			class={`box-couter-item ${index < stats.length - 1 ? 'outline-right' : ''} wow fadeInUp`}
@@ -26,3 +26,25 @@
 		</div>
 	{/each}
 </div>
+
+<style>
+	.bohemcars-about-stats {
+		margin-top: 18px;
+	}
+
+	.bohemcars-about-stats :global(.box-couter-item) {
+		border: 1px solid var(--bc-border);
+		border-radius: 8px;
+		background: #ffffff;
+		padding: 22px 12px;
+	}
+
+	.bohemcars-about-stats :global(.box-couter-item.outline-right)::after {
+		display: none;
+	}
+
+	.bohemcars-about-stats :global(.number-content) {
+		font-size: 38px;
+		line-height: 1;
+	}
+</style>
