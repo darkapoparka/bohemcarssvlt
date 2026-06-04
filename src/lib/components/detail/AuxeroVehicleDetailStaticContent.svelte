@@ -31,12 +31,12 @@
 
 <div class="divider mb-40 w-full"></div>
 
-<p class="h4 mb-16">Services Calculator</p>
+<p class="h4 mb-16">Финансиране и ориентировъчна вноска</p>
 <form action="/calculator" class="financing-calculator mb-40">
 	<div class="financing-calculator-form mb-24">
 		<div class="xl2-grid-cols-2 md-grid-cols-1 grid grid-cols-4 gap-12">
 			<div>
-				<p class="mb-10">Car Price</p>
+				<p class="mb-10">Цена на автомобила</p>
 				<input
 					class="active"
 					id="ServicesCalculatorCarPrice"
@@ -48,7 +48,7 @@
 			</div>
 
 			<div>
-				<p class="mb-10">Interest Rate</p>
+				<p class="mb-10">Лихвен процент</p>
 				<input
 					id="ServicesCalculatorInterestRate"
 					name="ServicesCalculatorInterestRate"
@@ -59,42 +59,42 @@
 			</div>
 
 			<div>
-				<p class="mb-8">Loan Term (months)</p>
+				<p class="mb-8">Срок (месеци)</p>
 				<select id="ServicesCalculatorLoanTerm" name="ServicesCalculatorLoanTerm">
-					<option>60 months</option>
-					<option>30 months</option>
-					<option>10 months</option>
+					<option>60 месеца</option>
+					<option>30 месеца</option>
+					<option>10 месеца</option>
 				</select>
 			</div>
 
 			<div>
-				<p class="mb-8">Down Payment</p>
+				<p class="mb-8">Първоначална вноска</p>
 				<input
 					id="ServicesCalculatorDownPayment"
 					name="ServicesCalculatorDownPayment"
 					type="text"
-					value="$400"
+					value="1 000 EUR"
 					required
 				/>
 			</div>
 		</div>
 
-		<button class="btn btn-medium btn-primary mb-2">Calculate</button>
+		<button class="btn btn-medium btn-primary mb-2">Изчисли</button>
 	</div>
 
 	<div class="md-grid-cols-1 grid grid-cols-3 gap-8">
 		<div>
-			<p class="mb-4">Monthly Payment:</p>
+			<p class="mb-4">Месечна вноска:</p>
 			<p class="font-weight-600">{detail.monthlyLabel}</p>
 		</div>
 
 		<div>
-			<p class="mb-4">Total Interest Payment:</p>
-			<p class="font-weight-600">Final terms on request</p>
+			<p class="mb-4">Лихва:</p>
+			<p class="font-weight-600">По оферта от партньор</p>
 		</div>
 
 		<div>
-			<p class="mb-4">Est. Total Loan:</p>
+			<p class="mb-4">Ориентировъчна обща сума:</p>
 			<p class="font-weight-600">{detail.priceLabel}</p>
 		</div>
 	</div>
@@ -104,20 +104,20 @@
 
 <div class="md-flex-col md-items-start mb-16 flex items-center justify-between gap-16">
 	<div>
-		<p class="h4 mb-12">Location</p>
+		<p class="h4 mb-12">Локация</p>
 		<p class="flex items-center gap-8">
-			<img class="h-16 w-16" src="/assets/icons/MapPin.svg" alt="fuel" />
+			<img class="h-16 w-16" src="/assets/icons/MapPin.svg" alt="Локация" />
 			{detail.contact.address}
 		</p>
 	</div>
 
-	<a href={contactHref} class="text-underline text-highlight text-sm">Get Directions</a>
+	<a href={contactHref} class="text-underline text-highlight text-sm">Виж упътване</a>
 </div>
 
 <div class="widget-gg-map radius-16 mb-40 flex overflow-hidden">
 	<iframe
 		title="Bohemcars appointment area"
-		src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97101.88872869895!2d-74.22688511715344!3d40.487336736141906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1689125037376!5m2!1svi!2s"
+		src="https://maps.google.com/maps?q=Plovdiv%20South%20Industrial%20Zone&t=&z=13&ie=UTF8&iwloc=&output=embed"
 		height="523"
 		style="border:0;width: 100%;"
 		allowfullscreen
@@ -129,7 +129,7 @@
 <div class="divider mb-40 w-full"></div>
 
 <div class="mb-16 flex items-center justify-between gap-16">
-	<p class="h4">Customer Reviews</p>
+	<p class="h4">Клиентски отзиви</p>
 </div>
 
 <div class="rating-box mb-40">
@@ -144,7 +144,7 @@
 					<img src="/assets/icons/star-2.svg" alt="star" />
 					<img src="/assets/icons/star-2.svg" alt="star" />
 				</div>
-				<p class="rating-box__count">(1,968 Ratings)</p>
+				<p class="rating-box__count">(157 отзива във Facebook)</p>
 			</div>
 		</div>
 		<div class="rating-box__distribution">
@@ -155,8 +155,8 @@
 			{@render ratingBar('1', '3%', '3%')}
 		</div>
 		<div class="rating-box__button">
-			<a href="#reviewForm" class="btn btn-primary btn-large font-weight-600 capitalize">
-				Write a review
+			<a href={reviewsHref} class="btn btn-primary btn-large font-weight-600 capitalize">
+				Виж всички отзиви
 			</a>
 		</div>
 	</div>
@@ -170,17 +170,16 @@
 			</div>
 			<div>
 				<div class="text-secondary mb-8 flex items-center gap-4">
-					<p class="h5">Randynox</p>
+					<p class="h5">Александър Вътев</p>
 					<span class="text-secondary text-sm">-</span>
-					<span class="text-secondary text-sm">August 13, 2025</span>
+					<span class="text-secondary text-sm">13 август 2025</span>
 				</div>
 				{@render starRow()}
 			</div>
 		</div>
 		<p class="text-secondary">
-			Bought new in 2012, and it is still running strong at over 180,000 miles. I have only had to
-			replace the battery and brakes once. The ride is smooth, the interior still feels solid, and
-			the fuel economy has not dropped much.
+			Екипът ми обясни историята на автомобила, транспорта и стъпките по регистрация преди да поема
+			ангажимент. Огледът беше спокоен, с ясни документи и конкретни следващи действия.
 		</p>
 	</div>
 
@@ -189,17 +188,16 @@
 			<div class="comment-box__avatar guest">MN</div>
 			<div>
 				<div class="text-secondary mb-8 flex items-center gap-4">
-					<p class="h5">Mista Nyroom</p>
+					<p class="h5">Красимир Георгиев</p>
 					<span class="text-secondary text-sm">-</span>
-					<span class="text-secondary text-sm">August 22, 2025</span>
+					<span class="text-secondary text-sm">22 август 2025</span>
 				</div>
 				{@render starRow()}
 			</div>
 		</div>
 		<p class="text-secondary">
-			Picked this car up used about five years ago with 90k miles. It is now at 160k and still
-			starts every morning without hesitation. Maintenance is simple, parts are cheap, and it is
-			surprisingly comfortable on long drives.
+			Bohemcars запазиха разговора практичен: снимки, документи, пробег и реалните разходи, които
+			имат значение преди доставка. Хареса ми, че нямаше излишни обещания.
 		</p>
 	</div>
 
@@ -210,35 +208,29 @@
 			</div>
 			<div>
 				<div class="text-secondary mb-8 flex items-center gap-4">
-					<p class="h5">Heather Dick</p>
+					<p class="h5">Илиян Петров</p>
 					<span class="text-secondary text-sm">-</span>
-					<span class="text-secondary text-sm">August 18, 2025</span>
+					<span class="text-secondary text-sm">18 август 2025</span>
 				</div>
 				{@render starRow()}
 			</div>
 		</div>
 		<p class="text-secondary" id="reviewForm">
-			Owned since 2010. Drove it through all kinds of weather, from hot summers to snowy roads, and
-			it never let me down. A few minor repairs here and there, mostly wear and tear, but the engine
-			just keeps going.
+			Изпратих данните за клиентски автомобил и получих ясна обратна връзка за цена, документи и
+			най-добрия начин да бъде представен автомобилът.
 		</p>
 	</div>
 
 	<p>
-		<a href={reviewsHref} class="text-underline font-weight-600 capitalize"
-			>View more reviews (98)</a
-		>
+		<a href={reviewsHref} class="text-underline font-weight-600 capitalize">Виж още отзиви</a>
 	</p>
 </div>
 
 <div>
-	<p class="h4 mb-8 capitalize">add a review</p>
-	<p class="mb-20">Your email address will not be published</p>
+	<p class="h4 mb-8 capitalize">Искаш оглед?</p>
+	<p class="mb-20">Изпрати запитване и Bohemcars ще върне конкретен отговор за автомобила.</p>
 
-	<button
-		class="btn btn-primary btn-large font-weight-600 open-modal capitalize"
-		data-modal-id="#LoginModal"
-	>
-		Login to add a Review
-	</button>
+	<a href={contactHref} class="btn btn-primary btn-large font-weight-600 capitalize">
+		Попитай за автомобила
+	</a>
 </div>

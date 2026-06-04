@@ -78,7 +78,7 @@
 				class="search-modal__close"
 				id="searchModalClose"
 				type="button"
-				aria-label={copy.vehicleCard.viewDetails}
+				aria-label="Затвори търсенето"
 			>
 				<svg
 					width="24"

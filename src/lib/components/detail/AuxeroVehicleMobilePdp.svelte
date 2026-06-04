@@ -12,8 +12,12 @@
 	const compareHref = resolve('/compare');
 	const favoritesHref = resolve('/account/favorites');
 	const externalHref = (href: string) => ({ href });
+	const drawerRestingSnapPoint = 0.6;
+	const drawerExpandedSnapPoint = 0.92;
+	const drawerSnapPoints = [drawerRestingSnapPoint, drawerExpandedSnapPoint];
 
 	let activeTab = $state<AuxeroVehicleDetailDrawerTabId>('info');
+	let activeDrawerSnapPoint = $state<number | string | null>(drawerSnapPoints[0]);
 	let drawerOpen = $state(true);
 	let selectedImageIndex = $state(0);
 	let shareStatus = $state('');
@@ -21,6 +25,7 @@
 	let inquiryOpen = $state(false);
 	let inquiryStatus = $state('');
 	let inquirySubmitting = $state(false);
+	let drawerSnapGestureStartY: number | null = null;
 
 	const heroGalleryImages = $derived(Array.from(new Set(detail.galleryImages)));
 	const heroImage = $derived(heroGalleryImages[selectedImageIndex] ?? detail.image);
@@ -29,6 +34,9 @@
 	const featureGroups = $derived(detail.featureTabs.filter((tab) => tab.items.length > 0));
 	const contentTabs = $derived(
 		detail.mobileDrawer.tabs.filter((tab) => ['info', 'specs', 'features'].includes(tab.id))
+	);
+	const drawerSnapOffset = $derived(
+		activeDrawerSnapPoint === drawerExpandedSnapPoint ? '8dvh' : '40dvh'
 	);
 
 	const useFallbackImage = (event: Event) => {
@@ -117,6 +125,44 @@
 		viewerOpen = false;
 	};
 
+	const startDrawerSnapGesture = (event: PointerEvent) => {
+		if (
+			!(event.target instanceof HTMLElement) ||
+			!event.target.closest('.bohemcars-mobile-pdp__handle')
+		) {
+			return;
+		}
+
+		drawerSnapGestureStartY = event.clientY;
+		(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+	};
+
+	const updateDrawerSnapGesture = (event: PointerEvent) => {
+		if (drawerSnapGestureStartY === null) return;
+
+		const deltaY = event.clientY - drawerSnapGestureStartY;
+
+		if (Math.abs(deltaY) < 42) return;
+
+		activeDrawerSnapPoint = deltaY < 0 ? drawerExpandedSnapPoint : drawerRestingSnapPoint;
+		drawerSnapGestureStartY = null;
+	};
+
+	const finishDrawerSnapGesture = (event: PointerEvent) => {
+		if (drawerSnapGestureStartY === null) return;
+
+		const deltaY = event.clientY - drawerSnapGestureStartY;
+		drawerSnapGestureStartY = null;
+
+		if (Math.abs(deltaY) < 42) return;
+
+		activeDrawerSnapPoint = deltaY < 0 ? drawerExpandedSnapPoint : drawerRestingSnapPoint;
+	};
+
+	const cancelDrawerSnapGesture = () => {
+		drawerSnapGestureStartY = null;
+	};
+
 	const handleWindowKeydown = (event: KeyboardEvent) => {
 		if (event.key !== 'Escape') return;
 
@@ -128,7 +174,12 @@
 	};
 </script>
 
-<svelte:window onkeydown={handleWindowKeydown} />
+<svelte:window
+	onkeydown={handleWindowKeydown}
+	onpointermove={updateDrawerSnapGesture}
+	onpointerup={finishDrawerSnapGesture}
+	onpointercancel={cancelDrawerSnapGesture}
+/>
 
 <svelte:head>
 	<style>
@@ -170,7 +221,7 @@
 	class="bohemcars-mobile-pdp"
 	data-mobile-pdp-root
 	aria-label={detail.title}
-	style:--drawer-resting-height="60dvh"
+	style:--bohemcars-mobile-pdp-snap-offset={drawerSnapOffset}
 >
 	<div class="bohemcars-mobile-pdp__hero" data-mobile-pdp-hero>
 		<button
@@ -235,12 +286,18 @@
 
 	<Drawer.Root
 		bind:open={drawerOpen}
+		bind:activeSnapPoint={activeDrawerSnapPoint}
 		direction="bottom"
 		dismissible={false}
-		handleOnly={true}
 		modal={false}
+		snapPoints={drawerSnapPoints}
+		snapToSequentialPoint={true}
 	>
-		<Drawer.Content class="bohemcars-mobile-pdp__drawer" data-mobile-pdp-drawer>
+		<Drawer.Content
+			class="bohemcars-mobile-pdp__drawer"
+			data-mobile-pdp-drawer
+			onpointerdown={startDrawerSnapGesture}
+		>
 			<Drawer.Handle class="bohemcars-mobile-pdp__handle" />
 
 			<div class="bohemcars-mobile-pdp__drawer-heading">
@@ -283,7 +340,7 @@
 				{/each}
 			</div>
 
-			<div class="bohemcars-mobile-pdp__panel" role="tabpanel">
+			<div class="bohemcars-mobile-pdp__panel" role="tabpanel" data-vaul-no-drag>
 				{#if activeTab === 'info'}
 					<div class="bohemcars-mobile-pdp__section">
 						<p class="bohemcars-mobile-pdp__eyebrow">{detail.copy.description}</p>
@@ -691,8 +748,8 @@
 			z-index: 1002;
 			display: flex;
 			flex-direction: column;
-			height: var(--drawer-resting-height, 60dvh);
-			max-height: 92dvh;
+			box-sizing: border-box;
+			height: 100dvh;
 			overflow: hidden;
 			border: 0;
 			border-radius: 22px 22px 0 0;
@@ -700,27 +757,47 @@
 			color: #1c1c1c;
 			box-shadow: 0 -20px 46px rgba(0, 0, 0, 0.22);
 			outline: 0;
-			padding: 7px 14px calc(12px + env(safe-area-inset-bottom));
+			padding: 7px 14px
+				calc(var(--bohemcars-mobile-pdp-snap-offset, 40dvh) + 12px + env(safe-area-inset-bottom));
 		}
 
-		.bohemcars-mobile-pdp
-			:global(.bohemcars-mobile-pdp__drawer[data-vaul-drawer][data-state='open']) {
-			transform: translate3d(0, 0, 0) !important;
-		}
-
-		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle) {
-			display: flex;
-			height: 14px;
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle[data-vaul-handle]) {
+			position: relative;
+			display: block;
+			width: 56px;
+			height: 22px;
+			min-height: 22px;
 			align-items: center;
 			justify-content: center;
+			align-self: center;
+			flex: 0 0 22px;
+			border-radius: 0;
+			background: transparent;
+			opacity: 1;
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle[data-vaul-handle])::after {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 34px;
+			height: 3px;
+			transform: translate(-50%, -50%);
+			border-radius: 999px;
+			background: var(--bc-border);
+			content: '';
 		}
 
 		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__handle [data-vaul-handle-hitarea]) {
+			position: absolute;
+			inset: 0;
+			top: 0;
+			left: 0;
 			display: block;
-			width: 34px;
-			height: 3px;
-			border-radius: 999px;
-			background: var(--bc-border);
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			transform: none;
 		}
 
 		.bohemcars-mobile-pdp__drawer-heading {

@@ -31,14 +31,14 @@
 
 <header class={cn('site-header', variant === 'home' && 'site-header--home')}>
 	<div class="site-header__inner">
-		<a class="site-header__logo" href={resolve('/')} aria-label="Bohemcars home">
+		<a class="site-header__logo" href={resolve('/')} aria-label="Bohemcars начало">
 			<img
 				src={variant === 'home' ? bohemcarsAssets.logoDark : bohemcarsAssets.logoLight}
 				alt="Bohemcars"
 			/>
 		</a>
 
-		<nav class={cn('site-nav', menuOpen && 'site-nav--open')} aria-label="Primary navigation">
+		<nav class={cn('site-nav', menuOpen && 'site-nav--open')} aria-label="Основна навигация">
 			{#each navItems as item (item.href)}
 				<a
 					class={cn(
@@ -54,30 +54,30 @@
 		</nav>
 
 		<div class="site-header__actions">
-			<a class="header-pill header-pill--outline" href={resolve('/account')} aria-label="Sign in">
+			<a class="header-pill header-pill--outline" href={resolve('/account')} aria-label="Вход">
 				<User size={20} />
-				<span>Sign In</span>
+				<span>Вход</span>
 			</a>
 			<a class="header-pill header-pill--solid" href={resolve('/sell-your-car')}>
 				<Plus size={20} />
-				<span>Sell Your Car</span>
+				<span>Продай автомобил</span>
 			</a>
 			<button
 				class="icon-button"
 				type="button"
-				aria-label="Search"
+				aria-label="Търсене"
 				onclick={() => (searchOpen = true)}
 			>
 				<Search size={23} />
 			</button>
-			<a class="icon-button icon-button--badge" href={resolve('/compare')} aria-label="Compare">
+			<a class="icon-button icon-button--badge" href={resolve('/compare')} aria-label="Сравни">
 				<GitCompare size={23} />
 				<span>{garage.compare.length}</span>
 			</a>
 			<a
 				class="icon-button icon-button--badge"
 				href={resolve('/account/favorites')}
-				aria-label="Wishlist"
+				aria-label="Любими"
 			>
 				<Heart size={23} />
 				<span>{garage.favorites.length}</span>
@@ -85,7 +85,7 @@
 			<button
 				class="icon-button site-header__menu"
 				type="button"
-				aria-label="Toggle navigation"
+				aria-label="Отвори навигация"
 				onclick={() => (menuOpen = !menuOpen)}
 			>
 				{#if menuOpen}
@@ -99,32 +99,32 @@
 </header>
 
 {#if searchOpen}
-	<div class="search-modal" role="dialog" aria-modal="true" aria-label="Site search">
+	<div class="search-modal" role="dialog" aria-modal="true" aria-label="Търсене в сайта">
 		<button
 			class="search-modal__backdrop"
 			type="button"
-			aria-label="Close search"
+			aria-label="Затвори търсенето"
 			onclick={() => (searchOpen = false)}
 		></button>
 		<div class="search-modal__panel">
 			<button
 				class="search-modal__close"
 				type="button"
-				aria-label="Close search"
+				aria-label="Затвори търсенето"
 				onclick={() => (searchOpen = false)}
 			>
 				<X size={24} />
 			</button>
-			<p class="eyebrow">What are you looking for?</p>
+			<p class="eyebrow">Какво търсиш?</p>
 			<form class="search-modal__form" onsubmit={submitSearch}>
 				<input
 					bind:value={searchQuery}
-					placeholder="Search for anything"
-					aria-label="Search inventory"
+					placeholder="Търси марка, модел, VIN..."
+					aria-label="Търси в наличните автомобили"
 				/>
 				<button class="btn btn-primary" type="submit">
 					<Search size={20} />
-					Search
+					Търси
 				</button>
 			</form>
 		</div>

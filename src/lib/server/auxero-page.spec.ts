@@ -41,7 +41,7 @@ describe('splitAuxeroDocument', () => {
 		expect(pageDocument.bodyClass).toContain('inner-page');
 		expect(pageDocument.bodyClass).toContain('auxero-template-compare-html');
 		expect(slotDocument.headHtml).toBe(pageDocument.headHtml);
-		expect(slot.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(slot.beforeHtml).toContain('Сравни автомобили от Bohemcars');
 		expect(slot.sectionHtml).toContain('data-bohemcars-compare-table');
 		expect(slot.afterHtml).toContain('CompareModal');
 	});
@@ -364,7 +364,7 @@ describe('splitAuxeroDocument', () => {
 			'table'
 		);
 
-		expect(split?.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(split?.beforeHtml).toContain('Сравни автомобили от Bohemcars');
 		expect(split?.beforeHtml).not.toContain('data-bohemcars-compare-table');
 		expect(split?.sectionHtml).toContain('card-details--table');
 		expect(split?.sectionHtml).toContain('data-bohemcars-compare-table');
@@ -381,7 +381,7 @@ describe('splitAuxeroDocument', () => {
 			'table'
 		);
 
-		expect(split?.beforeHtml).toContain('Compare Bohemcars Vehicles Side-by-Side');
+		expect(split?.beforeHtml).toContain('Сравни автомобили от Bohemcars');
 		expect(split?.sectionHtml).toContain('data-bohemcars-compare-table');
 		expect(split?.sectionHtml).toContain('data-bohemcars-compare-column');
 		expect(split?.afterHtml).toContain('CompareModal');
@@ -524,7 +524,7 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.sectionHtml).toContain('customer@bohemcars.local');
 		expect(split?.sectionHtml).toContain('Save Locally');
 		expect(split?.sectionHtml).toContain('Внос от Канада, проверена история');
-		expect(split?.sectionHtml).toContain('0888899911');
+		expect(split?.sectionHtml).toContain('+359 893 588 680');
 		expect(split?.sectionHtml).not.toContain('Lorem ipsum');
 		expect(split?.sectionHtml).not.toContain('themesflat@gmail.com');
 		expect(split?.afterHtml).toContain('CardModal');
@@ -652,11 +652,11 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'services-center-form');
 
-		expect(split?.beforeHtml).toContain('Bohemcars Services Center');
-		expect(split?.beforeHtml).toContain('Featured Services');
+		expect(split?.beforeHtml).toContain('Услуги от Bohemcars');
+		expect(split?.beforeHtml).toContain('Основни услуги');
 		expect(split?.beforeHtml).toContain('services-center-info');
 		expect(split?.sectionHtml).toContain('bohemcars-service-form');
-		expect(split?.sectionHtml).toContain('Schedule Service');
+		expect(split?.sectionHtml).toContain('Изпрати заявка');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
@@ -666,11 +666,11 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'bohemcars-sell-form', 'form');
 
-		expect(split?.beforeHtml).toContain('Sell Your Car With Bohemcars');
+		expect(split?.beforeHtml).toContain('Продай автомобила си с Bohemcars');
 		expect(split?.beforeHtml).toContain('menu-tab-style7');
 		expect(split?.sectionHtml).toContain('calculate-form bohemcars-sell-form');
-		expect(split?.sectionHtml).toContain('Request Review');
-		expect(split?.afterHtml).toContain('How It Works');
+		expect(split?.sectionHtml).toContain('Заяви преглед');
+		expect(split?.afterHtml).toContain('Как работи');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
@@ -701,11 +701,11 @@ describe('splitAuxeroDocument', () => {
 			'div'
 		);
 
-		expect(split?.beforeHtml).toContain('Import Cost Calculator');
-		expect(split?.sectionHtml).toContain('Calculate Estimated Landed Cost');
+		expect(split?.beforeHtml).toContain('Калкулатор за внос');
+		expect(split?.sectionHtml).toContain('Изчисли ориентировъчна крайна цена');
 		expect(split?.sectionHtml).toContain('data-bohemcars-calc-output="total"');
-		expect(split?.afterHtml).toContain('Browse By Budget');
-		expect(split?.afterHtml).toContain('Calculator FAQ');
+		expect(split?.afterHtml).toContain('Разгледай по бюджет');
+		expect(split?.afterHtml).toContain('Въпроси за калкулатора');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
@@ -715,7 +715,7 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-terms', 'div');
 
-		expect(split?.beforeHtml).toContain('Bohemcars Terms Of Use');
+		expect(split?.beforeHtml).toContain('Условия за използване на Bohemcars');
 		expect(split?.sectionHtml).toContain('term-page--nav');
 		expect(split?.sectionHtml).toContain('1. Vehicle Information');
 		expect(split?.sectionHtml).toContain('6. Contact And Data');
@@ -732,9 +732,9 @@ describe('splitAuxeroDocument', () => {
 			'section'
 		);
 
-		expect(split?.sectionHtml).toContain('Frequently Asked Questions');
-		expect(split?.sectionHtml).toContain('Bohemcars Support');
-		expect(split?.sectionHtml).toContain('Import And Buying');
+		expect(split?.sectionHtml).toContain('Често задавани въпроси');
+		expect(split?.sectionHtml).toContain('Bohemcars помощ');
+		expect(split?.sectionHtml).toContain('Внос и покупка');
 		expect(split?.sectionHtml).toContain('flat-accordion');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
@@ -745,9 +745,9 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-about', 'div');
 
-		expect(split?.sectionHtml).toContain('История и фокус');
-		expect(split?.sectionHtml).toContain('Client Reviews');
-		expect(split?.sectionHtml).toContain('Защо клиентите търсят Bohemcars?');
+		expect(split?.sectionHtml).toContain('Какво проверяваме');
+		expect(split?.sectionHtml).toContain('Отзиви от клиенти');
+		expect(split?.sectionHtml).toContain('Как работи процесът преди оглед или внос?');
 		expect(split?.sectionHtml).toContain('Екипът зад процеса');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
@@ -762,7 +762,7 @@ describe('splitAuxeroDocument', () => {
 			'div'
 		);
 
-		expect(split?.beforeHtml).toContain('Bohemcars Blog');
+		expect(split?.beforeHtml).toContain('Съвети от Bohemcars');
 		expect(split?.sectionHtml).toContain('post-style-6');
 		expect(split?.sectionHtml).toContain(
 			'Какво проверява Bohemcars преди внос на автомобил от Канада'
@@ -784,9 +784,9 @@ describe('splitAuxeroDocument', () => {
 
 		expect(split?.beforeHtml).toContain('blog-details-banner');
 		expect(split?.sectionHtml).toContain('bohemcars-blog-comment-form');
-		expect(split?.sectionHtml).toContain('Next Step');
+		expect(split?.sectionHtml).toContain('Следваща стъпка');
 		expect(split?.afterHtml).toContain('innerpage__sidebar');
-		expect(split?.afterHtml).toContain('Related Posts');
+		expect(split?.afterHtml).toContain('Свързани публикации');
 		expect(split?.afterHtml).toContain('footer');
 	});
 });

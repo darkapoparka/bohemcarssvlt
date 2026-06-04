@@ -45,9 +45,6 @@
 				<h1 id="sell-mobile-title">Продай автомобила си</h1>
 				<p>Изпрати данните. Връщаме ясен следващ ход.</p>
 			</div>
-			<div class="bohemcars-sell-mobile__intro-media" aria-hidden="true">
-				<img src="/assets/bohemcars/home2/home2-action-consultant.png" alt="" />
-			</div>
 		</section>
 
 		<form class="bohemcars-sell-mobile__form" onsubmit={handleSubmit}>
@@ -132,18 +129,23 @@
 		align-items: center;
 		overflow: hidden;
 		margin: 0 -14px;
-		padding: 13px 96px 13px 14px;
+		padding: 14px;
 		background:
-			linear-gradient(90deg, rgba(25, 28, 20, 0.98) 0%, rgba(31, 39, 25, 0.96) 58%), #1b2118;
+			linear-gradient(90deg, rgba(23, 31, 19, 0.97), rgba(23, 31, 19, 0.9)),
+			url('/assets/bohemcars/cta/sell-car-banner-v2.png') 67% 52% / cover;
 		box-shadow: inset 0 -1px 0 rgba(217, 242, 117, 0.36);
 		color: #ffffff;
 	}
 
 	.bohemcars-sell-mobile__intro::before {
 		position: absolute;
-		inset: 0 0 0 auto;
-		width: 46%;
-		background: linear-gradient(90deg, rgba(25, 28, 20, 0), rgba(217, 242, 117, 0.1));
+		inset: 0;
+		background: linear-gradient(
+			90deg,
+			rgba(23, 31, 19, 0.98) 0%,
+			rgba(23, 31, 19, 0.88) 58%,
+			rgba(23, 31, 19, 0.72) 100%
+		);
 		content: '';
 		pointer-events: none;
 	}
@@ -154,37 +156,7 @@
 		display: grid;
 		gap: 5px;
 		min-width: 0;
-		max-width: 286px;
-	}
-
-	.bohemcars-sell-mobile__intro-media {
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		z-index: 1;
-		display: flex;
-		width: 96px;
-		height: 120px;
-		align-items: flex-end;
-		justify-content: center;
-		overflow: hidden;
-		border-left: 1px solid rgba(255, 255, 255, 0.06);
-		pointer-events: none;
-	}
-
-	.bohemcars-sell-mobile__intro-media::before {
-		position: absolute;
-		inset: 10px 7px 0 8px;
-		border-radius: 18px 18px 0 0;
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
-		content: '';
-	}
-
-	.bohemcars-sell-mobile__intro-media img {
-		position: relative;
-		z-index: 1;
-		width: 84px;
-		max-width: none;
+		max-width: 330px;
 	}
 
 	.bohemcars-sell-mobile__intro span,
@@ -411,28 +383,14 @@
 	@media (max-width: 374px) {
 		.bohemcars-sell-mobile__intro {
 			min-height: 118px;
-			padding-right: 88px;
 		}
 
 		.bohemcars-sell-mobile__intro-copy {
-			max-width: 254px;
-		}
-
-		.bohemcars-sell-mobile__intro-media {
-			width: 88px;
-			height: 118px;
-		}
-
-		.bohemcars-sell-mobile__intro-media img {
-			width: 78px;
+			max-width: 300px;
 		}
 	}
 
 	@media (max-width: 359px) {
-		.bohemcars-sell-mobile__intro {
-			padding-right: 80px;
-		}
-
 		.bohemcars-sell-mobile__intro h1 {
 			font-size: 21.5px;
 			line-height: 25px;
@@ -441,14 +399,6 @@
 		.bohemcars-sell-mobile__intro p {
 			font-size: 12.5px;
 			line-height: 17px;
-		}
-
-		.bohemcars-sell-mobile__intro-media {
-			width: 80px;
-		}
-
-		.bohemcars-sell-mobile__intro-media img {
-			width: 74px;
 		}
 	}
 </style>

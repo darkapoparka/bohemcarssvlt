@@ -1,7 +1,14 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { AuxeroPageBanner } from '$lib/auxero/page-banner';
 
-	let { banner }: { banner: AuxeroPageBanner } = $props();
+	type PageBannerCta = {
+		className?: string;
+		href: string;
+		label: string;
+	};
+
+	let { banner, cta }: { banner: AuxeroPageBanner; cta?: PageBannerCta } = $props();
 </script>
 
 <section
@@ -15,6 +22,31 @@
 			</p>
 			<h1>{banner.title}</h1>
 			<p>{banner.description}</p>
+			{#if banner.actions?.length}
+				<div class="bohemcars-page-banner__actions">
+					{#each banner.actions as action (action.href)}
+						<a
+							href={resolve(action.href as '/')}
+							class={[
+								'btn btn-large font-weight-600',
+								action.variant === 'secondary'
+									? 'btn-line-style-2 bohemcars-page-banner__secondary'
+									: 'btn-primary'
+							]}
+						>
+							{action.label}
+						</a>
+					{/each}
+				</div>
+			{:else if cta}
+				<div class="bohemcars-page-banner__actions">
+					<a
+						href={resolve(cta.href as '/')}
+						class={cta.className ?? 'btn btn-primary btn-large font-weight-600 max-w-min'}
+						>{cta.label}</a
+					>
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>
@@ -22,11 +54,11 @@
 <style>
 	.bohemcars-page-banner {
 		display: flex;
-		min-height: 176px;
+		min-height: 218px;
 		align-items: center;
 		background-image:
 			linear-gradient(90deg, rgb(9 10 10 / 0.78), rgb(9 10 10 / 0.42)), var(--page-banner-image);
-		background-position: center;
+		background-position: center right;
 		background-size: cover;
 	}
 
@@ -62,9 +94,28 @@
 		line-height: 24px;
 	}
 
+	.bohemcars-page-banner__actions {
+		display: flex;
+		margin-top: 22px;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+
+	.bohemcars-page-banner__secondary {
+		border-color: rgb(255 255 255 / 0.72) !important;
+		color: #ffffff !important;
+	}
+
+	.bohemcars-page-banner__secondary:hover {
+		border-color: #ffffff !important;
+		background: #ffffff !important;
+		color: #1c1c1c !important;
+	}
+
 	@media (max-width: 767px) {
 		.bohemcars-page-banner {
-			min-height: 142px;
+			min-height: 164px;
+			background-position: 62% center;
 		}
 
 		.bohemcars-page-banner__content {

@@ -28,12 +28,7 @@ export const formatInventoryKm = (value: number) =>
 export const formatInventoryMonthly = (value: number, locale: Locale = 'en') =>
 	`${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} ${locale === 'bg' ? 'EUR/мес.' : 'EUR/mo'}`;
 
-export const inventoryCardHighlightClass = (vehicle: Vehicle, index: number) => {
-	if (vehicle.isClientVehicle) return 'bg-primary-2';
-	if (vehicle.tag === 'New listing') return 'bg-green';
-
-	return index % 4 === 0 ? 'bg-primary-2' : 'bg-green';
-};
+export const inventoryCardHighlightClass = () => 'bg-primary-2';
 
 export const inventoryGridClassForView = (view: AuxeroInventoryView) => {
 	if (view === '4') {
@@ -50,7 +45,8 @@ export const inventoryGridClassForView = (view: AuxeroInventoryView) => {
 // Mirror the PDP/mega-menu image override so the card thumbnail matches the detail
 // hero when a listing's remote primary photo is unreliable or off-model (e.g. the X5).
 const inventoryCardImageOverrides: Record<string, string> = {
-	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
 };
 
 export const inventoryCardsFromVehicles = (
@@ -62,7 +58,7 @@ export const inventoryCardsFromVehicles = (
 		delay: `0.${(index % 4) + 1}s`,
 		description: localizeVehicleTermsInText(locale, vehicle.description),
 		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
-		highlightClass: inventoryCardHighlightClass(vehicle, index),
+		highlightClass: inventoryCardHighlightClass(),
 		image: inventoryCardImageOverrides[vehicle.slug] ?? vehicle.image,
 		imagesCount: vehicle.images.length || 1,
 		mileageLabel: formatInventoryKm(vehicle.mileage),

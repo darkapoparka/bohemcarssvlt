@@ -12,57 +12,57 @@ export type AuxeroFaqGroup = {
 export const supportFaqs: AuxeroFaq[] = [
 	{
 		topic: 'Import',
-		question: 'Why import a vehicle from Canada?',
+		question: 'Защо да внеса автомобил от Канада?',
 		answer:
-			'Canada can offer well-equipped vehicles with traceable history and competitive pricing. Bohemcars still checks the specific car, records, mileage, photos, and estimated landed cost before recommending a decision.'
+			'Канада често предлага добре оборудвани автомобили с проследима история и конкурентна цена. Bohemcars проверява конкретния автомобил, документи, пробег, снимки и ориентировъчна крайна цена преди препоръка.'
 	},
 	{
 		topic: 'Timing',
-		question: 'How long does import usually take?',
+		question: 'Колко време обикновено отнема вносът?',
 		answer:
-			'Typical timing can be around 6 to 10 weeks, depending on vehicle selection, transport, customs steps, documents, and preparation for registration.'
+			'Ориентировъчно процесът може да бъде около 6 до 10 седмици според избора на автомобил, транспорта, митническите стъпки, документите и подготовката за регистрация.'
 	},
 	{
 		topic: 'Checks',
-		question: 'What does Bohemcars check before purchase?',
+		question: 'Какво проверява Bohemcars преди покупка?',
 		answer:
-			'The team reviews history, mileage, origin, seller context, service information, available reports, photos, documents, and known model-specific requirements.'
+			'Екипът преглежда история, пробег, произход, контекст на продавача, сервизна информация, налични доклади, снимки, документи и специфични изисквания за модела.'
 	},
 	{
 		topic: 'Costs',
-		question: 'How is the final cost formed?',
+		question: 'Как се формира крайната цена?',
 		answer:
-			'The estimate normally combines vehicle price, transport, customs duty, VAT, documents, technical preparation, registration steps, and any service work needed before handoff.'
+			'Оценката обикновено включва цена на автомобила, транспорт, мито, ДДС, документи, техническа подготовка, регистрационни стъпки и нужни сервизни дейности преди предаване.'
 	},
 	{
 		topic: 'Documents',
-		question: 'What documents will I receive?',
+		question: 'Какви документи ще получа?',
 		answer:
-			'Documents depend on the exact vehicle and transaction. Bohemcars confirms the purchase, transport, customs, and registration paperwork available before handoff.'
+			'Документите зависят от конкретния автомобил и сделка. Bohemcars потвърждава наличните документи за покупка, транспорт, митница и регистрация преди предаване.'
 	},
 	{
 		topic: 'Warranty',
-		question: 'Do imported vehicles include warranty?',
+		question: 'Имат ли внесените автомобили гаранция?',
 		answer:
-			'Warranty is not assumed automatically. If a vehicle has remaining factory coverage or dealer support, that must be confirmed for the specific vehicle before purchase.'
+			'Гаранция не се приема автоматично. Ако автомобилът има остатъчно фабрично покритие или дилърска поддръжка, това се потвърждава за конкретния автомобил преди покупка.'
 	},
 	{
 		topic: 'Selling',
-		question: 'Can Bohemcars help sell my vehicle?',
+		question: 'Може ли Bohemcars да помогне при продажба на моя автомобил?',
 		answer:
-			'Yes. Send VIN, mileage, photos, service history, condition, documents, and your expected price. Bohemcars can advise on a direct offer, client listing, or sale assistance.'
+			'Да. Изпратете VIN, пробег, снимки, сервизна история, състояние, документи и очаквана цена. Bohemcars може да предложи директна оферта, клиентска обява или съдействие при продажба.'
 	},
 	{
 		topic: 'Viewing',
-		question: 'Do I need an appointment?',
+		question: 'Нужна ли е предварителна уговорка за оглед?',
 		answer:
-			'Yes. Viewings are arranged by appointment so the vehicle, documents, and consultant context are prepared before you arrive.'
+			'Да. Огледите са с уговорка, за да бъдат автомобилът, документите и консултантът подготвени преди пристигане.'
 	},
 	{
 		topic: 'Compare',
-		question: 'Can Bohemcars compare several models?',
+		question: 'Може ли Bohemcars да сравни няколко модела?',
 		answer:
-			'Yes. Send the vehicles, budget, timing, and priorities. The team can compare equipment, history, running costs, availability, and import complexity.'
+			'Да. Изпратете автомобилите, бюджета, срока и приоритетите. Екипът може да сравни оборудване, история, разходи, наличност и сложност на вноса.'
 	}
 ];
 
@@ -72,15 +72,15 @@ export const featuredFaqs = supportFaqs.slice(0, 3);
 
 export const auxeroFaqGroups: AuxeroFaqGroup[] = [
 	{
-		title: 'Import And Buying',
+		title: 'Внос и покупка',
 		items: faqsByTopic(['Import', 'Timing', 'Checks'])
 	},
 	{
-		title: 'Costs And Documents',
+		title: 'Разходи и документи',
 		items: faqsByTopic(['Costs', 'Documents', 'Warranty'])
 	},
 	{
-		title: 'Selling And Appointments',
+		title: 'Продажба и огледи',
 		items: faqsByTopic(['Selling', 'Viewing', 'Compare'])
 	}
 ];

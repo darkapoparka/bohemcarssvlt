@@ -423,19 +423,14 @@
 
 			<!-- Search Cars Section -->
 			<div class="search-cars thumb effect-zoom-item container">
+				<h1 class="bohemcars-hero-accessible-title">{hero.heading}</h1>
 				<div class="sw-single-thumb swiper">
 					<div class="swiper-wrapper">
-						{#each hero.textSlides.slice(0, 1) as slide, index (slide.id)}
+						{#each hero.textSlides.slice(0, 1) as slide (slide.id)}
 							<div class="swiper-slide">
-								{#if index === 0}
-									<h1 class="search-cars__title effect-item effect-up text-center delay-3">
-										{slide.heading}
-									</h1>
-								{:else}
-									<p class="search-cars__title effect-item effect-up text-center delay-3">
-										{slide.heading}
-									</p>
-								{/if}
+								<p class="search-cars__title effect-item effect-up text-center delay-3">
+									{slide.heading}
+								</p>
 								<p class="h7 effect-item effect-up text-center text-white delay-4">
 									{slide.subtitle}
 								</p>
@@ -691,6 +686,15 @@
 		line-height: 1.08;
 		margin-bottom: 14px;
 		text-shadow: 0 4px 22px rgba(0, 0, 0, 0.4);
+	}
+
+	.bohemcars-hero-accessible-title {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	.search-cars p:not(.search-cars__title) {

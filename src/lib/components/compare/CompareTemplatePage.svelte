@@ -38,6 +38,12 @@
 </AuxeroPageShell>
 
 <style>
+	:global(body.auxero-template-compare-html section.pb-100 h1),
+	:global(body.auxero-template-compare-html section.pb-100 h2),
+	:global(body.auxero-template-compare-html section.pb-100 h2 + p) {
+		color: #1c1c1c !important;
+	}
+
 	:global(.bohemcars-dashboard-compare-scroll) {
 		overflow-x: auto;
 	}

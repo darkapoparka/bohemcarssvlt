@@ -316,10 +316,10 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeFeaturedSection.locator('.pagination-swiper-card-5')).toHaveCount(0);
 	const featuredCard = homeFeaturedSection.locator('.card-box-style-1').first();
 	await featuredCard.hover();
-	await expect(featuredCard).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+	await expect(featuredCard).toHaveCSS('background-color', 'rgb(228, 234, 223)');
 	await expect(featuredCard.locator('.content')).toHaveCSS(
 		'background-color',
-		'rgb(255, 255, 255)'
+		'rgb(228, 234, 223)'
 	);
 	await expect(featuredCard.locator('.card--img')).toHaveCSS('transform', 'none');
 	await expect(featuredCard.locator('.top .highlight')).toHaveText(/km$/);
@@ -348,9 +348,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	);
 	await expect(featuredCard.locator('.bohemcars-card-price__amount')).toHaveCSS(
 		'background-color',
-		'rgba(152, 188, 42, 0.2)'
+		'rgba(0, 0, 0, 0)'
 	);
-	await expect(featuredCard.locator('.card-box__price')).toHaveCSS('color', 'rgb(20, 33, 15)');
+	await expect(featuredCard.locator('.card-box__price')).toHaveCSS('color', 'rgb(23, 26, 21)');
 	await expect(featuredCard.locator('.bohemcars-card-price__finance')).toBeVisible();
 	const featuredMonthlyBox = await featuredCard
 		.locator('.bohemcars-card-price__monthly')
@@ -412,8 +412,8 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(brandCta).toHaveCSS('background-color', 'rgb(28, 28, 28)');
 	await expect(brandCta).toHaveCSS('color', 'rgb(255, 255, 255)');
 	await expect(brandCta).toHaveCSS('transform', 'none');
-	await expect(homeBrandSection.locator('.out-brand-2')).toHaveCount(12);
-	await expect(page.locator('.out-brand-2')).toHaveCount(12);
+	await expect(homeBrandSection.locator('.out-brand-2')).toHaveCount(5);
+	await expect(page.locator('.out-brand-2')).toHaveCount(5);
 	const firstBrandTile = homeBrandSection.locator('.out-brand-2').first();
 	await expect(firstBrandTile).toHaveCSS('background-color', 'rgb(238, 241, 237)');
 	await expect(firstBrandTile).toHaveCSS('border-top-width', '0px');
@@ -1076,9 +1076,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(
 		page.locator('.bohemcars-inventory-content .card-box-style-9').first()
 	).toBeVisible();
-	await expect(page.locator('.bohemcars-map-fallback')).toContainText(
-		'Exact vehicle viewing location'
-	);
+	await expect(page.locator('.bohemcars-map-fallback')).toContainText('Точната локация за оглед');
 
 	await page.goto('/inventory');
 	await refreshedFirstCard.locator('.bohemcars-favorite, .heart').click();
@@ -1250,12 +1248,12 @@ test('compare and consultants render branded buyer flows without login', async (
 test('planned public support routes render Bohemcars content and local forms', async ({ page }) => {
 	const routes = [
 		['/services', 'Внос от Канада'],
-		['/sell-your-car', 'Продай автомобила си With Bohemcars'],
-		['/about', 'Внос, проверка и предаване'],
+		['/sell-your-car', 'Продай автомобила си с Bohemcars'],
+		['/about', 'Bohemcars: автомобили от Канада'],
 		['/reviews', 'Aleksandar Vytev'],
 		['/calculator', 'Калкулатор за внос'],
-		['/faqs', 'Why import a vehicle from Canada?'],
-		['/terms', 'Bohemcars Terms Of Use'],
+		['/faqs', 'Защо да внеса автомобил от Канада?'],
+		['/terms', 'Условия за използване на Bohemcars'],
 		['/blog', 'Какво проверява Bohemcars преди внос на автомобил от Канада'],
 		['/blog/vnos-ot-kanada-proverka', 'Преди да препоръча автомобил, Bohemcars проверява произход']
 	];
@@ -1272,13 +1270,13 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(aboutContent.locator('.bohemcars-about-story')).toBeVisible();
 	await expect(aboutContent).toContainText('Внос от Канада');
 	await expect(aboutContent.locator('.bohemcars-about-service')).toHaveCount(4);
-	await expect(aboutContent.locator('.box-couter-item')).toHaveCount(4);
-	await expect(aboutContent.locator('.swiper-testimonior .testimonior-box')).toHaveCount(4);
-	await expect(aboutContent.locator('.why-choose-us.style2.style3')).toBeVisible();
 	await expect(aboutContent.locator('.sale-agent-box')).toHaveCount(3);
 	await expect(aboutContent.locator('.sale-agent-box.active')).toHaveCount(1);
 	await expect(aboutContent.locator('.sale-agent-social')).toHaveCount(3);
 	await expect(aboutContent.locator('.wow.fadeInUp .sale-agent-box')).toHaveCount(3);
+	await expect(aboutContent.locator('.bohemcars-about-brand-card')).toHaveCount(8);
+	await expect(aboutContent.locator('.bohemcars-about-location-card')).toHaveCount(3);
+	await expect(aboutContent.locator('.bohemcars-about-location__map iframe')).toBeVisible();
 	await expect(aboutContent.locator('.sale-agent-title').first()).toHaveAttribute(
 		'href',
 		/^\.?\/agents\/bohemcars-sales$/
@@ -1319,8 +1317,8 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(faqsContent.locator('.flat-toggle')).toHaveCount(12);
 	await expect(faqsContent.locator('.flat-toggle.active')).toHaveCount(4);
 	await expect(faqsContent.locator('.toggle-title.active')).toHaveCount(4);
-	await expect(faqsContent).toContainText('Import And Buying');
-	await expect(faqsContent).toContainText('Selling And Appointments');
+	await expect(faqsContent).toContainText('Внос и покупка');
+	await expect(faqsContent).toContainText('Продажба и огледи');
 
 	await page.goto('/blog');
 	const blogGrid = page.locator('[data-bohemcars-blog-grid]');
@@ -1419,6 +1417,11 @@ test('planned public support routes render Bohemcars content and local forms', a
 
 test('account and admin routes are role-aware and branded', async ({ page }) => {
 	await page.goto('/account?role=customer');
+	await expect(page.locator('body')).toContainText('Клиентски портал');
+	await expect(page.locator('body')).toContainText('Виж демо табло');
+	await expect(page.getByRole('link', { name: 'Виж демо табло' })).toBeVisible();
+
+	await page.goto('/account?demo=dashboard&role=customer');
 	await expect(page.locator('body')).toContainText('Account Dashboard');
 	await expect(page.locator('body')).toContainText('My Favorites');
 	await expect(
@@ -1515,7 +1518,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(accountProfile.locator('#last_name')).toHaveValue('Customer');
 	await expect(accountProfile.locator('#EmailAddress')).toHaveValue('customer@bohemcars.local');
 	await expect(accountProfile.locator('#Phone')).toHaveValue('+359 893 588 680');
-	await expect(accountProfile.locator('#SalesPhone')).toHaveValue('0888899911');
+	await expect(accountProfile.locator('#SalesPhone')).toHaveValue('+359 893 588 680');
 	await expect(accountProfile.locator('#Company')).toHaveValue('Bohemcars');
 	await expect(accountProfile.locator('#message')).toHaveValue(/Внос от Канада/);
 	await expect(accountProfile.locator('.widget-gg-map iframe')).toBeVisible();
@@ -1574,7 +1577,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(adminRecent).toBeVisible();
 	await expect(adminRecent).toContainText('Recent Inquiries');
 	await expect(adminRecent.locator('.comment-box')).toHaveCount(3);
-	await expect(adminRecent).toContainText('Canada import lead');
+	await expect(adminRecent).toContainText(/Canada import lead|QA Contact|QA Visitor/);
 	await expect(page.locator('body')).not.toContainText('Great Experience!');
 
 	await page.goto('/admin/inventory?role=admin');

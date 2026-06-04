@@ -179,8 +179,8 @@ export const bohemcarsVehicles = feed.listings.map(toVehicle);
 export const bohemcarsContact = {
 	primaryPhoneLabel: '+359 893 588 680',
 	primaryPhoneHref: 'tel:+359893588680',
-	marketplacePhoneLabel: '0888899911',
-	marketplacePhoneHref: 'tel:+359888899911',
+	marketplacePhoneLabel: '+359 893 588 680',
+	marketplacePhoneHref: 'tel:+359893588680',
 	emailLabel: 'bohemcars@gmail.com',
 	emailHref: 'mailto:bohemcars@gmail.com',
 	viberHref:
@@ -189,7 +189,9 @@ export const bohemcarsContact = {
 	reviewsHref: 'https://www.facebook.com/people/BohemCars/100090502502398/?sk=reviews',
 	youtubeHref: 'https://www.youtube.com/@BobbyDiv',
 	addressLabel: 'Пловдив, Южна индустриална зона',
-	appointmentNote: 'Огледи с предварителна уговорка'
+	appointmentNote: 'Огледи с предварителна уговорка',
+	mapEmbedUrl:
+		'https://maps.google.com/maps?q=Plovdiv%20South%20Industrial%20Zone&t=&z=13&ie=UTF8&iwloc=&output=embed'
 } as const;
 
 export const bohemcarsBrand = {
@@ -232,10 +234,10 @@ export const bohemcarsConsultants = [
 ] as const;
 
 export const mainNavigation = [
-	{ label: 'Home', href: '/', matchPrefixes: ['/'] },
-	{ label: 'Inventory', href: '/inventory', matchPrefixes: ['/inventory'] },
+	{ label: 'Начало', href: '/', matchPrefixes: ['/'] },
+	{ label: 'Автомобили', href: '/inventory', matchPrefixes: ['/inventory'] },
 	{
-		label: 'Services',
+		label: 'Услуги',
 		href: '/services',
 		matchPrefixes: [
 			'/services',
@@ -247,11 +249,11 @@ export const mainNavigation = [
 		]
 	},
 	{
-		label: 'About',
+		label: 'За нас',
 		href: '/about',
 		matchPrefixes: ['/about', '/agents', '/reviews', '/faqs', '/blog']
 	},
-	{ label: 'Contact', href: '/contact', matchPrefixes: ['/contact'] }
+	{ label: 'Контакти', href: '/contact', matchPrefixes: ['/contact'] }
 ] as const;
 
 export const isPrimaryNavActive = (pathname: string, item: (typeof mainNavigation)[number]) =>

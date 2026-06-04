@@ -30,7 +30,8 @@
 		position: relative;
 		overflow: hidden;
 		background: #111111 !important;
-		padding: 86px 0 !important;
+		min-height: calc(100vh - 94px);
+		padding: 42px 0 !important;
 	}
 
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84::before) {
@@ -46,10 +47,15 @@
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84 > .container) {
 		position: relative;
 		z-index: 2;
+		margin-top: -94px !important;
 	}
 
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84 .row) {
-		align-items: center;
+		align-items: flex-start;
+	}
+
+	:global(body.auxero-template-contact-us-html .container.contact-page > .grid) {
+		align-items: start;
 	}
 
 	:global(body.auxero-template-contact-us-html .contact-page-info) {
@@ -58,6 +64,7 @@
 		background: transparent !important;
 		box-shadow: none !important;
 		color: #ffffff;
+		padding-top: 18px;
 	}
 
 	:global(body.auxero-template-contact-us-html .contact-page-info h2),
@@ -72,6 +79,7 @@
 
 	:global(body.auxero-template-contact-us-html .contact-page-info > p) {
 		max-width: 600px;
+		margin-bottom: 24px !important;
 		color: rgb(255 255 255 / 0.82) !important;
 		font-weight: 500;
 	}
@@ -82,9 +90,21 @@
 		background: rgb(255 255 255 / 0.12) !important;
 	}
 
+	:global(body.auxero-template-contact-us-html .contact-page-info .contact .icon) {
+		width: 48px !important;
+		min-width: 48px !important;
+		height: 48px !important;
+		flex: 0 0 48px !important;
+	}
+
 	:global(body.auxero-template-contact-us-html .contact-page-info .contact .icon img),
 	:global(body.auxero-template-contact-us-html .contact-page-info-social img) {
 		filter: brightness(0) invert(1);
+	}
+
+	:global(body.auxero-template-contact-us-html .contact-page-info-social svg path) {
+		fill: #ffffff !important;
+		stroke: #ffffff !important;
 	}
 
 	:global(body.auxero-template-contact-us-html .contact-page-info-social a:hover) {
@@ -92,9 +112,17 @@
 		background: var(--primary) !important;
 	}
 
+	:global(body.auxero-template-contact-us-html .contact-page-info .contact) {
+		margin-bottom: 22px !important;
+	}
+
+	:global(body.auxero-template-contact-us-html .contact-page-info-social) {
+		margin-top: 18px !important;
+	}
+
 	@media (max-width: 991px) {
 		:global(body.auxero-template-contact-us-html section.bg-white.pb-84) {
-			padding: 68px 0 84px !important;
+			padding: 48px 0 64px !important;
 		}
 
 		:global(body.auxero-template-contact-us-html .contact-page-info) {

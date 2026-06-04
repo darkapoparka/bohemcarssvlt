@@ -28,6 +28,11 @@ export type AuxeroCompareRow = {
 
 const compareFallback = (locale: Locale) => (locale === 'bg' ? 'По запитване' : 'On request');
 
+const compareImageOverrides: Record<string, string> = {
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
+};
+
 export const compareVehiclesFromVehicles = (
 	vehicles: Vehicle[],
 	locale: Locale = 'en'
@@ -36,7 +41,7 @@ export const compareVehiclesFromVehicles = (
 		engine: vehicle.engine || compareFallback(locale),
 		exterior: vehicle.exterior || compareFallback(locale),
 		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
-		image: vehicle.image,
+		image: compareImageOverrides[vehicle.slug] ?? vehicle.image,
 		interior: vehicle.interior || compareFallback(locale),
 		location: vehicle.location,
 		mileageLabel: formatInventoryKm(vehicle.mileage),

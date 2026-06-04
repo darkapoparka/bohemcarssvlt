@@ -13,9 +13,9 @@
 
 <section class="bg-white pb-84" data-bohemcars-faqs>
 	<div class="container mb-60">
-		<h2>Frequently Asked Questions</h2>
+		<h1 class="h2">Често задавани въпроси</h1>
 		<div class="tf-spacing-style3"></div>
-		<p class="h3 mb-20 text-center capitalize">Bohemcars Support</p>
+		<p class="h3 mb-20 text-center capitalize">Съдействие от Bohemcars</p>
 		<div class="max-width-850 mx-auto w-full">
 			<FaqAccordion items={featured} forceWhite />
 		</div>

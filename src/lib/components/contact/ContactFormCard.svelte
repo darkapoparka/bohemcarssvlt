@@ -27,13 +27,13 @@
 </script>
 
 <div class="radius-20 contact-page-form bg-white">
-	<p class="h3 mb-12">{form.title}</p>
-	<p class="text-body-style-2 mb-32">{form.subtitle}</p>
+	<p class="h3 mb-8">{form.title}</p>
+	<p class="text-body-style-2 mb-22">{form.subtitle}</p>
 
 	<InquiryForm
 		{fields}
 		formClass="bohemcars-contact-form"
-		gridClass="md-grid-cols-1 mb-22 grid grid-cols-2 gap-x-20 gap-y-24"
+		gridClass="md-grid-cols-1 mb-16 grid grid-cols-2 gap-x-18 gap-y-16"
 		showEmptyStatus={false}
 		statusMessage="Съобщението е подготвено локално за Bohemcars"
 		submitLabel={form.submitLabel}
@@ -42,9 +42,16 @@
 
 <style>
 	.contact-page-form {
-		padding: 30px;
+		height: fit-content;
 		border: 1px solid var(--bc-border);
 		background: var(--bc-surface) !important;
+		padding: 24px;
+		align-self: start;
+	}
+
+	.contact-page-form > :global(.h3) {
+		font-size: 30px;
+		line-height: 1.16;
 	}
 
 	.contact-page-form :global(input),
@@ -55,16 +62,25 @@
 	}
 
 	.contact-page-form :global(input) {
-		height: 50px;
+		height: 44px;
 		border-radius: 12px;
-		padding: 10px 16px;
+		padding: 8px 16px;
 	}
 
 	.contact-page-form :global(textarea) {
-		min-height: 172px;
+		height: 104px !important;
+		min-height: 104px;
 		border-radius: 8px;
-		padding: 14px 16px;
+		padding: 12px 16px;
 		resize: vertical;
+	}
+
+	.contact-page-form :global(.bohemcars-contact-form p) {
+		margin-bottom: 6px !important;
+	}
+
+	.contact-page-form :global(.bohemcars-contact-form button) {
+		height: 48px;
 	}
 
 	.contact-page-form :global(input:focus),

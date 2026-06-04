@@ -59,6 +59,7 @@ export type InventoryMobileData = {
 	priceValue: string;
 	quickPills: InventoryMobilePill[];
 	searchDrawerTitle: string;
+	searchDisplayValue: string;
 	searchLabel: string;
 	searchPlaceholder: string;
 	searchValue: string;
@@ -376,6 +377,12 @@ export const inventoryMobileDataFromState = (
 		selectedBrands.length > 2
 			? `${selectedBrands.length} ${locale === 'bg' ? 'марки' : 'makes'}`
 			: selectedBrands.join(' + ') || text.all;
+	const modelValueLabel =
+		selectedQueries.length > 1
+			? `${selectedQueries.length} ${locale === 'bg' ? 'модела' : 'models'}`
+			: selectedQueries[0] || text.all;
+	const searchDisplayValue =
+		selectedQueries.length > 1 ? modelValueLabel : (state.filters.query ?? '');
 	const buildModelOptions = (brandFilter = '') => {
 		const modelBrandValues = splitFilterValues(brandFilter);
 		const selectedBrandMatches =
@@ -785,13 +792,14 @@ export const inventoryMobileDataFromState = (
 		modelOptions,
 		modelOptionsByBrand,
 		modelSearchPlaceholder: text.modelSearchPlaceholder,
-		modelValue: state.filters.query ?? text.all,
+		modelValue: modelValueLabel,
 		noMatchesLabel: text.noMatches,
 		priceLabel: text.price,
 		priceOptions,
 		priceValue: priceOptions.find((option) => option.active && option.value)?.label ?? text.all,
 		quickPills: [totalPill, ...brandPills, ...bodyPills],
 		searchDrawerTitle: text.searchDrawerTitle,
+		searchDisplayValue,
 		searchLabel: text.search,
 		searchPlaceholder: text.searchPlaceholder,
 		searchValue: state.filters.query ?? '',

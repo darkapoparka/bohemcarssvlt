@@ -49,7 +49,7 @@ export const auxeroCalculatorFields: AuxeroCalculatorField[] = [
 	{
 		active: true,
 		key: 'price',
-		label: 'Vehicle Price',
+		label: 'Цена на автомобила',
 		min: 0,
 		name: 'price',
 		step: 100,
@@ -58,7 +58,7 @@ export const auxeroCalculatorFields: AuxeroCalculatorField[] = [
 	{
 		active: false,
 		key: 'transport',
-		label: 'Transport And Port Costs',
+		label: 'Транспорт и портови разходи',
 		min: 0,
 		name: 'transport',
 		step: 100,
@@ -67,7 +67,7 @@ export const auxeroCalculatorFields: AuxeroCalculatorField[] = [
 	{
 		active: false,
 		key: 'dutyRate',
-		label: 'Customs Duty',
+		label: 'Мито',
 		min: 0,
 		mutedLabel: '(%)',
 		name: 'dutyRate',
@@ -77,7 +77,7 @@ export const auxeroCalculatorFields: AuxeroCalculatorField[] = [
 	{
 		active: false,
 		key: 'vatRate',
-		label: 'VAT',
+		label: 'ДДС',
 		min: 0,
 		mutedLabel: '(%)',
 		name: 'vatRate',
@@ -87,7 +87,7 @@ export const auxeroCalculatorFields: AuxeroCalculatorField[] = [
 	{
 		active: false,
 		key: 'prep',
-		label: 'Preparation And Registration',
+		label: 'Подготовка и регистрация',
 		min: 0,
 		name: 'prep',
 		step: 100,
@@ -116,19 +116,19 @@ export const createAuxeroCalculatorData = (): AuxeroCalculatorData => {
 
 	return {
 		ctaHref: '/contact',
-		ctaLabel: 'Request Exact Estimate',
+		ctaLabel: 'Заяви точна оферта',
 		fields: auxeroCalculatorFields,
 		summaryRows: [
-			{ key: 'price', label: 'Vehicle Price', value: auxeroCalculatorInitial.price },
-			{ key: 'transport', label: 'Transport', value: auxeroCalculatorInitial.transport },
-			{ key: 'duty', label: 'Customs Duty', value: totals.duty },
-			{ key: 'vat', label: 'VAT', value: totals.vat },
-			{ key: 'prep', label: 'Preparation And Registration', value: auxeroCalculatorInitial.prep }
+			{ key: 'price', label: 'Цена на автомобила', value: auxeroCalculatorInitial.price },
+			{ key: 'transport', label: 'Транспорт', value: auxeroCalculatorInitial.transport },
+			{ key: 'duty', label: 'Мито', value: totals.duty },
+			{ key: 'vat', label: 'ДДС', value: totals.vat },
+			{ key: 'prep', label: 'Подготовка и регистрация', value: auxeroCalculatorInitial.prep }
 		],
-		subtitle: 'Cost Summary',
-		title: 'Estimated Landed Cost*',
+		subtitle: 'Обобщение на разходите',
+		title: 'Ориентировъчна крайна цена*',
 		total: totals.total,
-		totalNote: 'before vehicle-specific confirmation'
+		totalNote: 'преди потвърждение за конкретния автомобил'
 	};
 };
 

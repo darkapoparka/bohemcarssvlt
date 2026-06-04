@@ -5,6 +5,14 @@ import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const routePath = 'account';
+
+	if (url.searchParams.get('demo') !== 'dashboard') {
+		return {
+			accountEntry: true,
+			auxeroFullPage: false
+		};
+	}
+
 	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
 
 	const renderOptions = {

@@ -90,6 +90,13 @@ export function splitAuxeroBodySection(bodyHtml: string, startComment: string, e
 	};
 }
 
+export function removeAuxeroBreadcrumb(html: string) {
+	return html.replace(
+		/<!-- breadcrumb -->\s*<section class="background-light mb-32">[\s\S]*?<\/section>\s*<!-- breadcrumb -->\s*/i,
+		''
+	);
+}
+
 const findClosingTagIndex = (html: string, openTagIndex: number, tagName: string) => {
 	const pattern = new RegExp(`<\\/?${tagName}\\b[^>]*>`, 'gi');
 	pattern.lastIndex = openTagIndex;

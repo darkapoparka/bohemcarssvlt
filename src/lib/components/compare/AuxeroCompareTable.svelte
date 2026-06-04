@@ -7,6 +7,7 @@
 	let { locale, vehicles }: { locale: Locale; vehicles: AuxeroCompareVehicle[] } = $props();
 
 	const rows: AuxeroCompareRow[] = $derived(compareRowsFromVehicles(vehicles, locale));
+	const removeLabel = $derived(locale === 'bg' ? 'Премахни' : 'Remove');
 </script>
 
 <div class="bohemcars-compare-scroll">
@@ -25,7 +26,7 @@
 							>
 								<img
 									src="/assets/icons/close-modal.svg"
-									alt="Remove"
+									alt={removeLabel}
 									style="width: 24px; height: 24px;"
 								/>
 							</button>

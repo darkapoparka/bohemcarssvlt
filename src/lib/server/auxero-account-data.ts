@@ -660,9 +660,9 @@ const recentInquiriesBox = (context: AccountContext) => {
 </div>`;
 };
 
-const favoriteCard = (vehicle: Vehicle, index: number) => {
+const favoriteCard = (vehicle: Vehicle) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
-	const tagClass = index % 2 === 0 ? 'bg-primary-2' : 'bg-green';
+	const tagClass = 'bg-primary-2';
 
 	return `<div class="card-box card-box-style-1" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 	<div class="top">
@@ -703,7 +703,7 @@ const favoriteGrid = (context: AccountContext) => {
 		.map((slug) => vehicles.find((vehicle) => vehicle.slug === slug))
 		.filter((vehicle): vehicle is Vehicle => Boolean(vehicle));
 	const content = savedVehicles.length
-		? savedVehicles.map((vehicle, index) => favoriteCard(vehicle, index)).join('\n')
+		? savedVehicles.map((vehicle) => favoriteCard(vehicle)).join('\n')
 		: `<div class="dashboard-box bg-white" data-bohemcars-favorites-empty="true">
 			<p class="h4 mb-8">No saved Bohemcars vehicles yet</p>
 			<p class="text-secondary">Use the heart action on inventory cards to build your saved list.</p>

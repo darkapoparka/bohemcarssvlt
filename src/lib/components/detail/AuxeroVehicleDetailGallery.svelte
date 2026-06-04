@@ -62,7 +62,7 @@
 		{#each images as image, index (index)}
 			<div class="swiper-slide">
 				<div class="listing-details-thumb">
-					<img src={image} alt="thumbnail" />
+					<img src={image} alt={`${title} снимка ${index + 1}`} />
 				</div>
 			</div>
 		{/each}

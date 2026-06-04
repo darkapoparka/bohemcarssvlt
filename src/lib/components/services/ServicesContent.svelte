@@ -13,23 +13,18 @@
 	} = $props();
 
 	const externalHref = (href: string) => ({ href });
+	const contactCta = {
+		className: 'btn btn-primary btn-large font-weight-600 max-w-min',
+		href: '/contact',
+		label: 'Свържи се'
+	};
 </script>
 
 <div class="bohemcars-services-page" data-bohemcars-services>
-	<PageBanner banner={services.hero} />
+	<PageBanner banner={services.hero} cta={contactCta} />
 
-	<section class="background-light py-100">
+	<section class="bohemcars-services-page__cards background-light py-100">
 		<div class="container">
-			<div class="title-section mb-40">
-				<div>
-					<h2>{services.cardsTitle}</h2>
-					<p class="bohemcars-services-page__lead text-secondary">{services.cardsDescription}</p>
-				</div>
-				<a
-					href={resolve('/contact')}
-					class="btn btn-line-style-2 effect-line-primary hover-fill-white btn-large">Свържи се</a
-				>
-			</div>
 			<div class="lg-grid-cols-2 md-grid-cols-1 grid grid-cols-3 gap-30">
 				{#each services.cards as service, index (service.title)}
 					<div
@@ -118,21 +113,29 @@
 		background: var(--bc-bg) !important;
 	}
 
-	.bohemcars-services-page__lead {
-		max-width: 620px;
-		margin-top: 10px;
-		line-height: 1.65;
+	.bohemcars-services-page__cards {
+		padding-top: 64px !important;
 	}
 
 	.bohemcars-service-card {
 		height: 100%;
-		border: 1px solid var(--bc-border);
-		background: var(--bc-surface);
+		border: 0 !important;
+		background: var(--bc-surface) !important;
+		box-shadow: none !important;
+		transform: none !important;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease !important;
 	}
 
-	.bohemcars-service-card:hover {
-		background: var(--bc-surface-hover);
-		border-color: var(--primary);
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-service-card:hover,
+		.bohemcars-service-card:focus-within {
+			border: 0 !important;
+			background: var(--bc-surface-hover) !important;
+			box-shadow: none !important;
+			transform: none !important;
+		}
 	}
 
 	.bohemcars-service-card__media {
@@ -164,13 +167,5 @@
 
 	.bohemcars-services-contact :global(.services-center-form) {
 		align-self: start;
-	}
-
-	@media (max-width: 767px) {
-		.bohemcars-services-page :global(.title-section) {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 18px;
-		}
 	}
 </style>

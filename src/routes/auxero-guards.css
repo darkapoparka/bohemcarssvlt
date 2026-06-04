@@ -6,6 +6,15 @@
 	--bc-border: #dde5d8;
 	--bc-control: #eef1ed;
 	--bc-control-hover: #e4eadf;
+	--bc-card-bg: #eef1ed;
+	--bc-card-hover: #e4eadf;
+	--bc-card-ink: #171a15;
+	--bc-card-muted: #666f63;
+	--bc-card-media: #f4f5f2;
+	--bc-card-chip: #ffffff;
+	--bc-card-chip-border: #dfe7dc;
+	--bc-card-pill: rgba(28, 28, 28, 0.78);
+	--bc-card-pill-hover: rgba(28, 28, 28, 0.88);
 }
 
 body {
@@ -89,6 +98,85 @@ body[class*='auxero-template-'] {
 
 .bohemcars-no-image-zoom.card-box-style-1 .image {
 	aspect-ratio: 4 / 3;
+}
+
+@media (min-width: 992px) {
+	.card-box[data-bohemcars-slug] {
+		border: 0 !important;
+		background: var(--bc-card-bg) !important;
+		color: var(--bc-card-ink);
+		transition: background-color 0.22s ease;
+	}
+
+	.card-box[data-bohemcars-slug]:hover,
+	.card-box[data-bohemcars-slug]:focus-within {
+		background: var(--bc-card-hover) !important;
+		box-shadow: none !important;
+	}
+
+	.card-box[data-bohemcars-slug] .image {
+		background: var(--bc-card-media);
+	}
+
+	.card-box[data-bohemcars-slug] .content {
+		background: var(--bc-card-bg) !important;
+	}
+
+	.card-box[data-bohemcars-slug]:hover .content,
+	.card-box[data-bohemcars-slug]:focus-within .content {
+		background: var(--bc-card-hover) !important;
+	}
+
+	.card-box[data-bohemcars-slug] .top .highlight {
+		border: 1px solid rgba(28, 28, 28, 0.1);
+		background: #ffffff !important;
+		box-shadow: 0 4px 12px rgba(28, 28, 28, 0.14);
+		color: var(--bc-card-ink) !important;
+	}
+
+	.card-box[data-bohemcars-slug] .bottom .category {
+		border-color: rgba(255, 255, 255, 0.18);
+		background-color: var(--bc-card-pill);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.card-box[data-bohemcars-slug]:hover .bottom .category,
+	.card-box[data-bohemcars-slug]:focus-within .bottom .category {
+		border-color: rgba(255, 255, 255, 0.24);
+		background-color: var(--bc-card-pill-hover);
+	}
+
+	.card-box[data-bohemcars-slug] .bottom .category a,
+	.card-box[data-bohemcars-slug]:hover .bottom .category a,
+	.card-box[data-bohemcars-slug]:focus-within .bottom .category a {
+		color: #ffffff !important;
+		text-decoration: none !important;
+	}
+
+	.card-box[data-bohemcars-slug] .content .tag li {
+		border-color: var(--bc-card-chip-border) !important;
+		background: var(--bc-card-chip) !important;
+	}
+
+	.card-box[data-bohemcars-slug] .content .tag li span {
+		color: #3d443a !important;
+	}
+
+	.card-box[data-bohemcars-slug] .card-box__price,
+	.card-box[data-bohemcars-slug] .bohemcars-card-price__amount {
+		color: var(--bc-card-ink) !important;
+	}
+
+	.card-box[data-bohemcars-slug] .bohemcars-card-price__amount,
+	.card-box[data-bohemcars-slug]:hover .bohemcars-card-price__amount,
+	.card-box[data-bohemcars-slug]:focus-within .bohemcars-card-price__amount {
+		background: transparent !important;
+	}
+
+	.card-box[data-bohemcars-slug] .bohemcars-card-price__finance-link {
+		color: var(--bc-card-muted) !important;
+	}
 }
 
 /* Soften heavy Cyrillic section headings (theme default is 600, which reads clunky in Manrope Cyrillic) */
@@ -280,10 +368,6 @@ body[class*='auxero-template-'] {
 		display: none !important;
 	}
 
-	body.inner-page .bohemcars-page-banner {
-		display: none !important;
-	}
-
 	body.inner-page .header-wrapper + section.background-light + section.pb-100,
 	body.inner-page .header-wrapper + section.background-light + section.bg-white.pb-84,
 	body.inner-page .header-wrapper + section.background-light + section.py-100 {
@@ -294,7 +378,6 @@ body[class*='auxero-template-'] {
 		display: none !important;
 	}
 
-	body.inner-page .bohemcars-services-page > section.background-light.py-100,
 	body.inner-page .bohemcars-about-page__intro {
 		padding-top: 32px !important;
 	}

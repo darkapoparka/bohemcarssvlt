@@ -1,5 +1,3 @@
-import { bohemcarsContact } from '$lib/data/bohemcars';
-
 export type AuxeroSellCarInputField = {
 	active: boolean;
 	id: string;
@@ -23,20 +21,20 @@ export type AuxeroSellCarStep = {
 
 export const auxeroSellSteps: AuxeroSellCarStep[] = [
 	{
-		title: 'Send Vehicle Details',
-		text: 'Share VIN, mileage, photos, equipment, documents, and your expected price.'
+		title: 'Изпрати данни за автомобила',
+		text: 'Сподели VIN, пробег, снимки, оборудване, документи и очаквана цена.'
 	},
 	{
-		title: 'Review History And Condition',
-		text: 'Bohemcars reviews the information and asks for anything needed before advising.'
+		title: 'Проверка на история и състояние',
+		text: 'Bohemcars преглежда информацията и уточнява липсващите детайли преди препоръка.'
 	},
 	{
-		title: 'Choose The Sale Path',
-		text: 'Discuss a direct offer, assisted sale, or publishing the car as a client vehicle.'
+		title: 'Избор на път за продажба',
+		text: 'Обсъждаме директна оферта, съдействие при продажба или публикуване като клиентски автомобил.'
 	},
 	{
-		title: 'Complete The Handoff',
-		text: 'Finalize documents, appointment timing, payment path, and vehicle handover.'
+		title: 'Финализиране и предаване',
+		text: 'Уточняваме документи, час за оглед, плащане и реалното предаване на автомобила.'
 	}
 ];
 
@@ -45,40 +43,40 @@ export const sellCarFormData: AuxeroSellCarFormData = {
 		{
 			active: true,
 			id: 'sellVIN',
-			label: 'VIN Number',
+			label: 'VIN номер',
 			name: 'vin',
-			placeholder: 'Enter the VIN',
+			placeholder: 'Въведете VIN',
 			required: true,
 			type: 'text'
 		},
 		{
 			active: false,
 			id: 'sellMileage',
-			label: 'Mileage',
+			label: 'Пробег',
 			name: 'mileage',
-			placeholder: 'Mileage in km',
+			placeholder: 'Пробег в км',
 			required: true,
 			type: 'text'
 		},
 		{
 			active: false,
 			id: 'sellPrice',
-			label: 'Expected Price',
+			label: 'Очаквана цена',
 			name: 'price',
-			placeholder: 'Expected price in EUR',
+			placeholder: 'Очаквана цена в EUR',
 			type: 'text'
 		},
 		{
 			active: false,
 			id: 'sellPhone',
-			label: 'Contact Phone',
+			label: 'Телефон за контакт',
 			name: 'phone',
-			placeholder: bohemcarsContact.primaryPhoneLabel,
+			placeholder: 'Вашият телефон',
 			required: true,
 			type: 'tel'
 		}
 	],
-	submitLabel: 'Request Review'
+	submitLabel: 'Заяви преглед'
 };
 
 export const sellCarFormDataWithPrefill = (vin = ''): AuxeroSellCarFormData => ({

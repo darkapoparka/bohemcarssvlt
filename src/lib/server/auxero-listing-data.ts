@@ -492,12 +492,7 @@ const inventoryBanner = (state: InventoryState) =>
 	</div>
 </section>`;
 
-const highlightClass = (vehicle: Vehicle, index: number) => {
-	if (vehicle.isClientVehicle) return 'bg-primary-2';
-	if (vehicle.tag === 'New listing') return 'bg-green';
-
-	return index % 4 === 0 ? 'bg-primary-2' : 'bg-green';
-};
+const highlightClass = () => 'bg-primary-2';
 
 const cardMeta = (vehicle: Vehicle, tagClass = 'tag style2 mb-10') => `<ul class="${tagClass}">
 	<li><img src="/assets/icons/icon-gauge.svg" alt="mileage"><span>${km(vehicle.mileage)}</span></li>
@@ -519,7 +514,7 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 
 	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
-			<p class="${highlightClass(vehicle, index)} text-white highlight">${km(vehicle.mileage)}</p>
+			<p class="${highlightClass()} text-white highlight">${km(vehicle.mileage)}</p>
 			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="image">
@@ -558,12 +553,12 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 	</div>`;
 };
 
-const listCard = (vehicle: Vehicle, index: number) => {
+const listCard = (vehicle: Vehicle) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
 
 	return `<div class="card-box card-box-style-9 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
-			<p class="${highlightClass(vehicle, index)} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
+			<p class="${highlightClass()} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
 			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="bottom">
@@ -636,9 +631,7 @@ const inventoryContent = (state: InventoryState) => {
 				? 'grid grid-cols-1 gap-20'
 				: 'grid grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
 	const cards = state.selected
-		.map((vehicle, index) =>
-			state.view === 'map' ? listCard(vehicle, index) : gridCard(vehicle, index)
-		)
+		.map((vehicle, index) => (state.view === 'map' ? listCard(vehicle) : gridCard(vehicle, index)))
 		.join('\n');
 	const empty = `<div class="card-box card-box-style-1 bohemcars-empty-state">
 		<div class="content border-light">
@@ -875,10 +868,18 @@ export const applyCompareData = (html: string, options: AuxeroRenderOptions = {}
 
 	return replaceDemoVehicleCopy(
 		html
-			.replaceAll('Compare Cars Side-by-Side', 'Compare Bohemcars Vehicles Side-by-Side')
+			.replaceAll(
+				'<h2>Compare Cars Side-by-Side</h2>',
+				'<h1 class="h2">Сравни автомобили от Bohemcars</h1>'
+			)
+			.replaceAll(
+				'<h2 class="text-center mb-12 capitalize">Сравни автомобили от Bohemcars</h2>',
+				'<h1 class="h2 text-center mb-12 capitalize">Сравни автомобили от Bohemcars</h1>'
+			)
+			.replaceAll('Compare Cars Side-by-Side', 'Сравни автомобили от Bohemcars')
 			.replaceAll(
 				'Compare features, performance, and pricing to choose the perfect car.',
-				'Compare price, mileage, source details, and specifications before you book a viewing.'
+				'Сравни цена, пробег, източник и спецификации преди да запазиш оглед.'
 			)
 			.replace(/<table class="card-details--table">[\s\S]*?<\/table>/g, table)
 	);
@@ -963,15 +964,19 @@ const agentGrid = (
 export const applyAgentsData = (html: string, options: AuxeroRenderOptions = {}) => {
 	const adminMode = options.routePath?.replace(/^\/+/, '').startsWith('admin/agents') ?? false;
 	const next = html
-		.replaceAll('Find a Dealer', 'Find a Consultant')
+		.replaceAll('Find a Dealer', 'Намери консултант')
 		.replace(
 			'<h2>Bohemcars Consultants</h2>',
-			adminMode ? '<h2>Bohemcars Agent Management</h2>' : '<h2>Bohemcars Consultants</h2>'
+			adminMode
+				? '<h1 class="h2">Управление на консултанти</h1>'
+				: '<h1 class="h2">Консултанти на Bohemcars</h1>'
 		);
 
 	return replaceFirstDivAfter(
 		next,
-		adminMode ? '<h2>Bohemcars Agent Management</h2>' : '<h2>Bohemcars Consultants</h2>',
+		adminMode
+			? '<h1 class="h2">Управление на консултанти</h1>'
+			: '<h1 class="h2">Консултанти на Bohemcars</h1>',
 		'<div class="grid grid-cols-4',
 		agentGrid(adminMode)
 	);
@@ -990,7 +995,7 @@ const agentInventoryGrid = (agent: Agent) => {
 	const inventory = getAgentInventoryState(agent, 3);
 
 	return `<div class="grid grid-cols-1 gap-20 mb-40 bohemcars-agent-inventory">
-		${inventory.vehicles.map((vehicle, index) => listCard(vehicle, index)).join('\n')}
+		${inventory.vehicles.map((vehicle) => listCard(vehicle)).join('\n')}
 	</div>`;
 };
 
@@ -1203,11 +1208,11 @@ const mapLocationGroups = (source: Vehicle[]) => {
 };
 
 const matchingVehicleLabel = (count: number) =>
-	`${count} matching ${count === 1 ? 'vehicle' : 'vehicles'}`;
+	`${count} ${count === 1 ? 'съвпадащ автомобил' : 'съвпадащи автомобила'}`;
 
 const mapLocationList = (groups: MapLocationGroup[]) => {
 	if (!groups.length) {
-		return `<p class="text-secondary mb-16" data-bohemcars-map-empty="true">No vehicles match these map filters yet. Reset the filters or call Bohemcars for incoming inventory.</p>`;
+		return `<p class="text-secondary mb-16" data-bohemcars-map-empty="true">Няма автомобили по тези филтри. Изчисти филтрите или се свържи с Bohemcars за входящи автомобили.</p>`;
 	}
 
 	return `<ul class="bohemcars-map-fallback__locations">
@@ -1215,7 +1220,7 @@ const mapLocationList = (groups: MapLocationGroup[]) => {
 			.map(
 				(group) => `<li data-bohemcars-map-location="${escapeHtml(group.location)}">
 					<span class="h7 font-weight-600">${escapeHtml(group.location)}</span>
-					<span class="text-secondary">${group.count} ${group.count === 1 ? 'vehicle' : 'vehicles'}</span>
+					<span class="text-secondary">${group.count} ${group.count === 1 ? 'автомобил' : 'автомобила'}</span>
 					<span class="text-secondary">${group.samples
 						.map((vehicle) => escapeHtml(vehicle.title))
 						.join(' / ')}</span>
@@ -1233,11 +1238,11 @@ const replaceMap = (html: string, state: InventoryState) => {
 			/<div id="map" data-map-zoom="16" data-map-scroll="true"><\/div>/,
 			`<div id="map" class="bohemcars-map-fallback" data-map-zoom="16" data-map-scroll="true" data-bohemcars-map-selected="${state.selected.length}">
 				<div class="bohemcars-map-fallback__inner">
-					<p class="h4 mb-12">Bohemcars showroom area</p>
+					<p class="h4 mb-12">Зона за огледи Bohemcars</p>
 					<p class="text-secondary mb-8">${escapeHtml(bohemcarsContact.addressLabel)}</p>
-					<p class="text-secondary mb-12" data-bohemcars-map-summary="${escapeHtml(matchingVehicleLabel(state.selected.length))}">${escapeHtml(matchingVehicleLabel(state.selected.length))} grouped by appointment area.</p>
+					<p class="text-secondary mb-12" data-bohemcars-map-summary="${escapeHtml(matchingVehicleLabel(state.selected.length))}">${escapeHtml(matchingVehicleLabel(state.selected.length))}, групирани по локация за оглед.</p>
 					${mapLocationList(groups)}
-					<p class="text-secondary mb-16">${escapeHtml(bohemcarsContact.appointmentNote)}. Exact vehicle viewing location is confirmed by phone.</p>
+					<p class="text-secondary mb-16">${escapeHtml(bohemcarsContact.appointmentNote)}. Точната локация за оглед се потвърждава по телефона.</p>
 					<a class="btn btn-medium btn-primary-3 font-weight-600" href="${bohemcarsContact.primaryPhoneHref}">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</a>
 				</div>
 			</div>`
@@ -1395,6 +1400,10 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 			/<div class="content-inner active">(\s*<p class="h5 mb-4">Price:<\/p>\s*<p class="h4 mb-4">\$245\/mo)/,
 			'<div class="content-inner">$1'
 		)
+		.replace(
+			'<h2 class="capitalize">Audi A6 Avant e-tron</h2>',
+			'<h1 class="h2 capitalize">Audi A6 Avant e-tron</h1>'
+		)
 		.replaceAll('Audi A6 Avant e-tron', escapeHtml(vehicle.title))
 		.replaceAll('Audi A6 Avant E-Tron', escapeHtml(vehicle.title))
 		.replace(
@@ -1442,6 +1451,71 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 		.replaceAll('Tony Nguyen', '')
 		.replaceAll('This Vehicle&#39;s Availability 2', 'Registration and documents')
 		.replaceAll('This Vehicle&#39;s Availability 3', 'Viewing appointment');
+
+	next = next
+		.replaceAll('Financing Calculator', 'Калкулатор за финансиране')
+		.replaceAll('Services Calculator', 'Калкулатор за финансиране')
+		.replaceAll('Car Price', 'Цена на автомобила')
+		.replaceAll('Interest Rate', 'Лихвен процент')
+		.replaceAll('Loan Term (months)', 'Срок (месеци)')
+		.replaceAll('60 months', '60 месеца')
+		.replaceAll('30 months', '30 месеца')
+		.replaceAll('10 months', '10 месеца')
+		.replaceAll('Down Payment', 'Първоначална вноска')
+		.replaceAll('Calculate', 'Изчисли')
+		.replaceAll('Monthly Payment:', 'Месечна вноска:')
+		.replaceAll('Total Interest Payment:', 'Обща лихва:')
+		.replaceAll('Est. Total Loan:', 'Прибл. общо:')
+		.replaceAll('$788.56/Month', '788.56 EUR/мес.')
+		.replaceAll('$1413.60', '1413.60 EUR')
+		.replaceAll('$47713.60', '47713.60 EUR')
+		.replaceAll('Customer Reviews', 'Отзиви от клиенти')
+		.replaceAll('(1,968 Ratings)', '(1 968 оценки)')
+		.replaceAll('Write a review', 'Напиши отзив')
+		.replaceAll('Randynox', 'Клиент от Пловдив')
+		.replaceAll('Mista Nyroom', 'Купувач от София')
+		.replaceAll('Heather Dick', 'Собственик от Варна')
+		.replaceAll('August 13, 2025', '13 август 2025')
+		.replaceAll('August 22, 2025', '22 август 2025')
+		.replaceAll('August 18, 2025', '18 август 2025')
+		.replaceAll(
+			'Bought new in 2012, and it’s still running strong at over 180,000 miles. I’ve only had to replace the battery and brakes once. The ride is smooth, the interior still feels solid, and the fuel economy hasn’t dropped much.',
+			'Bohemcars ни помогна да изберем автомобил с ясна история и реален пробег. Огледът беше организиран спокойно, а документите бяха обяснени предварително.'
+		)
+		.replaceAll(
+			'Picked this car up used about five years ago with 90k miles. It’s now at 160k and still starts every morning without hesitation. Maintenance is simple, parts are cheap, and it’s surprisingly comfortable on long drives.',
+			'Получихме сравнение между няколко автомобила и ясна крайна цена. Най-ценно беше, че екипът не натискаше сделката, а показа плюсовете и рисковете.'
+		)
+		.replaceAll(
+			'Owned since 2010. Drove it through all kinds of weather, from hot summers to snowy roads, and it never let me down. A few minor repairs here and there — mostly wear and tear — but the engine just keeps going.',
+			'Процесът по внос беше проследим от първия разговор до регистрацията. Получихме снимки, документи и реалистични срокове, което ни спести много нерви.'
+		)
+		.replaceAll('View more reviews (98)', 'Виж още отзиви (98)')
+		.replaceAll('add a review', 'Добави отзив')
+		.replaceAll('Your email address will not be published', 'Имейлът няма да бъде публикуван.')
+		.replaceAll('Login to add a Review', 'Свържи се за отзив')
+		.replaceAll('Send Inquiry about Vehicle', 'Запитване за автомобила')
+		.replaceAll('<p class="mb-8">Name</p>', '<p class="mb-8">Име</p>')
+		.replaceAll('<p class="mb-8">Email</p>', '<p class="mb-8">Имейл</p>')
+		.replaceAll('<p class="mb-8">Phone</p>', '<p class="mb-8">Телефон</p>')
+		.replaceAll('<p class="mb-8">Subject</p>', '<p class="mb-8">Тема</p>')
+		.replaceAll('<p class="mb-6">Message</p>', '<p class="mb-6">Съобщение</p>')
+		.replaceAll('placeholder="Phone (optional)"', 'placeholder="Телефон (по избор)"')
+		.replaceAll('placeholder="Comment"', 'placeholder="Коментар"')
+		.replaceAll('This Vehicle&#39;s Availability', 'Наличност на автомобила')
+		.replaceAll('Registration and documents', 'Регистрация и документи')
+		.replaceAll('Viewing appointment', 'Оглед по уговорка')
+		.replaceAll('Send Inquiry', 'Изпрати запитване')
+		.replaceAll(
+			'Yes, I would like to receive price alerts on this vehicle and helpful shopping information.',
+			'Искам да получа информация за цената и следващите стъпки за този автомобил.'
+		)
+		.replaceAll('By using this service, you accept our', 'С изпращането приемате')
+		.replaceAll('Visitor Agreement.', 'условията за запитване.')
+		.replace(
+			/<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=[^"]+"/,
+			`<iframe src="${escapeHtml(bohemcarsContact.mapEmbedUrl)}"`
+		);
 
 	next = next
 		.replace(

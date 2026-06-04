@@ -328,11 +328,7 @@ const cardMeta = (
 
 const homeVehicleCard = (vehicle: Vehicle, index: number) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
-	const highlightClass = vehicle.isClientVehicle
-		? 'bg-primary-2'
-		: index % 2 === 0
-			? 'bg-green'
-			: 'bg-primary-2';
+	const highlightClass = 'bg-primary-2';
 
 	return `<div class="card-box card-box-style-1 wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 	<div class="top">
@@ -521,9 +517,9 @@ const home05CardMeta = (
 	</li>
 </ul>`;
 
-const home05VehicleCard = (vehicle: Vehicle, index: number, style2 = false) => {
+const home05VehicleCard = (vehicle: Vehicle, style2 = false) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
-	const highlightClass = index % 2 === 0 ? 'bg-primary-2' : 'bg-green';
+	const highlightClass = 'bg-primary-2';
 	const highlight = vehicle.tag ?? (vehicle.isClientVehicle ? 'Client vehicle' : 'Available');
 
 	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
@@ -594,8 +590,8 @@ const home05FeaturedInventory = () => `<!-- New Vehicles -->
 				${vehicles
 					.slice(0, 6)
 					.map(
-						(vehicle, index) => `<div class="swiper-slide">
-					${home05VehicleCard(vehicle, index)}
+						(vehicle) => `<div class="swiper-slide">
+					${home05VehicleCard(vehicle)}
 				</div>`
 					)
 					.join('\n')}
@@ -732,7 +728,7 @@ const home05BudgetSection = () => `<!-- Used Cars by Budget -->
 				<div class="grid grid-cols-3 xl-grid-cols-2 sm-grid-cols-1 gap-30">
 					${vehicles
 						.slice(0, 9)
-						.map((vehicle, index) => home05VehicleCard(vehicle, index, true))
+						.map((vehicle) => home05VehicleCard(vehicle, true))
 						.join('\n')}
 				</div>
 			</div>
@@ -984,9 +980,9 @@ const compareSection = () => `<!-- Compare Top Rated Vehicles -->
 </section>
 <!-- /Compare Top Rated Vehicles -->`;
 
-const darkVehicleCard = (vehicle: Vehicle, index: number) => {
+const darkVehicleCard = (vehicle: Vehicle) => {
 	const url = `/inventory/${encodeURIComponent(vehicle.slug)}`;
-	const highlightClass = index % 2 === 0 ? 'bg-primary-2' : 'bg-green';
+	const highlightClass = 'bg-primary-2';
 
 	return `<div class="swiper-slide">
 	<div class="card-box card-box-style-2" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">

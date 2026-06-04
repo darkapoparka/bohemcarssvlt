@@ -39,7 +39,7 @@ export const contactFormData: AuxeroContactFormData = {
 			id: 'SendInquiryemail',
 			label: 'Имейл',
 			name: 'SendInquiryemail',
-			placeholder: 'bohemcars@gmail.com',
+			placeholder: 'Вашият имейл',
 			type: 'email'
 		},
 		{
@@ -47,7 +47,7 @@ export const contactFormData: AuxeroContactFormData = {
 			id: 'SendInquiryphone',
 			label: 'Телефон',
 			name: 'SendInquiryphone',
-			placeholder: '+359 893 588 680',
+			placeholder: 'Вашият телефон',
 			type: 'tel'
 		}
 	],

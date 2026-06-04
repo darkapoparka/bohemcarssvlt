@@ -394,7 +394,7 @@
 				>
 					<Search size={21} strokeWidth={2.15} aria-hidden="true" />
 					<span class:active={Boolean(mobile.searchValue)}>
-						{mobile.searchValue || mobile.searchPlaceholder}
+						{mobile.searchDisplayValue || mobile.searchPlaceholder}
 					</span>
 				</button>
 				<button
@@ -993,6 +993,9 @@
 	}
 
 	.bohemcars-inventory-mobile {
+		width: 100%;
+		max-width: 100vw;
+		overflow-x: hidden;
 		min-height: 100vh;
 		background: var(--bc-bg);
 		color: #111111;
@@ -1000,16 +1003,23 @@
 
 	.bohemcars-inventory-mobile__main {
 		display: grid;
+		width: 100%;
+		max-width: 100vw;
+		min-width: 0;
 		gap: 10px;
+		overflow-x: hidden;
 		padding: 14px 14px 92px;
 	}
 
 	.bohemcars-inventory-mobile__search {
 		display: block;
+		min-width: 0;
 	}
 
 	.bohemcars-inventory-mobile__search-field {
 		display: flex;
+		width: 100%;
+		max-width: 100%;
 		min-height: 52px;
 		min-width: 0;
 		align-items: center;
@@ -1023,6 +1033,7 @@
 
 	.bohemcars-inventory-mobile__search-label {
 		display: flex;
+		overflow: hidden;
 		min-width: 0;
 		height: 44px !important;
 		flex: 1 1 auto;
@@ -1085,6 +1096,8 @@
 
 	.bohemcars-inventory-mobile__tools {
 		display: flex;
+		max-width: calc(100vw - 28px);
+		min-width: 0;
 		gap: 8px;
 		margin: 0 -14px;
 		overflow-x: auto;
@@ -1099,6 +1112,7 @@
 	.bohemcars-inventory-mobile__tools a,
 	.bohemcars-inventory-mobile__tools button {
 		display: inline-flex;
+		min-width: 0;
 		flex: 0 0 auto;
 		min-height: 44px;
 		align-items: center;
@@ -1154,6 +1168,7 @@
 
 	.bohemcars-inventory-mobile__tool-choice strong {
 		display: block;
+		min-width: 0;
 		max-width: min(42vw, 138px);
 		overflow: hidden;
 		color: #111111;
@@ -1178,12 +1193,16 @@
 
 	.bohemcars-inventory-mobile__cards {
 		display: grid;
+		min-width: 0;
 		gap: 10px;
 		margin-top: 8px;
 	}
 
 	.bohemcars-inventory-mobile-card {
 		display: grid;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 		grid-template-columns: 132px minmax(0, 1fr);
 		min-height: 154px;
 		overflow: hidden;
@@ -1224,7 +1243,9 @@
 
 	.bohemcars-inventory-mobile-card__body {
 		display: grid;
+		min-width: 0;
 		align-content: start;
+		overflow: hidden;
 		padding: 9px 10px;
 	}
 
@@ -1239,6 +1260,7 @@
 
 	.bohemcars-inventory-mobile-card__body h2 {
 		display: -webkit-box;
+		min-width: 0;
 		min-height: 40px;
 		margin: 0 0 5px;
 		overflow: hidden;
@@ -1252,12 +1274,18 @@
 	}
 
 	.bohemcars-inventory-mobile-card__body h2 a {
-		display: block;
+		display: -webkit-box;
+		min-width: 0;
 		min-height: 44px;
+		overflow: hidden;
 		color: inherit;
 		font-size: inherit;
 		font-weight: 500;
 		line-height: inherit;
+		overflow-wrap: anywhere;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
 	}
 
 	.bohemcars-inventory-mobile-card__body strong {
@@ -1301,6 +1329,10 @@
 		line-height: 13px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.bohemcars-inventory-mobile-card__body li :global(svg) {
+		flex: 0 0 auto;
 	}
 
 	.bohemcars-inventory-mobile__empty {
@@ -1386,21 +1418,42 @@
 		grid-template-rows: max-content max-content minmax(0, 1fr) max-content;
 	}
 
-	.bohemcars-inventory-mobile
-		:global(.bohemcars-inventory-mobile-drawer__sheet[data-vaul-drawer][data-state='open']) {
-		transform: translate3d(0, 0, 0) !important;
-	}
-
 	:global(.bohemcars-inventory-mobile-drawer__sheet[data-vaul-drawer]::-webkit-scrollbar) {
 		display: none;
 	}
 
-	:global(.bohemcars-inventory-mobile-drawer__handle) {
+	:global(.bohemcars-inventory-mobile-drawer__handle[data-vaul-handle]) {
+		position: relative;
+		display: block;
+		width: 56px;
+		height: 22px;
+		justify-self: center;
+		border-radius: 0;
+		background: transparent;
+		opacity: 1;
+	}
+
+	:global(.bohemcars-inventory-mobile-drawer__handle[data-vaul-handle])::after {
+		position: absolute;
+		top: 50%;
+		left: 50%;
 		width: 44px;
 		height: 5px;
-		justify-self: center;
+		transform: translate(-50%, -50%);
 		border-radius: 999px;
 		background: var(--bc-border);
+		content: '';
+	}
+
+	:global(.bohemcars-inventory-mobile-drawer__handle [data-vaul-handle-hitarea]) {
+		position: absolute;
+		inset: 0;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		transform: none;
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet header) {

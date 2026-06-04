@@ -1443,15 +1443,15 @@ function injectLocalBehavior(
 		color: #1c1c1c !important;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box {
-		background: #f2f4ee;
+		background: #eef1ed;
 		border: 0 !important;
-		box-shadow: 0 10px 22px rgba(28, 28, 28, 0.05) !important;
+		box-shadow: none !important;
 		transition:
 			background-color 0.22s ease,
 			box-shadow 0.22s ease;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box .image {
-		background: #eef1ea;
+		background: #f4f5f2;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box .top .highlight {
 		background: #ffffff !important;
@@ -1459,20 +1459,21 @@ function injectLocalBehavior(
 		color: #1c1c1c !important;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box .content {
-		background: #ffffff;
+		background: #eef1ed;
 		border: 0 !important;
 		transition: background-color 0.22s ease;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box.active,
 	body.${pageClass} .bohemcars-inventory-content .card-box:hover,
 	body.${pageClass} .bohemcars-inventory-content .card-box:focus-within {
-		background: #ffffff;
-		box-shadow: 0 12px 26px rgba(28, 28, 28, 0.075) !important;
+		background: #e4eadf;
+		box-shadow: none !important;
+		transform: none !important;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box.active .content,
 	body.${pageClass} .bohemcars-inventory-content .card-box:hover .content,
 	body.${pageClass} .bohemcars-inventory-content .card-box:focus-within .content {
-		background: #ffffff;
+		background: #e4eadf;
 	}
 	body.${pageClass} .bohemcars-inventory-content .card-box.active .card--img,
 	body.${pageClass} .bohemcars-inventory-content .card-box:hover .card--img,
@@ -1879,7 +1880,7 @@ function injectLocalBehavior(
 		});
 	};
 	const favoriteCardHtml = (vehicle, index) => {
-		const tagClass = index % 2 === 0 ? 'bg-primary-2' : 'bg-green';
+		const tagClass = 'bg-primary-2';
 		const favoriteIconHtml = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 14C8 14 1.5 10.5 1.5 6.375C1.5 5.47989 1.85558 5 4.875 3C6.28688 3 7.49625 3.76937 8 5C8.50375 3.76937 9.71312 3 11.125 3C14.1444 5 14.5 5.47989 14.5 6.375C14.5 10.5 8 14 8 14Z" stroke="white" fill="#d9f275"/></svg>';
 		return '<div class="card-box card-box-style-1" data-bohemcars-slug="' + escapeText(vehicle.slug) + '">' +
 			'<div class="top"><p class="' + tagClass + ' text-white highlight">' + escapeText(vehicle.tag || vehicle.condition || 'Available') + '</p><p class="heart bohemcars-favorite is-active" role="button" tabindex="0" aria-label="Remove ' + escapeText(vehicle.title) + '">' + favoriteIconHtml + '</p></div>' +

@@ -17,13 +17,13 @@ export type AuxeroFavoriteVehicleCard = {
 	year: number;
 };
 
-const favoriteHighlightClass = (index: number) => (index % 2 === 0 ? 'bg-primary-2' : 'bg-green');
+const favoriteHighlightClass = () => 'bg-primary-2';
 
 export const favoriteCardsFromVehicles = (vehicles: Vehicle[]): AuxeroFavoriteVehicleCard[] =>
-	vehicles.map((vehicle, index) => ({
+	vehicles.map((vehicle) => ({
 		brand: vehicle.brand,
 		fuel: vehicle.fuel,
-		highlightClass: favoriteHighlightClass(index),
+		highlightClass: favoriteHighlightClass(),
 		image: vehicle.image,
 		imagesCount: vehicle.images.length || 1,
 		mileageLabel: formatInventoryKm(vehicle.mileage),

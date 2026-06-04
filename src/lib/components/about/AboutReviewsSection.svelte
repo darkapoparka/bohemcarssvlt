@@ -32,11 +32,7 @@
 
 <style>
 	.bohemcars-about-reviews {
-		padding-top: 54px;
-	}
-
-	.bohemcars-about-reviews :global(.container) {
-		max-width: 1010px;
+		padding-top: 48px;
 	}
 
 	.bohemcars-about-reviews :global(.title-section) {
@@ -47,6 +43,7 @@
 	.bohemcars-about-reviews :global(.testimonior-box) {
 		border: 1px solid var(--bc-border);
 		background: var(--bc-surface);
+		box-shadow: none;
 	}
 
 	@media (max-width: 767px) {

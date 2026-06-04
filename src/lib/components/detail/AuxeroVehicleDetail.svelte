@@ -62,7 +62,7 @@
 <div class="listing-details" data-bohemcars-slug={detail.slug} data-bohemcars-detail="true">
 	<div class="listing-details--content">
 		<div class="title-section mb-40">
-			<h2 class="capitalize">{detail.title}</h2>
+			<h1 class="h2 capitalize">{detail.title}</h1>
 			<div class="flex items-center justify-end gap-12">
 				<a
 					href={compareHref}
@@ -85,7 +85,11 @@
 					{@render favoriteIcon()}
 				</a>
 
-				<a href={contactHref} class="btn-icon-circle hover-fill-white">
+				<a
+					href={contactHref}
+					class="btn-icon-circle hover-fill-white"
+					aria-label={`Попитай Bohemcars за ${detail.title}`}
+				>
 					{@render shareIcon()}
 				</a>
 			</div>

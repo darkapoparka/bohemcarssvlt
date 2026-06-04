@@ -17,7 +17,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="sm-grid-cols-1 lg-grid-cols-2 xl-gap-16 grid grid-cols-3 gap-20">
+		<div class="bohemcars-consultants__grid sm-grid-cols-1 lg-grid-cols-2 grid grid-cols-3 gap-20">
 			{#each consultants as consultant, index (consultant.slug)}
 				<div class="wow fadeInUp" data-wow-delay={`0.${(index % 4) + 1}s`}>
 					<AuxeroAgentCard card={consultant} />
@@ -29,12 +29,8 @@
 
 <style>
 	.bohemcars-consultants {
-		background: #ffffff;
-		padding: 62px 0 70px;
-	}
-
-	.bohemcars-consultants :global(.container) {
-		max-width: 1010px;
+		background: var(--bc-bg);
+		padding: 56px 0 62px;
 	}
 
 	.bohemcars-consultants :global(.title-section) {
@@ -62,15 +58,14 @@
 		line-height: 1.55;
 	}
 
+	.bohemcars-consultants__grid {
+		max-width: 1120px;
+		margin: 0 auto;
+	}
+
 	:global(.bohemcars-about-page .sale-agent-box:hover .sale-agent-title),
 	:global(.bohemcars-about-page .sale-agent-box.active .sale-agent-title) {
 		text-decoration: none;
-	}
-
-	:global(.bohemcars-about-page .sale-agent-social li a:hover),
-	:global(.bohemcars-about-page .sale-agent-box .card-bottom .contact li a:hover) {
-		border-color: #d6dbd1 !important;
-		background-color: #eef0ec !important;
 	}
 
 	@media (max-width: 767px) {

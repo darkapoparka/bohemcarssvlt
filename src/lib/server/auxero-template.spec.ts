@@ -48,22 +48,22 @@ describe('Auxero template Bohemcars adapter', () => {
 
 	it('renders the planned Bohemcars route surfaces without opening a browser server', async () => {
 		const routeCases = [
-			['about', 'Екип за автомобили от Канада, проверка и спокойно предаване'],
-			['services', 'Bohemcars Services Center'],
-			['sell-your-car', 'Sell Your Car With Bohemcars'],
-			['compare', 'Compare Bohemcars Vehicles Side-by-Side'],
+			['about', 'Услуги около внос, оглед и продажба'],
+			['services', 'Услуги от Bohemcars'],
+			['sell-your-car', 'Продай автомобила си с Bohemcars'],
+			['compare', 'Сравни автомобили от Bohemcars'],
 			['agents', 'Bohemcars Consultants'],
 			['agents/bohemcars-import', 'Внос от Канада'],
 			['reviews', 'Aleksandar Vytev'],
-			['calculator', 'Import Cost Calculator'],
-			['faqs', 'Why import a vehicle from Canada?'],
-			['terms', 'Bohemcars Terms Of Use'],
-			['blog', 'Bohemcars Blog'],
+			['calculator', 'Калкулатор за внос'],
+			['faqs', 'Защо да внеса автомобил от Канада?'],
+			['terms', 'Условия за използване на Bohemcars'],
+			['blog', 'Съвети от Bohemcars'],
 			['blog/gotov-za-registracia', 'Какво означава „готов за регистрация“'],
 			['contact', 'Свържете се с Bohemcars'],
 			['account', 'Account Dashboard', 'customer'],
 			['account/favorites', 'My Favorites', 'customer'],
-			['account/compare', 'Compare Bohemcars Vehicles Side-by-Side', 'customer'],
+			['account/compare', 'Сравни автомобили от Bohemcars', 'customer'],
 			['account/messages', 'Messages', 'customer'],
 			['account/listings', 'My Listings', 'customer'],
 			['account/profile', 'My Profile', 'customer'],
@@ -73,7 +73,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['admin/inventory/new', 'Add Bohemcars Listing', 'admin'],
 			['admin/inquiries', 'Inquiries & Messages', 'agent'],
 			['admin/messages', 'Inquiries & Messages', 'admin'],
-			['admin/agents', 'Bohemcars Agent Management', 'admin'],
+			['admin/agents', 'Управление на консултанти', 'admin'],
 			['admin/users', 'User Management', 'admin']
 		] as const;
 
@@ -277,9 +277,9 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(map).toContain('card-box-style-9');
 		expect(map).toContain('bohemcars-map-fallback');
 		expect(map).toContain(`data-bohemcars-map-selected="${vehicles.length}"`);
-		expect(map).toContain(`${vehicles.length} matching vehicles`);
+		expect(map).toContain(`${vehicles.length} съвпадащи автомобила`);
 		expect(map).toContain(`data-bohemcars-map-location="${vehicles[0].location}"`);
-		expect(map).toContain('Exact vehicle viewing location is confirmed by phone');
+		expect(map).toContain('Точната локация за оглед се потвърждава по телефона');
 		expect(map).not.toContain('maps.googleapis.com/maps/api/js');
 		expect(map).not.toContain('/assets/js/maps.js');
 		expect(map).not.toContain('/assets/js/infobox.min.js');
@@ -304,10 +304,12 @@ describe('Auxero template Bohemcars adapter', () => {
 		const map = await mapResponse.text();
 
 		expect(map).toContain(`data-bohemcars-map-selected="${selectedCount}"`);
-		expect(map).toContain(`${selectedCount} matching vehicles`);
+		expect(map).toContain(
+			`${selectedCount} ${selectedCount === 1 ? 'съвпадащ автомобил' : 'съвпадащи автомобила'}`
+		);
 		expect(map).toContain(`data-bohemcars-map-location="${filteredLocation}"`);
 		expect(map).not.toContain(`data-bohemcars-map-location="${excludedLocation}"`);
-		expect(map).toContain('Exact vehicle viewing location is confirmed by phone');
+		expect(map).toContain('Точната локация за оглед се потвърждава по телефона');
 	});
 
 	it('applies rich inventory query filters through the preserved template route', async () => {
@@ -501,7 +503,7 @@ describe('Auxero template Bohemcars adapter', () => {
 	it('renders admin agent management with Bohemcars consultant routing actions', () => {
 		const html = renderAuxeroTemplate('sale-agents.html', { routePath: 'admin/agents' });
 
-		expect(html).toContain('Bohemcars Agent Management');
+		expect(html).toContain('Управление на консултанти');
 		expect(html).toContain('data-bohemcars-agent-management="true"');
 		expect(html).toContain('/admin/inquiries?role=admin');
 		expect(html).toContain('/admin/messages?role=admin');
@@ -704,7 +706,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(profile).toContain('data-bohemcars-profile-form');
 		expect(profile).toContain('customer@bohemcars.local');
 		expect(profile).toContain('Save Locally');
-		expect(profile).toContain('0888899911');
+		expect(profile).toContain('+359 893 588 680');
 		expect(profile).toContain('value="Bohemcars"');
 		expect(password).toContain('bohemcars-password-form');
 		expect(password).toContain('data-bohemcars-password-form');
@@ -750,14 +752,14 @@ describe('Auxero template Bohemcars adapter', () => {
 		const sell = renderAuxeroTemplate('sell-your-car.html');
 		const services = renderAuxeroTemplate('services-center.html');
 
-		expect(sell).toContain('Sell Your Car With Bohemcars');
+		expect(sell).toContain('Продай автомобила си с Bohemcars');
 		expect(sell).toContain('bohemcars-sell-form');
 		expect(sell).toContain(bohemcarsContact.primaryPhoneLabel);
 		expect(sell).toContain('Sell-your-car request prepared locally for Bohemcars');
 		expect(sell).not.toContain('Certified Dealers');
 		expect(sell).not.toContain('Zip Code');
 		expect(sell).not.toContain('1-555-678-8888');
-		expect(services).toContain('Bohemcars Services Center');
+		expect(services).toContain('Услуги от Bohemcars');
 		expect(services).toContain('Внос от Канада');
 		expect(services).toContain('bohemcars-service-form');
 		expect(services).toContain('Service request queued locally for Bohemcars');
@@ -770,7 +772,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		const about = renderAuxeroTemplate('about-us.html');
 		const reviews = renderAuxeroTemplate('clients-reviews.html');
 
-		expect(about).toContain('Екип за автомобили от Канада, проверка и спокойно предаване');
+		expect(about).toContain('Услуги около внос, оглед и продажба');
 		expect(about).toContain('Екипът зад процеса');
 		expect(about).toContain(agents[0].name);
 		expect(reviews).toContain('Aleksandar Vytev');
@@ -786,13 +788,13 @@ describe('Auxero template Bohemcars adapter', () => {
 		const terms = renderAuxeroTemplate('terms.html');
 		const calculator = renderAuxeroTemplate('calculator.html');
 
-		expect(faqs).toContain('Why import a vehicle from Canada?');
-		expect(faqs).toContain('Can Bohemcars help sell my vehicle?');
+		expect(faqs).toContain('Защо да внеса автомобил от Канада?');
+		expect(faqs).toContain('Може ли Bohemcars да помогне при продажба на моя автомобил?');
 		expect(faqs).not.toContain('Required documents for financing or leasing?');
-		expect(terms).toContain('Bohemcars Terms Of Use');
+		expect(terms).toContain('Условия за използване на Bohemcars');
 		expect(terms).toContain('Vehicle Information');
 		expect(terms).not.toContain('Lorem ipsum');
-		expect(calculator).toContain('Import Cost Calculator');
+		expect(calculator).toContain('Калкулатор за внос');
 		expect(calculator).toContain('data-bohemcars-calculator');
 		expect(calculator).toContain('38 640 EUR');
 		expect(calculator).not.toContain('$46.300');

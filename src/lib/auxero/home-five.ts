@@ -229,7 +229,7 @@ export type HomeFiveComparePair = {
 export type HomeFiveVehicleCardData = {
 	brand: string;
 	fuel: string;
-	highlightClass: 'bg-green' | 'bg-primary-2';
+	highlightClass: 'bg-primary-2';
 	image: string;
 	monthlyLabel: string;
 	photoCount: number;
@@ -327,7 +327,8 @@ const brokenHomeImageSlugs = new Set(['21779200396408437']);
 // X5 shipped a sedan-looking shot). Use the same curated cutout the PDP and mega-menu
 // use so the card thumbnail and the detail hero stay consistent.
 const cardImageOverrides: Record<string, string> = {
-	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png'
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
 };
 
 export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
@@ -572,65 +573,44 @@ const aboutMegaMenuForLocale = (locale: Locale): HomeFiveHeaderContainerMenu => 
 });
 
 export const homeFiveBrandCards: HomeFiveBrandCard[] = [
-	{ name: 'BMW', image: '/assets/images/brand/brand-1.png', count: '18 Vehicles', query: 'BMW' },
+	{ name: 'BMW', image: '/assets/bohemcars/brands/bmw.png', count: '0 Vehicles', query: 'BMW' },
 	{
 		name: 'Mercedes',
-		image: '/assets/images/brand/brand-2.png',
-		count: '22 Vehicles',
+		image: '/assets/bohemcars/brands/mercedes-benz.png',
+		count: '0 Vehicles',
 		query: 'Mercedes-Benz'
 	},
-	{ name: 'Audi', image: '/assets/images/brand/brand-3.png', count: '38 Vehicles', query: 'Audi' },
-	{
-		name: 'Honda',
-		image: '/assets/images/brand/brand-4.png',
-		count: '29 Vehicles',
-		query: 'Honda'
-	},
-	{
-		name: 'Toyota',
-		image: '/assets/images/brand/brand-5.png',
-		count: '23 Vehicles',
-		query: 'Toyota'
-	},
-	{
-		name: 'Volvo',
-		image: '/assets/images/brand/brand-6.png',
-		count: '32 Vehicles',
-		query: 'Volvo'
-	},
-	{ name: 'Ford', image: '/assets/images/brand/brand-7.png', count: '24 Vehicles', query: 'Ford' },
-	{
-		name: 'Hyundai',
-		image: '/assets/images/brand/brand-8.png',
-		count: '22 Vehicles',
-		query: 'Hyundai'
-	},
-	{ name: 'Kia', image: '/assets/images/brand/brand-9.png', count: '14 Vehicles', query: 'Kia' },
+	{ name: 'Audi', image: '/assets/bohemcars/brands/audi.png', count: '0 Vehicles', query: 'Audi' },
 	{
 		name: 'Mazda',
-		image: '/assets/images/brand/brand-10.png',
-		count: '32 Vehicles',
+		image: '/assets/bohemcars/brands/mazda.png',
+		count: '0 Vehicles',
 		query: 'Mazda'
 	},
 	{
-		name: 'Ferrari',
-		image: '/assets/images/brand/brand-11.png',
-		count: '24 Vehicles',
-		query: 'Ferrari'
-	},
-	{
-		name: 'Tesla',
-		image: '/assets/images/brand/brand-12.png',
-		count: '27 Vehicles',
-		query: 'Tesla'
+		name: 'Porsche',
+		image: '/assets/bohemcars/brands/porsche.png',
+		count: '0 Vehicles',
+		query: 'Porsche'
 	}
 ];
 
-export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] =>
-	homeFiveBrandCards.map((card) => ({
-		...card,
-		count: localizeCount(locale, card.count)
-	}));
+const homeFiveBrandOrder = ['BMW', 'Mercedes-Benz', 'Audi', 'Mazda', 'Porsche'] as const;
+
+export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] => {
+	const counts = countBy(inventoryVehicles.map((vehicle) => vehicle.brand));
+
+	return homeFiveBrandOrder
+		.filter((brand) => counts.has(brand))
+		.map((brand) => ({
+			name: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
+			image:
+				modalBrandLogos[brand] ??
+				'/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
+			count: localizeCount(locale, `${counts.get(brand) ?? 0} Vehicles`),
+			query: brand
+		}));
+};
 
 const isHeaderNavActive = (activePath: string, href: string) => {
 	if (href === '/') return activePath === '/';

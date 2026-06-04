@@ -5,10 +5,33 @@ import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 import { brands, vehicles } from '$lib/data/vehicles';
 import type { AuxeroPageBanner } from './page-banner';
 
+export type AuxeroAboutBrandCard = {
+	count: string;
+	href: string;
+	image: string;
+	name: string;
+};
+
+export type AuxeroAboutOffice = {
+	address: string;
+	appointment: string;
+	description: string;
+	email: string;
+	emailHref: string;
+	heading: string;
+	hours: string;
+	mapEmbedUrl: string;
+	phone: string;
+	phoneHref: string;
+	secondaryPhone: string;
+	secondaryPhoneHref: string;
+};
+
 export type AuxeroAboutContent = {
 	assets: {
 		hero: string;
 	};
+	brands: AuxeroAboutBrandCard[];
 	consultants: AuxeroAgentCard[];
 	contact: {
 		primaryPhoneHref: string;
@@ -24,6 +47,7 @@ export type AuxeroAboutContent = {
 		subImageAlt: string;
 		title: string;
 	};
+	office: AuxeroAboutOffice;
 	profile: {
 		description: string;
 		eyebrow: string;
@@ -35,6 +59,10 @@ export type AuxeroAboutContent = {
 			title: string;
 		}[];
 	};
+	process: {
+		description: string;
+		title: string;
+	}[];
 	reviews: AuxeroReviewCard[];
 	stats: AuxeroAboutStat[];
 	why: {
@@ -52,43 +80,89 @@ export type AuxeroAboutStat = {
 	value: string;
 };
 
+const brandLogos: Record<string, string> = {
+	Audi: '/assets/bohemcars/brands/audi.png',
+	BMW: '/assets/bohemcars/brands/bmw.png',
+	Ford: '/assets/bohemcars/brands/ford.png',
+	Mazda: '/assets/bohemcars/brands/mazda.png',
+	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
+	Porsche: '/assets/bohemcars/brands/porsche.png',
+	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+};
+
+const vehicleCountLabel = (count: number) => {
+	if (count === 0) return 'внос по заявка';
+
+	return `${count} ${count === 1 ? 'автомобил' : 'автомобила'}`;
+};
+
+const aboutBrandCards: AuxeroAboutBrandCard[] = Object.entries(brandLogos).map(
+	([brand, image]) => ({
+		count: vehicleCountLabel(vehicles.filter((vehicle) => vehicle.brand === brand).length),
+		href: `/inventory?brand=${encodeURIComponent(brand)}`,
+		image,
+		name: brand
+	})
+);
+
 export const auxeroAboutContent: AuxeroAboutContent = {
 	assets: {
 		hero: bohemcarsAssets.hero
 	},
+	brands: aboutBrandCards,
 	consultants: agentCardsFromAgents(agents),
 	contact: {
 		primaryPhoneHref: bohemcarsContact.primaryPhoneHref,
 		primaryPhoneLabel: bohemcarsContact.primaryPhoneLabel
 	},
 	hero: {
+		actions: [
+			{ href: '/inventory', label: 'Виж автомобили' },
+			{ href: '/contact', label: 'Свържете се', variant: 'secondary' }
+		],
 		description:
 			'Автомобили от Канада, проверка по конкретен VIN, документи и оглед с ясен следващ ход.',
 		eyebrow: 'За Bohemcars',
-		image: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
-		title: 'Внос, проверка и предаване'
+		image: '/assets/bohemcars/hero/about-import-banner-generated.png',
+		title: 'Bohemcars: автомобили от Канада'
 	},
 	intro: {
-		title: 'История и фокус',
-		heading: 'Екип за автомобили от Канада, проверка и спокойно предаване',
+		title: 'Какво проверяваме',
+		heading: 'Услуги около внос, оглед и продажба',
 		description:
-			'Bohemcars е пловдивски екип, фокусиран върху практичната част от покупката: избор на правилен автомобил, внос от Канада, проверка на историята, документи, крайни разходи и оглед с уговорка.',
+			'Работата е практична и последователна: намираме правилния автомобил, проверяваме историята и документите, уточняваме разходите и подготвяме оглед или предаване без излишен шум.',
 		checklist: [
-			'Внос от Канада и налични автомобили в България',
-			'VIN, история, снимки, пробег и документи преди решение',
-			'Ориентир за транспорт, мита, ДДС, подготовка и регистрация'
+			'VIN, снимки, история, пробег и сервизни следи',
+			'Транспорт, мита, ДДС, подготовка и регистрация',
+			'Огледи, документи и предаване с предварителна уговорка'
 		],
 		mainImageAlt: 'Bohemcars showroom',
 		subImage: '/assets/bohemcars/proof-studio-import-handoff.png',
 		subImageAlt: 'Bohemcars handoff'
 	},
-	profile: {
-		eyebrow: 'Какво прави екипът',
-		heading: 'Подреждаме реалния случай, преди клиентът да каже да',
+	office: {
+		address: bohemcarsContact.addressLabel,
+		appointment: bohemcarsContact.appointmentNote,
 		description:
-			'Bohemcars работи като точка за подбор, проверка и съдействие. Клиентът може да пита за автомобил от наличност, конкретна обява от Канада, VIN проверка, документи, разходи до България или продажба на собствен автомобил.',
+			'Огледите са с уговорка, за да има време за конкретния автомобил, документи, история и следваща стъпка.',
+		email: bohemcarsContact.emailLabel,
+		emailHref: bohemcarsContact.emailHref,
+		heading: 'Огледи и предаване в Пловдив',
+		hours: 'Понеделник-петък: 9:00 - 18:00',
+		mapEmbedUrl: bohemcarsContact.mapEmbedUrl,
+		phone: bohemcarsContact.primaryPhoneLabel,
+		phoneHref: bohemcarsContact.primaryPhoneHref,
+		secondaryPhone: bohemcarsContact.marketplacePhoneLabel,
+		secondaryPhoneHref: bohemcarsContact.marketplacePhoneHref
+	},
+	profile: {
+		eyebrow: 'Екип и история',
+		heading: 'Bohemcars е пловдивски екип за автомобили от Канада',
+		description:
+			'Bohemcars започва от конкретния автомобил, а не от празни обещания. Екипът помага при налични коли, обяви от Канада, проверка по VIN, история, документи, ориентир за крайни разходи и продажба на клиентски автомобил.',
 		statement:
-			'Фокусът е прост: да знаеш какво гледаш, колко реално ще струва и какво следва след избора.',
+			'Целта е клиентът да знае какво гледа, колко реално ще струва и каква е следващата стъпка преди да поеме ангажимент.',
 		highlights: [
 			'Внос от Канада',
 			'Проверка по VIN и история',
@@ -116,6 +190,24 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 			}
 		]
 	},
+	process: [
+		{
+			title: '1. Заявка',
+			description: 'Изпращате линк, VIN, бюджет или модел, който търсите.'
+		},
+		{
+			title: '2. Проверка',
+			description: 'Екипът гледа история, снимки, пробег, документи и реални разходи.'
+		},
+		{
+			title: '3. Решение',
+			description: 'Получавате ясен контекст дали автомобилът си струва следваща стъпка.'
+		},
+		{
+			title: '4. Оглед и предаване',
+			description: 'Организираме оглед, документи, регистрация или продажба с уговорка.'
+		}
+	],
 	reviews: auxeroReviewCards.slice(0, 4),
 	stats: [
 		{ value: String(vehicles.length), suffix: '', label: 'Автомобила в наличност' },
@@ -124,9 +216,9 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		{ value: '157', suffix: '', label: 'Публични отзива' }
 	],
 	why: {
-		heading: 'Защо клиентите търсят Bohemcars?',
+		heading: 'Как работи процесът преди оглед или внос?',
 		description:
-			'Защото покупката или вносът не се решават само по снимка. Екипът гледа произход, документи, разходи и готовност за оглед, преди да има ангажимент.',
+			'Покупката или вносът не се решават само по снимка. Екипът събира контекст за произход, документи, разходи и готовност за регистрация, след което клиентът получава ясен следващ ход.',
 		checklist: [
 			'Подбор според бюджет, модел и очакван срок',
 			'Проверка по VIN, история, снимки и документи',

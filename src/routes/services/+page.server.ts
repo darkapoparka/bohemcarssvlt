@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { auxeroServicesContent, serviceFormData } from '$lib/auxero/services';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { removeAuxeroBreadcrumb, renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const { pageDocument, slot: servicesSlot } = renderAuxeroPageSlot(
@@ -20,7 +20,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 	return {
 		afterServicesHtml: servicesSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeServicesHtml: servicesSlot.beforeHtml,
+		beforeServicesHtml: removeAuxeroBreadcrumb(servicesSlot.beforeHtml),
 		form: serviceFormData,
 		pageDocument,
 		services: auxeroServicesContent

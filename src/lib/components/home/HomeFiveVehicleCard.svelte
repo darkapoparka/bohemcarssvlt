@@ -344,6 +344,83 @@
 		}
 	}
 
+	@media (min-width: 992px) {
+		.card-box-style-1 .image {
+			background: var(--bc-card-media, #f4f5f2);
+		}
+
+		.card-box-style-1 .top .highlight {
+			border: 1px solid rgba(28, 28, 28, 0.1);
+			background: #ffffff !important;
+			box-shadow: 0 4px 12px rgba(28, 28, 28, 0.14);
+			color: var(--bc-card-ink, #171a15) !important;
+		}
+
+		.bohemcars-card-price__amount {
+			background: transparent;
+			color: var(--bc-card-ink, #171a15);
+			padding: 0;
+		}
+
+		.bohemcars-card-soft-hover {
+			background-color: var(--bc-card-bg, #eef1ed);
+			border-color: transparent;
+			box-shadow: none !important;
+		}
+
+		.bohemcars-card-soft-hover .content {
+			background-color: var(--bc-card-bg, #eef1ed);
+		}
+
+		.card-box-style-1 .bottom .category {
+			background-color: var(--bc-card-pill, rgba(28, 28, 28, 0.78));
+			border-color: rgba(255, 255, 255, 0.18);
+		}
+
+		.bohemcars-card-soft-hover .card-box__price {
+			color: var(--bc-card-ink, #171a15) !important;
+		}
+
+		.bohemcars-card-soft-hover:hover,
+		.bohemcars-card-soft-hover:focus-within {
+			background-color: var(--bc-card-hover, #e4eadf);
+			border-color: transparent !important;
+			box-shadow: none !important;
+			transform: none;
+		}
+
+		.bohemcars-card-soft-hover:hover .content,
+		.bohemcars-card-soft-hover:focus-within .content {
+			background-color: var(--bc-card-hover, #e4eadf);
+		}
+
+		.bohemcars-card-soft-hover:hover .card-box__price,
+		.bohemcars-card-soft-hover:focus-within .card-box__price,
+		.bohemcars-card-soft-hover:hover .card-box__title a,
+		.bohemcars-card-soft-hover:focus-within .card-box__title a {
+			color: var(--bc-card-ink, #171a15) !important;
+			text-decoration: none !important;
+		}
+
+		.bohemcars-card-soft-hover:hover .bottom .category a,
+		.bohemcars-card-soft-hover:focus-within .bottom .category a {
+			color: #ffffff !important;
+			text-decoration: none !important;
+		}
+
+		.bohemcars-card-soft-hover:hover .bottom .category,
+		.bohemcars-card-soft-hover:focus-within .bottom .category {
+			background-color: var(--bc-card-pill-hover, rgba(28, 28, 28, 0.88));
+			border-color: rgba(255, 255, 255, 0.24);
+		}
+
+		.bohemcars-card-soft-hover:hover .bohemcars-card-price__amount,
+		.bohemcars-card-soft-hover:focus-within .bohemcars-card-price__amount {
+			background-color: transparent;
+			color: var(--bc-card-ink, #171a15);
+		}
+	}
+
 	@media (max-width: 767px) {
 		.card-box-style-1 {
 			overflow: hidden;

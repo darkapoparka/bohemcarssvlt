@@ -134,12 +134,12 @@ const contactCtaSection = () => `<section class="relative py-100">
 		<img class="lazyload parallax" data-src="${escapeHtml(bohemcarsAssets.hero)}" src="${escapeHtml(bohemcarsAssets.hero)}" alt="Bohemcars">
 	</div>
 	<div class="container relative index-10">
-		<h2 class="mb-12 text-white capitalize">Talk To Bohemcars</h2>
-		<p class="h7 line-height-28 text-white mb-20">Send the vehicle, budget, VIN, or photos and the team will prepare the next step.</p>
+		<h2 class="mb-12 text-white capitalize">Говори с Bohemcars</h2>
+		<p class="h7 line-height-28 text-white mb-20">Изпрати автомобил, бюджет, VIN или снимки и екипът ще подготви следващата стъпка.</p>
 		<p class="mb-4 text-white">${escapeHtml(bohemcarsContact.appointmentNote)}</p>
 		<p class="mb-20 text-white">${escapeHtml(bohemcarsContact.addressLabel)}</p>
 		<div class="flex">
-			<a href="/contact" class="btn btn-white text-primary btn-large-3 font-weight-600">Contact Bohemcars</a>
+			<a href="/contact" class="btn btn-white text-primary btn-large-3 font-weight-600">Свържи се с Bohemcars</a>
 		</div>
 	</div>
 </section>`;
@@ -199,18 +199,18 @@ const consultantGrid =
 const applySellYourCarData = (html: string) => {
 	const body = `<section class="pb-100">
 	<div class="container">
-		<h2>Sell Your Car With Bohemcars</h2>
+		<h1 class="h2">Продай автомобила си с Bohemcars</h1>
 		<div class="tf-spacing-style3"></div>
 		<div class="row">
 			<div class="col-lg-6 lg-mb-40">
 				<p class="mb-12 text-highlight font-weight-600 uppercase">${escapeHtml(bohemcarsBrand.tagline)}</p>
-				<h2 class="font-weight-600 mb-20 capitalize mt-12">A clear route for client vehicles</h2>
-				<p class="text-secondary h7 line-height-28 mb-40">Send the right information first and Bohemcars can advise whether a direct offer, assisted sale, or client listing makes sense.</p>
+				<h2 class="font-weight-600 mb-20 capitalize mt-12">Ясен процес за клиентски автомобили</h2>
+				<p class="text-secondary h7 line-height-28 mb-40">Изпрати точната информация първо, за да преценим дали е подходяща директна оферта, съдействие при продажба или клиентска обява.</p>
 				<ul class="flex flex-col gap-16 mb-38">
 					${[
-						'VIN, mileage, history, documents, and photos reviewed together',
-						'Realistic pricing feedback before the vehicle is published',
-						'Appointment-based handoff with clear next steps'
+						'VIN, пробег, история, документи и снимки се гледат заедно',
+						'Реалистична обратна връзка за цената преди публикуване',
+						'Предаване с уговорка и ясни следващи стъпки'
 					]
 						.map(
 							(item) => `<li class="flex gap-4">
@@ -221,11 +221,11 @@ const applySellYourCarData = (html: string) => {
 						.join('\n')}
 				</ul>
 				<div class="flex gap-40 items-center sm-flex-col sm-items-start sm-gap-16">
-					<a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Contact Bohemcars</a>
+					<a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Свържи се с Bohemcars</a>
 					<a href="${bohemcarsContact.primaryPhoneHref}" class="flex gap-16">
 						<img src="/assets/icons/PhoneCall-3.svg" alt="PhoneCall">
 						<div class="mt2">
-							<span class="text-sm text-secondary">Have any question?</span>
+							<span class="text-sm text-secondary">Въпрос за продажба?</span>
 							<p class="h4">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</p>
 						</div>
 					</a>
@@ -235,8 +235,8 @@ const applySellYourCarData = (html: string) => {
 				<div class="flat-tabs about-form">
 					<div class="overflow-x-auto mb-26">
 						<ul class="menu-tab menu-tab-style7 large">
-							<li>Vehicle Details</li>
-							<li class="active">VIN And Photos</li>
+							<li>Данни за автомобила</li>
+							<li class="active">VIN и снимки</li>
 						</ul>
 					</div>
 					<div class="content-tab visible">
@@ -244,23 +244,23 @@ const applySellYourCarData = (html: string) => {
 							<form action="#" class="calculate-form bohemcars-sell-form" novalidate>
 								<div class="grid grid-cols-1 gap-15 mb-28">
 									<div>
-										<p class="mb-8">VIN Number</p>
-										<input class="active input-large" placeholder="Enter the VIN" id="sellVIN" name="vin" type="text" required>
+										<p class="mb-8">VIN номер</p>
+										<input class="active input-large" placeholder="Въведете VIN" id="sellVIN" name="vin" type="text" required>
 									</div>
 									<div>
-										<p class="mb-8">Mileage</p>
-										<input class="input-large" id="sellMileage" name="mileage" placeholder="Mileage in km" type="text" required>
+										<p class="mb-8">Пробег</p>
+										<input class="input-large" id="sellMileage" name="mileage" placeholder="Пробег в км" type="text" required>
 									</div>
 									<div>
-										<p class="mb-8">Expected Price</p>
-										<input class="input-large" id="sellPrice" name="price" placeholder="Expected price in EUR" type="text">
+										<p class="mb-8">Очаквана цена</p>
+										<input class="input-large" id="sellPrice" name="price" placeholder="Очаквана цена в EUR" type="text">
 									</div>
 									<div>
-										<p class="mb-8">Contact Phone</p>
-										<input class="input-large" id="sellPhone" name="phone" placeholder="${escapeHtml(bohemcarsContact.primaryPhoneLabel)}" type="tel" required>
+										<p class="mb-8">Телефон за контакт</p>
+										<input class="input-large" id="sellPhone" name="phone" placeholder="Вашият телефон" type="tel" required>
 									</div>
 								</div>
-								<button type="submit" class="btn btn-primary btn-large font-weight-600 w-full">Request Review</button>
+								<button type="submit" class="btn btn-primary btn-large font-weight-600 w-full">Заяви преглед</button>
 								<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite"></p>
 							</form>
 						</div>
@@ -273,7 +273,7 @@ const applySellYourCarData = (html: string) => {
 	<div class="divider w-full"></div>
 	<div class="tf-spacing-style3"></div>
 	<div class="container wow fadeInUp" data-wow-delay="0.1s">
-		<div class="flex justify-center mb-40"><h2>How It Works</h2></div>
+		<div class="flex justify-center mb-40"><h2>Как работи</h2></div>
 		<div class="sell-your-car-box-wrapper">
 			${auxeroSellSteps
 				.map(
@@ -291,18 +291,18 @@ const applySellYourCarData = (html: string) => {
 	<div class="container">
 		<div class="why-choose-us style2 style3">
 			<div class="wow fadeIn" data-wow-delay="0.1s">
-				<img class="move5" src="/assets/bohemcars/cta/sell-car-banner-v2.png" alt="Sell your car with Bohemcars">
+				<img class="move5" src="/assets/bohemcars/cta/sell-car-banner-v2.png" alt="Продай автомобила си с Bohemcars">
 			</div>
 			<div class="wow fadeIn" data-wow-delay="0.2s">
-				<h2 class="mb-12">Why Choose Bohemcars?</h2>
-				<p class="text-muted mb-20">The team keeps client-vehicle decisions grounded in documents, condition, market position, and realistic timing.</p>
+				<h2 class="mb-12">Защо Bohemcars?</h2>
+				<p class="text-muted mb-20">Екипът държи решенията за клиентски автомобили върху документи, състояние, пазарна позиция и реалистичен срок.</p>
 				${checkList([
-					'Vehicle review based on VIN, photos, service history, and documents',
-					'Direct offer, assisted sale, or client listing path when appropriate',
-					'Transparent next steps before appointment or publication',
-					'Local support from first request through handoff'
+					'Преглед според VIN, снимки, сервизна история и документи',
+					'Директна оферта, съдействие или клиентска обява при подходящ случай',
+					'Прозрачни следващи стъпки преди оглед или публикуване',
+					'Локално съдействие от първа заявка до предаване'
 				])}
-				<a href="/inventory" class="btn btn-primary btn-large font-weight-600 max-w-min">View Inventory</a>
+				<a href="/inventory" class="btn btn-primary btn-large font-weight-600 max-w-min">Виж наличните</a>
 			</div>
 		</div>
 		${statsGrid()}
@@ -311,7 +311,7 @@ const applySellYourCarData = (html: string) => {
 ${contactCtaSection()}
 <section class="background-light py-100">
 	<div class="container">
-		<h2 class="mb-40 text-center">Sell Your Car FAQ</h2>
+		<h2 class="mb-40 text-center">Въпроси за продажба</h2>
 		<div class="max-width-850 mx-auto w-full">${faqAccordion(
 			supportFaqs.filter((faq) => ['Selling', 'Viewing', 'Documents', 'Costs'].includes(faq.topic)),
 			true
@@ -325,25 +325,25 @@ ${contactCtaSection()}
 const applyServicesData = (html: string) => {
 	const body = `<div data-bohemcars-services><section class="bg-white pb-100">
 	<div class="container">
-		<h2>Services</h2>
+		<h1 class="h2">Услуги</h1>
 		<div class="tf-spacing-style3"></div>
 		<div class="grid grid-cols-2 xl-grid-cols-2 lg-grid-cols-1 gap-30">
 			<div class="flex justify-center flex-col wow fadeInUp">
-				<h2 class="mb-12 capitalize">Bohemcars Services Center</h2>
-				<p class="mb-40 h7 line-height-28 text-secondary">Support for Canada imports, listing evaluation, documents, registration preparation, client vehicles, and appointment-based vehicle viewings.</p>
-				<p class="h4 mb-20 capitalize">Our Services Include</p>
+				<h2 class="mb-12 capitalize">Услуги от Bohemcars</h2>
+				<p class="mb-40 h7 line-height-28 text-secondary">Съдействие за внос от Канада, проверка на обяви, документи, подготовка за регистрация, клиентски автомобили и огледи с уговорка.</p>
+				<p class="h4 mb-20 capitalize">Какво включват услугите</p>
 				<ul class="grid grid-cols-2 sm-grid-cols-1 gap-x-60 gap-y-8 mb-40">
 					${[
-						'Canada vehicle sourcing',
-						'VIN and history review',
-						'Carfax and document context',
-						'Transport coordination',
-						'Customs and VAT guidance',
-						'Registration preparation',
-						'Client vehicle sale review',
-						'Appointment viewings',
-						'Model comparison',
-						'Handoff support'
+						'Подбор на автомобили от Канада',
+						'Проверка на VIN и история',
+						'Carfax и контекст на документите',
+						'Координация на транспорт',
+						'Съдействие за мито и ДДС',
+						'Подготовка за регистрация',
+						'Преглед при продажба на клиентски автомобил',
+						'Огледи с уговорка',
+						'Сравнение на модели',
+						'Съдействие при предаване'
 					]
 						.map(
 							(item) => `<li class="flex items-start gap-8">
@@ -353,7 +353,7 @@ const applyServicesData = (html: string) => {
 						)
 						.join('\n')}
 				</ul>
-				<div class="flex"><a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Contact Bohemcars</a></div>
+				<div class="flex"><a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Свържи се с Bohemcars</a></div>
 			</div>
 			<div class="ml-24 flex lg-ml-0 wow fadeInUp radius-20 overflow-hidden">
 				<img class="w-full" src="/assets/bohemcars/services/import-canada-banner-generated.png" alt="Bohemcars services">
@@ -363,8 +363,8 @@ const applyServicesData = (html: string) => {
 </section>
 <section class="background-light py-100">
 	<div class="container">
-		<h2 class="text-center capitalize mb-12">Featured Services</h2>
-		<p class="mb-40 text-center">Keep the buying, import, and sale decision practical from the first message.</p>
+		<h2 class="text-center capitalize mb-12">Основни услуги</h2>
+		<p class="mb-40 text-center">Запази покупката, вноса или продажбата практични още от първото съобщение.</p>
 		<div class="grid grid-cols-3 lg-grid-cols-2 md-grid-cols-1 gap-30">
 			${auxeroServiceCards.map(serviceCard).join('\n')}
 		</div>
@@ -378,14 +378,14 @@ const applyServicesData = (html: string) => {
 	<div class="container relative index-10">
 		<div class="grid grid-cols-2 lg-grid-cols-1 gap-30">
 			<div class="services-center-info">
-				<h2 class="mb-12 text-white">Contact Information</h2>
-				<p class="mb-28 text-white h7 line-height-28 font-weight-500">Send a vehicle link, VIN, budget, deadline, or sale request and the right Bohemcars consultant will prepare the next step.</p>
+				<h2 class="mb-12 text-white">Контакт за услуга</h2>
+				<p class="mb-28 text-white h7 line-height-28 font-weight-500">Изпрати линк към автомобил, VIN, бюджет, срок или заявка за продажба и правилният консултант ще подготви следващата стъпка.</p>
 				${checkList(
 					[
-						'Import and document specialists',
-						'Appointment-based vehicle viewings',
-						'Clear estimates before commitment',
-						'Support from request through handoff'
+						'Специалисти по внос и документи',
+						'Огледи с предварителна уговорка',
+						'Ясни ориентировъчни разходи преди ангажимент',
+						'Съдействие от заявка до предаване'
 					],
 					true
 				)}
@@ -394,7 +394,7 @@ const applyServicesData = (html: string) => {
 					<li class="contact gap-12">
 						<div class="icon"><img src="/assets/icons/PhoneCall-2.svg" alt="phone"></div>
 						<div class="flex flex-col gap-4">
-							<p class="text-sm text-muted">Contact Bohemcars</p>
+							<p class="text-sm text-muted">Контакт с Bohemcars</p>
 							<a href="${bohemcarsContact.primaryPhoneHref}" class="text-sm text-white">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</a>
 							<a href="${bohemcarsContact.marketplacePhoneHref}" class="text-sm text-white">${escapeHtml(bohemcarsContact.marketplacePhoneLabel)}</a>
 						</div>
@@ -402,7 +402,7 @@ const applyServicesData = (html: string) => {
 					<li class="contact gap-12">
 						<div class="icon"><img src="/assets/icons/Alarm.svg" alt="hours"></div>
 						<div class="flex flex-col gap-4">
-							<p class="text-sm text-muted">Working Time</p>
+							<p class="text-sm text-muted">Работно време</p>
 							<span class="text-sm text-white">${escapeHtml(bohemcarsContact.appointmentNote)}</span>
 							<span class="text-sm text-white">${escapeHtml(bohemcarsContact.addressLabel)}</span>
 						</div>
@@ -410,22 +410,22 @@ const applyServicesData = (html: string) => {
 				</ul>
 			</div>
 			<div class="bg-white radius-20 services-center-form">
-				<p class="h4 mb-16">Schedule A Service</p>
+				<p class="h4 mb-16">Заяви услуга</p>
 				<form action="#" class="send-inquiry bohemcars-service-form" novalidate>
 					<div class="grid grid-cols-2 lg-grid-cols-1 gap-x-12 gap-y-24 mb-22">
-						<div><p class="mb-8">Name</p><input class="active input-large" name="name" type="text" placeholder="Your name" required></div>
-						<div><p class="mb-8">Email</p><input class="input-large" name="email" type="email" placeholder="${escapeHtml(bohemcarsContact.emailLabel)}" required></div>
-						<div><p class="mb-8">Phone</p><input class="input-large" name="phone" type="tel" placeholder="${escapeHtml(bohemcarsContact.primaryPhoneLabel)}"></div>
-						<div><p class="mb-8">Preferred Date</p><input class="input-large" name="date" type="date"></div>
+						<div><p class="mb-8">Име</p><input class="active input-large" name="name" type="text" placeholder="Вашето име" required></div>
+						<div><p class="mb-8">Имейл</p><input class="input-large" name="email" type="email" placeholder="Вашият имейл" required></div>
+						<div><p class="mb-8">Телефон</p><input class="input-large" name="phone" type="tel" placeholder="Вашият телефон"></div>
+						<div><p class="mb-8">Предпочитана дата</p><input class="input-large" name="date" type="date"></div>
 						<div>
-							<p class="mb-8">Service</p>
+							<p class="mb-8">Услуга</p>
 							<select class="select-style-2" name="service">
 								${auxeroServiceCards.map((service) => `<option>${escapeHtml(service.title)}</option>`).join('\n')}
 							</select>
 						</div>
-						<div><p class="mb-8">Vehicle Or VIN</p><input class="input-large" name="vehicle" type="text" placeholder="Vehicle link or VIN"></div>
+						<div><p class="mb-8">Автомобил или VIN</p><input class="input-large" name="vehicle" type="text" placeholder="Линк към автомобил или VIN"></div>
 					</div>
-					<button class="btn btn-primary btn-large font-weight-600 w-full">Schedule Service</button>
+					<button class="btn btn-primary btn-large font-weight-600 w-full">Изпрати заявка</button>
 					<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite"></p>
 				</form>
 			</div>
@@ -439,7 +439,7 @@ const applyServicesData = (html: string) => {
 const applyAboutData = (html: string) => {
 	const body = `<div data-bohemcars-about><section class="pb-100">
 	<div class="container">
-		<h2>${escapeHtml(auxeroAboutContent.intro.title)}</h2>
+		<h1 class="h2">${escapeHtml(auxeroAboutContent.intro.title)}</h1>
 		<div class="tf-spacing-style3"></div>
 		<div class="row">
 			<div class="col-lg-6">
@@ -463,10 +463,10 @@ const applyAboutData = (html: string) => {
 							.join('\n')}
 					</ul>
 					<div class="flex gap-28 items-center">
-						<a href="/contact" class="btn btn-primary btn-large font-weight-600">Contact Bohemcars</a>
+						<a href="/contact" class="btn btn-primary btn-large font-weight-600">Свържи се с Bohemcars</a>
 						<a href="${auxeroAboutContent.contact.primaryPhoneHref}" class="flex gap-16">
 							<img src="/assets/icons/PhoneCall-3.svg" alt="PhoneCall">
-							<div class="mt2"><span class="text-sm text-secondary">Have any question?</span><p class="h4">${escapeHtml(auxeroAboutContent.contact.primaryPhoneLabel)}</p></div>
+							<div class="mt2"><span class="text-sm text-secondary">Имаш въпрос?</span><p class="h4">${escapeHtml(auxeroAboutContent.contact.primaryPhoneLabel)}</p></div>
 						</a>
 					</div>
 				</div>
@@ -477,8 +477,8 @@ const applyAboutData = (html: string) => {
 	<section>
 		<div class="container wow fadeIn" data-wow-delay="0.3s">
 			<div class="title-section mb-40">
-				<h2>Client Reviews</h2>
-				<a href="/reviews" class="btn btn-line-style-2 effect-line-primary hover-fill-white btn-large">View All</a>
+				<h2>Отзиви от клиенти</h2>
+				<a href="/reviews" class="btn btn-line-style-2 effect-line-primary hover-fill-white btn-large">Виж всички</a>
 			</div>
 			<div class="swiper-container swiper-testimonior">
 				<div class="swiper-wrapper">
@@ -500,7 +500,7 @@ const applyAboutData = (html: string) => {
 				<h2 class="mb-12">${escapeHtml(auxeroAboutContent.why.heading)}</h2>
 				<p class="text-muted mb-20">${escapeHtml(auxeroAboutContent.why.description)}</p>
 				${checkList(auxeroAboutContent.why.checklist)}
-				<a href="/services" class="btn btn-primary btn-large font-weight-600 max-w-min">Explore Services</a>
+				<a href="/services" class="btn btn-primary btn-large font-weight-600 max-w-min">Виж услугите</a>
 			</div>
 		</div>
 		${statsGrid()}
@@ -518,7 +518,7 @@ const applyAboutData = (html: string) => {
 const applyReviewsData = (html: string) => {
 	const body = `<section class="pb-100">
 	<div class="container">
-		<h2>Client Reviews</h2>
+		<h1 class="h2">Отзиви от клиенти</h1>
 		<div class="tf-spacing-style3"></div>
 		${reviewsGrid()}
 		<ul class="pagination justify-center">
@@ -534,9 +534,9 @@ const applyReviewsData = (html: string) => {
 const applyFaqData = (html: string) => {
 	const body = `<section class="bg-white pb-84" data-bohemcars-faqs>
 	<div class="container mb-60">
-		<h2>Frequently Asked Questions</h2>
+		<h1 class="h2">Често задавани въпроси</h1>
 		<div class="tf-spacing-style3"></div>
-		<p class="h3 mb-20 text-center capitalize">Bohemcars Support</p>
+		<p class="h3 mb-20 text-center capitalize">Bohemcars помощ</p>
 		<div class="max-width-850 mx-auto w-full">${faqAccordion(supportFaqs.slice(0, 3), true)}</div>
 	</div>
 	${auxeroFaqGroups
@@ -570,7 +570,7 @@ const applyTermsData = (html: string) => {
 		.join('\n');
 	const body = `<section class="bg-white pb-100">
 	<div class="container">
-		<h2 class="capitalize">Bohemcars Terms Of Use</h2>
+		<h1 class="h2 capitalize">Условия за използване на Bohemcars</h1>
 		<div class="tf-spacing-style3"></div>
 		<div class="term-page" id="scrollContainer" data-bohemcars-terms>
 			<div class="term-page--nav-container">
@@ -590,20 +590,20 @@ const calculatorField = (field: AuxeroCalculatorField) =>
 const applyCalculatorData = (html: string) => {
 	const calculator = auxeroCalculatorData;
 	const budgetLinks = [
-		['Ready Stock', 'Under 20k EUR', 'highest-price'],
-		['Canada Import', 'Under 30k EUR', 'best-match'],
-		['Client Vehicles', 'Under 40k EUR', 'newest-listed'],
-		['SUV Candidates', 'Under 60k EUR', 'newest-year'],
-		['Premium Cars', 'Over 60k EUR', 'highest-price']
+		['Налични автомобили', 'До 20k EUR', 'highest-price'],
+		['Внос от Канада', 'До 30k EUR', 'best-match'],
+		['Клиентски автомобили', 'До 40k EUR', 'newest-listed'],
+		['SUV кандидати', 'До 60k EUR', 'newest-year'],
+		['Премиум автомобили', 'Над 60k EUR', 'highest-price']
 	];
 	const body = `<section class="pb-100">
 	<div class="tf-spacing-style3"></div>
 	<div class="container">
-		<h2 class="text-center mb-12">Import Cost Calculator</h2>
-		<p class="mb-40 text-center text-secondary h7 line-height-28">Estimate the landed cost for a Canada-sourced vehicle before asking Bohemcars for a vehicle-specific breakdown.</p>
+		<h1 class="h2 text-center mb-12">Калкулатор за внос</h1>
+		<p class="mb-40 text-center text-secondary h7 line-height-28">Изчисли ориентировъчна крайна цена за автомобил от Канада преди точна разбивка от Bohemcars.</p>
 		<div class="grid grid-cols-2 gap-40 lg-grid-cols-1" data-bohemcars-calculator>
 			<div class="border-box">
-				<p class="h3 mb-28">Calculate Estimated Landed Cost</p>
+				<p class="h3 mb-28">Изчисли ориентировъчна крайна цена</p>
 				<form action="#" class="calculate-form" novalidate>
 					<div class="grid grid-cols-1 gap-15">
 						${calculator.fields.map(calculatorField).join('\n')}
@@ -625,13 +625,13 @@ const applyCalculatorData = (html: string) => {
 						.join('\n')}
 				</div>
 				<div class="divider mb-28 w-full"></div>
-				<div class="flex justify-between gap-8 mb-16"><p class="h4">Estimated Total</p><p class="h4" data-bohemcars-calc-output="totalSmall">${formatEur(calculator.total)}</p></div>
+				<div class="flex justify-between gap-8 mb-16"><p class="h4">Ориентировъчно общо</p><p class="h4" data-bohemcars-calc-output="totalSmall">${formatEur(calculator.total)}</p></div>
 				<a href="${escapeHtml(calculator.ctaHref)}" class="btn btn-primary btn-large font-weight-600 w-full">${escapeHtml(calculator.ctaLabel)}</a>
 			</div>
 		</div>
 	</div>
 	<div class="tf-spacing"></div>
-	<h2 class="text-center mb-40 capitalize">Browse By Budget</h2>
+	<h2 class="text-center mb-40 capitalize">Разгледай по бюджет</h2>
 	<div class="container">
 		<div class="grid grid-cols-5 lg-grid-cols-3 md-grid-cols-2 smb-grid-cols-1 gap-20 mb-40 padding-box-20">
 			${budgetLinks
@@ -643,12 +643,12 @@ const applyCalculatorData = (html: string) => {
 				)
 				.join('\n')}
 		</div>
-		<div class="flex justify-center"><a href="/inventory" class="btn btn-line-hover effect-line-primary btn-large font-weight-600 hover-fill-white">View Inventory</a></div>
+		<div class="flex justify-center"><a href="/inventory" class="btn btn-line-hover effect-line-primary btn-large font-weight-600 hover-fill-white">Виж наличните</a></div>
 	</div>
 </section>
 <section class="background-light py-100">
 	<div class="container">
-		<h2 class="mb-40 text-center">Calculator FAQ</h2>
+		<h2 class="mb-40 text-center">Въпроси за калкулатора</h2>
 		<div class="max-width-930 mx-auto w-full">${faqAccordion(
 			supportFaqs.filter((faq) => ['Costs', 'Documents', 'Timing'].includes(faq.topic)),
 			true
@@ -665,7 +665,7 @@ const blogCard = (
 	<div class="image"><img class="post--img flex" src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}"></div>
 	<div class="content">
 		<div class="flex gap-12 justify-start mb-12">
-			<span class="text-sm">by Bohemcars</span>
+			<span class="text-sm">от Bohemcars</span>
 			<span class="text-sm">${escapeHtml(post.date)}</span>
 			<span class="text-sm text-highlight uppercase text-underline">${escapeHtml(post.category)}</span>
 		</div>
@@ -677,7 +677,7 @@ const blogCard = (
 const applyBlogListData = (html: string) => {
 	const posts = listBlogPosts();
 	const body = `<section class="pb-100">
-	<div class="container"><h2>Bohemcars Blog</h2></div>
+	<div class="container"><h1 class="h2">Съвети от Bohemcars</h1></div>
 	<div class="tf-spacing-style3"></div>
 	<div class="container">
 		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30 mb-40" data-bohemcars-blog-grid>
@@ -685,7 +685,7 @@ const applyBlogListData = (html: string) => {
 		</div>
 		<ul class="pagination justify-center">
 			<li><a href="/blog" class="pagination__link active">1</a></li>
-			<li><a href="/contact" class="pagination__link">Ask</a></li>
+			<li><a href="/contact" class="pagination__link">Попитай</a></li>
 		</ul>
 	</div>
 </section>`;
@@ -707,9 +707,9 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 	<div class="breadcrumb-wrapper">
 		<div class="container">
 			<ul class="breadcrumb">
-				<li><a class="text-white" href="/">Home</a></li>
+				<li><a class="text-white" href="/">Начало</a></li>
 				<li><img src="/assets/icons/right.svg" alt="chevron-right"></li>
-				<li><a class="text-white" href="/blog">Blog</a></li>
+				<li><a class="text-white" href="/blog">Съвети</a></li>
 				<li><img src="/assets/icons/right.svg" alt="chevron-right"></li>
 				<li><span class="text-muted">${escapeHtml(post.title)}</span></li>
 			</ul>
@@ -720,7 +720,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 		<div class="container">
 			<h1 class="mb-20 text-white letter-spacing-1">${escapeHtml(post.title)}</h1>
 			<ul class="flex items-center flex-wrap gap-20">
-				<li><a class="text-white" href="/agents">by Bohemcars</a></li>
+				<li><a class="text-white" href="/agents">от Bohemcars</a></li>
 				<li><a class="text-white" href="/blog">${escapeHtml(post.date)}</a></li>
 				<li><a class="uppercase text-underline text-highlight" href="/blog">${escapeHtml(post.category)}</a></li>
 			</ul>
@@ -737,7 +737,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 					index === 1
 						? `<div class="quote mb-28">
 							<div class="content">
-								<p class="h4 mb-14 capitalize">"Good import decisions start with documents, photos, history, and a clear next step."</p>
+								<p class="h4 mb-14 capitalize">"Доброто решение за внос започва с документи, снимки, история и ясна следваща стъпка."</p>
 								<p class="h7 flex items-center gap-8"><img src="/assets/icons/line.svg" alt="quote">Bohemcars</p>
 							</div>
 							<img class="icon-quote" src="/assets/icons/quote.svg" alt="quote">
@@ -745,46 +745,46 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 						: `<p class="h7 text-secondary mb-28 line-height-28">${sentence(paragraph)}</p>`
 				)
 				.join('\n')}
-			<p class="h4 mb-12 capitalize">Next Step</p>
-			<p class="text-secondary h7 line-height-28 mb-40">Send Bohemcars the exact vehicle link, VIN, budget, or sale request so the team can review the real case instead of working from a generic estimate.</p>
+			<p class="h4 mb-12 capitalize">Следваща стъпка</p>
+			<p class="text-secondary h7 line-height-28 mb-40">Изпрати точен линк, VIN, бюджет или заявка за продажба, за да прегледаме реалния случай вместо обща оценка.</p>
 			<div class="flex justify-between mb-40 gap-16 md-flex-col">
 				<ul class="blog-detail-tags flex gap-12">
-					<li><p>Tag:</p></li>
+					<li><p>Таг:</p></li>
 					<li><a href="/blog">${escapeHtml(post.category)}</a></li>
 					<li><a href="/services">Bohemcars</a></li>
 				</ul>
 				<ul class="blog-detail-social flex gap-12">
-					<li><p>Share this post:</p></li>
+					<li><p>Сподели:</p></li>
 					<li><a href="${escapeHtml(bohemcarsContact.facebookHref)}">Facebook</a></li>
 				</ul>
 			</div>
 			<div class="divider mb-26"></div>
 			<div class="flex justify-between mb-24 blog-detail-recentpost">
 				<div class="previous">
-					<p class="font-weight-600 text-highlight uppercase mb-4">Previous</p>
+					<p class="font-weight-600 text-highlight uppercase mb-4">Предишна</p>
 					<a href="/blog/${escapeHtml(firstRelated.slug)}" class="h5 font-weight-500 capitalize">${escapeHtml(firstRelated.title)}</a>
 				</div>
 				<div class="next">
-					<p class="font-weight-600 text-highlight uppercase mb-4 text-right">Next</p>
+					<p class="font-weight-600 text-highlight uppercase mb-4 text-right">Следваща</p>
 					<a href="/blog/${escapeHtml(secondRelated.slug)}" class="h5 font-weight-500 text-right capitalize">${escapeHtml(secondRelated.title)}</a>
 				</div>
 			</div>
 			<div class="divider mb-40"></div>
 			<form action="#" class="blog-detail-comment-form bohemcars-blog-comment-form" novalidate>
-				<p class="h3 mb-24 capitalize">Leave A Comment</p>
+				<p class="h3 mb-24 capitalize">Изпрати коментар</p>
 				<div class="grid grid-cols-2 gap-22 mb-16 md-grid-cols-1">
-					<div class="md-col-span-2"><p class="mb-8">Your Name</p><input class="active input-large" name="name-review" type="text" placeholder="Your name" required></div>
-					<div class="md-col-span-2"><p class="mb-8">Your Email</p><input class="input-large" name="email-comment" type="email" placeholder="${escapeHtml(bohemcarsContact.emailLabel)}" required></div>
-					<div class="col-span-2 padding-0"><p class="mb-8">Comment</p><textarea placeholder="Write your comment here" rows="3" name="comment" class="message" required></textarea></div>
+					<div class="md-col-span-2"><p class="mb-8">Име</p><input class="active input-large" name="name-review" type="text" placeholder="Вашето име" required></div>
+					<div class="md-col-span-2"><p class="mb-8">Имейл</p><input class="input-large" name="email-comment" type="email" placeholder="Вашият имейл" required></div>
+					<div class="col-span-2 padding-0"><p class="mb-8">Коментар</p><textarea placeholder="Вашият коментар" rows="3" name="comment" class="message" required></textarea></div>
 				</div>
-				<label class="filter-checkbox style-2 style-3 mb-28"><input type="checkbox" name="save"><span>Save your name and email for next time</span></label>
-				<button class="btn btn-primary-3 btn-large font-weight-600 capitalize">Post Comment</button>
+				<label class="filter-checkbox style-2 style-3 mb-28"><input type="checkbox" name="save"><span>Запази име и имейл за следващ път</span></label>
+				<button class="btn btn-primary-3 btn-large font-weight-600 capitalize">Публикувай коментар</button>
 				<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite"></p>
 			</form>
 		</div>
 		<div class="innerpage__sidebar">
 			<form action="/blog" class="widget-search w-full mb-34">
-				<input class="input-normal" type="text" name="q" placeholder="Search Bohemcars blog">
+				<input class="input-normal" type="text" name="q" placeholder="Търси в съветите на Bohemcars">
 				<button type="submit" class="widget-search-btn"><img src="/assets/icons/search.svg" alt="Search"></button>
 			</form>
 			<div class="mb-32">
@@ -792,10 +792,10 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 					<img src="${escapeHtml(agents[1]?.image ?? bohemcarsConsultants[1].image)}" alt="Bohemcars consultant">
 					<div class="content"><a href="/agents/bohemcars-import" class="h4 mb-8 font-weight-600">Внос от Канада</a><p class="text-secondary">Подбор, транспорт и крайни разходи</p></div>
 				</div>
-				<p class="mb-16">Send a VIN, listing link, budget, or timeline and Bohemcars will review the exact case.</p>
+				<p class="mb-16">Изпрати VIN, линк към обява, бюджет или срок и Bohemcars ще прегледа конкретния случай.</p>
 			</div>
 			<div class="divider mb-32 w-full"></div>
-			<p class="h4 mb-16 capitalize">Recent Posts</p>
+			<p class="h4 mb-16 capitalize">Последни публикации</p>
 			<div class="mb-32">
 				${related
 					.map(
@@ -804,7 +804,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 						) => `<a href="/blog/${escapeHtml(item.slug)}" class="recent-post overflow-hidden mb-16">
 							<div class="image"><img class="post--img flex" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}"></div>
 							<div class="content">
-								<div class="flex gap-12 md-gap-6 justify-start mb-6"><span class="text-xs">by Bohemcars</span><span class="text-xs">${escapeHtml(item.date)}</span></div>
+								<div class="flex gap-12 md-gap-6 justify-start mb-6"><span class="text-xs">от Bohemcars</span><span class="text-xs">${escapeHtml(item.date)}</span></div>
 								<p class="title h7">${escapeHtml(item.title)}</p>
 							</div>
 						</a><div class="divider mb-16 w-full"></div>`
@@ -812,9 +812,9 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 					.join('\n')}
 			</div>
 			<div class="divider mb-32 w-full"></div>
-			<p class="h4 mb-18">Subscribe Newsletter</p>
+			<p class="h4 mb-18">Абонамент за новини</p>
 			<form action="#" class="widget-search w-full mb-34 bohemcars-newsletter-form" novalidate>
-				<input class="input-normal" type="email" name="email" placeholder="Email address" required>
+				<input class="input-normal" type="email" name="email" placeholder="Имейл адрес" required>
 				<button type="submit" class="widget-search-btn"><img src="/assets/icons/right.svg" alt="Subscribe"></button>
 				<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite"></p>
 			</form>
@@ -823,7 +823,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 </section>
 <section class="py-100">
 	<div class="container">
-		<h2 class="mb-40">Related Posts</h2>
+		<h2 class="mb-40">Свързани публикации</h2>
 		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30">${related.map(blogCard).join('\n')}</div>
 	</div>
 </section>`;
