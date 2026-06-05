@@ -101,6 +101,13 @@ const inventoryUrl = (state: InventoryState, overrides: Record<string, string | 
 	return `/inventory${query ? `?${query}` : ''}`;
 };
 
+const isDashboardLayout = (state: InventoryState) => {
+	const layout = state.searchParams.get('layout')?.trim().toLowerCase();
+	const mode = state.searchParams.get('mode')?.trim().toLowerCase();
+
+	return layout === 'dashboard' || layout === 'sidebar' || mode === 'dashboard';
+};
+
 const modelOptions = Array.from(new Set(vehicles.map((vehicle) => vehicle.model).filter(Boolean)))
 	.sort((a, b) => a.localeCompare(b, 'en'))
 	.slice(0, 24);
@@ -131,7 +138,8 @@ const inventoryBrandPills = brands
 	.map((brand) => ({
 		count: brandCounts.get(brand) ?? 0,
 		image:
-			brandLogos[brand] ?? '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp',
+			brandLogos[brand] ??
+			'/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp',
 		label: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
 		value: brand
 	}))
@@ -237,7 +245,9 @@ const viewToggle = (state: InventoryState) =>
 				{
 					view
 				}
-			)}" aria-label="${labels[view]}" title="${labels[view]}">${viewIcon(view)}</a>`;
+			)}" data-bohemcars-view-toggle aria-label="${labels[view]}" title="${labels[view]}">${viewIcon(
+				view
+			)}</a>`;
 		})
 		.join('');
 
@@ -463,7 +473,16 @@ const inventorySearchHiddenInputs = (state: InventoryState) =>
 		state.view !== '4' ? `<input type="hidden" name="view" value="${state.view}">` : '',
 		state.sortParam !== 'best-match'
 			? `<input type="hidden" name="sort" value="${escapeHtml(state.sortParam)}">`
-			: ''
+			: '',
+		isDashboardLayout(state) ? '<input type="hidden" name="layout" value="dashboard">' : ''
+	].join('');
+
+const inventorySidebarHiddenInputs = (state: InventoryState) =>
+	[
+		selectedSearchQuery(state)
+			? `<input type="hidden" name="q" value="${escapeHtml(selectedSearchQuery(state))}">`
+			: '',
+		inventorySearchHiddenInputs(state)
 	].join('');
 
 type InventoryFilterKey = keyof InventoryState['filters'];
@@ -550,6 +569,7 @@ const inventoryClearFiltersUrl = (state: InventoryState) => {
 
 	if (state.view !== '4') params.set('view', state.view);
 	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
+	if (isDashboardLayout(state)) params.set('layout', 'dashboard');
 
 	return inventoryUrlFromParams(params);
 };
@@ -607,13 +627,41 @@ const inventoryActiveFilters = (state: InventoryState, modifierClass = '') => {
 	</div>`;
 };
 
-const inventoryUtilityToolbar = (state: InventoryState) => {
+const inventoryShowingText = (state: InventoryState) => {
 	const hasFilters = Object.keys(state.filters).length > 0;
 	const selectedCount = state.selected.length;
-	const showingText =
-		selectedCount > 0
-			? `Showing 1 - ${selectedCount} of ${selectedCount} ${hasFilters ? 'matching ' : ''}Bohemcars Listings`
-			: `Showing 0 of ${vehicles.length} Bohemcars Listings`;
+
+	if (selectedCount === 0) return `Showing 0 of ${vehicles.length} Bohemcars Listings`;
+
+	if (hasFilters) {
+		return `Showing 1 - ${selectedCount} of ${selectedCount} matching Bohemcars Listings`;
+	}
+
+	return `Showing 1 - ${selectedCount} of ${selectedCount} Bohemcars Listings`;
+};
+
+const inventoryLayoutToggle = (state: InventoryState) => {
+	const dashboard = isDashboardLayout(state);
+	const href = inventoryUrl(state, {
+		layout: dashboard ? undefined : 'dashboard',
+		mode: undefined
+	});
+
+	return `<a class="bohemcars-inventory-layout-toggle ${dashboard ? 'active' : ''}" href="${href}" data-bohemcars-layout-toggle aria-pressed="${dashboard}" title="${dashboard ? 'Use classic inventory view' : 'Use sidebar dashboard view'}">
+		<span>${dashboard ? 'Classic' : 'Sidebar'}</span>
+	</a>`;
+};
+
+const inventoryViewSwitches = (state: InventoryState) =>
+	`<div class="bohemcars-inventory-hero-switches">
+		<span class="bohemcars-inventory-hero-switches__label">View</span>
+		<div class="listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}${inventoryLayoutToggle(
+			state
+		)}</div>
+	</div>`;
+
+const inventoryUtilityToolbar = (state: InventoryState) => {
+	const showingText = inventoryShowingText(state);
 	const selectedSort = sortLabels[state.sortParam] ?? 'Best Match';
 
 	return `<div class="bohemcars-inventory-toolbar-row bohemcars-inventory-searchbar__utility">
@@ -624,7 +672,6 @@ const inventoryUtilityToolbar = (state: InventoryState) => {
 			</button>
 			<p class="md-hidden">${showingText}</p>
 		</div>
-		<div class="listing-tabs menu-tab bohemcars-view-toggle">${viewToggle(state)}</div>
 		<div class="bohemcars-inventory-sort">
 			<span class="bohemcars-inventory-sort__label">Sort Vehicles by</span>
 			<div class="core-dropdown">
@@ -636,6 +683,24 @@ const inventoryUtilityToolbar = (state: InventoryState) => {
 			</div>
 		</div>
 	</div>`;
+};
+
+const inventoryHeroSearchSurface = (state: InventoryState) => {
+	const searchQuery = selectedSearchQuery(state);
+
+	return `<form class="bohemcars-inventory-searchbar" action="/inventory" method="get" role="search" aria-label="Search Bohemcars inventory" data-bohemcars-search-form="inventory">
+		${inventorySearchHiddenInputs(state)}
+		<div class="bohemcars-inventory-searchbar__row">
+			<div class="bohemcars-inventory-searchbar__primary">
+				<label class="bohemcars-inventory-searchbar__search">
+					<img src="/assets/icons/search-icon.svg" alt="">
+					<input type="text" name="q" value="${escapeHtml(searchQuery)}" placeholder="Search make, model, year, fuel, extras..." autocomplete="off">
+				</label>
+				<button class="bohemcars-inventory-searchbar__submit" type="submit">Search</button>
+			</div>
+		</div>
+		${inventoryViewSwitches(state)}
+	</form>`;
 };
 
 const inventorySearchSurface = (state: InventoryState) => {
@@ -652,6 +717,7 @@ const inventorySearchSurface = (state: InventoryState) => {
 				<button class="bohemcars-inventory-searchbar__submit" type="submit">Search</button>
 			</div>
 		</div>
+		${inventoryViewSwitches(state)}
 		<div class="bohemcars-inventory-filter-grid">
 			${inventoryFilterDropdown({
 				label: 'Make',
@@ -716,6 +782,99 @@ const inventorySearchSurface = (state: InventoryState) => {
 	</form>`;
 };
 
+const sidebarFilterGroup = ({
+	label,
+	mode = 'multiple',
+	name,
+	options,
+	selected
+}: {
+	label: string;
+	mode?: 'multiple' | 'single';
+	name: string;
+	options: InventoryFilterOption[];
+	selected?: string | number;
+}) => {
+	const selectedValues = splitFilterValues(selected);
+	const inputType = mode === 'single' ? 'radio' : 'checkbox';
+
+	return `<fieldset class="bohemcars-inventory-sidebar-group">
+		<legend>${escapeHtml(label)}</legend>
+		<div class="bohemcars-inventory-sidebar-options">
+			${filterDropdownOption(name, { label: `All ${label.toLowerCase()}`, value: '' }, selectedValues, inputType)}
+			${options.map((option) => filterDropdownOption(name, option, selectedValues, inputType)).join('')}
+		</div>
+	</fieldset>`;
+};
+
+const inventorySidebarRail = (state: InventoryState) => {
+	const clearHref = inventoryClearFiltersUrl(state);
+
+	return `<aside class="bohemcars-inventory-dashboard-sidebar" aria-label="Inventory filters">
+		<form class="bohemcars-filter-form bohemcars-inventory-sidebar-form" action="/inventory" method="get">
+			${inventorySidebarHiddenInputs(state)}
+			<div class="bohemcars-inventory-sidebar-heading">
+				<p class="h5 mb-4">Filters</p>
+				<p class="text-secondary">${state.selected.length} ${state.selected.length === 1 ? 'vehicle' : 'vehicles'} shown</p>
+			</div>
+			${sidebarFilterGroup({
+				label: 'Make',
+				name: 'brand',
+				options: inventoryBrandPills,
+				selected: state.filters.brand
+			})}
+			${sidebarFilterGroup({
+				label: 'Model',
+				name: 'model',
+				options: modelOptionsForBrands(state.filters.brand).slice(0, 12),
+				selected: selectedModel(state)
+			})}
+			${sidebarFilterGroup({
+				label: 'Budget',
+				mode: 'single',
+				name: 'priceTo',
+				options: priceFilterOptions,
+				selected: selectedNumber(state.filters.maxPrice)
+			})}
+			${sidebarFilterGroup({
+				label: 'Mileage',
+				mode: 'single',
+				name: 'mileageTo',
+				options: mileageFilterOptions,
+				selected: selectedNumber(state.filters.maxMileage)
+			})}
+			${sidebarFilterGroup({
+				label: 'Body',
+				name: 'bodyType',
+				options: inventoryBodyTypePills,
+				selected: state.filters.bodyType
+			})}
+			${sidebarFilterGroup({
+				label: 'Fuel',
+				name: 'fuel',
+				options: inventoryFuelPills,
+				selected: state.filters.fuel
+			})}
+			${sidebarFilterGroup({
+				label: 'Gearbox',
+				name: 'transmission',
+				options: transmissionOptions,
+				selected: state.filters.transmission
+			})}
+			${sidebarFilterGroup({
+				label: 'Extras',
+				name: 'feature',
+				options: popularFeatureOptions,
+				selected: state.filters.feature
+			})}
+			<div class="bohemcars-inventory-sidebar-actions">
+				<a href="${clearHref}" class="bohemcars-active-filter bohemcars-active-filter--clear">Clear</a>
+				<button class="btn btn-small btn-primary-3 font-weight-600" type="submit">Show ${state.selected.length}</button>
+			</div>
+		</form>
+	</aside>`;
+};
+
 const inventoryBanner = (state: InventoryState) =>
 	`<section class="bohemcars-inventory-banner" aria-label="Bohemcars inventory showcase">
 	<div class="container">
@@ -727,7 +886,7 @@ const inventoryBanner = (state: InventoryState) =>
 			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--sq5" src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp" alt="" loading="eager" decoding="async">
 		</div>
 		<div class="bohemcars-inventory-banner__buybox">
-			${inventorySearchSurface(state)}
+			${isDashboardLayout(state) ? inventoryHeroSearchSurface(state) : inventorySearchSurface(state)}
 		</div>
 	</div>
 </section>`;
@@ -910,6 +1069,59 @@ const replaceInventorySearchSurface = (html: string) =>
 		''
 	);
 
+const replaceInventoryContent = (html: string, state: InventoryState) => {
+	const tabsStart = html.indexOf('data-custom="true"');
+	const contentStart = html.indexOf('<div class="content-tab', tabsStart);
+
+	return replaceDivBlock(
+		html,
+		contentStart,
+		`${inventoryActiveFilters(
+			state,
+			'bohemcars-inventory-active-filters--results'
+		)}${inventoryContent(state)}`
+	);
+};
+
+const inventoryDashboard = (
+	state: InventoryState
+) => `<div class="bohemcars-inventory-dashboard bohemcars-inventory-dashboard--${state.view}">
+	${inventorySidebarRail(state)}
+	<div class="bohemcars-inventory-dashboard-results">
+		${inventoryUtilityToolbar(state)}
+		${inventoryActiveFilters(state, 'bohemcars-inventory-active-filters--results')}
+		${inventoryContent(state)}
+	</div>
+	${
+		state.view === 'map'
+			? `<div class="bohemcars-inventory-dashboard-map">${inventoryMapFallback(state)}</div>`
+			: ''
+	}
+</div>`;
+
+const inventoryMainSection = (
+	state: InventoryState
+) => `<section class="bohemcars-inventory-main pb-100" aria-label="Bohemcars inventory results">
+	<div class="container">
+		${inventoryDashboard(state)}
+	</div>
+</section>`;
+
+const replaceInventoryMainSection = (html: string, state: InventoryState) => {
+	const replacement = `<!-- New Cars -->\n${inventoryMainSection(state)}\n<!-- New Cars -->`;
+
+	return html.replace(/<!-- New Cars -->[\s\S]*?<!-- New Cars -->/, replacement);
+};
+
+const stripInventoryMapScripts = (html: string) =>
+	html
+		.replace(
+			/\s*<script src="https:\/\/maps\.googleapis\.com\/maps\/api\/js[\s\S]*?<\/script>/g,
+			''
+		)
+		.replace(/\s*<script src="\/assets\/js\/maps\.js"><\/script>/g, '')
+		.replace(/\s*<script src="\/assets\/js\/infobox\.min\.js"><\/script>/g, '');
+
 const replaceInventoryBreadcrumb = (html: string, state: InventoryState) => {
 	const banner = inventoryBanner(state);
 	const withBreadcrumb = html.replace(
@@ -922,20 +1134,6 @@ const replaceInventoryBreadcrumb = (html: string, state: InventoryState) => {
 	return html.replace(
 		/(\s*<!-- New Cars -->\s*<section class="max-w-1920 mx-auto">)/,
 		`\n${banner}$1`
-	);
-};
-
-const replaceInventoryContent = (html: string, state: InventoryState) => {
-	const tabsStart = html.indexOf('data-custom="true"');
-	const contentStart = html.indexOf('<div class="content-tab', tabsStart);
-
-	return replaceDivBlock(
-		html,
-		contentStart,
-		`${inventoryActiveFilters(
-			state,
-			'bohemcars-inventory-active-filters--results'
-		)}${inventoryContent(state)}`
 	);
 };
 
@@ -1397,7 +1595,10 @@ const replaceFilterSidebar = (html: string, state: InventoryState) => {
 
 	if (formStart >= 0) {
 		next = `${next.slice(0, formStart)}<form action="/inventory" method="get" class="bohemcars-filter-form">
-			<input type="hidden" name="view" value="${state.view}">${next.slice(formStart + '<form action="#">'.length)}`;
+			<input type="hidden" name="view" value="${state.view}">
+			${isDashboardLayout(state) ? '<input type="hidden" name="layout" value="dashboard">' : ''}${next.slice(
+				formStart + '<form action="#">'.length
+			)}`;
 	}
 
 	const brandList = `<div class="filter-select-dropdown__list">
@@ -1486,13 +1687,10 @@ const mapLocationList = (groups: MapLocationGroup[]) => {
 	</ul>`;
 };
 
-const replaceMap = (html: string, state: InventoryState) => {
+const inventoryMapFallback = (state: InventoryState) => {
 	const groups = mapLocationGroups(state.selected);
 
-	return html
-		.replace(
-			/<div id="map" data-map-zoom="16" data-map-scroll="true"><\/div>/,
-			`<div id="map" class="bohemcars-map-fallback" data-map-zoom="16" data-map-scroll="true" data-bohemcars-map-selected="${state.selected.length}">
+	return `<div id="map" class="bohemcars-map-fallback" data-map-zoom="16" data-map-scroll="true" data-bohemcars-map-selected="${state.selected.length}">
 				<div class="bohemcars-map-fallback__inner">
 					<p class="h4 mb-12">Зона за огледи Bohemcars</p>
 					<p class="text-secondary mb-8">${escapeHtml(bohemcarsContact.addressLabel)}</p>
@@ -1501,15 +1699,16 @@ const replaceMap = (html: string, state: InventoryState) => {
 					<p class="text-secondary mb-16">${escapeHtml(bohemcarsContact.appointmentNote)}. Точната локация за оглед се потвърждава по телефона.</p>
 					<a class="btn btn-medium btn-primary-3 font-weight-600" href="${bohemcarsContact.primaryPhoneHref}">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</a>
 				</div>
-			</div>`
-		)
-		.replace(
-			/\s*<script src="https:\/\/maps\.googleapis\.com\/maps\/api\/js[\s\S]*?<\/script>/g,
-			''
-		)
-		.replace(/\s*<script src="\/assets\/js\/maps\.js"><\/script>/g, '')
-		.replace(/\s*<script src="\/assets\/js\/infobox\.min\.js"><\/script>/g, '');
+			</div>`;
 };
+
+const replaceMap = (html: string, state: InventoryState) =>
+	stripInventoryMapScripts(
+		html.replace(
+			/<div id="map" data-map-zoom="16" data-map-scroll="true"><\/div>/,
+			inventoryMapFallback(state)
+		)
+	);
 
 export const applyInventoryData = (
 	html: string,
@@ -1518,13 +1717,20 @@ export const applyInventoryData = (
 ) => {
 	const state = getInventoryState(templateFile, options);
 	let next = replaceInventoryBreadcrumb(html, state);
-	next = replaceInventorySearchSurface(next);
-	next = replaceInventoryToolbar(next);
-	next = replaceInventoryContent(next, state);
-	next = replaceFilterSidebar(next, state);
 
-	if (state.view === 'map') {
-		next = replaceMap(next, state);
+	if (isDashboardLayout(state)) {
+		next = replaceInventoryMainSection(next, state);
+		next = replaceFilterSidebar(next, state);
+		next = stripInventoryMapScripts(next);
+	} else {
+		next = replaceInventorySearchSurface(next);
+		next = replaceInventoryToolbar(next);
+		next = replaceInventoryContent(next, state);
+		next = replaceFilterSidebar(next, state);
+
+		if (state.view === 'map') {
+			next = replaceMap(next, state);
+		}
 	}
 
 	return replaceDemoVehicleCopy(next)

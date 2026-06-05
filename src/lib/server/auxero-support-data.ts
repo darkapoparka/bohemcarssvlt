@@ -203,16 +203,16 @@ const consultantGrid =
 </div>`;
 
 const applySellYourCarData = (html: string) => {
-	const body = `<section class="pb-100">
+	const body = `<section class="pb-100 bohemcars-sell-hero">
 	<div class="container">
-		<h1 class="h2">Продай автомобила си с Bohemcars</h1>
+		<h1 class="h2 bohemcars-sell-page-title">Продай автомобила си с Bohemcars</h1>
 		<div class="tf-spacing-style3"></div>
-		<div class="row">
-			<div class="col-lg-6 lg-mb-40">
-				<p class="mb-12 text-highlight font-weight-600 uppercase">${escapeHtml(bohemcarsBrand.tagline)}</p>
-				<h2 class="font-weight-600 mb-20 capitalize mt-12">Ясен процес за клиентски автомобили</h2>
-				<p class="text-secondary h7 line-height-28 mb-40">Изпрати точната информация първо, за да преценим дали е подходяща директна оферта, съдействие при продажба или клиентска обява.</p>
-				<ul class="flex flex-col gap-16 mb-38">
+		<div class="row bohemcars-sell-hero-grid">
+			<div class="col-lg-6 lg-mb-40 bohemcars-sell-copy">
+				<p class="bohemcars-sell-eyebrow mb-12 text-highlight font-weight-600 uppercase">${escapeHtml(bohemcarsBrand.tagline)}</p>
+				<h2 class="font-weight-600 mb-16 capitalize mt-12">Ясен процес за клиентски автомобили</h2>
+				<p class="text-secondary h7 line-height-28 mb-32">Изпрати точната информация първо, за да преценим дали е подходяща директна оферта, съдействие при продажба или клиентска обява.</p>
+				<ul class="flex flex-col gap-12 mb-32 bohemcars-sell-checklist">
 					${[
 						'VIN, пробег, история, документи и снимки се гледат заедно',
 						'Реалистична обратна връзка за цената преди публикуване',
@@ -221,24 +221,24 @@ const applySellYourCarData = (html: string) => {
 						.map(
 							(item) => `<li class="flex gap-4">
 								<img class="w-24 h-24" src="/assets/icons/check.svg" alt="check">
-								<p class="h5 capitalize">${escapeHtml(item)}</p>
+								<p class="h6 font-weight-600">${escapeHtml(item)}</p>
 							</li>`
 						)
 						.join('\n')}
 				</ul>
-				<div class="flex gap-40 items-center sm-flex-col sm-items-start sm-gap-16">
+				<div class="flex gap-28 items-center sm-flex-col sm-items-start sm-gap-16 bohemcars-sell-actions">
 					<a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Свържи се с Bohemcars</a>
-					<a href="${bohemcarsContact.primaryPhoneHref}" class="flex gap-16">
+					<a href="${bohemcarsContact.primaryPhoneHref}" class="flex gap-12 bohemcars-sell-phone">
 						<img src="/assets/icons/PhoneCall-3.svg" alt="PhoneCall">
 						<div class="mt2">
 							<span class="text-sm text-secondary">Въпрос за продажба?</span>
-							<p class="h4">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</p>
+							<p class="h5 font-weight-600">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</p>
 						</div>
 					</a>
 				</div>
 			</div>
 			<div class="col-lg-6">
-				<div class="flat-tabs about-form">
+				<div class="flat-tabs about-form bohemcars-sell-intake">
 					<div class="overflow-x-auto mb-26">
 						<ul class="menu-tab menu-tab-style7 large">
 							<li>Данни за автомобила</li>
@@ -275,10 +275,10 @@ const applySellYourCarData = (html: string) => {
 			</div>
 		</div>
 	</div>
-	<div class="tf-spacing-style3"></div>
+	<div class="tf-spacing-style4 bohemcars-sell-section-gap"></div>
 	<div class="divider w-full"></div>
-	<div class="tf-spacing-style3"></div>
-	<div class="container wow fadeInUp" data-wow-delay="0.1s">
+	<div class="tf-spacing-style4 bohemcars-sell-section-gap"></div>
+	<div class="container wow fadeInUp bohemcars-sell-process" data-wow-delay="0.1s">
 		<div class="flex justify-center mb-40"><h2>Как работи</h2></div>
 		<div class="sell-your-car-box-wrapper">
 			${auxeroSellSteps

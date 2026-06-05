@@ -687,19 +687,17 @@
 
 	.bohemcars-newest-heading :global(.bohemcars-section-cta) {
 		flex: 0 0 auto;
-		background: #98bc2a;
-		color: #ffffff !important;
-	}
-
-	.bohemcars-newest-heading :global(.bohemcars-section-cta:hover),
-	.bohemcars-newest-heading :global(.bohemcars-section-cta:focus-visible) {
-		background: #d9f275;
+		border-color: #98bc2a !important;
+		background: #98bc2a !important;
 		color: #14210f !important;
 	}
 
-	.bohemcars-newest-heading :global(.bohemcars-section-cta:hover svg path),
-	.bohemcars-newest-heading :global(.bohemcars-section-cta:focus-visible svg path) {
-		fill: #14210f !important;
+	.bohemcars-newest-heading :global(.bohemcars-section-cta:hover),
+	.bohemcars-newest-heading :global(.bohemcars-section-cta:focus-visible),
+	.bohemcars-newest-heading :global(.bohemcars-section-cta:active) {
+		border-color: #a6c93a !important;
+		background: #a6c93a !important;
+		color: #14210f !important;
 	}
 
 	.bohemcars-newest-controls {

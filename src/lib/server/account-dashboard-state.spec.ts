@@ -78,8 +78,22 @@ describe('account-dashboard-state', () => {
 		expect(customerRecent.heading).toBe('Recent Messages');
 		expect(customerRecent.items.length).toBeGreaterThan(0);
 		expect(customerRecent.items[0]?.name).toContain('Bohemcars');
-		expect(adminRecent.heading).toBe('Recent Inquiries');
+		expect(customerRecent.actions.map((action) => action.id)).toContain('open-messages');
+		expect(adminRecent.heading).toBe('Admin Focus');
+		expect(adminRecent.intro).toContain('Triage leads');
 		expect(adminRecent.items.length).toBeGreaterThan(0);
+		expect(adminRecent.items[0]?.statusLabel).toBeTruthy();
+		expect(adminRecent.actions.map((action) => action.id)).toEqual([
+			'review-leads',
+			'reply-messages',
+			'add-listing',
+			'assign-team'
+		]);
+		expect(adminRecent.summary.map((item) => item.id)).toEqual([
+			'new-leads',
+			'needs-reply',
+			'car-reviews'
+		]);
 		expect(JSON.stringify([customerRecent, adminRecent])).not.toContain('Great Experience');
 	});
 

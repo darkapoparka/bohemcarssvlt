@@ -78,6 +78,7 @@
 						class="btn btn-large font-weight-600 bohemcars-type-gallery__cta"
 					>
 						{copy.typeCta}
+						<span class="bohemcars-type-gallery__cta-arrow" aria-hidden="true">→</span>
 						<svg
 							width="21"
 							height="21"
@@ -227,27 +228,37 @@
 	.bohemcars-type-gallery__cta {
 		background: #98bc2a !important;
 		border: 1px solid #98bc2a !important;
-		color: #ffffff !important;
+		color: #14210f !important;
 		font-weight: 500;
 		gap: 8px;
 	}
 
-	.bohemcars-type-gallery__cta:hover {
-		background: #1c1c1c !important;
-		border-color: #1c1c1c !important;
-		color: #ffffff !important;
-		transform: none;
+	.bohemcars-type-gallery__cta:hover,
+	.bohemcars-type-gallery__cta:focus-visible {
+		background: #a6c93a !important;
+		border-color: #a6c93a !important;
+		color: #14210f !important;
+		transform: none !important;
+	}
+
+	.bohemcars-type-gallery__cta::before,
+	.bohemcars-type-gallery__cta::after {
+		display: none !important;
 	}
 
 	.bohemcars-type-gallery__cta svg {
+		display: none;
 		flex: 0 0 auto;
 		height: 21px;
 		width: 21px;
 	}
 
-	/* White arrow in every state */
-	.bohemcars-type-gallery__cta svg path {
-		fill: #ffffff !important;
+	.bohemcars-type-gallery__cta-arrow {
+		display: inline-block;
+		flex: 0 0 auto;
+		font-size: 22px;
+		font-weight: 700;
+		line-height: 1;
 	}
 
 	.bohemcars-type-gallery__grid {

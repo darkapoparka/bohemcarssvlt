@@ -1356,13 +1356,27 @@ const formatKm = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u
 const formatMonthly = (value: number, locale: Locale) =>
 	`${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} ${locale === 'bg' ? 'EUR/мес.' : 'EUR/mo'}`;
 
+const compactFuelLabel = (fuel: string, locale: Locale) => {
+	const normalizedFuel = fuel.toLowerCase();
+
+	if (
+		normalizedFuel.includes('hybrid') ||
+		normalizedFuel.includes('хибрид') ||
+		normalizedFuel.includes('phev')
+	) {
+		return translateVehicleTerm(locale, 'fuels', 'Hybrid');
+	}
+
+	return translateVehicleTerm(locale, 'fuels', fuel);
+};
+
 export const homeFiveVehicleCardFromVehicle = (
 	vehicle: Vehicle,
 	index: number,
 	locale: Locale = 'en'
 ): HomeFiveVehicleCardData => ({
 	brand: vehicle.brand,
-	fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
+	fuel: compactFuelLabel(vehicle.fuel, locale),
 	highlightClass: 'bg-primary-2',
 	image: imageForHomeFiveVehicle(vehicle),
 	mileageLabel: formatKm(vehicle.mileage),

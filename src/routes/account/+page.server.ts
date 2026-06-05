@@ -1,19 +1,16 @@
 import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
 import { getAccountDashboardRecentData } from '$lib/server/account-dashboard-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const routePath = 'account';
-
-	if (url.searchParams.get('demo') !== 'dashboard') {
-		return {
-			accountEntry: true,
-			auxeroFullPage: false
-		};
-	}
-
 	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
+
+	if (session.role === 'admin') {
+		redirect(302, '/admin');
+	}
 
 	const renderOptions = {
 		request,

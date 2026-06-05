@@ -755,7 +755,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(sell).toContain('Продай автомобила си с Bohemcars');
 		expect(sell).toContain('bohemcars-sell-form');
 		expect(sell).toContain(bohemcarsContact.primaryPhoneLabel);
-		expect(sell).toContain('Sell-your-car request prepared locally for Bohemcars');
+		expect(sell).toContain('Заявката е подготвена. Bohemcars ще се свърже с вас.');
 		expect(sell).not.toContain('Certified Dealers');
 		expect(sell).not.toContain('Zip Code');
 		expect(sell).not.toContain('1-555-678-8888');

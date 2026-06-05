@@ -15,8 +15,30 @@
 		pageDocument: AuxeroPageDocument;
 		recent: AuxeroDashboardRecentData;
 	} = $props();
+
+	const chartMarker = '<div class="dashboard-box car-views-chart';
+
+	let overviewPlacement = $derived.by(() => {
+		const chartIndex = beforeRecentHtml.indexOf(chartMarker);
+
+		if (chartIndex < 0) {
+			return {
+				afterOverviewHtml: '',
+				beforeOverviewHtml: beforeRecentHtml
+			};
+		}
+
+		return {
+			afterOverviewHtml: beforeRecentHtml.slice(chartIndex),
+			beforeOverviewHtml: beforeRecentHtml.slice(0, chartIndex)
+		};
+	});
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeRecentHtml} afterHtml={afterRecentHtml}>
+<AuxeroPageShell
+	{pageDocument}
+	beforeHtml={overviewPlacement.beforeOverviewHtml}
+	afterHtml={`${overviewPlacement.afterOverviewHtml}${afterRecentHtml}`}
+>
 	<DashboardRecentBox {recent} />
 </AuxeroPageShell>

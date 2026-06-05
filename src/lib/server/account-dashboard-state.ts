@@ -55,6 +55,58 @@ export const formatDashboardDate = (value: string, fallback = 'Today') => {
 	});
 };
 
+const countLabel = (count: number, singular: string, plural = `${singular}s`) =>
+	`${count} ${count === 1 ? singular : plural}`;
+
+const sourceLabel = (source: string) => {
+	const labels: Record<string, string> = {
+		'sell-your-car': 'Seller intake',
+		'vehicle-detail': 'Vehicle lead',
+		website: 'Website'
+	};
+
+	return (
+		labels[source] ??
+		source
+			.split(/[-_\s]+/g)
+			.filter(Boolean)
+			.map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+			.join(' ')
+	);
+};
+
+const inquiryStatusLabel = (status: string) => {
+	const labels: Record<string, string> = {
+		assigned: 'Assigned',
+		closed: 'Closed',
+		contacted: 'Contacted',
+		new: 'New'
+	};
+
+	return labels[status] ?? status;
+};
+
+const messageStatusLabel = (status: string) => {
+	const labels: Record<string, string> = {
+		closed: 'Closed',
+		open: 'Open',
+		read: 'Read'
+	};
+
+	return labels[status] ?? status;
+};
+
+const submissionStatusLabel = (status: string) => {
+	const labels: Record<string, string> = {
+		draft: 'Draft',
+		published: 'Published',
+		reviewing: 'Reviewing',
+		submitted: 'Submitted'
+	};
+
+	return labels[status] ?? status;
+};
+
 export const activeRouteForAccountTemplate = (templateFile: string, routePath = '') => {
 	const normalized = routePath.replace(/^\/+|\/+$/g, '');
 
@@ -162,40 +214,184 @@ export const accountDashboardStatsData = (context: AccountContext): DashboardSta
 };
 
 export const accountDashboardRecentData = (context: AccountContext): AuxeroDashboardRecentData => {
-	const heading = context.isAdmin ? 'Recent Inquiries' : 'Recent Messages';
-	const items: RecentDashboardItem[] = context.isAdmin
-		? listInquiriesForRole('admin')
-				.slice(0, 3)
-				.map((inquiry) => ({
-					avatarRole: inquiry.source === 'sell-your-car' ? 'agent' : context.session.role,
+	const inquiries = listInquiriesForRole(context.isAdmin ? 'admin' : context.session.role);
+	const messages = listMessagesForRole(context.session.role);
+	const submissions = listVehicleSubmissions();
+	const garage = context.isAdmin ? undefined : getBohemcarsGarageState(context.session);
+	const openInquiries = inquiries.filter((inquiry) => inquiry.status !== 'closed');
+	const newInquiries = inquiries.filter((inquiry) => inquiry.status === 'new');
+	const openMessages = messages.filter((message) => message.status !== 'closed');
+	const reviewingSubmissions = submissions.filter((submission) =>
+		['reviewing', 'submitted'].includes(submission.status)
+	);
+
+	if (context.isAdmin) {
+		const items = inquiries.slice(0, 3);
+
+		return {
+			actions: [
+				{
+					href: '/admin/inquiries',
+					icon: '/assets/images/dashboard/clockCountdown.svg',
+					id: 'review-leads',
+					label: 'Review leads',
+					meta: countLabel(openInquiries.length, 'open lead')
+				},
+				{
+					href: '/admin/messages',
+					icon: '/assets/images/dashboard/chats.svg',
+					id: 'reply-messages',
+					label: 'Reply messages',
+					meta: countLabel(openMessages.length, 'open thread')
+				},
+				{
+					href: '/admin/inventory/new',
+					icon: '/assets/images/dashboard/car.svg',
+					id: 'add-listing',
+					label: 'Add listing',
+					meta: 'Create inventory draft'
+				},
+				{
+					href: '/admin/agents',
+					icon: '/assets/images/dashboard/star.svg',
+					id: 'assign-team',
+					label: 'Assign team',
+					meta: countLabel(agents.length, 'agent')
+				}
+			],
+			heading: 'Admin Focus',
+			intro: 'Triage leads, messages, and inventory without leaving the Auxero dashboard flow.',
+			items: items.map((inquiry, index) => {
+				const agentName =
+					agents.find((agent) => agent.slug === inquiry.assignedAgentSlug)?.name ??
+					'Bohemcars team';
+
+				return {
+					actionLabel: 'Open lead',
+					avatar:
+						accountAvatarByRole[
+							inquiry.source === 'sell-your-car' ? 'agent' : context.session.role
+						],
 					body: inquiry.message,
-					date: inquiry.createdAt,
+					dateLabel: formatDashboardDate(inquiry.createdAt, `May ${20 + index}, 2026`),
+					href: '/admin/inquiries',
+					id: inquiry.id,
+					metaLabel: `${sourceLabel(inquiry.source)} · ${agentName}`,
 					name: inquiry.contactName,
-					title: inquiry.vehicleTitle ?? inquiry.source
-				}))
-		: listMessagesForRole(context.session.role)
-				.slice(0, 3)
-				.map((message) => ({
-					avatarRole: 'agent' as BohemcarsRole,
-					body: message.message,
-					date: message.createdAt,
-					name: message.threadId === 'bohemcars-sales' ? 'Bohemcars Sales' : message.authorName,
-					title: message.vehicleSlug
-						? (vehicles.find((vehicle) => vehicle.slug === message.vehicleSlug)?.title ??
-							'Bohemcars vehicle')
-						: message.threadId
-				}));
+					statusLabel: inquiryStatusLabel(inquiry.status),
+					title: inquiry.vehicleTitle ?? sourceLabel(inquiry.source)
+				};
+			}),
+			primaryAction: {
+				href: '/admin/inventory/new',
+				icon: '/assets/images/dashboard/car.svg',
+				id: 'primary-add-listing',
+				label: 'Add listing',
+				meta: 'Create inventory draft'
+			},
+			summary: [
+				{
+					id: 'new-leads',
+					label: 'New leads',
+					tone: newInquiries.length > 0 ? 'attention' : 'neutral',
+					value: String(newInquiries.length)
+				},
+				{
+					id: 'needs-reply',
+					label: 'Needs reply',
+					tone: openMessages.length > 0 ? 'attention' : 'neutral',
+					value: String(openMessages.length)
+				},
+				{
+					id: 'car-reviews',
+					label: 'Car reviews',
+					tone: reviewingSubmissions.length > 0 ? 'calm' : 'neutral',
+					value: String(reviewingSubmissions.length)
+				}
+			]
+		};
+	}
+
+	const items: RecentDashboardItem[] = messages.slice(0, 3).map((message) => ({
+		avatarRole: 'agent' as BohemcarsRole,
+		body: message.message,
+		date: message.createdAt,
+		name: message.threadId === 'bohemcars-sales' ? 'Bohemcars Sales' : message.authorName,
+		title: message.vehicleSlug
+			? (vehicles.find((vehicle) => vehicle.slug === message.vehicleSlug)?.title ??
+				'Bohemcars vehicle')
+			: message.threadId
+	}));
 
 	return {
-		heading,
-		items: items.map((item, index) => ({
-			avatar: accountAvatarByRole[item.avatarRole],
-			body: item.body,
-			dateLabel: formatDashboardDate(item.date, `May ${20 + index}, 2026`),
-			id: `${item.name}-${item.title}-${index}`,
-			name: item.name,
-			title: item.title
-		}))
+		actions: [
+			{
+				href: '/account/messages',
+				icon: '/assets/images/dashboard/chats.svg',
+				id: 'open-messages',
+				label: 'Open messages',
+				meta: countLabel(openMessages.length, 'open thread')
+			},
+			{
+				href: '/account/listings',
+				icon: '/assets/images/dashboard/car.svg',
+				id: 'view-listings',
+				label: 'My listings',
+				meta: countLabel(submissions.length, 'submission')
+			},
+			{
+				href: '/account/favorites',
+				icon: '/assets/images/dashboard/star.svg',
+				id: 'view-favorites',
+				label: 'Favorites',
+				meta: countLabel(garage?.favorites.length ?? 0, 'saved car')
+			}
+		],
+		heading: 'Recent Messages',
+		intro: 'Pick up the latest Bohemcars conversation and keep saved vehicles moving.',
+		items: items.map((item, index) => {
+			const message = messages[index];
+
+			return {
+				actionLabel: 'Open thread',
+				avatar: accountAvatarByRole[item.avatarRole],
+				body: item.body,
+				dateLabel: formatDashboardDate(item.date, `May ${20 + index}, 2026`),
+				href: '/account/messages',
+				id: message?.id ?? `${item.name}-${item.title}-${index}`,
+				metaLabel: message?.threadId ?? 'Bohemcars sales',
+				name: item.name,
+				statusLabel: messageStatusLabel(message?.status ?? 'open'),
+				title: item.title
+			};
+		}),
+		primaryAction: {
+			href: '/account/messages',
+			icon: '/assets/images/dashboard/chats.svg',
+			id: 'primary-open-messages',
+			label: 'Open messages',
+			meta: countLabel(openMessages.length, 'open thread')
+		},
+		summary: [
+			{
+				id: 'open-threads',
+				label: 'Open threads',
+				tone: openMessages.length > 0 ? 'attention' : 'neutral',
+				value: String(openMessages.length)
+			},
+			{
+				id: 'saved-cars',
+				label: 'Saved cars',
+				tone: 'calm',
+				value: String(garage?.favorites.length ?? 0)
+			},
+			{
+				id: 'latest-status',
+				label: 'Latest status',
+				tone: 'neutral',
+				value: submissionStatusLabel(submissions[0]?.status ?? 'submitted')
+			}
+		]
 	};
 };
 

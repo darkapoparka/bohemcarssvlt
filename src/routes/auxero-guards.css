@@ -203,6 +203,205 @@ html[lang='bg'] .capitalize {
 	text-transform: none;
 }
 
+/* Desktop sell-your-car: keep the Auxero page, but rebalance the heavier
+   Bohemcars intake content so the first viewport feels intentional. */
+@media (min-width: 992px) {
+	body.auxero-template-sell-your-car-html .bohemcars-sell-hero {
+		background: #ffffff;
+		padding-bottom: 76px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-hero > .container > .tf-spacing-style3 {
+		height: 34px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-page-title {
+		margin-bottom: 0 !important;
+		font-size: 42px;
+		font-weight: 500;
+		line-height: 48px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-hero-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 0.95fr) minmax(480px, 1fr);
+		gap: 54px;
+		align-items: start;
+		margin: 0;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-hero-grid > [class*='col-'] {
+		width: auto;
+		max-width: none;
+		padding: 0;
+		flex: none;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-copy {
+		padding-top: 22px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-eyebrow {
+		font-size: 13px;
+		line-height: 18px;
+		letter-spacing: 0;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-copy h2 {
+		max-width: 560px;
+		font-size: 36px;
+		font-weight: 500;
+		line-height: 42px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-copy > p.text-secondary {
+		max-width: 560px;
+		font-size: 17px;
+		line-height: 26px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-checklist li {
+		align-items: flex-start;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-checklist p {
+		margin: 0;
+		font-size: 17px;
+		line-height: 24px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-actions {
+		flex-wrap: wrap;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-phone {
+		align-items: center;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-phone img {
+		width: 48px;
+		height: 48px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-phone p {
+		margin: 0;
+		line-height: 26px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-intake {
+		margin-top: 6px;
+		padding: 20px 24px 22px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-intake .overflow-x-auto {
+		margin-bottom: 18px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-intake .menu-tab-style7.large {
+		width: 100%;
+		padding: 4px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-intake .menu-tab-style7.large li {
+		min-height: 42px;
+		height: 42px;
+		padding: 0 22px;
+		font-size: 15px;
+		line-height: 20px;
+		white-space: nowrap;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-form .grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px !important;
+		margin-bottom: 18px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-form p.mb-8 {
+		margin-bottom: 6px !important;
+		font-size: 15px;
+		line-height: 20px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-form input.input-large {
+		height: 44px;
+		padding: 0 16px;
+		font-size: 15px;
+		line-height: 20px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-form button[type='submit'] {
+		height: 52px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-section-gap {
+		height: 54px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .mb-40 {
+		margin-bottom: 32px !important;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process h2 {
+		font-weight: 500;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box-wrapper {
+		gap: 42px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box::before,
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box::after {
+		top: 33px;
+		width: calc(50% + 21px);
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box::before {
+		left: -21px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box::after {
+		right: -21px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box .number {
+		width: 68px;
+		height: 68px;
+		margin-bottom: 22px;
+		font-size: 28px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box a {
+		max-width: 240px;
+		font-size: 22px;
+		line-height: 28px;
+		text-align: center;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-process .sell-your-car-box p {
+		max-width: 265px;
+		margin: 0;
+		line-height: 26px;
+	}
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+	body.auxero-template-sell-your-car-html .bohemcars-sell-hero-grid {
+		grid-template-columns: minmax(0, 1fr) minmax(430px, 1fr);
+		gap: 34px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-copy h2 {
+		font-size: 32px;
+		line-height: 38px;
+	}
+
+	body.auxero-template-sell-your-car-html .bohemcars-sell-checklist p {
+		font-size: 16px;
+		line-height: 24px;
+	}
+}
+
 /* =====================================================================
    MOBILE-ONLY POLISH — phones + the mobile nav drawer.
    Desktop (>=992px) is intentionally left untouched.
@@ -1365,4 +1564,95 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 
 .compare-details:hover svg path {
 	stroke: #ffffff !important;
+}
+
+.btn.btn-primary-3.bohemcars-section-cta,
+.btn.btn-primary-3.bohemcars-section-cta:hover,
+.btn.btn-primary-3.bohemcars-section-cta:focus-visible,
+.btn.btn-primary-3.bohemcars-section-cta:active,
+.bohemcars-type-gallery__cta,
+.bohemcars-type-gallery__cta:hover,
+.bohemcars-type-gallery__cta:focus-visible,
+.bohemcars-type-gallery__cta:active {
+	background-color: #98bc2a !important;
+	border-color: #98bc2a !important;
+	color: #14210f !important;
+	transform: none !important;
+}
+
+.btn.btn-primary-3.bohemcars-section-cta:hover,
+.btn.btn-primary-3.bohemcars-section-cta:focus-visible,
+.btn.btn-primary-3.bohemcars-section-cta:active,
+.bohemcars-type-gallery__cta:hover,
+.bohemcars-type-gallery__cta:focus-visible,
+.bohemcars-type-gallery__cta:active {
+	background-color: #a6c93a !important;
+	border-color: #a6c93a !important;
+}
+
+.btn.btn-primary-3.bohemcars-section-cta svg,
+.bohemcars-type-gallery__cta svg {
+	display: none !important;
+}
+
+.bohemcars-card-actions .bohemcars-card-detail-circle,
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle,
+.bohemcars-card-actions .view-details {
+	color: #ffffff !important;
+}
+
+.bohemcars-card-actions .bohemcars-card-detail-circle:hover,
+.bohemcars-card-actions .bohemcars-card-detail-circle:focus-visible,
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle:hover,
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle:focus-visible {
+	background-color: #98bc2a !important;
+	border-color: #98bc2a !important;
+	color: #14210f !important;
+}
+
+.bohemcars-card-actions .bohemcars-card-detail-circle::after,
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle::after {
+	display: none !important;
+}
+
+.bohemcars-card-actions .bohemcars-card-detail-circle svg,
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle svg {
+	display: none !important;
+}
+
+body.bohemcars-inventory-template
+	.bohemcars-inventory-content
+	.bohemcars-card-actions
+	.view-details {
+	width: auto !important;
+	min-width: 0 !important;
+	height: auto !important;
+	min-height: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	color: #1c1c1c !important;
+	font-size: 15px !important;
+	font-weight: 800 !important;
+	line-height: 22px !important;
+	padding: 0 !important;
+	text-decoration: none !important;
+}
+
+body.bohemcars-inventory-template
+	.bohemcars-inventory-content
+	.bohemcars-card-actions
+	.view-details::before,
+body.bohemcars-inventory-template
+	.bohemcars-inventory-content
+	.bohemcars-card-actions
+	.view-details::after {
+	display: none !important;
+}
+
+body.bohemcars-inventory-template
+	.bohemcars-inventory-content
+	.bohemcars-card-actions
+	.view-details
+	img {
+	display: inline-block !important;
 }

@@ -635,7 +635,44 @@ const recentInquiriesBox = (context: AccountContext) => {
 	const data = accountDashboardRecentData(context);
 
 	return `<div class="dashboard-box bg-white bohemcars-inquiries-box" data-bohemcars-dashboard-recent>
-	<p class="h4 mb-20">${data.heading}</p>
+	<div class="flex justify-between items-start gap-16 flex-wrap mb-20">
+		<div>
+			<p class="h4 mb-8">${escapeHtml(data.heading)}</p>
+			<p class="h7 text-secondary">${escapeHtml(data.intro)}</p>
+		</div>
+		<a href="${escapeHtml(data.primaryAction.href)}" class="btn btn-small btn-primary-3 font-weight-600">${escapeHtml(data.primaryAction.label)}</a>
+	</div>
+	<div class="grid grid-cols-3 md-grid-cols-1 gap-1 mb-20" aria-label="Dashboard summary">
+		${data.summary
+			.map(
+				(
+					item
+				) => `<div class="bg-white p-16" data-bohemcars-dashboard-summary="${escapeHtml(item.id)}">
+			<p class="h4 mb-4">${escapeHtml(item.value)}</p>
+			<p class="text-secondary text-sm mb-0">${escapeHtml(item.label)}</p>
+		</div>`
+			)
+			.join('\n')}
+	</div>
+	<div class="grid grid-cols-4 xl-grid-cols-2 sm-grid-cols-1 gap-10 mb-24" aria-label="Quick dashboard actions">
+		${data.actions
+			.map(
+				(
+					action
+				) => `<a href="${escapeHtml(action.href)}" class="car-box" data-bohemcars-dashboard-action="${escapeHtml(action.id)}">
+			<div class="icon"><img src="${escapeHtml(action.icon)}" alt=""></div>
+			<div>
+				<p class="h7 font-weight-700 mb-4">${escapeHtml(action.label)}</p>
+				<p class="text-secondary text-sm mb-0">${escapeHtml(action.meta)}</p>
+			</div>
+		</a>`
+			)
+			.join('\n')}
+	</div>
+	<div class="flex justify-between items-center gap-12 mb-16">
+		<p class="h5 mb-0">Recent activity</p>
+		<p class="text-secondary text-sm mb-0">${data.items.length} latest</p>
+	</div>
 	<div class="comments">
 		${data.items
 			.map(
@@ -650,9 +687,12 @@ const recentInquiriesBox = (context: AccountContext) => {
 						<p class="text-secondary text-sm">${escapeHtml(item.dateLabel)}</p>
 					</div>
 				</div>
+				<span class="text-highlight font-weight-700 text-sm">${escapeHtml(item.statusLabel)}</span>
 			</div>
 			<p class="h5 mb-12">${escapeHtml(item.title)}</p>
-			<p class="h7 line-height-28">${escapeHtml(item.body)}</p>
+			<p class="text-secondary text-sm mb-10">${escapeHtml(item.metaLabel)}</p>
+			<p class="h7 line-height-28 mb-16">${escapeHtml(item.body)}</p>
+			<a href="${escapeHtml(item.href)}" class="view-details">${escapeHtml(item.actionLabel)} <img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt=""></a>
 		</div>`
 			)
 			.join('\n')}

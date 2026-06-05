@@ -324,7 +324,10 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(featuredCta).toContainText('Виж всички');
 	await expect(featuredCta).toHaveClass(/btn-primary-3/);
 	await expect(featuredCta).toHaveAttribute('href', /^\.?\/inventory$/);
+	await expect(featuredCta.locator('.bohemcars-section-cta__arrow')).toContainText('→');
 	await featuredCta.hover();
+	await expect(featuredCta).toHaveCSS('background-color', 'rgb(166, 201, 58)');
+	await expect(featuredCta).toHaveCSS('color', 'rgb(20, 33, 15)');
 	await expect(featuredCta).toHaveCSS('transform', 'none');
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(8);
 	await expect(homeFeaturedSection.locator('.bohemcars-price-pill')).toHaveCount(3);
@@ -447,6 +450,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		.boundingBox();
 	expect(featuredFinanceBox?.y ?? 0).toBeGreaterThan(featuredMonthlyBox?.y ?? 0);
 	await page.mouse.move(0, 0);
+	await expect(featuredCard.locator('.compare-details')).toContainText('Сравни');
 	await expect(featuredCard.locator('.compare-details')).toHaveCSS(
 		'background-color',
 		'rgba(0, 0, 0, 0)'
@@ -458,6 +462,17 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		'rgb(28, 28, 28)'
 	);
 	await expect(featuredCard.locator('.compare-details')).toHaveCSS('color', 'rgb(255, 255, 255)');
+	await expect(featuredCard.locator('.view-details')).toContainText('Виж детайли');
+	await expect(featuredCard.locator('.view-details img')).toHaveAttribute(
+		'src',
+		'/assets/icons/CaretCircleRight.svg'
+	);
+	const hybridFeaturedCard = featuredGrid
+		.locator('[data-bohemcars-slug]')
+		.filter({ hasText: 'BMW X3 30e xDrive' })
+		.first();
+	await expect(hybridFeaturedCard.locator('.bohemcars-card-specs')).toContainText('Хибрид');
+	await expect(hybridFeaturedCard.locator('.bohemcars-card-specs')).not.toContainText('Plug-in');
 	const featuredColumnCount = await featuredGrid.evaluate(
 		(grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length
 	);
@@ -493,12 +508,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(brandCta).toHaveClass(/btn-primary-3/);
 	await expect(brandCta).toHaveClass(/bohemcars-section-cta/);
 	await expect(brandCta).toHaveCSS('background-color', 'rgb(152, 188, 42)');
-	await expect(brandCta).toHaveCSS('color', 'rgb(255, 255, 255)');
-	await expect(brandCta.locator('svg path')).toHaveCSS('fill', 'rgb(255, 255, 255)');
+	await expect(brandCta).toHaveCSS('color', 'rgb(20, 33, 15)');
+	await expect(brandCta.locator('.bohemcars-section-cta__arrow')).toContainText('→');
 	await expect(brandCta).toHaveCSS('border-radius', '12px');
 	await brandCta.hover();
-	await expect(brandCta).toHaveCSS('background-color', 'rgb(28, 28, 28)');
-	await expect(brandCta).toHaveCSS('color', 'rgb(255, 255, 255)');
+	await expect(brandCta).toHaveCSS('background-color', 'rgb(166, 201, 58)');
+	await expect(brandCta).toHaveCSS('color', 'rgb(20, 33, 15)');
 	await expect(brandCta).toHaveCSS('transform', 'none');
 	await expect(homeBrandSection.locator('.out-brand-2')).toHaveCount(12);
 	await expect(page.locator('.out-brand-2')).toHaveCount(12);
@@ -527,11 +542,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	);
 	await expect(typeGallery.locator('.bohemcars-type-gallery__cta')).toHaveCSS(
 		'color',
-		'rgb(255, 255, 255)'
+		'rgb(20, 33, 15)'
 	);
-	await expect(typeGallery.locator('.bohemcars-type-gallery__cta svg path')).toHaveCSS(
-		'fill',
-		'rgb(255, 255, 255)'
+	await expect(typeGallery.locator('.bohemcars-type-gallery__cta-arrow')).toContainText('→');
+	await expect(typeGallery.locator('.bohemcars-type-gallery__cta svg')).toHaveCSS(
+		'display',
+		'none'
 	);
 	await expect(typeGallery.locator('.bohemcars-type-card').first()).toHaveCSS(
 		'background-color',
@@ -1491,7 +1507,7 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await sellForm.locator('#sellPhone').fill('893588680');
 	await sellForm.locator('button').click();
 	await expect(sellForm.locator('.auxero-form-status')).toHaveText(
-		'Sell-your-car request prepared locally for Bohemcars'
+		'Заявката е подготвена. Bohemcars ще се свърже с вас.'
 	);
 
 	await page.goto('/contact');
@@ -1531,12 +1547,6 @@ test('planned public support routes render Bohemcars content and local forms', a
 
 test('account and admin routes are role-aware and branded', async ({ page }) => {
 	await page.goto('/account?role=customer');
-	await expect(page.locator('body')).toContainText('Клиентски портал');
-	await expect(page.locator('body')).toContainText('Заяви достъп');
-	await expect(page.getByRole('link', { name: 'Заяви достъп' })).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Виж автомобили' })).toBeVisible();
-
-	await page.goto('/account?demo=dashboard&role=customer');
 	await expect(page.locator('body')).toContainText('Account Dashboard');
 	await expect(page.locator('body')).toContainText('My Favorites');
 	await expect(
@@ -1558,6 +1568,11 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect.poll(async () => accountRecent.locator('.comment-box').count()).toBeGreaterThan(0);
 	await expect(accountRecent).toContainText('Bohemcars Sales');
 	await expect(page.locator('body')).not.toContainText('Great Experience!');
+	await expect(page.locator('body')).not.toContainText('Клиентски портал');
+
+	await page.goto('/account?role=admin');
+	await expect(page).toHaveURL(/\/admin$/);
+	await expect(page.locator('body')).toContainText('Admin Dashboard');
 
 	await page.goto('/account/favorites?role=customer');
 	const favoritesGrid = page.locator('[data-bohemcars-favorites-grid]');
@@ -1690,7 +1705,8 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(adminHeaderCta).toHaveAttribute('href', '/admin/inventory/new');
 	const adminRecent = page.locator('[data-bohemcars-dashboard-recent]');
 	await expect(adminRecent).toBeVisible();
-	await expect(adminRecent).toContainText('Recent Inquiries');
+	await expect(adminRecent).toContainText('Admin Focus');
+	await expect(adminRecent).toContainText('Review leads');
 	await expect(adminRecent.locator('.comment-box')).toHaveCount(3);
 	await expect(adminRecent).toContainText(/Canada import lead|QA Contact|QA Visitor/);
 	await expect(page.locator('body')).not.toContainText('Great Experience!');

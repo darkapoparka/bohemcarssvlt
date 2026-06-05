@@ -151,6 +151,7 @@
 		};
 		const desktopInventorySelectors = [
 			'.bohemcars-inventory-banner',
+			'.bohemcars-inventory-main',
 			'.bohemcars-inventory-active-filters--results',
 			'.bohemcars-inventory-content',
 			'.bohemcars-map-fallback'
@@ -354,6 +355,16 @@
 				const nextUrl = inventoryHref(link.href);
 
 				if (nextUrl !== undefined) {
+					if (link.matches('[data-bohemcars-layout-toggle], [data-bohemcars-view-toggle]')) {
+						event.preventDefault();
+						event.stopImmediatePropagation();
+						setSidebarOpen(false);
+						void goto(resolve(`/inventory${nextUrl}` as `/inventory${string}`), {
+							invalidateAll: true
+						});
+						return;
+					}
+
 					event.preventDefault();
 					event.stopImmediatePropagation();
 

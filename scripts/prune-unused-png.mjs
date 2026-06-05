@@ -7,10 +7,31 @@
 import { readdirSync, statSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
 
-const SKIP_DIRS = new Set(['node_modules', '.git', '.svelte-kit', 'static', '.tmp', 'build', 'dist', '.vercel']);
+const SKIP_DIRS = new Set([
+	'node_modules',
+	'.git',
+	'.svelte-kit',
+	'static',
+	'.tmp',
+	'build',
+	'dist',
+	'.vercel'
+]);
 const SCAN_EXTS = new Set([
-	'.ts', '.tsx', '.js', '.mjs', '.cjs', '.svelte', '.css', '.scss',
-	'.html', '.json', '.md', '.yaml', '.yml', '.txt'
+	'.ts',
+	'.tsx',
+	'.js',
+	'.mjs',
+	'.cjs',
+	'.svelte',
+	'.css',
+	'.scss',
+	'.html',
+	'.json',
+	'.md',
+	'.yaml',
+	'.yml',
+	'.txt'
 ]);
 const PNG_TOKEN = /([A-Za-z0-9_.-]+?)\.png\b/g;
 
@@ -41,7 +62,10 @@ function walkPng(dir, acc = []) {
 }
 
 const pngs = walkPng('static');
-let deleted = 0, keptReferenced = 0, keptNoWebp = 0, freed = 0;
+let deleted = 0,
+	keptReferenced = 0,
+	keptNoWebp = 0,
+	freed = 0;
 const keptRefSample = [];
 for (const png of pngs) {
 	const base = basename(png).toLowerCase();

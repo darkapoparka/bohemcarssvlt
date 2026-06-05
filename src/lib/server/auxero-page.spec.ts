@@ -408,7 +408,8 @@ describe('splitAuxeroDocument', () => {
 
 		expect(split?.beforeHtml).toContain('Admin Dashboard');
 		expect(split?.beforeHtml).toContain('data-bohemcars-dashboard-stat="inventory"');
-		expect(split?.sectionHtml).toContain('Recent Inquiries');
+		expect(split?.sectionHtml).toContain('Admin Focus');
+		expect(split?.sectionHtml).toContain('Review leads');
 		expect(split?.sectionHtml).toContain('Canada import lead');
 		expect(split?.sectionHtml).not.toContain('Great Experience!');
 		expect(split?.afterHtml).toContain('LoginModal');

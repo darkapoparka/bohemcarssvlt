@@ -28,7 +28,6 @@
 		afterBudgetSectionHtml,
 		afterCompareSectionHtml,
 		afterFeaturedVehiclesHtml,
-		afterFooterHtml,
 		afterHeaderHtml,
 		afterHeroHtml,
 		afterModalsHtml,
@@ -52,7 +51,6 @@
 		afterBudgetSectionHtml: string;
 		afterCompareSectionHtml: string;
 		afterFeaturedVehiclesHtml: string;
-		afterFooterHtml: string;
 		afterHeaderHtml: string;
 		afterHeroHtml: string;
 		afterModalsHtml: string;
@@ -85,36 +83,40 @@
 <svelte:head>{@html pageDocument.headHtml}</svelte:head>
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html bodyClassScript}
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html pageDocument.bodyHtml}
-<HomeFiveHeader {header} hideMobileLogo />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterHeaderHtml}
-<main id="main-content">
-	<HomeFiveHero {hero} />
+
+<div class="preload preload-container">
+	<img class="preload--icon" src="/assets/icons/preload.svg" alt="preload" />
+</div>
+
+<div id="wrapper">
+	<HomeFiveHeader {header} hideMobileLogo />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterHeroHtml}
-	<HomeFiveActionBand {copy} />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterCompareSectionHtml}
-	<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} {copy} />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterFeaturedVehiclesHtml}
-	<HomeFiveBrowseSection {brandCards} {typeCards} {copy} {afterBrandStripHtml} />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterTypeGalleryHtml}
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterBudgetSectionHtml}
-	<HomeFiveReviewsSection {reviews} {copy} />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterReviewsSectionHtml}
-	<HomeFiveNewsSection posts={newsPosts} {copy} />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterNewsSectionHtml}
-</main>
-<HomeFiveFooter {footer} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterFooterHtml}
+	{@html afterHeaderHtml}
+	<main id="main-content">
+		<HomeFiveHero {hero} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterHeroHtml}
+		<HomeFiveActionBand {copy} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterCompareSectionHtml}
+		<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} {copy} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterFeaturedVehiclesHtml}
+		<HomeFiveBrowseSection {brandCards} {typeCards} {copy} {afterBrandStripHtml} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterTypeGalleryHtml}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterBudgetSectionHtml}
+		<HomeFiveReviewsSection {reviews} {copy} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterReviewsSectionHtml}
+		<HomeFiveNewsSection posts={newsPosts} {copy} />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html afterNewsSectionHtml}
+	</main>
+	<HomeFiveFooter {footer} />
+</div>
+
 <HomeFiveModals {modals} {copy} {header} />
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html afterModalsHtml}

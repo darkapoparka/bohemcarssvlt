@@ -29,7 +29,6 @@
 	afterBudgetSectionHtml={data.afterBudgetSectionHtml}
 	afterCompareSectionHtml={data.afterCompareSectionHtml}
 	afterFeaturedVehiclesHtml={data.afterFeaturedVehiclesHtml}
-	afterFooterHtml={data.afterFooterHtml}
 	afterHeaderHtml={data.afterHeaderHtml}
 	afterHeroHtml={data.afterHeroHtml}
 	afterModalsHtml={data.afterModalsHtml}

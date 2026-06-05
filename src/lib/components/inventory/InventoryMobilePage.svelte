@@ -415,7 +415,6 @@
 					aria-expanded={searchDrawerOpen}
 					onclick={openSearchDrawer}
 				>
-					<Search size={21} strokeWidth={2.15} aria-hidden="true" />
 					<span class:active={Boolean(mobile.searchValue)}>
 						{mobile.searchDisplayValue || mobile.searchPlaceholder}
 					</span>
@@ -1031,7 +1030,7 @@
 		min-width: 0;
 		gap: 10px;
 		overflow-x: hidden;
-		padding: 14px 14px 92px;
+		padding: max(14px, env(safe-area-inset-top)) 14px 92px;
 	}
 
 	.bohemcars-inventory-mobile__search {
@@ -1061,7 +1060,6 @@
 		height: 44px !important;
 		flex: 1 1 auto;
 		align-items: center;
-		gap: 12px;
 		border: 0;
 		background: transparent;
 		color: #1c1c1c;
@@ -1074,7 +1072,7 @@
 		display: block;
 		min-width: 0;
 		overflow: hidden;
-		color: #9ba0a5;
+		color: #728093;
 		font-size: 15px;
 		font-weight: 600;
 		line-height: 21px;
@@ -1084,12 +1082,6 @@
 
 	.bohemcars-inventory-mobile__search-label span.active {
 		color: #1c1c1c;
-	}
-
-	.bohemcars-inventory-mobile__search-label :global(svg) {
-		width: 20px;
-		height: 20px;
-		flex: 0 0 20px;
 	}
 
 	.bohemcars-inventory-mobile__search-action {
@@ -1121,13 +1113,14 @@
 
 	.bohemcars-inventory-mobile__tools {
 		display: flex;
-		max-width: calc(100vw - 28px);
 		min-width: 0;
 		gap: 8px;
 		margin: 0 -14px;
 		overflow-x: auto;
 		padding: 0 14px 2px;
 		scrollbar-width: none;
+		-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
+		mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
 	}
 
 	.bohemcars-inventory-mobile__tools::-webkit-scrollbar {

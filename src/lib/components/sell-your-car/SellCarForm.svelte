@@ -18,6 +18,7 @@
 	formClass="calculate-form bohemcars-sell-form"
 	gridClass="mb-28 grid grid-cols-1 gap-15"
 	novalidate
-	statusMessage="Sell-your-car request prepared locally for Bohemcars"
+	showEmptyStatus={false}
+	statusMessage="Заявката е подготвена. Bohemcars ще се свърже с вас."
 	submitLabel={form.submitLabel}
 />
