@@ -397,7 +397,7 @@ const applyAccountShell = (
 	const next = html
 		.replaceAll('Bohemcars Admin', escapeHtml(context.session.name))
 		.replaceAll(
-			'/assets/images/dashboard/dashbroard_avatar.png',
+			'/assets/images/dashboard/dashbroard_avatar.webp',
 			accountAvatarByRole[context.session.role]
 		)
 		.replaceAll('Dashboard', context.isAdmin ? 'Admin Dashboard' : 'Account Dashboard')

@@ -1563,7 +1563,8 @@
 		background: transparent !important;
 		box-shadow: none !important;
 		color: #111111;
-		font-size: 15px;
+		/* >=16px stops iOS Safari from auto-zooming (and shifting the vaul sheet) on focus. */
+		font-size: 16px;
 		font-weight: 600;
 		line-height: 22px;
 		outline: 0;

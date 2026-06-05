@@ -205,11 +205,11 @@ export const bohemcarsBrand = {
 } as const;
 
 export const bohemcarsAssets = {
-	logoDark: '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
-	logoLight: '/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png',
+	logoDark: '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp',
+	logoLight: '/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp',
 	hero: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
 	homeHeroSlides: [],
-	footerImage: '/assets/bohemcars/footer-canada-request-v2.png'
+	footerImage: '/assets/bohemcars/footer-canada-request-v2.webp'
 } as const;
 
 export const bohemcarsConsultants = [

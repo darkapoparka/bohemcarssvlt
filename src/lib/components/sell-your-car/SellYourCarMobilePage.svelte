@@ -132,7 +132,7 @@
 		padding: 14px;
 		background:
 			linear-gradient(90deg, rgba(23, 31, 19, 0.97), rgba(23, 31, 19, 0.9)),
-			url('/assets/bohemcars/cta/sell-car-banner-v2.png') 67% 52% / cover;
+			url('/assets/bohemcars/cta/sell-car-banner-v2.webp') 67% 52% / cover;
 		box-shadow: inset 0 -1px 0 rgba(217, 242, 117, 0.36);
 		color: #ffffff;
 	}

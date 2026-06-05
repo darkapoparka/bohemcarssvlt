@@ -14,7 +14,7 @@ export const posts: BlogPost[] = [
 		title: 'Какво проверява Bohemcars преди внос на автомобил от Канада',
 		category: 'Внос от Канада',
 		date: 'Май 2026',
-		image: '/assets/bohemcars/blog/import-check-cover.png',
+		image: '/assets/bohemcars/blog/import-check-cover.webp',
 		excerpt:
 			'История, пробег, сервизни записи, снимки от покупката и документи правят решението за внос по-спокойно.',
 		content: [
@@ -28,7 +28,7 @@ export const posts: BlogPost[] = [
 		title: 'Какво означава „готов за регистрация“',
 		category: 'Документи',
 		date: 'Май 2026',
-		image: '/assets/bohemcars/blog/registration-cover.png',
+		image: '/assets/bohemcars/blog/registration-cover.webp',
 		excerpt:
 			'Технически проверки, кодиране, документи и подготовка според модела са част от истинското предаване.',
 		content: [
@@ -42,7 +42,7 @@ export const posts: BlogPost[] = [
 		title: 'Как Bohemcars преглежда клиентски автомобил',
 		category: 'Продай автомобила си',
 		date: 'Май 2026',
-		image: '/assets/bohemcars/blog/sell-car-cover.png',
+		image: '/assets/bohemcars/blog/sell-car-cover.webp',
 		excerpt:
 			'Снимки, VIN, сервизна история, пробег и очаквана цена помагат на екипа да даде реалистична обратна връзка.',
 		content: [

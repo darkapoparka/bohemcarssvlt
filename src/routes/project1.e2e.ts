@@ -199,7 +199,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	expect(inventoryMegaMenuBox).not.toBeNull();
 	await expect(inventoryMegaMenu.locator('.bohemcars-mega-car img').first()).toHaveAttribute(
 		'src',
-		/\/assets\/bohemcars\/megamenu\/inventory-bmw-x5-cutout\.png$/
+		/\/assets\/bohemcars\/megamenu\/inventory-bmw-x5-cutout\.webp$/
 	);
 	const servicesNavItem = homeHeader.locator('#menu-primary-menu > .menu-item').nth(2);
 	await expect(servicesNavItem).toHaveClass(/menu-item-has-children/);
@@ -545,7 +545,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	);
 	await expect(page.locator('.bohemcars-type-card')).toHaveCount(8);
 	await expect(
-		homeBrowseSection.locator('img[src*="/assets/images/card/card-27.png"]')
+		homeBrowseSection.locator('img[src*="/assets/images/card/card-27.webp"]')
 	).toBeVisible();
 	await expect(homeActionBand).toHaveCSS('background-color', 'rgb(251, 252, 250)');
 	await expect(homeActionBand.locator('.bohemcars-action-card')).toHaveCount(2);

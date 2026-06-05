@@ -86,6 +86,15 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 		'<!-- /CompareModal -->'
 	);
 
+	// Feature only cars that carry a genuine remote listing photo so the homepage
+	// card grid reads as one consistent set of real photos. Cars whose source photo
+	// was missing/mismatched fall back to a local studio cutout or a generic stock
+	// shot (e.g. the X5's remote photo is a 7-series sedan); those are kept out of the
+	// grid here rather than mixing cutouts and stock images among the real listings.
+	const vehiclesWithListingPhoto = vehicles.filter((vehicle) =>
+		/^https?:\/\//.test(vehicle.image)
+	);
+
 	return {
 		afterBrandStripHtml: typeGallerySlot
 			? typeGallerySlot.beforeHtml
@@ -124,7 +133,7 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		copy: messages.home,
 		featuredVehicles: featuredVehiclesSlot
-			? homeFiveVehicleCardsFromVehicles(vehicles, 8, locale)
+			? homeFiveVehicleCardsFromVehicles(vehiclesWithListingPhoto, 8, locale)
 			: [],
 		footer: footerSlot ? homeFiveFooterDataForLocale(locale) : undefined,
 		header: headerSlot ? homeFiveHeaderDataForLocale(locale) : undefined,

@@ -22,7 +22,7 @@
 		description:
 			'Изпрати конкретна обява, VIN или кратко описание. Bohemcars ще провери дали автомобилът си струва преди да поемеш ангажимент.',
 		eyebrow: 'Bohemcars внос',
-		image: '/assets/bohemcars/services/import-canada-banner-generated.png',
+		image: '/assets/bohemcars/services/import-canada-banner-generated.webp',
 		title: 'Проверка за внос от Канада'
 	};
 </script>

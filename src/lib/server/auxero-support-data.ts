@@ -297,7 +297,7 @@ const applySellYourCarData = (html: string) => {
 	<div class="container">
 		<div class="why-choose-us style2 style3">
 			<div class="wow fadeIn" data-wow-delay="0.1s">
-				<img class="move5" src="/assets/bohemcars/cta/sell-car-banner-v2.png" alt="Продай автомобила си с Bohemcars">
+				<img class="move5" src="/assets/bohemcars/cta/sell-car-banner-v2.webp" alt="Продай автомобила си с Bohemcars">
 			</div>
 			<div class="wow fadeIn" data-wow-delay="0.2s">
 				<h2 class="mb-12">Защо Bohemcars?</h2>
@@ -362,7 +362,7 @@ const applyServicesData = (html: string) => {
 				<div class="flex"><a href="/contact" class="btn btn-primary btn-large-3 font-weight-600">Свържи се с Bohemcars</a></div>
 			</div>
 			<div class="ml-24 flex lg-ml-0 wow fadeInUp radius-20 overflow-hidden">
-				<img class="w-full" src="/assets/bohemcars/services/import-canada-banner-generated.png" alt="Bohemcars services">
+				<img class="w-full" src="/assets/bohemcars/services/import-canada-banner-generated.webp" alt="Bohemcars services">
 			</div>
 		</div>
 	</div>
@@ -379,7 +379,7 @@ const applyServicesData = (html: string) => {
 <section class="relative py-100">
 	<div class="overlay-parallax"></div>
 	<div class="overlay image">
-		<img class="lazyload parallax" data-src="/assets/bohemcars/proof-studio-import-handoff.png" src="/assets/bohemcars/proof-studio-import-handoff.png" alt="Bohemcars service support">
+		<img class="lazyload parallax" data-src="/assets/bohemcars/proof-studio-import-handoff.webp" src="/assets/bohemcars/proof-studio-import-handoff.webp" alt="Bohemcars service support">
 	</div>
 	<div class="container relative index-10">
 		<div class="grid grid-cols-2 lg-grid-cols-1 gap-30">
@@ -718,7 +718,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 	const firstRelated = related[0] ?? post;
 	const secondRelated = related[1] ?? post;
 	const body = `<section class="blog-details-banner">
-	<img class="overlay-image" src="/assets/images/blog/overlay-blogdetails.png" alt="blog-details-banner">
+	<img class="overlay-image" src="/assets/images/blog/overlay-blogdetails.webp" alt="blog-details-banner">
 	<div class="breadcrumb-wrapper">
 		<div class="container">
 			<ul class="breadcrumb">

@@ -122,7 +122,7 @@ describe('splitAuxeroDocument', () => {
 		);
 
 		expect(typeSplit?.sectionHtml).toContain('Browse By Type');
-		expect(typeSplit?.sectionHtml).toContain('card-27.png');
+		expect(typeSplit?.sectionHtml).toContain('card-27.webp');
 		expect(typeSplit?.afterHtml).toContain('<!-- Compare Top Rated Vehicles -->');
 	});
 

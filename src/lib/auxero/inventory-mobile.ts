@@ -76,18 +76,18 @@ export type InventoryMobileData = {
 };
 
 const brandLogos: Record<string, string> = {
-	Audi: '/assets/images/brand/brand-3.png',
-	BMW: '/assets/images/brand/brand-1.png',
-	Ford: '/assets/images/brand/brand-7.png',
-	Honda: '/assets/images/brand/brand-4.png',
-	Hyundai: '/assets/images/brand/brand-8.png',
-	Kia: '/assets/bohemcars/brands/kia-transparent.png',
-	Mazda: '/assets/images/brand/brand-10.png',
-	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
-	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/images/brand/brand-5.png',
-	Volvo: '/assets/images/brand/brand-6.png',
-	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+	Audi: '/assets/images/brand/brand-3.webp',
+	BMW: '/assets/images/brand/brand-1.webp',
+	Ford: '/assets/images/brand/brand-7.webp',
+	Honda: '/assets/images/brand/brand-4.webp',
+	Hyundai: '/assets/images/brand/brand-8.webp',
+	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
+	Mazda: '/assets/images/brand/brand-10.webp',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.webp',
+	Porsche: '/assets/bohemcars/brands/porsche.webp',
+	Toyota: '/assets/images/brand/brand-5.webp',
+	Volvo: '/assets/images/brand/brand-6.webp',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.webp'
 };
 
 const featuredExtras = [

@@ -83,14 +83,14 @@ export type AuxeroAboutStat = {
 };
 
 const brandLogos: Record<string, string> = {
-	Audi: '/assets/bohemcars/brands/audi.png',
-	BMW: '/assets/bohemcars/brands/bmw.png',
-	Ford: '/assets/bohemcars/brands/ford.png',
-	Mazda: '/assets/bohemcars/brands/mazda.png',
-	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
-	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/bohemcars/brands/toyota.png',
-	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+	Audi: '/assets/bohemcars/brands/audi.webp',
+	BMW: '/assets/bohemcars/brands/bmw.webp',
+	Ford: '/assets/bohemcars/brands/ford.webp',
+	Mazda: '/assets/bohemcars/brands/mazda.webp',
+	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.webp',
+	Porsche: '/assets/bohemcars/brands/porsche.webp',
+	Toyota: '/assets/bohemcars/brands/toyota.webp',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.webp'
 };
 
 const vehicleCountLabel = (count: number) => {
@@ -126,7 +126,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		description:
 			'Автомобили от Канада, проверка по конкретен VIN, документи и оглед с ясен следващ ход.',
 		eyebrow: 'За Bohemcars',
-		image: '/assets/bohemcars/hero/about-import-banner-generated.png',
+		image: '/assets/bohemcars/hero/about-import-banner-generated.webp',
 		title: 'Bohemcars: автомобили от Канада'
 	},
 	intro: {
@@ -140,7 +140,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 			'Огледи, документи и предаване с предварителна уговорка'
 		],
 		mainImageAlt: 'Bohemcars showroom',
-		subImage: '/assets/bohemcars/proof-studio-import-handoff.png',
+		subImage: '/assets/bohemcars/proof-studio-import-handoff.webp',
 		subImageAlt: 'Bohemcars handoff'
 	},
 	office: {
@@ -175,24 +175,24 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		steps: [
 			{
 				title: 'Внос от Канада',
-				image: '/assets/bohemcars/services/import-canada-service.png',
+				image: '/assets/bohemcars/services/import-canada-service.webp',
 				description:
 					'Работа по конкретен модел, бюджет, срок и реалистична крайна цена до България.'
 			},
 			{
 				title: 'Налични автомобили',
-				image: '/assets/bohemcars/home2/home2-action-buy.png',
+				image: '/assets/bohemcars/home2/home2-action-buy.webp',
 				description: 'Огледи с уговорка, контекст за произход, състояние, пробег и следващи стъпки.'
 			},
 			{
 				title: 'Проверка и документи',
-				image: '/assets/bohemcars/services/evaluate-link-service.png',
+				image: '/assets/bohemcars/services/evaluate-link-service.webp',
 				description:
 					'Преглед на VIN, история, снимки, сервизни следи, документи и готовност за регистрация.'
 			},
 			{
 				title: 'Продажба и предаване',
-				image: '/assets/bohemcars/services/sell-car-service.png',
+				image: '/assets/bohemcars/services/sell-car-service.webp',
 				description:
 					'Съдействие при клиентски автомобили, подготвяне на оглед, документи и спокойно предаване.'
 			}
@@ -233,7 +233,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 			'Контекст за транспорт, мита, ДДС, подготовка и регистрация',
 			'Оглед, продажба на клиентски автомобил и предаване с уговорка'
 		],
-		image: '/assets/bohemcars/cta/import-canada-banner.png',
+		image: '/assets/bohemcars/cta/import-canada-banner.webp',
 		imageAlt: 'Why choose Bohemcars'
 	}
 };

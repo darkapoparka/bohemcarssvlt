@@ -20,7 +20,7 @@
 			<div class="home2-header__inner">
 				<a class="home2-header__logo" href={resolve(header.logo.href as '/')}>
 					<img
-						src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png"
+						src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
 						alt={header.logo.alt}
 					/>
 				</a>

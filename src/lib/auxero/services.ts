@@ -53,21 +53,21 @@ export const auxeroServiceCards: AuxeroSupportService[] = [
 		description:
 			'Подбор на автомобили с проследима история, ясни снимки и реалистична крайна цена преди покупка.',
 		href: '/contact',
-		image: '/assets/bohemcars/services/import-canada-banner-generated.png'
+		image: '/assets/bohemcars/services/import-canada-banner-generated.webp'
 	},
 	{
 		title: 'Проверка на обява',
 		description:
 			'Преглед на VIN, пробег, история, оборудване, снимки и контекст на продавача преди решение.',
 		href: '/compare',
-		image: '/assets/bohemcars/services/evaluate-link-service.png'
+		image: '/assets/bohemcars/services/evaluate-link-service.webp'
 	},
 	{
 		title: 'Продажба на автомобил',
 		description:
 			'Изпрати данни, документи, снимки и очаквания, за да изберем правилния път за продажба.',
 		href: '/sell-your-car',
-		image: '/assets/bohemcars/services/sell-car-service.png'
+		image: '/assets/bohemcars/services/sell-car-service.webp'
 	},
 	{
 		title: 'Документи и регистрация',
@@ -87,7 +87,7 @@ export const auxeroServiceCards: AuxeroSupportService[] = [
 		description:
 			'Сравняваме цена, пробег, оборудване, история, разходи и срокове за няколко кандидата.',
 		href: '/compare',
-		image: '/assets/bohemcars/cta/import-canada-banner-v2.png'
+		image: '/assets/bohemcars/cta/import-canada-banner-v2.webp'
 	}
 ];
 
@@ -117,7 +117,7 @@ export const auxeroServicesContent: AuxeroServicesContent = {
 		description:
 			'Подбор, проверка, документи и реалистична крайна цена за автомобили от Канада, преди да стигнем до оглед.',
 		eyebrow: 'Bohemcars услуги',
-		image: '/assets/bohemcars/services/import-canada-banner-generated.png',
+		image: '/assets/bohemcars/services/import-canada-banner-generated.webp',
 		title: 'Внос от Канада'
 	}
 };

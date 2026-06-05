@@ -37,29 +37,29 @@ const heartIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" x
 </svg>`;
 
 const typeImages = [
-	'/assets/images/card/card-27.png',
-	'/assets/images/card/card-28.png',
-	'/assets/images/card/card-29.png',
-	'/assets/images/card/card-30.png',
-	'/assets/images/card/card-31.png',
-	'/assets/images/card/card-32.png',
-	'/assets/images/card/card-33.png',
-	'/assets/images/card/card-34.png'
+	'/assets/images/card/card-27.webp',
+	'/assets/images/card/card-28.webp',
+	'/assets/images/card/card-29.webp',
+	'/assets/images/card/card-30.webp',
+	'/assets/images/card/card-31.webp',
+	'/assets/images/card/card-32.webp',
+	'/assets/images/card/card-33.webp',
+	'/assets/images/card/card-34.webp'
 ] as const;
 
 const brandImages: Record<string, string> = {
-	Audi: '/assets/images/brand/brand-3.png',
-	BMW: '/assets/images/brand/brand-1.png',
-	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
-	Mazda: '/assets/images/brand/brand-10.png',
-	Toyota: '/assets/images/brand/brand-5.png',
-	Ford: '/assets/images/brand/brand-7.png',
-	Honda: '/assets/images/brand/brand-4.png',
-	Volvo: '/assets/images/brand/brand-6.png',
-	Hyundai: '/assets/images/brand/brand-8.png',
-	Kia: '/assets/bohemcars/brands/kia-transparent.png',
-	Ferrari: '/assets/images/brand/brand-11.png',
-	Tesla: '/assets/images/brand/brand-12.png'
+	Audi: '/assets/images/brand/brand-3.webp',
+	BMW: '/assets/images/brand/brand-1.webp',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.webp',
+	Mazda: '/assets/images/brand/brand-10.webp',
+	Toyota: '/assets/images/brand/brand-5.webp',
+	Ford: '/assets/images/brand/brand-7.webp',
+	Honda: '/assets/images/brand/brand-4.webp',
+	Volvo: '/assets/images/brand/brand-6.webp',
+	Hyundai: '/assets/images/brand/brand-8.webp',
+	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
+	Ferrari: '/assets/images/brand/brand-11.webp',
+	Tesla: '/assets/images/brand/brand-12.webp'
 };
 
 const brandShowcase = [
@@ -893,7 +893,7 @@ const brandStrip = () => `<!-- Explore Our Brands -->
 						(brand) => `<div class="swiper-slide">
 					<a href="/inventory?brand=${encodeURIComponent(brand.query)}" class="out-brand-2">
 						<span class="bohemcars-brand-logo-frame">
-							<img class="out-brand--img" src="${brandImages[brand.query] ?? '/assets/images/brand/brand-1.png'}" alt="">
+							<img class="out-brand--img" src="${brandImages[brand.query] ?? '/assets/images/brand/brand-1.webp'}" alt="">
 						</span>
 						<p class="h5">${escapeHtml(brand.name)}</p>
 						<p class="text-muted text-sm">${brandCountLabel(brand.count)}</p>
@@ -916,7 +916,7 @@ const whyChoose = () => {
 	<div class="container">
 		<div class="why-choose-us style2">
 			<div class="wow fadeIn" data-wow-delay="0.1s">
-				<img class="move5" src="/assets/bohemcars/proof-studio-import-handoff.png" alt="Bohemcars vehicle handoff">
+				<img class="move5" src="/assets/bohemcars/proof-studio-import-handoff.webp" alt="Bohemcars vehicle handoff">
 			</div>
 			<div class="wow fadeIn" data-wow-delay="0.2s">
 				<h2 class="mb-15">Why Choose Bohemcars?</h2>
@@ -1117,7 +1117,7 @@ const calculatorSection = () => {
 				</div>
 			</div>
 			<div class="col-lg-6 text-center wow fadeInUp">
-				<img class="max-w-628 ml-60 move3" src="/assets/bohemcars/cta/import-canada-banner-v2.png" alt="Bohemcars import calculator">
+				<img class="max-w-628 ml-60 move3" src="/assets/bohemcars/cta/import-canada-banner-v2.webp" alt="Bohemcars import calculator">
 			</div>
 		</div>
 	</div>

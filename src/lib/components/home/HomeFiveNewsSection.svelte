@@ -357,7 +357,7 @@
 			display: inline-flex;
 			align-items: center;
 			gap: 7px;
-			color: #86aa1f;
+			color: #4f7012;
 			font-size: 14px;
 			font-weight: 900;
 			line-height: 20px;

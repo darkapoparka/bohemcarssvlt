@@ -1236,7 +1236,8 @@
 			color: #1c1c1c;
 			padding: 12px 13px;
 			font: inherit;
-			font-size: 15px;
+			/* >=16px stops iOS Safari from auto-zooming on focus inside the drawer. */
+			font-size: 16px;
 			font-weight: 600;
 			line-height: 20px;
 		}

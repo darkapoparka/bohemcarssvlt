@@ -327,8 +327,8 @@ const brokenHomeImageSlugs = new Set(['21779200396408437']);
 // X5 shipped a sedan-looking shot). Use the same curated cutout the PDP and mega-menu
 // use so the card thumbnail and the detail hero stay consistent.
 const cardImageOverrides: Record<string, string> = {
-	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
-	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp'
 };
 
 export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
@@ -337,22 +337,22 @@ export const imageForHomeFiveVehicle = (vehicle: Vehicle) =>
 
 const inventoryMegaMenuVehicles = [
 	{
-		image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
 		label: 'BMW X5 40i',
 		slug: '21764342419542174'
 	},
 	{
-		image: '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png',
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp',
 		label: 'BMW X4 M Competition',
 		slug: '21778068579001193'
 	},
 	{
-		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp',
 		label: 'Audi SQ5 Black Optic',
 		slug: '21778067767337633'
 	},
 	{
-		image: '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp',
 		label: 'Audi A7 Black Optic',
 		slug: '11774283016080050'
 	}
@@ -580,23 +580,23 @@ const countBy = (items: string[]) =>
 	}, new Map<string, number>());
 
 const homeFiveBrandShowcase = [
-	{ count: 18, image: '/assets/images/brand/brand-1.png', name: 'BMW', query: 'BMW' },
+	{ count: 18, image: '/assets/images/brand/brand-1.webp', name: 'BMW', query: 'BMW' },
 	{
 		count: 22,
-		image: '/assets/images/brand/brand-2.png',
+		image: '/assets/images/brand/brand-2.webp',
 		name: 'Mercedes',
 		query: 'Mercedes-Benz'
 	},
-	{ count: 38, image: '/assets/images/brand/brand-3.png', name: 'Audi', query: 'Audi' },
-	{ count: 29, image: '/assets/images/brand/brand-4.png', name: 'Honda', query: 'Honda' },
-	{ count: 23, image: '/assets/images/brand/brand-5.png', name: 'Toyota', query: 'Toyota' },
-	{ count: 32, image: '/assets/images/brand/brand-6.png', name: 'Volvo', query: 'Volvo' },
-	{ count: 24, image: '/assets/images/brand/brand-7.png', name: 'Ford', query: 'Ford' },
-	{ count: 22, image: '/assets/images/brand/brand-8.png', name: 'Hyundai', query: 'Hyundai' },
-	{ count: 14, image: '/assets/bohemcars/brands/kia-transparent.png', name: 'Kia', query: 'Kia' },
-	{ count: 32, image: '/assets/images/brand/brand-10.png', name: 'Mazda', query: 'Mazda' },
-	{ count: 24, image: '/assets/images/brand/brand-11.png', name: 'Ferrari', query: 'Ferrari' },
-	{ count: 27, image: '/assets/images/brand/brand-12.png', name: 'Tesla', query: 'Tesla' }
+	{ count: 38, image: '/assets/images/brand/brand-3.webp', name: 'Audi', query: 'Audi' },
+	{ count: 29, image: '/assets/images/brand/brand-4.webp', name: 'Honda', query: 'Honda' },
+	{ count: 23, image: '/assets/images/brand/brand-5.webp', name: 'Toyota', query: 'Toyota' },
+	{ count: 32, image: '/assets/images/brand/brand-6.webp', name: 'Volvo', query: 'Volvo' },
+	{ count: 24, image: '/assets/images/brand/brand-7.webp', name: 'Ford', query: 'Ford' },
+	{ count: 22, image: '/assets/images/brand/brand-8.webp', name: 'Hyundai', query: 'Hyundai' },
+	{ count: 14, image: '/assets/bohemcars/brands/kia-transparent.webp', name: 'Kia', query: 'Kia' },
+	{ count: 32, image: '/assets/images/brand/brand-10.webp', name: 'Mazda', query: 'Mazda' },
+	{ count: 24, image: '/assets/images/brand/brand-11.webp', name: 'Ferrari', query: 'Ferrari' },
+	{ count: 27, image: '/assets/images/brand/brand-12.webp', name: 'Tesla', query: 'Tesla' }
 ] as const;
 
 const showcaseBrandCountLabel = (locale: Locale, count: number) =>
@@ -686,19 +686,19 @@ export const homeFiveReviewItems: HomeFiveReview[] = [
 	{
 		name: 'Aleksandar Vytev',
 		role: 'Клиент на Bohemcars',
-		avatar: '/assets/images/avatar/avatar-1.png',
+		avatar: '/assets/images/avatar/avatar-1.webp',
 		text: 'Екипът ми обясни историята на автомобила, транспорта и стъпките по регистрацията, преди да поема ангажимент. Предаването беше спокойно и прозрачно.'
 	},
 	{
 		name: 'Krasimir Georgiev',
 		role: 'Клиент с внос',
-		avatar: '/assets/images/avatar/avatar-2.png',
+		avatar: '/assets/images/avatar/avatar-2.webp',
 		text: 'Bohemcars запазиха разговора практичен: снимки, документи, пробег и разходите, които имат значение преди доставка.'
 	},
 	{
 		name: 'Iliyan Petrov',
 		role: 'Продава клиентски автомобил',
-		avatar: '/assets/images/avatar/avatar-3.png',
+		avatar: '/assets/images/avatar/avatar-3.webp',
 		text: 'Изпратих данните за колата и получих ясна обратна връзка за цената, документите и най-добрия начин да представя автомобила.'
 	}
 ];
@@ -810,49 +810,49 @@ export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData 
 export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{
 		label: 'Electric',
-		image: '/assets/images/card/card-27.png',
+		image: '/assets/images/card/card-27.webp',
 		bodyType: 'Electric',
 		href: '/inventory?fuel=EV'
 	},
 	{
 		label: 'Sedan',
-		image: '/assets/images/card/card-28.png',
+		image: '/assets/images/card/card-28.webp',
 		bodyType: 'Sedan',
 		href: '/inventory?bodyType=Sedan'
 	},
 	{
 		label: 'SUV',
-		image: '/assets/images/card/card-29.png',
+		image: '/assets/images/card/card-29.webp',
 		bodyType: 'SUV',
 		href: '/inventory?bodyType=SUV'
 	},
 	{
 		label: 'Pickup Truck',
-		image: '/assets/images/card/card-30.png',
+		image: '/assets/images/card/card-30.webp',
 		bodyType: 'Pickup Truck',
 		href: '/inventory?bodyType=Pickup%20Truck'
 	},
 	{
 		label: 'Hatchback',
-		image: '/assets/images/card/card-31.png',
+		image: '/assets/images/card/card-31.webp',
 		bodyType: 'Hatchback',
 		href: '/inventory?bodyType=Hatchback'
 	},
 	{
 		label: 'Crossover',
-		image: '/assets/images/card/card-32.png',
+		image: '/assets/images/card/card-32.webp',
 		bodyType: 'Crossover',
 		href: '/inventory?bodyType=Crossover'
 	},
 	{
 		label: 'Coupe',
-		image: '/assets/images/card/card-33.png',
+		image: '/assets/images/card/card-33.webp',
 		bodyType: 'Coupe',
 		href: '/inventory?bodyType=Coupe'
 	},
 	{
 		label: 'Cabriolet',
-		image: '/assets/images/card/card-34.png',
+		image: '/assets/images/card/card-34.webp',
 		bodyType: 'Cabriolet',
 		href: '/inventory?bodyType=Cabriolet'
 	}
@@ -938,21 +938,21 @@ export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
 	{
 		active: false,
 		href: '/inventory?brand=BMW',
-		image: '/assets/images/brand/brand-1.png',
+		image: '/assets/images/brand/brand-1.webp',
 		kind: 'brand',
 		label: 'BMW'
 	},
 	{
 		active: false,
 		href: '/inventory?brand=Audi',
-		image: '/assets/images/brand/brand-3.png',
+		image: '/assets/images/brand/brand-3.webp',
 		kind: 'brand',
 		label: 'Audi'
 	},
 	{
 		active: false,
 		href: '/inventory?brand=Mercedes-Benz',
-		image: '/assets/images/brand/brand-2.png',
+		image: '/assets/images/brand/brand-2.webp',
 		kind: 'brand',
 		label: 'Mercedes'
 	}
@@ -970,19 +970,19 @@ const uniqueSortedValues = (items: string[]) =>
 	Array.from(new Set(items.filter(Boolean))).sort((left, right) => left.localeCompare(right));
 
 const modalBrandLogos: Record<string, string> = {
-	Audi: '/assets/images/brand/brand-3.png',
-	BMW: '/assets/images/brand/brand-1.png',
-	Ferrari: '/assets/images/brand/brand-11.png',
-	Ford: '/assets/images/brand/brand-7.png',
-	Honda: '/assets/images/brand/brand-4.png',
-	Hyundai: '/assets/images/brand/brand-8.png',
-	Kia: '/assets/bohemcars/brands/kia-transparent.png',
-	Mazda: '/assets/images/brand/brand-10.png',
-	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
-	Tesla: '/assets/images/brand/brand-12.png',
-	Toyota: '/assets/images/brand/brand-5.png',
-	Volvo: '/assets/images/brand/brand-6.png',
-	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+	Audi: '/assets/images/brand/brand-3.webp',
+	BMW: '/assets/images/brand/brand-1.webp',
+	Ferrari: '/assets/images/brand/brand-11.webp',
+	Ford: '/assets/images/brand/brand-7.webp',
+	Honda: '/assets/images/brand/brand-4.webp',
+	Hyundai: '/assets/images/brand/brand-8.webp',
+	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
+	Mazda: '/assets/images/brand/brand-10.webp',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.webp',
+	Tesla: '/assets/images/brand/brand-12.webp',
+	Toyota: '/assets/images/brand/brand-5.webp',
+	Volvo: '/assets/images/brand/brand-6.webp',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.webp'
 };
 
 const compactModelLabel = (value: string) =>

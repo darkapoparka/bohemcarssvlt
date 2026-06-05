@@ -22,8 +22,8 @@
 		Wrench
 	} from '@lucide/svelte';
 
-	const heroImage = '/assets/bohemcars/offer/offer-poster-background.png';
-	const logo = '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png';
+	const heroImage = '/assets/bohemcars/offer/offer-poster-background.webp';
+	const logo = '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp';
 
 	const stats = [
 		{ value: '42', label: 'реални автомобила в каталога' },
@@ -44,7 +44,7 @@
 			title: 'Страници за автомобили с галерия, спецификации и клиентски действия'
 		},
 		{
-			image: '/assets/bohemcars/services/import-canada-service.png',
+			image: '/assets/bohemcars/services/import-canada-service.webp',
 			label: 'Услуги',
 			title: 'Внос от Канада, оценка, контактни форми и съдържание'
 		}
@@ -402,7 +402,7 @@
 				rgba(17, 20, 15, 0.78) 42%,
 				rgba(17, 20, 15, 0.34)
 			),
-			url('/assets/bohemcars/offer/offer-poster-background.png') center / cover;
+			url('/assets/bohemcars/offer/offer-poster-background.webp') center / cover;
 		content: '';
 	}
 
@@ -854,7 +854,7 @@
 					rgba(17, 20, 15, 0.86) 46%,
 					rgba(17, 20, 15, 0.56)
 				),
-				url('/assets/bohemcars/offer/offer-poster-background.png') center / cover;
+				url('/assets/bohemcars/offer/offer-poster-background.webp') center / cover;
 		}
 
 		.offer-hero__visual {

@@ -11,7 +11,7 @@
 		{
 			body: 'Налични автомобили с ясен произход и оглед преди сделка.',
 			href: '/inventory',
-			image: '/assets/bohemcars/home2/home2-action-buy.png',
+			image: '/assets/bohemcars/home2/home2-action-buy.webp',
 			kicker: 'Купи автомобил',
 			label: 'Виж наличните',
 			tone: 'buy'
@@ -19,7 +19,7 @@
 		{
 			body: 'Подбор, проверка, документи и доставка от Канада.',
 			href: '/services',
-			image: '/assets/bohemcars/home2/home2-action-import.png',
+			image: '/assets/bohemcars/home2/home2-action-import.webp',
 			kicker: 'Внос от Канада',
 			label: 'Виж процеса',
 			tone: 'import'
@@ -29,28 +29,28 @@
 	const budgetCards = [
 		{
 			href: '/inventory?maxPrice=30000',
-			image: '/assets/bohemcars/home2/home2-budget-entry.png',
+			image: '/assets/bohemcars/home2/home2-budget-entry.webp',
 			label: 'до 30 000 €',
 			meta: 'Градски и практични',
 			tone: 'entry'
 		},
 		{
 			href: '/inventory?minPrice=30000&maxPrice=50000',
-			image: '/assets/bohemcars/home2/home2-budget-mid.png',
+			image: '/assets/bohemcars/home2/home2-budget-mid.webp',
 			label: '30 000 - 50 000 €',
 			meta: 'Семейни SUV и седани',
 			tone: 'mid'
 		},
 		{
 			href: '/inventory?minPrice=50000&maxPrice=80000',
-			image: '/assets/bohemcars/home2/home2-budget-premium.png',
+			image: '/assets/bohemcars/home2/home2-budget-premium.webp',
 			label: '50 000 - 80 000 €',
 			meta: 'Премиум избор',
 			tone: 'premium'
 		},
 		{
 			href: '/inventory?minPrice=80000',
-			image: '/assets/bohemcars/home2/home2-budget-luxury.png',
+			image: '/assets/bohemcars/home2/home2-budget-luxury.webp',
 			label: '80 000+ €',
 			meta: 'Луксозни модели',
 			tone: 'luxury'

@@ -99,7 +99,7 @@
 	</div>
 
 	<div class="listing-details--sidebar-box mb-40">
-		<p class="h5 mb-4 capitalize">{detail.copy.carOverview}</p>
+		<p class="h5 mb-4">{detail.copy.carOverview}</p>
 		<AuxeroVehicleOverview items={detail.overviewItems} />
 	</div>
 
@@ -163,7 +163,7 @@
 	</div>
 
 	<div class="listing-details--sidebar-box">
-		<p class="h5 mb-16 capitalize">{detail.copy.inquiryTitle}</p>
+		<p class="h5 mb-16">{detail.copy.inquiryTitle}</p>
 
 		<form action="#" class="send-inquiry" onsubmit={handleInquirySubmit}>
 			<div class="mb-8 grid grid-cols-1 gap-18">

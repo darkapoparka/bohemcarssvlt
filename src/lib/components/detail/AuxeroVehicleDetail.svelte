@@ -106,7 +106,7 @@
 
 		<div class="divider mb-40 w-full"></div>
 
-		<p class="h4 mb-16 capitalize">{detail.copy.getToKnow}</p>
+		<p class="h4 mb-16">{detail.copy.getToKnow}</p>
 		<AuxeroVehicleDetailFeatureTabs tabs={detail.featureTabs} />
 
 		<AuxeroVehicleDetailStaticContent {detail} />

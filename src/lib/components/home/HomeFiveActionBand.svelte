@@ -20,7 +20,7 @@
 				</span>
 				<img
 					class="bohemcars-action-card__img"
-					src="/assets/bohemcars/home2/home2-action-import.png"
+					src="/assets/bohemcars/home2/home2-action-import.webp"
 					alt=""
 					loading="lazy"
 				/>
@@ -40,7 +40,7 @@
 				</span>
 				<img
 					class="bohemcars-action-card__img bohemcars-action-card__img--consultant"
-					src="/assets/bohemcars/home2/home2-action-consultant.png"
+					src="/assets/bohemcars/home2/home2-action-consultant.webp"
 					alt=""
 					loading="lazy"
 				/>

@@ -41,7 +41,7 @@
 		z-index: 1;
 		background:
 			linear-gradient(90deg, rgb(0 0 0 / 0.78), rgb(0 0 0 / 0.46)),
-			url('/assets/bohemcars/proof-studio-import-handoff.png') center / cover;
+			url('/assets/bohemcars/proof-studio-import-handoff.webp') center / cover;
 	}
 
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84 > .container) {

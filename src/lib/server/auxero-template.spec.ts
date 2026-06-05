@@ -178,7 +178,7 @@ describe('Auxero template Bohemcars adapter', () => {
 
 		expect(html).toContain('Bohemcars');
 		expect(html).toContain(
-			'/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png'
+			'/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp'
 		);
 		expect(html).toContain('Browse, Compare, Drive');
 		expect(html).toContain('With Bohemcars!');
@@ -354,9 +354,9 @@ describe('Auxero template Bohemcars adapter', () => {
 
 		expect(html).toContain('bohemcars-inventory-banner');
 		expect(html).toContain('Bohemcars inventory showcase');
-		expect(html).toContain('/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png');
-		expect(html).toContain('/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png');
-		expect(html).not.toContain('/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png');
+		expect(html).toContain('/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp');
+		expect(html).toContain('/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp');
+		expect(html).not.toContain('/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp');
 		expect(html).not.toContain('Bohemcars current stock');
 		expect(html).not.toContain('class="background-light mb-32"');
 		expect(html).not.toContain('class="breadcrumb"');

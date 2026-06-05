@@ -12,15 +12,15 @@
 		rel="preload"
 		as="image"
 		fetchpriority="high"
-		href="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png"
-		type="image/png"
+		href="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp"
+		type="image/webp"
 	/>
 	<link
 		rel="preload"
 		as="image"
 		fetchpriority="high"
-		href="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png"
-		type="image/png"
+		href="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp"
+		type="image/webp"
 	/>
 </svelte:head>
 

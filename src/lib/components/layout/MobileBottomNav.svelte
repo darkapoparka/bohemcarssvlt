@@ -186,7 +186,7 @@
 			</span>
 			<img
 				class="mobile-menu-sheet__sell-consultant"
-				src="/assets/bohemcars/home2/home2-action-consultant.png"
+				src="/assets/bohemcars/home2/home2-action-consultant.webp"
 				alt=""
 				aria-hidden="true"
 				loading="lazy"

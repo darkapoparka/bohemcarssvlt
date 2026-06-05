@@ -410,13 +410,13 @@
 			<div class="bohemcars-hero-cars" aria-hidden="true">
 				<img
 					class="bohemcars-hero-car bohemcars-hero-car--left"
-					src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png"
+					src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp"
 					alt=""
 					loading="lazy"
 				/>
 				<img
 					class="bohemcars-hero-car bohemcars-hero-car--right"
-					src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png"
+					src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp"
 					alt=""
 					loading="lazy"
 				/>
@@ -815,7 +815,7 @@
 			--bohemcars-mobile-ink: #ffffff;
 			--bohemcars-mobile-ink-muted: rgba(255, 255, 255, 0.88);
 			--bohemcars-mobile-ink-strong: #ffffff;
-			--bohemcars-mobile-cta: rgba(255, 255, 255, 0.18);
+			--bohemcars-mobile-cta: rgba(0, 0, 0, 0.26);
 			--bohemcars-mobile-action: #6f9f0c;
 		}
 
@@ -892,18 +892,6 @@
 			padding: 0;
 		}
 
-		.bohemcars-mobile-hero__tabs::after {
-			position: absolute;
-			right: 14px;
-			bottom: 0;
-			left: 14px;
-			height: 2px;
-			border-radius: 999px;
-			background: rgba(255, 255, 255, 0.24);
-			content: '';
-			pointer-events: none;
-		}
-
 		.bohemcars-mobile-hero__tabs a {
 			position: relative;
 			display: flex;
@@ -932,16 +920,29 @@
 			box-shadow: none;
 		}
 
+		/* One continuous faint rail runs under all three tabs... */
+		.bohemcars-mobile-hero__tabs::after {
+			position: absolute;
+			right: 8px;
+			bottom: 0;
+			left: 8px;
+			height: 2px;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.26);
+			content: '';
+			pointer-events: none;
+		}
+
+		/* ...and only the selected tab brightens its third of that rail. */
 		.bohemcars-mobile-hero__tabs a::after {
 			position: absolute;
-			left: 50%;
-			bottom: -1px;
-			width: min(66px, calc(100% - 28px));
-			height: 4px;
+			right: 8px;
+			bottom: 0;
+			left: 8px;
+			height: 3px;
 			border-radius: 999px;
 			background: transparent;
 			content: '';
-			transform: translateX(-50%);
 			transition: background-color 0.18s ease;
 		}
 
@@ -1078,7 +1079,7 @@
 
 		.bohemcars-mobile-hero__all:hover,
 		.bohemcars-mobile-hero__all:focus-visible {
-			background: rgba(255, 255, 255, 0.28);
+			background: rgba(0, 0, 0, 0.4);
 			color: #ffffff !important;
 			outline: 2px solid rgba(255, 255, 255, 0.72);
 			outline-offset: 2px;

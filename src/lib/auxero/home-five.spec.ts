@@ -82,21 +82,21 @@ describe('homeFiveVehiclePills', () => {
 			{
 				active: false,
 				href: '/inventory?brand=BMW',
-				image: '/assets/images/brand/brand-1.png',
+				image: '/assets/images/brand/brand-1.webp',
 				kind: 'brand',
 				label: 'BMW'
 			},
 			{
 				active: false,
 				href: '/inventory?brand=Audi',
-				image: '/assets/images/brand/brand-3.png',
+				image: '/assets/images/brand/brand-3.webp',
 				kind: 'brand',
 				label: 'Audi'
 			},
 			{
 				active: false,
 				href: '/inventory?brand=Mercedes-Benz',
-				image: '/assets/images/brand/brand-2.png',
+				image: '/assets/images/brand/brand-2.webp',
 				kind: 'brand',
 				label: 'Mercedes'
 			}
@@ -126,7 +126,7 @@ describe('homeFiveBrandCardsForLocale', () => {
 		expect(cards.find((card) => card.query === 'BMW')?.count).toBe('18 автомобила');
 		expect(cards.find((card) => card.query === 'Audi')?.count).toBe('38 автомобила');
 		expect(cards.find((card) => card.query === 'Kia')?.image).toBe(
-			'/assets/bohemcars/brands/kia-transparent.png'
+			'/assets/bohemcars/brands/kia-transparent.webp'
 		);
 		expect(cards.find((card) => card.query === 'Tesla')?.count).toBe('27 автомобила');
 	});
@@ -167,7 +167,7 @@ describe('homeFiveHeaderData', () => {
 		expect(inventory?.megaMenu?.vehicles).toHaveLength(4);
 		expect(inventory?.megaMenu?.vehicles[0]).toMatchObject({
 			href: '/inventory/21764342419542174',
-			image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+			image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
 			label: 'BMW X5 40i'
 		});
 		expect(inventory?.megaMenu?.footer.ctaHref).toBe('/inventory');

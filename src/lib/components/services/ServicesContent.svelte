@@ -53,8 +53,8 @@
 		<div class="overlay image">
 			<img
 				class="lazyload parallax"
-				data-src="/assets/bohemcars/proof-studio-import-handoff.png"
-				src="/assets/bohemcars/proof-studio-import-handoff.png"
+				data-src="/assets/bohemcars/proof-studio-import-handoff.webp"
+				src="/assets/bohemcars/proof-studio-import-handoff.webp"
 				alt="Bohemcars service support"
 			/>
 		</div>

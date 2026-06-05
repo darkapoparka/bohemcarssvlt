@@ -162,7 +162,7 @@
 			{@render ratingBar('1', '3%', '3%')}
 		</div>
 		<div class="rating-box__button">
-			<a href={reviewsHref} class="btn btn-primary btn-large font-weight-600 capitalize">
+			<a href={reviewsHref} class="btn btn-primary btn-large font-weight-600">
 				Виж всички отзиви
 			</a>
 		</div>
@@ -173,7 +173,7 @@
 	<div class="comment-box">
 		<div class="comment-box__header mb-20">
 			<div class="comment-box__avatar">
-				<img src="/assets/images/avatar/coment-avatar-1.png" alt="avatar" />
+				<img src="/assets/images/avatar/coment-avatar-1.webp" alt="avatar" />
 			</div>
 			<div>
 				<div class="text-secondary mb-8 flex items-center gap-4">
@@ -211,7 +211,7 @@
 	<div class="comment-box">
 		<div class="comment-box__header mb-20">
 			<div class="comment-box__avatar">
-				<img src="/assets/images/avatar/coment-avatar-2.png" alt="avatar" />
+				<img src="/assets/images/avatar/coment-avatar-2.webp" alt="avatar" />
 			</div>
 			<div>
 				<div class="text-secondary mb-8 flex items-center gap-4">
@@ -229,15 +229,15 @@
 	</div>
 
 	<p>
-		<a href={reviewsHref} class="text-underline font-weight-600 capitalize">Виж още отзиви</a>
+		<a href={reviewsHref} class="text-underline font-weight-600">Виж още отзиви</a>
 	</p>
 </div>
 
 <div>
-	<p class="h4 mb-8 capitalize">Искаш оглед?</p>
+	<p class="h4 mb-8">Искаш оглед?</p>
 	<p class="mb-20">Изпрати запитване и Bohemcars ще върне конкретен отговор за автомобила.</p>
 
-	<a href={contactHref} class="btn btn-primary btn-large font-weight-600 capitalize">
+	<a href={contactHref} class="btn btn-primary btn-large font-weight-600">
 		Попитай за автомобила
 	</a>
 </div>

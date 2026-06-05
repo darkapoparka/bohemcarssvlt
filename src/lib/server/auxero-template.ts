@@ -293,6 +293,14 @@ function applyBohemcarsBranding(html: string) {
 		)
 		.replaceAll('/assets/images/logo-white.png', bohemcarsAssets.logoDark)
 		.replaceAll('/assets/images/logo.png', bohemcarsAssets.logoLight)
+		.replaceAll(
+			'/assets/images/brand/app-store-dark.png',
+			'/assets/images/brand/app-store-dark.webp'
+		)
+		.replaceAll(
+			'/assets/images/brand/google-play-dark.png',
+			'/assets/images/brand/google-play-dark.webp'
+		)
 		.replaceAll('alt="logo-white.png"', 'alt="Bohemcars"')
 		.replaceAll('alt="logo"', 'alt="Bohemcars"')
 		.replaceAll('href="/account/favorites"', 'href="/account"')

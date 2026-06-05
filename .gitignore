@@ -32,6 +32,7 @@ playwright-report
 .audit/
 .codex-review-screens/
 .playwright-mcp/
+.tmp/
 tmp/
 tmp-vite*.log
 .tmp-*.log

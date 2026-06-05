@@ -110,14 +110,15 @@
 					>
 						<span class="bohemcars-mobile-view-all-card__logo" aria-hidden="true">
 							<img
-								src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png" loading="lazy"
+								src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
+								loading="lazy"
 								alt=""
 							/>
 						</span>
 						<span class="bohemcars-mobile-view-all-card__fleet" aria-hidden="true">
 							{#each mobileCtaVehicles as ctaVehicle (ctaVehicle.slug)}
 								<span class="bohemcars-mobile-view-all-card__thumb">
-									<img src={ctaVehicle.image} alt="" loading="lazy" />
+									<img src={ctaVehicle.image} alt="" />
 								</span>
 							{/each}
 						</span>

@@ -70,27 +70,27 @@ export type AuxeroVehicleDetailData = {
 };
 
 const vehicleImageOverrides: Record<string, string> = {
-	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
-	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp'
 };
 
 const vehicleImageFallback = (vehicle: Vehicle): string => {
 	const normalizedTitle = vehicle.title.toLowerCase();
 
 	if (normalizedTitle.includes('x5')) {
-		return '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png';
+		return '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp';
 	}
 
 	if (normalizedTitle.includes('x4')) {
-		return '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png';
+		return '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp';
 	}
 
 	if (normalizedTitle.includes('sq5')) {
-		return '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png';
+		return '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp';
 	}
 
 	if (normalizedTitle.includes('a7')) {
-		return '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png';
+		return '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp';
 	}
 
 	return '/assets/images/inner-page/slide-listing-details-1.jpg';

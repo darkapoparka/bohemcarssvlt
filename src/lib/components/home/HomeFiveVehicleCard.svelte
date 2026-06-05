@@ -458,6 +458,9 @@
 			font-size: 10px;
 			font-weight: 800;
 			line-height: 24px;
+			border: 1px solid rgba(28, 28, 28, 0.08);
+			background: #ffffff !important;
+			color: var(--bc-card-ink, #171a15) !important;
 		}
 
 		.card-box-style-1 .top .heart {

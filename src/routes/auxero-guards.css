@@ -187,6 +187,14 @@ body[class*='auxero-template-'] {
 	letter-spacing: -0.01em;
 }
 
+/* The Auxero `capitalize` utility title-cases every word, which mis-cases
+   Bulgarian copy ("Основни данни" -> "Основни Данни", "Внос и покупка" ->
+   "Внос И Покупка"). The source strings are already correctly cased, so disable
+   capitalize for the Bulgarian locale only — English mode keeps title-casing. */
+html[lang='bg'] .capitalize {
+	text-transform: none;
+}
+
 /* =====================================================================
    MOBILE-ONLY POLISH — phones + the mobile nav drawer.
    Desktop (>=992px) is intentionally left untouched.
@@ -229,7 +237,7 @@ body[class*='auxero-template-'] {
 	display: block;
 	width: 168px;
 	height: 34px;
-	background: url('/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png') left
+	background: url('/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp') left
 		center / contain no-repeat;
 }
 

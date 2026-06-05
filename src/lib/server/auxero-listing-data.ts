@@ -108,18 +108,18 @@ const transmissionOptions = Array.from(new Set(vehicles.map((vehicle) => vehicle
 	.filter(Boolean)
 	.sort();
 const brandLogos: Record<string, string> = {
-	Audi: '/assets/images/brand/brand-3.png',
-	BMW: '/assets/images/brand/brand-1.png',
-	Ford: '/assets/images/brand/brand-7.png',
-	Honda: '/assets/images/brand/brand-4.png',
-	Hyundai: '/assets/images/brand/brand-8.png',
-	Kia: '/assets/bohemcars/brands/kia-transparent.png',
-	Mazda: '/assets/images/brand/brand-10.png',
-	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
-	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/images/brand/brand-5.png',
-	Volvo: '/assets/images/brand/brand-6.png',
-	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
+	Audi: '/assets/images/brand/brand-3.webp',
+	BMW: '/assets/images/brand/brand-1.webp',
+	Ford: '/assets/images/brand/brand-7.webp',
+	Honda: '/assets/images/brand/brand-4.webp',
+	Hyundai: '/assets/images/brand/brand-8.webp',
+	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
+	Mazda: '/assets/images/brand/brand-10.webp',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.webp',
+	Porsche: '/assets/bohemcars/brands/porsche.webp',
+	Toyota: '/assets/images/brand/brand-5.webp',
+	Volvo: '/assets/images/brand/brand-6.webp',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.webp'
 };
 const brandCounts = new Map<string, number>();
 
@@ -131,7 +131,7 @@ const inventoryBrandPills = brands
 	.map((brand) => ({
 		count: brandCounts.get(brand) ?? 0,
 		image:
-			brandLogos[brand] ?? '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
+			brandLogos[brand] ?? '/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.webp',
 		label: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
 		value: brand
 	}))
@@ -723,8 +723,8 @@ const inventoryBanner = (state: InventoryState) =>
 			<h1 id="bohemcars-inventory-title" class="bohemcars-sr-only">Bohemcars Inventory</h1>
 		</div>
 		<div class="bohemcars-inventory-banner__cars" aria-hidden="true">
-			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--x5" src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png" alt="" loading="eager" decoding="async">
-			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--sq5" src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png" alt="" loading="eager" decoding="async">
+			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--x5" src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp" alt="" loading="eager" decoding="async">
+			<img class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--sq5" src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp" alt="" loading="eager" decoding="async">
 		</div>
 		<div class="bohemcars-inventory-banner__buybox">
 			${inventorySearchSurface(state)}
@@ -1697,6 +1697,14 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 		.replaceAll('Tampa, FL', escapeHtml(vehicle.location))
 		.replaceAll('Mike Hanley', escapeHtml(consultant.name))
 		.replaceAll('/assets/images/avatar/contact-avatar.png', escapeHtml(consultant.image))
+		.replaceAll(
+			'/assets/images/avatar/coment-avatar-1.png',
+			'/assets/images/avatar/coment-avatar-1.webp'
+		)
+		.replaceAll(
+			'/assets/images/avatar/coment-avatar-2.png',
+			'/assets/images/avatar/coment-avatar-2.webp'
+		)
 		.replaceAll('Verified Dealer', 'Bohemcars Consultant')
 		.replaceAll('1-555-678-8888', escapeHtml(bohemcarsContact.primaryPhoneLabel))
 		.replaceAll('1-555-678-9999', escapeHtml(bohemcarsContact.marketplacePhoneLabel))

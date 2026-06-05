@@ -26,7 +26,7 @@ export const homeTwoDealCards: HomeTwoDealCard[] = [
 	{
 		badge: 'Наличен',
 		description: 'Премиум SUV, наличен за оглед',
-		image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
 		imageMax: '124%',
 		kind: 'vehicle',
 		meta: '2019 · Бензин · Автоматик',
@@ -41,7 +41,7 @@ export const homeTwoDealCards: HomeTwoDealCard[] = [
 	{
 		badge: 'Премиум',
 		description: 'M Competition, наличен в България',
-		image: '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png',
+		image: '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp',
 		imageMax: '124%',
 		kind: 'vehicle',
 		meta: '2020 · Бензин · Автоматик',
@@ -56,7 +56,7 @@ export const homeTwoDealCards: HomeTwoDealCard[] = [
 	{
 		badge: 'Нов внос',
 		description: 'Technik Black Optic от Канада',
-		image: '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp',
 		imageMax: '124%',
 		kind: 'vehicle',
 		meta: '2021 · Хибрид · Автоматик',
@@ -72,7 +72,7 @@ export const homeTwoDealCards: HomeTwoDealCard[] = [
 		badge: 'Канада',
 		description: 'Подбор, проверка и доставка',
 		flip: true,
-		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png',
+		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp',
 		imageMax: '124%',
 		kind: 'service',
 		meta: 'Подбор · Проверка · Доставка',

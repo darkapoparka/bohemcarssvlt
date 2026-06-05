@@ -45,8 +45,8 @@ export const inventoryGridClassForView = (view: AuxeroInventoryView) => {
 // Mirror the PDP/mega-menu image override so the card thumbnail matches the detail
 // hero when a listing's remote primary photo is unreliable or off-model (e.g. the X5).
 const inventoryCardImageOverrides: Record<string, string> = {
-	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png',
-	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.png'
+	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
+	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp'
 };
 
 export const inventoryCardsFromVehicles = (

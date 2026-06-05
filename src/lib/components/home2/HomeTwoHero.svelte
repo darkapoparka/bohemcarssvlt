@@ -19,13 +19,13 @@
 	<section class="home2-hero">
 		<img
 			class="home2-hero__car home2-hero__car--left"
-			src="/assets/bohemcars/home2/home2-hero-suv.png"
+			src="/assets/bohemcars/home2/home2-hero-suv.webp"
 			alt=""
 			loading="eager"
 		/>
 		<img
 			class="home2-hero__car home2-hero__car--right"
-			src="/assets/bohemcars/home2/home2-hero-sedan.png"
+			src="/assets/bohemcars/home2/home2-hero-sedan.webp"
 			alt=""
 			loading="eager"
 		/>
