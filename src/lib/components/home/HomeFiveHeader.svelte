@@ -297,7 +297,7 @@
 							</a>
 
 							<a
-								href={resolve('/account/favorites')}
+								href={resolve('/account')}
 								class="header-action-btn header-action-icon"
 								aria-label={header.ui.wishlist}
 								data-badge={header.actionBadges.wishlist}
@@ -1074,11 +1074,11 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
 			width: 40px !important;
 			height: 40px !important;
-			border: 1px solid rgba(17, 17, 17, 0.08);
-			background: #ffffff !important;
+			border: 1px solid rgba(255, 255, 255, 0.26);
+			background: rgba(255, 255, 255, 0.14) !important;
 			box-sizing: border-box;
-			box-shadow: 0 6px 16px rgba(17, 24, 39, 0.14);
-			color: #111111 !important;
+			box-shadow: none;
+			color: #ffffff !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
@@ -1089,8 +1089,8 @@
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
-			border-color: #1c1c1c;
-			background: #1c1c1c !important;
+			border-color: rgba(255, 255, 255, 0.42);
+			background: rgba(255, 255, 255, 0.24) !important;
 			color: #ffffff !important;
 			outline: 2px solid rgba(255, 255, 255, 0.94);
 			outline-offset: 2px;
@@ -1098,17 +1098,17 @@
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
-			width: 18px !important;
-			height: 18px !important;
-			color: currentColor !important;
+			width: 17px !important;
+			height: 17px !important;
+			color: #ffffff !important;
 			fill: none !important;
-			stroke: currentColor !important;
+			stroke: #ffffff !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg *),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg *) {
 			fill: none !important;
-			stroke: currentColor !important;
+			stroke: #ffffff !important;
 		}
 	}
 </style>

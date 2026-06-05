@@ -50,6 +50,7 @@
 
 				{#if field.kind === 'input'}
 					<input
+						aria-label={field.label}
 						class={inputClass(field)}
 						id={field.id}
 						name={field.name}
@@ -60,13 +61,20 @@
 						value={field.value ?? ''}
 					/>
 				{:else if field.kind === 'select'}
-					<select class={field.className} id={field.id} name={field.name} required={field.required}>
+					<select
+						aria-label={field.label}
+						class={field.className}
+						id={field.id}
+						name={field.name}
+						required={field.required}
+					>
 						{#each field.options as option (option)}
 							<option>{option}</option>
 						{/each}
 					</select>
 				{:else}
 					<textarea
+						aria-label={field.label}
 						class={field.className}
 						id={field.id}
 						name={field.name}

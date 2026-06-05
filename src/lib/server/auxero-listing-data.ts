@@ -85,13 +85,17 @@ const transmissionOptions = Array.from(new Set(vehicles.map((vehicle) => vehicle
 	.filter(Boolean)
 	.sort();
 const brandLogos: Record<string, string> = {
-	Audi: '/assets/bohemcars/brands/audi.png',
-	BMW: '/assets/bohemcars/brands/bmw.png',
-	Ford: '/assets/bohemcars/brands/ford.png',
-	Mazda: '/assets/bohemcars/brands/mazda.png',
-	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
+	Audi: '/assets/images/brand/brand-3.png',
+	BMW: '/assets/images/brand/brand-1.png',
+	Ford: '/assets/images/brand/brand-7.png',
+	Honda: '/assets/images/brand/brand-4.png',
+	Hyundai: '/assets/images/brand/brand-8.png',
+	Kia: '/assets/bohemcars/brands/kia-transparent.png',
+	Mazda: '/assets/images/brand/brand-10.png',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
 	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Toyota: '/assets/images/brand/brand-5.png',
+	Volvo: '/assets/images/brand/brand-6.png',
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
 };
 const brandCounts = new Map<string, number>();
@@ -515,7 +519,7 @@ const gridCard = (vehicle: Vehicle, index: number) => {
 	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
 			<p class="${highlightClass()} text-white highlight">${km(vehicle.mileage)}</p>
-			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
+			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Запази ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="image">
 			<a href="${url}">
@@ -559,7 +563,7 @@ const listCard = (vehicle: Vehicle) => {
 	return `<div class="card-box card-box-style-9 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
 			<p class="${highlightClass()} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
-			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
+			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Запази ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="bottom">
 			<p class="category uppercase text-white"><a href="${url}" class="text-white uppercase text-xs">${escapeHtml(vehicle.brand)}</a></p>
@@ -873,6 +877,10 @@ export const applyCompareData = (html: string, options: AuxeroRenderOptions = {}
 				'<h1 class="h2">Сравни автомобили от Bohemcars</h1>'
 			)
 			.replaceAll(
+				'<h2 class="text-center mb-12 capitalize">Compare Cars Side-by-Side</h2>',
+				'<h1 class="h2 text-center mb-12 capitalize">Сравни автомобили от Bohemcars</h1>'
+			)
+			.replaceAll(
 				'<h2 class="text-center mb-12 capitalize">Сравни автомобили от Bohemcars</h2>',
 				'<h1 class="h2 text-center mb-12 capitalize">Сравни автомобили от Bohemcars</h1>'
 			)
@@ -1074,6 +1082,10 @@ export const applyContactData = (html: string) => {
 		.replace(
 			/<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=[^"]*"/g,
 			`<iframe src="${bohemcarsMapEmbedSrc}"`
+		)
+		.replace(
+			'<p class="h3 mb-12 capitalize">Reach Out to Us</p>',
+			'<h1 class="h3 mb-12 capitalize">Свържете се с Bohemcars</h1>'
 		)
 		.replaceAll('Reach Out to Us', 'Свържете се с Bohemcars')
 		.replaceAll(
@@ -1513,6 +1525,18 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 		.replaceAll('By using this service, you accept our', 'С изпращането приемате')
 		.replaceAll('Visitor Agreement.', 'условията за запитване.')
 		.replace(
+			'<input class="active" id="ServicesCalculatorCarPrice" name="ServicesCalculatorCarPrice" type="text"',
+			'<input class="active" id="ServicesCalculatorCarPrice" name="ServicesCalculatorCarPrice" aria-label="Цена на автомобила" type="text"'
+		)
+		.replace(
+			'<input id="ServicesCalculatorInterestRate" name="ServicesCalculatorInterestRate" type="text"',
+			'<input id="ServicesCalculatorInterestRate" name="ServicesCalculatorInterestRate" aria-label="Лихвен процент" type="text"'
+		)
+		.replace(
+			'<input id="ServicesCalculatorDownPayment" name="ServicesCalculatorDownPayment" type="text"',
+			'<input id="ServicesCalculatorDownPayment" name="ServicesCalculatorDownPayment" aria-label="Първоначална вноска" type="text"'
+		)
+		.replace(
 			/<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=[^"]+"/,
 			`<iframe src="${escapeHtml(bohemcarsContact.mapEmbedUrl)}"`
 		);
@@ -1528,7 +1552,27 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 		)
 		.replace(
 			'<a href="#" class="btn-icon-circle hover-stroke-white">',
-			`<a href="/account/favorites" class="btn-icon-circle hover-stroke-white bohemcars-favorite" role="button" aria-label="Save ${escapeHtml(vehicle.title)}">`
+			`<a href="/account" class="btn-icon-circle hover-stroke-white bohemcars-favorite" role="button" aria-label="Запази ${escapeHtml(vehicle.title)}">`
+		)
+		.replace(
+			'<a href="#" class="btn-icon-circle hover-fill-white">',
+			`<a href="/contact" class="btn-icon-circle hover-fill-white" aria-label="Попитай за ${escapeHtml(vehicle.title)}" title="Попитай за автомобила">`
+		)
+		.replace(
+			'<input class="active input-large" id="SendInquiryname" name="SendInquiryname" type="text"',
+			'<input class="active input-large" id="SendInquiryname" name="SendInquiryname" aria-label="Име" type="text"'
+		)
+		.replace(
+			'<input class="input-large" name="SendInquiryemail" id="SendInquiryemail" type="text"',
+			'<input class="input-large" name="SendInquiryemail" id="SendInquiryemail" aria-label="Имейл" type="text"'
+		)
+		.replace(
+			'<input placeholder="Телефон (по избор)" class="input-large" name="SendInquiryphone" id="SendInquiryphone" type="number"',
+			'<input placeholder="Телефон (по избор)" class="input-large" name="SendInquiryphone" id="SendInquiryphone" aria-label="Телефон" type="number"'
+		)
+		.replace(
+			'<textarea placeholder="Коментар" rows="3" tabindex="5" name="message" class="message" id="message"',
+			'<textarea placeholder="Коментар" aria-label="Съобщение" rows="3" tabindex="5" name="message" class="message" id="message"'
 		);
 
 	next = next.replace(/<ul class="car-overview-list-style2">[\s\S]*?<\/ul>/, overviewList(vehicle));
@@ -1541,6 +1585,10 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 	next = replaceRelatedVehicles(next, vehicle);
 
 	return replaceDemoVehicleCopy(next)
+		.replace(
+			'<input class="active" id="ServicesCalculatorCarPrice" name="ServicesCalculatorCarPrice" type="text"',
+			'<input class="active" id="ServicesCalculatorCarPrice" name="ServicesCalculatorCarPrice" aria-label="Цена на автомобила" type="text"'
+		)
 		.replace(/href="listing-grid4-columns\.html"/g, 'href="/inventory?view=4"')
 		.replace(/href="dealer-details\.html"/g, 'href="/agents/bohemcars-sales"')
 		.replace(/href="clients-reviews\.html"/g, 'href="/reviews"')

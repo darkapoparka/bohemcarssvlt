@@ -47,7 +47,9 @@
 						class="home2-brand-card out-brand-2"
 						href={resolve(`/inventory?brand=${encodeURIComponent(brand.query)}`)}
 					>
-						<img class="out-brand--img" src={brand.image} alt={brand.name} />
+						<span class="home2-brand-card__logo-frame">
+							<img class="out-brand--img" src={brand.image} alt="" />
+						</span>
 						<span class="home2-brand-card__name">{brand.name}</span>
 						<span class="home2-brand-card__count">{brand.count}</span>
 					</a>
@@ -160,11 +162,22 @@
 		transform: none;
 	}
 
-	.home2-brand-card img {
+	.home2-brand-card__logo-frame {
+		display: grid;
 		height: 34px;
 		margin: 0 auto 12px;
+		place-items: center;
+		width: 96px;
+	}
+
+	.home2-brand-card__logo-frame :global(.out-brand--img) {
+		display: block;
+		height: 34px !important;
+		margin: 0 !important;
+		max-height: 34px;
 		max-width: 96px;
 		object-fit: contain;
+		width: 96px !important;
 	}
 
 	.home2-brand-card__name {

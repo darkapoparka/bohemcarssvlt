@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { homeFiveHeaderData, homeFiveHeaderDataForLocale, homeFiveVehiclePills } from './home-five';
+import {
+	homeFiveBrandCardsForLocale,
+	homeFiveHeaderData,
+	homeFiveHeaderDataForLocale,
+	homeFiveVehiclePills
+} from './home-five';
 
 describe('homeFiveVehiclePills', () => {
 	it('keeps the Home 05 quick-search pills as shared typed route data', () => {
@@ -96,6 +101,34 @@ describe('homeFiveVehiclePills', () => {
 				label: 'Mercedes'
 			}
 		]);
+	});
+});
+
+describe('homeFiveBrandCardsForLocale', () => {
+	it('keeps the Home 05 brand wall at the full 12-card coverage', () => {
+		const cards = homeFiveBrandCardsForLocale('bg');
+
+		expect(cards).toHaveLength(12);
+		expect(cards.map((card) => card.name)).toEqual([
+			'BMW',
+			'Mercedes',
+			'Audi',
+			'Honda',
+			'Toyota',
+			'Volvo',
+			'Ford',
+			'Hyundai',
+			'Kia',
+			'Mazda',
+			'Ferrari',
+			'Tesla'
+		]);
+		expect(cards.find((card) => card.query === 'BMW')?.count).toBe('18 автомобила');
+		expect(cards.find((card) => card.query === 'Audi')?.count).toBe('38 автомобила');
+		expect(cards.find((card) => card.query === 'Kia')?.image).toBe(
+			'/assets/bohemcars/brands/kia-transparent.png'
+		);
+		expect(cards.find((card) => card.query === 'Tesla')?.count).toBe('27 автомобила');
 	});
 });
 

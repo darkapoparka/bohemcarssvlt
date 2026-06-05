@@ -44,9 +44,9 @@
 					</a>
 					<a
 						class="btn btn-line-hover effect-line-primary hover-fill-white btn-large font-weight-600"
-						href={resolve('/account?demo=dashboard')}
+						href={resolve('/inventory')}
 					>
-						Виж демо табло
+						Виж автомобили
 					</a>
 				</div>
 			</div>
@@ -102,6 +102,24 @@
 	.account-entry {
 		background: #f7f7f5;
 		color: #1c1c1c;
+		font-family:
+			Inter,
+			ui-sans-serif,
+			system-ui,
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			sans-serif;
+		letter-spacing: 0;
+	}
+
+	.account-entry * {
+		box-sizing: border-box;
+	}
+
+	.account-entry a {
+		color: inherit;
+		text-decoration: none;
 	}
 
 	.account-entry__hero {
@@ -158,6 +176,33 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
+	}
+
+	.account-entry__actions .btn {
+		min-height: 52px;
+		justify-content: center;
+		border-radius: 12px;
+		padding: 0 24px;
+		font-weight: 800;
+		line-height: 1;
+	}
+
+	.account-entry__actions .btn-primary {
+		border: 0;
+		background: #b9ee39;
+		color: #1c1c1c;
+	}
+
+	.account-entry__actions .btn-line-hover {
+		border: 1px solid #1c1c1c;
+		background: transparent;
+		color: #1c1c1c;
+	}
+
+	.account-entry__actions .btn-line-hover:hover,
+	.account-entry__actions .btn-line-hover:focus-visible {
+		background: #1c1c1c;
+		color: #ffffff;
 	}
 
 	.account-entry__panel {

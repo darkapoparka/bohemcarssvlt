@@ -11,11 +11,11 @@
 
 <div class="bohemcars-about-page" data-bohemcars-about>
 	<PageBanner banner={about.hero} />
-	<section class="bohemcars-about-page__intro bg-white">
-		<AboutIntroSection {about} />
-	</section>
 	<AboutConsultantsSection consultants={about.consultants} />
 	<AboutBrandsSection brands={about.brands} />
+	<section class="bohemcars-about-page__intro">
+		<AboutIntroSection {about} />
+	</section>
 	<AboutLocationSection office={about.office} />
 </div>
 
@@ -26,15 +26,15 @@
 
 	.bohemcars-about-page__intro {
 		overflow: hidden;
-		background: var(--bc-bg) !important;
-		padding-top: 50px;
-		padding-bottom: 54px;
+		background: var(--bc-bg);
+		padding-top: 38px;
+		padding-bottom: 42px;
 	}
 
 	@media (max-width: 767px) {
 		.bohemcars-about-page__intro {
-			padding-top: 36px;
-			padding-bottom: 48px;
+			padding-top: 32px;
+			padding-bottom: 40px;
 		}
 	}
 </style>

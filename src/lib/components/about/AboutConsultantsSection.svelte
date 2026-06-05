@@ -7,7 +7,7 @@
 
 <section class="bohemcars-consultants">
 	<div class="container">
-		<div class="title-section wow fadeInDown mb-40" data-wow-delay="0.1s">
+		<div class="title-section wow fadeInDown mb-34" data-wow-delay="0.1s">
 			<div>
 				<p class="bohemcars-consultants__eyebrow">Екип</p>
 				<h2>Екипът зад процеса</h2>
@@ -30,12 +30,11 @@
 <style>
 	.bohemcars-consultants {
 		background: var(--bc-bg);
-		padding: 56px 0 62px;
+		padding: 42px 0 56px;
 	}
 
 	.bohemcars-consultants :global(.title-section) {
-		justify-content: center;
-		text-align: center;
+		align-items: flex-end;
 	}
 
 	.bohemcars-consultants__eyebrow {
@@ -49,18 +48,22 @@
 	}
 
 	.bohemcars-consultants__copy {
-		max-width: 720px;
+		max-width: 760px;
 		margin-top: 10px;
-		margin-right: auto;
-		margin-left: auto;
 		color: #696665;
 		font-size: 16px;
 		line-height: 1.55;
 	}
 
+	.bohemcars-consultants h2 {
+		margin-bottom: 8px;
+		font-size: clamp(28px, 2vw, 34px);
+		font-weight: 500;
+		line-height: 1.12;
+	}
+
 	.bohemcars-consultants__grid {
-		max-width: 1120px;
-		margin: 0 auto;
+		width: 100%;
 	}
 
 	:global(.bohemcars-about-page .sale-agent-box:hover .sale-agent-title),
@@ -70,7 +73,13 @@
 
 	@media (max-width: 767px) {
 		.bohemcars-consultants {
-			padding: 44px 0 58px;
+			padding: 38px 0 50px;
+		}
+
+		.bohemcars-consultants :global(.title-section) {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 14px;
 		}
 	}
 </style>

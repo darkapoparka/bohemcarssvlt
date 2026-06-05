@@ -95,8 +95,8 @@
 <style>
 	.bohemcars-news-section {
 		background-color: var(--bc-bg);
-		padding-top: 82px;
-		padding-bottom: 86px;
+		padding-top: 64px;
+		padding-bottom: 64px;
 	}
 
 	.bohemcars-news-banner {

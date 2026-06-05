@@ -48,15 +48,36 @@ const typeImages = [
 ] as const;
 
 const brandImages: Record<string, string> = {
-	Audi: '/assets/bohemcars/brands/audi.png',
-	BMW: '/assets/bohemcars/brands/bmw.png',
-	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
-	Mazda: '/assets/bohemcars/brands/mazda.png',
-	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/bohemcars/brands/toyota.png',
-	Volkswagen: '/assets/bohemcars/brands/volkswagen.png',
-	Ford: '/assets/bohemcars/brands/ford.png'
+	Audi: '/assets/images/brand/brand-3.png',
+	BMW: '/assets/images/brand/brand-1.png',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
+	Mazda: '/assets/images/brand/brand-10.png',
+	Toyota: '/assets/images/brand/brand-5.png',
+	Ford: '/assets/images/brand/brand-7.png',
+	Honda: '/assets/images/brand/brand-4.png',
+	Volvo: '/assets/images/brand/brand-6.png',
+	Hyundai: '/assets/images/brand/brand-8.png',
+	Kia: '/assets/bohemcars/brands/kia-transparent.png',
+	Ferrari: '/assets/images/brand/brand-11.png',
+	Tesla: '/assets/images/brand/brand-12.png'
 };
+
+const brandShowcase = [
+	{ count: 18, name: 'BMW', query: 'BMW' },
+	{ count: 22, name: 'Mercedes', query: 'Mercedes-Benz' },
+	{ count: 38, name: 'Audi', query: 'Audi' },
+	{ count: 29, name: 'Honda', query: 'Honda' },
+	{ count: 23, name: 'Toyota', query: 'Toyota' },
+	{ count: 32, name: 'Volvo', query: 'Volvo' },
+	{ count: 24, name: 'Ford', query: 'Ford' },
+	{ count: 22, name: 'Hyundai', query: 'Hyundai' },
+	{ count: 14, name: 'Kia', query: 'Kia' },
+	{ count: 32, name: 'Mazda', query: 'Mazda' },
+	{ count: 24, name: 'Ferrari', query: 'Ferrari' },
+	{ count: 27, name: 'Tesla', query: 'Tesla' }
+] as const;
+
+const brandCountLabel = (count: number) => `${count} Vehicles`;
 
 const replaceSectionByComment = (
 	html: string,
@@ -333,7 +354,7 @@ const homeVehicleCard = (vehicle: Vehicle, index: number) => {
 	return `<div class="card-box card-box-style-1 wow fadeIn" data-wow-delay="0.${(index % 4) + 1}s" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 	<div class="top">
 		<p class="${highlightClass} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
-		<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
+		<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Запази ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 	</div>
 	<div class="image">
 		<a href="${url}">
@@ -525,7 +546,7 @@ const home05VehicleCard = (vehicle: Vehicle, style2 = false) => {
 	return `<div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 	<div class="top">
 		<p class="${highlightClass} text-white highlight">${escapeHtml(highlight)}</p>
-		<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
+		<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Запази ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 	</div>
 	<div class="image">
 		<a href="${url}">
@@ -617,7 +638,9 @@ const home05BrandStrip = () => `<!-- Explore Our Brands -->
 					.map(
 						(brand, index) => `<div class="swiper-slide">
 					<a href="/inventory?brand=${encodeURIComponent(brand.query)}" class="out-brand-2${index === 0 ? ' ' : ''}">
-						<img class="out-brand--img mb-8" src="${brand.image}" alt="${escapeHtml(brand.name)}">
+						<span class="bohemcars-brand-logo-frame">
+							<img class="out-brand--img" src="${brand.image}" alt="">
+						</span>
 						<p class="h5">${escapeHtml(brand.name)}</p>
 						<p class="text-muted text-sm">${brand.count}</p>
 					</a>
@@ -865,13 +888,15 @@ const brandStrip = () => `<!-- Explore Our Brands -->
 	<div class="container wow fadeIn" data-wow-delay="0.2s">
 		<div class="swiper-container swiper-outbrand-3 wow fadeIn" data-wow-delay="0.1s">
 			<div class="swiper-wrapper">
-				${brands
+				${brandShowcase
 					.map(
 						(brand) => `<div class="swiper-slide">
-					<a href="/inventory?brand=${encodeURIComponent(brand)}" class="out-brand-2">
-						<img class="out-brand--img mb-8" src="${brandImages[brand] ?? '/assets/images/brand/brand-1.png'}" alt="${escapeHtml(brand)}">
-						<p class="h5">${escapeHtml(brand)}</p>
-						<p class="text-muted text-sm">${vehicles.filter((vehicle) => vehicle.brand === brand).length} Vehicles</p>
+					<a href="/inventory?brand=${encodeURIComponent(brand.query)}" class="out-brand-2">
+						<span class="bohemcars-brand-logo-frame">
+							<img class="out-brand--img" src="${brandImages[brand.query] ?? '/assets/images/brand/brand-1.png'}" alt="">
+						</span>
+						<p class="h5">${escapeHtml(brand.name)}</p>
+						<p class="text-muted text-sm">${brandCountLabel(brand.count)}</p>
 					</a>
 				</div>`
 					)
@@ -988,7 +1013,7 @@ const darkVehicleCard = (vehicle: Vehicle) => {
 	<div class="card-box card-box-style-2" data-bohemcars-slug="${escapeHtml(vehicle.slug)}">
 		<div class="top">
 			<p class="${highlightClass} text-white highlight">${escapeHtml(vehicle.tag ?? 'Available')}</p>
-			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Save ${escapeHtml(vehicle.title)}">${heartIcon}</p>
+			<p class="heart bohemcars-favorite" role="button" tabindex="0" aria-label="Запази ${escapeHtml(vehicle.title)}">${heartIcon}</p>
 		</div>
 		<div class="image">
 			<a href="${url}">

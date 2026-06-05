@@ -491,14 +491,20 @@
 
 		/* Mobile: title → spec chips → price anchored at the bottom (price as the bold conclusion). */
 		.bohemcars-card-specs {
+			display: grid !important;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 			order: 1;
-			flex-wrap: wrap !important;
 			gap: 5px 6px !important;
 			margin-top: 0;
 			margin-bottom: 12px !important;
 		}
 
 		.bohemcars-card-specs li {
+			width: 100%;
+			min-width: 0;
+			flex: initial;
+			justify-content: center;
+			box-sizing: border-box;
 			padding: 5px 9px;
 			font-size: 12px;
 			line-height: 16px;
@@ -507,7 +513,14 @@
 			border-color: var(--bc-border);
 		}
 
+		.bohemcars-card-specs span {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
 		.bohemcars-card-specs img {
+			flex: 0 0 auto;
 			width: 13px;
 			height: 13px;
 		}

@@ -727,6 +727,8 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Role Access Notes/g, 'Бележки за достъп по роли'],
 	[/\bNotes\b/g, 'Бележки'],
 	[/\bSearch\b/g, 'Търсене'],
+	[/WHAT ARE YOU LOOKING FOR\?/g, 'Какво търсите?'],
+	[/\bPages\b/g, 'Раздели'],
 	[/\bHome\b/g, 'Начало'],
 	[/\bInventory\b/g, 'Автомобили'],
 	[/\bServices\b/g, 'Услуги'],

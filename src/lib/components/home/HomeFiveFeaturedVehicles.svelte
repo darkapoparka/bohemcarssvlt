@@ -625,7 +625,7 @@
 	.bohemcars-featured-vehicles {
 		overflow: hidden;
 		background: var(--bc-bg);
-		padding: 18px 0 56px;
+		padding: 56px 0;
 	}
 
 	.bohemcars-newest-shell {

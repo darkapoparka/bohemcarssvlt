@@ -26,7 +26,9 @@
 								href={resolve(`/inventory?brand=${encodeURIComponent(brand.query)}`)}
 								class={index === 0 ? 'out-brand-2 ' : 'out-brand-2'}
 							>
-								<img class="out-brand--img mb-8" src={brand.image} alt={brand.name} />
+								<span class="bohemcars-brand-strip__logo-frame">
+									<img class="out-brand--img" src={brand.image} alt="" />
+								</span>
 								<p class="h5">{brand.name}</p>
 								<p class="text-muted text-sm">{brand.count}</p>
 							</a>
@@ -62,7 +64,24 @@
 
 	.bohemcars-brand-strip :global(.swiper-outbrand-3) {
 		margin: 0;
+		overflow: visible;
 		padding: 0;
+	}
+
+	.bohemcars-brand-strip :global(.swiper-outbrand-3 .swiper-wrapper) {
+		display: grid !important;
+		gap: 22px 30px;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		transform: none !important;
+		width: 100% !important;
+	}
+
+	.bohemcars-brand-strip :global(.swiper-outbrand-3 .swiper-slide) {
+		flex: none !important;
+		height: auto !important;
+		margin-right: 0 !important;
+		margin-top: 0 !important;
+		width: auto !important;
 	}
 
 	.bohemcars-brand-strip :global(.out-brand-2) {
@@ -73,11 +92,33 @@
 		min-height: 178px;
 	}
 
+	.bohemcars-brand-strip__logo-frame {
+		display: grid;
+		height: 82px;
+		margin-bottom: 10px;
+		place-items: center;
+		width: 112px;
+	}
+
+	.bohemcars-brand-strip__logo-frame :global(.out-brand--img) {
+		display: block;
+		height: 80px !important;
+		margin: 0 !important;
+		max-height: 80px;
+		max-width: 112px;
+		object-fit: contain;
+		width: 112px !important;
+	}
+
 	.bohemcars-brand-strip :global(.out-brand-2:hover),
 	.bohemcars-brand-strip :global(.out-brand-2.active) {
 		background-color: var(--bc-surface-hover) !important;
 		border-color: var(--bc-border);
 		box-shadow: none !important;
+	}
+
+	.bohemcars-brand-strip :global(.pagination-swiper-outbrand-3) {
+		display: none !important;
 	}
 
 	@media (max-width: 767px) {
@@ -88,6 +129,12 @@
 		.bohemcars-brand-strip :global(.title-section) {
 			align-items: flex-start;
 			gap: 18px;
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 1199px) {
+		.bohemcars-brand-strip :global(.swiper-outbrand-3 .swiper-wrapper) {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 	}
 </style>

@@ -52,7 +52,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['services', 'Услуги от Bohemcars'],
 			['sell-your-car', 'Продай автомобила си с Bohemcars'],
 			['compare', 'Сравни автомобили от Bohemcars'],
-			['agents', 'Bohemcars Consultants'],
+			['agents', 'Консултанти на Bohemcars'],
 			['agents/bohemcars-import', 'Внос от Канада'],
 			['reviews', 'Aleksandar Vytev'],
 			['calculator', 'Калкулатор за внос'],
@@ -409,7 +409,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain(`data-bohemcars-slug="${vehicle.slug}" data-bohemcars-detail="true"`);
 		expect(html).toContain(`data-bohemcars-compare="${vehicle.slug}"`);
 		expect(html).toContain(`aria-label="Compare ${vehicle.title}"`);
-		expect(html).toContain(`aria-label="Save ${vehicle.title}"`);
+		expect(html).toContain(`aria-label="Запази ${vehicle.title}"`);
 		expect(html).toContain('bohemcars-favorite');
 		expect(html).not.toContain('Mike Hanley');
 		expect(html).not.toContain('Tony Nguyen');

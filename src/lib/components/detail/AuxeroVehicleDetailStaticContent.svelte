@@ -38,6 +38,7 @@
 			<div>
 				<p class="mb-10">Цена на автомобила</p>
 				<input
+					aria-label="Цена на автомобила"
 					class="active"
 					id="ServicesCalculatorCarPrice"
 					name="ServicesCalculatorCarPrice"
@@ -50,6 +51,7 @@
 			<div>
 				<p class="mb-10">Лихвен процент</p>
 				<input
+					aria-label="Лихвен процент"
 					id="ServicesCalculatorInterestRate"
 					name="ServicesCalculatorInterestRate"
 					type="text"
@@ -60,7 +62,11 @@
 
 			<div>
 				<p class="mb-8">Срок (месеци)</p>
-				<select id="ServicesCalculatorLoanTerm" name="ServicesCalculatorLoanTerm">
+				<select
+					aria-label="Срок (месеци)"
+					id="ServicesCalculatorLoanTerm"
+					name="ServicesCalculatorLoanTerm"
+				>
 					<option>60 месеца</option>
 					<option>30 месеца</option>
 					<option>10 месеца</option>
@@ -70,6 +76,7 @@
 			<div>
 				<p class="mb-8">Първоначална вноска</p>
 				<input
+					aria-label="Първоначална вноска"
 					id="ServicesCalculatorDownPayment"
 					name="ServicesCalculatorDownPayment"
 					type="text"

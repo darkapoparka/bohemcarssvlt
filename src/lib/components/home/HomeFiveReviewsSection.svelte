@@ -94,8 +94,8 @@
 <style>
 	.bohemcars-home-reviews {
 		background-color: var(--bc-bg) !important;
-		padding-top: 84px;
-		padding-bottom: 84px;
+		padding-top: 64px;
+		padding-bottom: 64px;
 	}
 
 	.bohemcars-reviews-panel {

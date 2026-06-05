@@ -416,7 +416,7 @@ const applyServicesData = (html: string) => {
 						<div><p class="mb-8">Име</p><input class="active input-large" name="name" type="text" placeholder="Вашето име" required></div>
 						<div><p class="mb-8">Имейл</p><input class="input-large" name="email" type="email" placeholder="Вашият имейл" required></div>
 						<div><p class="mb-8">Телефон</p><input class="input-large" name="phone" type="tel" placeholder="Вашият телефон"></div>
-						<div><p class="mb-8">Предпочитана дата</p><input class="input-large" name="date" type="date"></div>
+						<div><p class="mb-8">Предпочитана дата</p><input class="input-large" name="date" aria-label="Предпочитана дата" type="date"></div>
 						<div>
 							<p class="mb-8">Услуга</p>
 							<select class="select-style-2" name="service">
@@ -432,8 +432,17 @@ const applyServicesData = (html: string) => {
 		</div>
 	</div>
 </section></div>`;
+	const chrome = html
+		.replaceAll('<a href="/">Home</a>', '<a href="/">Начало</a>')
+		.replaceAll('<span>Pages</span>', '<span>Раздели</span>')
+		.replaceAll('<span>Services</span>', '<span>Услуги</span>')
+		.replaceAll('WHAT ARE YOU LOOKING FOR?', 'Какво търсите?')
+		.replace(
+			/(<a href="#" class="btn btn-line btn-large font-weight-600 bg-sign-in open-modal"[\s\S]*?<\/svg>\s*)Sign In(\s*<\/a>)/,
+			'$1Вход$2'
+		);
 
-	return replaceBodyAfterBreadcrumb(html, body);
+	return replaceBodyAfterBreadcrumb(chrome, body);
 };
 
 const applyAboutData = (html: string) => {
@@ -585,7 +594,7 @@ const applyTermsData = (html: string) => {
 };
 
 const calculatorField = (field: AuxeroCalculatorField) =>
-	`<div><p class="mb-8">${escapeHtml(field.label)}${field.mutedLabel ? ` <span class="text-muted">${escapeHtml(field.mutedLabel)}</span>` : ''}</p><input class="${field.active ? 'active ' : ''}input-large" name="${escapeHtml(field.name)}" type="number" value="${field.value}" min="${field.min}" step="${field.step}" data-bohemcars-calc-input="${escapeHtml(field.key)}"></div>`;
+	`<div><p class="mb-8">${escapeHtml(field.label)}${field.mutedLabel ? ` <span class="text-muted">${escapeHtml(field.mutedLabel)}</span>` : ''}</p><input class="${field.active ? 'active ' : ''}input-large" name="${escapeHtml(field.name)}" aria-label="${escapeHtml(field.label)}" type="number" value="${field.value}" min="${field.min}" step="${field.step}" data-bohemcars-calc-input="${escapeHtml(field.key)}"></div>`;
 
 const applyCalculatorData = (html: string) => {
 	const calculator = auxeroCalculatorData;

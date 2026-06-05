@@ -67,6 +67,7 @@
 		padding-top: 18px;
 	}
 
+	:global(body.auxero-template-contact-us-html .contact-page-info h1),
 	:global(body.auxero-template-contact-us-html .contact-page-info h2),
 	:global(body.auxero-template-contact-us-html .contact-page-info h3),
 	:global(body.auxero-template-contact-us-html .contact-page-info h4),

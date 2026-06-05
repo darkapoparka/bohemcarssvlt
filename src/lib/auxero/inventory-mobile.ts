@@ -76,13 +76,17 @@ export type InventoryMobileData = {
 };
 
 const brandLogos: Record<string, string> = {
-	Audi: '/assets/bohemcars/brands/audi.png',
-	BMW: '/assets/bohemcars/brands/bmw.png',
-	Ford: '/assets/bohemcars/brands/ford.png',
-	Mazda: '/assets/bohemcars/brands/mazda.png',
-	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
+	Audi: '/assets/images/brand/brand-3.png',
+	BMW: '/assets/images/brand/brand-1.png',
+	Ford: '/assets/images/brand/brand-7.png',
+	Honda: '/assets/images/brand/brand-4.png',
+	Hyundai: '/assets/images/brand/brand-8.png',
+	Kia: '/assets/bohemcars/brands/kia-transparent.png',
+	Mazda: '/assets/images/brand/brand-10.png',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
 	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Toyota: '/assets/images/brand/brand-5.png',
+	Volvo: '/assets/images/brand/brand-6.png',
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
 };
 

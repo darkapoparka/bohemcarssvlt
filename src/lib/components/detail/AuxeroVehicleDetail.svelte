@@ -7,7 +7,7 @@
 	import AuxeroVehicleDetailStaticContent from './AuxeroVehicleDetailStaticContent.svelte';
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
-	const accountFavoritesHref = resolve('/account/favorites');
+	const accountFavoritesHref = resolve('/account');
 	const compareHref = resolve('/compare');
 	const contactHref = resolve('/contact');
 </script>

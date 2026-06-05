@@ -21,6 +21,7 @@ export type AuxeroAboutOffice = {
 	heading: string;
 	hours: string;
 	mapEmbedUrl: string;
+	mapHref: string;
 	phone: string;
 	phoneHref: string;
 	secondaryPhone: string;
@@ -56,6 +57,7 @@ export type AuxeroAboutContent = {
 		statement: string;
 		steps: {
 			description: string;
+			image: string;
 			title: string;
 		}[];
 	};
@@ -151,6 +153,8 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		heading: 'Огледи и предаване в Пловдив',
 		hours: 'Понеделник-петък: 9:00 - 18:00',
 		mapEmbedUrl: bohemcarsContact.mapEmbedUrl,
+		mapHref:
+			'https://www.google.com/maps/search/?api=1&query=BohemCars%20Plovdiv%20South%20Industrial%20Zone',
 		phone: bohemcarsContact.primaryPhoneLabel,
 		phoneHref: bohemcarsContact.primaryPhoneHref,
 		secondaryPhone: bohemcarsContact.marketplacePhoneLabel,
@@ -158,11 +162,11 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 	},
 	profile: {
 		eyebrow: 'Екип и история',
-		heading: 'Bohemcars е пловдивски екип за автомобили от Канада',
+		heading: 'Пловдивски екип за автомобили от Канада',
 		description:
-			'Bohemcars започва от конкретния автомобил, а не от празни обещания. Екипът помага при налични коли, обяви от Канада, проверка по VIN, история, документи, ориентир за крайни разходи и продажба на клиентски автомобил.',
+			'Bohemcars работи около конкретния автомобил: налична кола, линк от Канада, VIN, документи, ориентир за крайни разходи, оглед и предаване.',
 		statement:
-			'Целта е клиентът да знае какво гледа, колко реално ще струва и каква е следващата стъпка преди да поеме ангажимент.',
+			'Целта е клиентът да знае какво гледа, колко реално струва и каква е следващата стъпка преди ангажимент.',
 		highlights: [
 			'Внос от Канада',
 			'Проверка по VIN и история',
@@ -171,20 +175,24 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		steps: [
 			{
 				title: 'Внос от Канада',
+				image: '/assets/bohemcars/services/import-canada-service.png',
 				description:
 					'Работа по конкретен модел, бюджет, срок и реалистична крайна цена до България.'
 			},
 			{
 				title: 'Налични автомобили',
+				image: '/assets/bohemcars/home2/home2-action-buy.png',
 				description: 'Огледи с уговорка, контекст за произход, състояние, пробег и следващи стъпки.'
 			},
 			{
 				title: 'Проверка и документи',
+				image: '/assets/bohemcars/services/evaluate-link-service.png',
 				description:
 					'Преглед на VIN, история, снимки, сервизни следи, документи и готовност за регистрация.'
 			},
 			{
 				title: 'Продажба и предаване',
+				image: '/assets/bohemcars/services/sell-car-service.png',
 				description:
 					'Съдействие при клиентски автомобили, подготвяне на оглед, документи и спокойно предаване.'
 			}

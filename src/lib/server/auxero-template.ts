@@ -295,6 +295,9 @@ function applyBohemcarsBranding(html: string) {
 		.replaceAll('/assets/images/logo.png', bohemcarsAssets.logoLight)
 		.replaceAll('alt="logo-white.png"', 'alt="Bohemcars"')
 		.replaceAll('alt="logo"', 'alt="Bohemcars"')
+		.replaceAll('href="/account/favorites"', 'href="/account"')
+		.replaceAll('href="./account/favorites"', 'href="./account"')
+		.replaceAll('aria-label="Wishlist"', 'aria-label="Любими"')
 		.replaceAll('Search Cars Near You – Buy Today!', 'Find Your Next Bohemcars Vehicle')
 		.replaceAll('Search Cars Near You', 'Find Your Next Bohemcars Vehicle')
 		.replaceAll('Get Your Dream Car', 'Import or buy with Bohemcars')
@@ -349,6 +352,12 @@ function applyBohemcarsBranding(html: string) {
 		);
 }
 
+function rewriteUnfinishedAccountDashboardLinks(html: string) {
+	return html
+		.replaceAll('href="/account/favorites"', 'href="/account"')
+		.replaceAll('href="./account/favorites"', 'href="./account"');
+}
+
 function navMarkup(pathname: string) {
 	return mainNavigation
 		.map((item) => {
@@ -366,6 +375,56 @@ const escapeHtml = (value: string | number) =>
 		.replaceAll('>', '&gt;')
 		.replaceAll('"', '&quot;')
 		.replaceAll("'", '&#39;');
+
+function applyAuxeroAccessibilityLabels(html: string, templateFile: string) {
+	let next = html
+		.replace(
+			/<button type="submit" class="btn-submit"(?![^>]*aria-label)/g,
+			'<button type="submit" class="btn-submit" aria-label="Изпрати" title="Изпрати"'
+		)
+		.replace(
+			/<a href="https:\/\/www\.facebook\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://www.facebook.com$1" aria-label="Facebook" title="Facebook"'
+		)
+		.replace(
+			/<a href="https:\/\/x\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://x.com$1" aria-label="X" title="X"'
+		)
+		.replace(
+			/<a href="https:\/\/www\.instagram\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://www.instagram.com$1" aria-label="Instagram" title="Instagram"'
+		)
+		.replace(
+			/<a href="https:\/\/www\.tiktok\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://www.tiktok.com$1" aria-label="TikTok" title="TikTok"'
+		)
+		.replace(
+			/<a href="https:\/\/www\.amazon\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://www.amazon.com$1" aria-label="Amazon" title="Amazon"'
+		)
+		.replace(
+			/<a href="https:\/\/www\.pinterest\.com([^"]*)"(?![^>]*aria-label)/g,
+			'<a href="https://www.pinterest.com$1" aria-label="Pinterest" title="Pinterest"'
+		)
+		.replace(
+			/<a href="#" class="pagination__link">\s*(<svg[\s\S]*?<\/svg>)\s*<\/a>/g,
+			'<a href="#" class="pagination__link" aria-label="Следваща страница" title="Следваща страница">$1</a>'
+		);
+
+	if (templateFile === 'contact-us.html') {
+		const contactSocialLabels = ['Facebook', 'X', 'Instagram', 'YouTube', 'TikTok', 'Pinterest'];
+		let contactSocialIndex = 0;
+		next = next.replace(
+			/<a href="#" class="hover-(?:fill|stroke)-white"(?![^>]*aria-label)>/g,
+			(match) => {
+				const label = contactSocialLabels[contactSocialIndex++];
+				return label ? match.replace('>', ` aria-label="${label}" title="${label}">`) : match;
+			}
+		);
+	}
+
+	return next;
+}
 
 function findClosingTagIndex(html: string, openTagIndex: number, tagName: string) {
 	if (openTagIndex < 0) return -1;
@@ -2098,7 +2157,7 @@ function injectLocalBehavior(
 		document.querySelectorAll('[aria-label="Compare"]').forEach((link) => {
 			link.setAttribute('data-badge', String(compare.length));
 		});
-		document.querySelectorAll('[aria-label="Wishlist"]').forEach((link) => {
+		document.querySelectorAll('[aria-label="Wishlist"], [aria-label="Любими"]').forEach((link) => {
 			link.setAttribute('data-badge', String(favorites.length));
 		});
 		renderCompareTables(compare);
@@ -2426,12 +2485,14 @@ export function renderAuxeroTemplate(templateFile: string, options: AuxeroRender
 	const withoutBlockedAnchors = stripBlockedTemplateAnchors(branded);
 	const withNavigation = rewritePrimaryNavigation(withoutBlockedAnchors, templateFile);
 	const withRoutes = rewriteTemplateLinks(withNavigation);
-	const withAuthValues = clearAuthModalDemoValues(withRoutes);
+	const withAccountTeaserLinks = rewriteUnfinishedAccountDashboardLinks(withRoutes);
+	const withAuthValues = clearAuthModalDemoValues(withAccountTeaserLinks);
 	const withSearchForms = wireGlobalSearchForms(withAuthValues);
 	const withData = applyTemplateData(withSearchForms, templateFile, options);
 	const withDashboardHeader = applyDashboardContextHeader(withData, templateFile, options);
+	const withAccessibilityLabels = applyAuxeroAccessibilityLabels(withDashboardHeader, templateFile);
 
-	return injectLocalBehavior(withDashboardHeader, templateFile, options);
+	return injectLocalBehavior(withAccessibilityLabels, templateFile, options);
 }
 
 export function auxeroResponse(

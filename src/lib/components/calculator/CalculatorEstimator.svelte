@@ -9,7 +9,7 @@
 
 <div class="lg-grid-cols-1 grid grid-cols-2 gap-40" data-bohemcars-calculator>
 	<div class="border-box">
-		<p class="h3 mb-28">Calculate Estimated Landed Cost</p>
+		<p class="h3 mb-28">Изчисли ориентировъчната крайна цена</p>
 		<form action="#" class="calculate-form" novalidate>
 			<div class="grid grid-cols-1 gap-15">
 				{#each calculator.fields as field (field.key)}
@@ -21,6 +21,7 @@
 							{/if}
 						</p>
 						<input
+							aria-label={field.label}
 							class={inputClass(field.active)}
 							data-bohemcars-calc-input={field.key}
 							min={field.min}

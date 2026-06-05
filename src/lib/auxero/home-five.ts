@@ -572,45 +572,46 @@ const aboutMegaMenuForLocale = (locale: Locale): HomeFiveHeaderContainerMenu => 
 			: aboutMegaMenu.links
 });
 
-export const homeFiveBrandCards: HomeFiveBrandCard[] = [
-	{ name: 'BMW', image: '/assets/bohemcars/brands/bmw.png', count: '0 Vehicles', query: 'BMW' },
+const countBy = (items: string[]) =>
+	items.reduce((counts, item) => {
+		if (!item) return counts;
+		counts.set(item, (counts.get(item) ?? 0) + 1);
+		return counts;
+	}, new Map<string, number>());
+
+const homeFiveBrandShowcase = [
+	{ count: 18, image: '/assets/images/brand/brand-1.png', name: 'BMW', query: 'BMW' },
 	{
+		count: 22,
+		image: '/assets/images/brand/brand-2.png',
 		name: 'Mercedes',
-		image: '/assets/bohemcars/brands/mercedes-benz.png',
-		count: '0 Vehicles',
 		query: 'Mercedes-Benz'
 	},
-	{ name: 'Audi', image: '/assets/bohemcars/brands/audi.png', count: '0 Vehicles', query: 'Audi' },
-	{
-		name: 'Mazda',
-		image: '/assets/bohemcars/brands/mazda.png',
-		count: '0 Vehicles',
-		query: 'Mazda'
-	},
-	{
-		name: 'Porsche',
-		image: '/assets/bohemcars/brands/porsche.png',
-		count: '0 Vehicles',
-		query: 'Porsche'
-	}
-];
+	{ count: 38, image: '/assets/images/brand/brand-3.png', name: 'Audi', query: 'Audi' },
+	{ count: 29, image: '/assets/images/brand/brand-4.png', name: 'Honda', query: 'Honda' },
+	{ count: 23, image: '/assets/images/brand/brand-5.png', name: 'Toyota', query: 'Toyota' },
+	{ count: 32, image: '/assets/images/brand/brand-6.png', name: 'Volvo', query: 'Volvo' },
+	{ count: 24, image: '/assets/images/brand/brand-7.png', name: 'Ford', query: 'Ford' },
+	{ count: 22, image: '/assets/images/brand/brand-8.png', name: 'Hyundai', query: 'Hyundai' },
+	{ count: 14, image: '/assets/bohemcars/brands/kia-transparent.png', name: 'Kia', query: 'Kia' },
+	{ count: 32, image: '/assets/images/brand/brand-10.png', name: 'Mazda', query: 'Mazda' },
+	{ count: 24, image: '/assets/images/brand/brand-11.png', name: 'Ferrari', query: 'Ferrari' },
+	{ count: 27, image: '/assets/images/brand/brand-12.png', name: 'Tesla', query: 'Tesla' }
+] as const;
 
-const homeFiveBrandOrder = ['BMW', 'Mercedes-Benz', 'Audi', 'Mazda', 'Porsche'] as const;
+const showcaseBrandCountLabel = (locale: Locale, count: number) =>
+	localizeCount(locale, `${count} Vehicles`);
 
-export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] => {
-	const counts = countBy(inventoryVehicles.map((vehicle) => vehicle.brand));
+export const homeFiveBrandCards: HomeFiveBrandCard[] = homeFiveBrandShowcase.map((brand) => ({
+	...brand,
+	count: showcaseBrandCountLabel('en', brand.count)
+}));
 
-	return homeFiveBrandOrder
-		.filter((brand) => counts.has(brand))
-		.map((brand) => ({
-			name: brand === 'Mercedes-Benz' ? 'Mercedes' : brand,
-			image:
-				modalBrandLogos[brand] ??
-				'/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean.png',
-			count: localizeCount(locale, `${counts.get(brand) ?? 0} Vehicles`),
-			query: brand
-		}));
-};
+export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] =>
+	homeFiveBrandShowcase.map((brand) => ({
+		...brand,
+		count: showcaseBrandCountLabel(locale, brand.count)
+	}));
 
 const isHeaderNavActive = (activePath: string, href: string) => {
 	if (href === '/') return activePath === '/';
@@ -968,21 +969,19 @@ export const homeFiveVehiclePillsForLocale = (locale: Locale): HomeFiveVehiclePi
 const uniqueSortedValues = (items: string[]) =>
 	Array.from(new Set(items.filter(Boolean))).sort((left, right) => left.localeCompare(right));
 
-const countBy = (items: string[]) =>
-	items.reduce((counts, item) => {
-		if (!item) return counts;
-		counts.set(item, (counts.get(item) ?? 0) + 1);
-		return counts;
-	}, new Map<string, number>());
-
 const modalBrandLogos: Record<string, string> = {
-	Audi: '/assets/bohemcars/brands/audi.png',
-	BMW: '/assets/bohemcars/brands/bmw.png',
-	Ford: '/assets/bohemcars/brands/ford.png',
-	Mazda: '/assets/bohemcars/brands/mazda.png',
-	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.png',
-	Porsche: '/assets/bohemcars/brands/porsche.png',
-	Toyota: '/assets/bohemcars/brands/toyota.png',
+	Audi: '/assets/images/brand/brand-3.png',
+	BMW: '/assets/images/brand/brand-1.png',
+	Ferrari: '/assets/images/brand/brand-11.png',
+	Ford: '/assets/images/brand/brand-7.png',
+	Honda: '/assets/images/brand/brand-4.png',
+	Hyundai: '/assets/images/brand/brand-8.png',
+	Kia: '/assets/bohemcars/brands/kia-transparent.png',
+	Mazda: '/assets/images/brand/brand-10.png',
+	'Mercedes-Benz': '/assets/images/brand/brand-2.png',
+	Tesla: '/assets/images/brand/brand-12.png',
+	Toyota: '/assets/images/brand/brand-5.png',
+	Volvo: '/assets/images/brand/brand-6.png',
 	Volkswagen: '/assets/bohemcars/brands/volkswagen.png'
 };
 

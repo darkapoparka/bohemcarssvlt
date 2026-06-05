@@ -10,7 +10,7 @@
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
 
 	const compareHref = resolve('/compare');
-	const favoritesHref = resolve('/account/favorites');
+	const favoritesHref = resolve('/account');
 	const externalHref = (href: string) => ({ href });
 	const drawerRestingSnapPoint = 0.6;
 	const drawerExpandedSnapPoint = 0.92;
