@@ -48,6 +48,14 @@ body[class*='auxero-template-'] {
 	visibility: visible !important;
 }
 
+/* Vaul drawers (inventory + PDP): keep library-owned drag/focus behavior, but
+   shorten the default 0.5s open/close motion to match the faster CSS sheets. */
+[data-vaul-drawer],
+[data-vaul-overlay] {
+	animation-duration: 0.28s !important;
+	transition-duration: 0.28s !important;
+}
+
 .bohemcars-no-image-zoom.card-box.active .card--img,
 .bohemcars-no-image-zoom.card-box:hover .card--img,
 .bohemcars-no-image-zoom.card-box-style-1.active .card--img,
@@ -703,7 +711,7 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 	body.auxero-template-listing-grid3-columns-html .bohemcars-inventory-searchbar__search input,
 	body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-searchbar__search input,
 	body.auxero-template-listing-gridstyle-halfmap-html .bohemcars-inventory-searchbar__search input {
-		font-size: 14px !important;
+		font-size: 16px !important;
 		line-height: 20px !important;
 	}
 

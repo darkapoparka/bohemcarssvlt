@@ -420,7 +420,11 @@
 					<textarea name="message" rows="3" placeholder={detail.copy.messagePlaceholder}></textarea>
 				</label>
 
-				<button type="submit" class="bohemcars-mobile-pdp__inquiry-submit" disabled={inquirySubmitting}>
+				<button
+					type="submit"
+					class="bohemcars-mobile-pdp__inquiry-submit"
+					disabled={inquirySubmitting}
+				>
 					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
 					{detail.copy.sendInquiry}
 				</button>
@@ -433,7 +437,10 @@
 				</p>
 			</form>
 
-			<a class="bohemcars-mobile-pdp__inquiry-call" {...externalHref(detail.contact.primaryPhoneHref)}>
+			<a
+				class="bohemcars-mobile-pdp__inquiry-call"
+				{...externalHref(detail.contact.primaryPhoneHref)}
+			>
 				<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
 				{detail.contact.primaryPhoneLabel}
 			</a>
@@ -1115,8 +1122,7 @@
 			opacity: 1;
 		}
 
-		.bohemcars-mobile-pdp
-			:global(.bohemcars-mobile-pdp__inquiry-handle[data-vaul-handle])::after {
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-handle[data-vaul-handle])::after {
 			position: absolute;
 			top: 50%;
 			left: 50%;
