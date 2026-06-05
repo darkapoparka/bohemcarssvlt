@@ -115,22 +115,22 @@ export const getInventoryState = (
 	const sortParam = getParam(searchParams, 'sort') ?? 'best-match';
 	const sort = sortParamToKey[sortParam] ?? 'template';
 	const filters: InventoryFilters = {
-		bodyType: getParam(searchParams, 'body', 'bodyType', 'bodystyle'),
+		bodyType: getParamList(searchParams, 'body', 'bodyType', 'bodystyle'),
 		brand: getParamList(searchParams, 'brand'),
 		condition: getParam(searchParams, 'condition') as InventoryFilters['condition'],
-		fuel: getParam(searchParams, 'fuel', 'FuelType'),
+		fuel: getParamList(searchParams, 'fuel', 'FuelType'),
 		location: getParam(searchParams, 'location', 'city', 'area'),
 		maxMileage: getNumberParam(searchParams, 'maxMileage', 'mileageTo'),
 		maxPrice: getNumberParam(searchParams, 'maxPrice', 'priceTo', 'price'),
 		maxYear: getNumberParam(searchParams, 'maxYear', 'yearTo'),
-		feature: getParam(searchParams, 'feature', 'features', 'extra', 'equipment'),
+		feature: getParamList(searchParams, 'feature', 'features', 'extra', 'equipment'),
 		minMileage: getNumberParam(searchParams, 'minMileage', 'mileageFrom'),
 		minPrice: getNumberParam(searchParams, 'minPrice', 'priceFrom'),
 		minYear: getNumberParam(searchParams, 'minYear', 'yearFrom'),
-		query: getParam(searchParams, 'q', 'query', 'keyword', 'model'),
+		query: getParamList(searchParams, 'q', 'query', 'keyword', 'model'),
 		sourceId: getParam(searchParams, 'sourceId', 'source', 'stockNumber', 'vin'),
 		status: getParam(searchParams, 'status'),
-		transmission: getParam(searchParams, 'transmission', 'Transmission', 'gearbox')
+		transmission: getParamList(searchParams, 'transmission', 'Transmission', 'gearbox')
 	};
 	const normalizedFilters = normalizeFilters(filters);
 	const filtered = filterVehicles(vehicles, normalizedFilters);

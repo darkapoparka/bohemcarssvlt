@@ -110,14 +110,14 @@
 					>
 						<span class="bohemcars-mobile-view-all-card__logo" aria-hidden="true">
 							<img
-								src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png"
+								src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.png" loading="lazy"
 								alt=""
 							/>
 						</span>
 						<span class="bohemcars-mobile-view-all-card__fleet" aria-hidden="true">
 							{#each mobileCtaVehicles as ctaVehicle (ctaVehicle.slug)}
 								<span class="bohemcars-mobile-view-all-card__thumb">
-									<img src={ctaVehicle.image} alt="" />
+									<img src={ctaVehicle.image} alt="" loading="lazy" />
 								</span>
 							{/each}
 						</span>
@@ -810,7 +810,7 @@
 	.bohemcars-price-pill a {
 		min-width: 0;
 		justify-content: center;
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	.bohemcars-filter-pill span,
@@ -882,8 +882,17 @@
 	}
 
 	.bohemcars-home-vehicle-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 		overflow: visible;
 		margin-top: 0;
+	}
+
+	.bohemcars-home-vehicle-grid :global(.card-box-style-1) {
+		min-width: 0;
+	}
+
+	.bohemcars-home-vehicle-grid :global(.card-box-style-1 .image) {
+		overflow: hidden;
 	}
 
 	.bohemcars-newest-footer-cta {
@@ -899,6 +908,10 @@
 	@media (max-width: 1199px) {
 		.bohemcars-newest-banner__inner {
 			min-height: auto;
+		}
+
+		.bohemcars-home-vehicle-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 		}
 	}
 
@@ -1025,7 +1038,7 @@
 			background: var(--bc-surface);
 			color: #14210f;
 			font-size: 18px;
-			font-weight: 800;
+			font-weight: 600;
 			line-height: 22px;
 			text-align: center;
 			scroll-snap-align: start;

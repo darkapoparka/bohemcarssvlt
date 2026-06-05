@@ -46,7 +46,7 @@
 									class={index === 0 ? 'out-brand-2 ' : 'out-brand-2'}
 								>
 									<span class="bohemcars-brand-logo-frame">
-										<img class="out-brand--img" src={brand.image} alt="" />
+										<img class="out-brand--img" src={brand.image} alt="" loading="lazy" />
 									</span>
 									<p class="h5">{brand.name}</p>
 									<p class="text-muted text-sm">{brand.count}</p>
@@ -97,7 +97,7 @@
 					{#each typeCards as typeCard (typeCard.image)}
 						<a class="bohemcars-type-card" href={resolve(typeCard.href)}>
 							<span class="bohemcars-type-card__image">
-								<img src={typeCard.image} alt={typeCard.label} />
+								<img src={typeCard.image} alt={typeCard.label} loading="lazy" />
 							</span>
 							<span class="bohemcars-type-card__label">{typeCard.label}</span>
 						</a>
@@ -228,6 +228,7 @@
 		background: #98bc2a !important;
 		border: 1px solid #98bc2a !important;
 		color: #ffffff !important;
+		font-weight: 500;
 		gap: 8px;
 	}
 

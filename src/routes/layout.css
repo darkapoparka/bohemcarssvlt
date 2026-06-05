@@ -41,6 +41,8 @@
 
 html {
 	scroll-behavior: smooth;
+	/* Keep section titles clear of the sticky header when scrolled to via anchors. */
+	scroll-padding-top: 80px;
 }
 
 body {

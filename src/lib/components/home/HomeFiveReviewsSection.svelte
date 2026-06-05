@@ -40,7 +40,7 @@
 									></div>
 									<p class="testimonior-box--desc mb-16">{review.text}</p>
 									<div class="testimonior-box--user">
-										<img class="testimonior--img" src={review.avatar} alt={review.name} />
+										<img class="testimonior--img" src={review.avatar} alt={review.name} loading="lazy" />
 										<div class="testimonior-box--user-content">
 											<p class="h5 title">{review.name}</p>
 											<p class="desc">{review.role}</p>
@@ -55,7 +55,7 @@
 								<span class="bohemcars-review-more-card__proof" aria-hidden="true">
 									<span class="bohemcars-review-more-card__avatars">
 										{#each moreCardReviews as review (review.name)}
-											<img src={review.avatar} alt="" />
+											<img src={review.avatar} alt="" loading="lazy" />
 										{/each}
 									</span>
 									<span class="bohemcars-review-more-card__stars">★★★★★</span>

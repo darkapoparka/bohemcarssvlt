@@ -159,6 +159,7 @@
 																				class="bohemcars-mega-car__image"
 																				src={vehicle.image}
 																				alt={vehicle.label}
+																				loading="lazy"
 																			/>
 																		</span>
 																		<span class="bohemcars-mega-car__title">{vehicle.label}</span>
@@ -297,7 +298,7 @@
 							</a>
 
 							<a
-								href={resolve('/account')}
+								href={resolve('/account/favorites')}
 								class="header-action-btn header-action-icon"
 								aria-label={header.ui.wishlist}
 								data-badge={header.actionBadges.wishlist}
@@ -1030,8 +1031,8 @@
 		.bohemcars-mobile-call,
 		.bohemcars-mobile-map {
 			display: flex;
-			width: 40px;
-			height: 40px;
+			width: 44px;
+			height: 44px;
 			align-items: center;
 			justify-content: center;
 			border: 1px solid rgba(28, 28, 28, 0.1);
@@ -1072,8 +1073,8 @@
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
-			width: 40px !important;
-			height: 40px !important;
+			width: 44px !important;
+			height: 44px !important;
 			border: 1px solid rgba(255, 255, 255, 0.26);
 			background: rgba(255, 255, 255, 0.14) !important;
 			box-sizing: border-box;

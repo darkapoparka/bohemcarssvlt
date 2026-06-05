@@ -74,7 +74,11 @@
 				<GitCompare size={23} />
 				<span>{garage.compare.length}</span>
 			</a>
-			<a class="icon-button icon-button--badge" href={resolve('/account')} aria-label="Любими">
+			<a
+				class="icon-button icon-button--badge"
+				href={resolve('/account/favorites')}
+				aria-label="Любими"
+			>
 				<Heart size={23} />
 				<span>{garage.favorites.length}</span>
 			</a>

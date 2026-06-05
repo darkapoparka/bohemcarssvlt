@@ -60,6 +60,29 @@ const escapeHtml = (value: string | number) =>
 		.replaceAll('"', '&quot;')
 		.replaceAll("'", '&#39;');
 
+const translatedFilterValueProtections = [
+	['Automatic', 'Automati&#99;', 'Automati%63'],
+	['Manual', 'Manu&#97;l', 'Manu%61l'],
+	['On request', 'On r&#101;quest', 'On%20r%65quest'],
+	['Petrol', 'Petr&#111;l', 'Petr%6fl'],
+	['Diesel', 'Dies&#101;l', 'Dies%65l'],
+	['Hybrid', 'Hybr&#105;d', 'Hybr%69d'],
+	['Sedan', 'S&#101;dan', 'S%65dan'],
+	['Cabriolet', 'Cabriol&#101;t', 'Cabriol%65t'],
+	['Convertible', 'Convertibl&#101;', 'Convertibl%65'],
+	['Coupe', 'Coup&#101;', 'Coup%65'],
+	['Hatchback', 'Hatchbac&#107;', 'Hatchbac%6b'],
+	['Crossover', 'Crossov&#101;r', 'Crossov%65r'],
+	['Pickup', 'Pick&#117;p', 'Pick%75p'],
+	['Wagon', 'Wag&#111;n', 'Wag%6fn']
+] as const;
+
+const escapeFilterValueAttribute = (value: string | number) =>
+	translatedFilterValueProtections.reduce(
+		(result, [raw, entity]) => result.replaceAll(raw, entity),
+		escapeHtml(value)
+	);
+
 const km = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
 
 const inventoryUrl = (state: InventoryState, overrides: Record<string, string | undefined>) => {
@@ -241,6 +264,29 @@ const sortDropdown = (state: InventoryState) => {
 	</ul>`;
 };
 
+const splitFilterValues = (value?: string | number | null) =>
+	String(value ?? '')
+		.split(',')
+		.map((item) => item.trim())
+		.filter(Boolean);
+
+const joinFilterValues = (values: string[]) =>
+	Array.from(new Set(values.filter(Boolean))).join(',');
+
+const hasFilterValue = (values: string[], value: string) =>
+	values.some((item) => item.toLowerCase() === value.toLowerCase());
+
+const modelOptionsForBrands = (brandFilter?: string) => {
+	const selectedBrands = splitFilterValues(brandFilter);
+	const source = selectedBrands.length
+		? vehicles.filter((vehicle) => hasFilterValue(selectedBrands, vehicle.brand))
+		: vehicles;
+
+	return Array.from(new Set(source.map((vehicle) => vehicle.model).filter(Boolean)))
+		.sort((a, b) => a.localeCompare(b, 'en'))
+		.slice(0, 24);
+};
+
 const selectedSearchQuery = (state: InventoryState) =>
 	state.searchParams.get('q') ??
 	state.searchParams.get('query') ??
@@ -248,47 +294,145 @@ const selectedSearchQuery = (state: InventoryState) =>
 	'';
 
 const selectedModel = (state: InventoryState) => {
-	const model = state.searchParams.get('model');
+	const model = joinFilterValues(state.searchParams.getAll('model').flatMap(splitFilterValues));
 
 	if (model) return model;
-	if (selectedSearchQuery(state)) return '';
 
-	return modelOptions.includes(state.filters.query ?? '') ? (state.filters.query ?? '') : '';
+	const queryValues = splitFilterValues(state.filters.query);
+	const availableModels = modelOptionsForBrands(state.filters.brand);
+
+	if (!queryValues.length) return '';
+	if (queryValues.some((value) => !hasFilterValue(availableModels, value))) return '';
+
+	return joinFilterValues(queryValues);
 };
 
 const selectedNumber = (value?: number) => (value ? String(value) : '');
 
-const selectOptions = (
-	options: Array<string | { label: string; value: string }>,
-	selected?: string | number
+type InventoryFilterOption =
+	| string
+	| { count?: number; image?: string; label: string; value: string };
+
+const optionParts = (option: InventoryFilterOption) => ({
+	count: typeof option === 'string' ? undefined : option.count,
+	image: typeof option === 'string' ? undefined : option.image,
+	label: typeof option === 'string' ? option : option.label,
+	value: typeof option === 'string' ? option : option.value
+});
+
+const selectedOptionLabels = (
+	options: InventoryFilterOption[],
+	selected?: string | number,
+	placeholder = ''
 ) => {
-	const selectedValue = selected ? String(selected).toLowerCase() : '';
+	const selectedValues = splitFilterValues(selected);
+	const labels = options
+		.map(optionParts)
+		.filter((option) => option.value && hasFilterValue(selectedValues, option.value))
+		.map((option) => option.label);
 
-	return options
-		.map((option) => {
-			const value = typeof option === 'string' ? option : option.value;
-			const label = typeof option === 'string' ? option : option.label;
+	if (!labels.length) return placeholder;
+	if (labels.length <= 2) return labels.join(' + ');
 
-			return `<option value="${escapeHtml(value)}" ${
-				selectedValue === value.toLowerCase() ? 'selected' : ''
-			}>${escapeHtml(label)}</option>`;
-		})
-		.join('');
+	return `${labels.length} selected`;
 };
 
-const inventoryFilterSelect = (
+const optionLabelForValue = (options: InventoryFilterOption[], value: string | number) => {
+	const selectedValue = String(value);
+
+	return options
+		.map(optionParts)
+		.find((option) => option.value && option.value.toLowerCase() === selectedValue.toLowerCase())
+		?.label;
+};
+
+const activeFilterDisplayLabel = (
+	key: InventoryFilterKey,
+	value: string | number,
+	state: InventoryState
+) => {
+	const optionLabel =
+		key === 'brand'
+			? optionLabelForValue(inventoryBrandPills, value)
+			: key === 'query'
+				? optionLabelForValue(modelOptionsForBrands(state.filters.brand), value)
+				: key === 'bodyType'
+					? optionLabelForValue(inventoryBodyTypePills, value)
+					: key === 'feature'
+						? optionLabelForValue(popularFeatureOptions, value)
+						: key === 'fuel'
+							? optionLabelForValue(inventoryFuelPills, value)
+							: key === 'transmission'
+								? optionLabelForValue(transmissionOptions, value)
+								: key === 'maxMileage'
+									? optionLabelForValue(mileageFilterOptions, value)
+									: key === 'maxPrice'
+										? optionLabelForValue(priceFilterOptions, value)
+										: undefined;
+
+	if (optionLabel) return optionLabel;
+
+	return typeof value === 'number' ? value.toLocaleString('fr-FR').replace(/\u202f/g, ' ') : value;
+};
+
+const filterDropdownOption = (
 	name: string,
-	label: string,
-	placeholder: string,
-	options: Array<string | { label: string; value: string }>,
-	selected?: string | number
-) => `<label class="bohemcars-inventory-filter-field">
-	<span>${escapeHtml(label)}</span>
-	<select name="${escapeHtml(name)}" aria-label="${escapeHtml(label)}">
-		<option value="">${escapeHtml(placeholder)}</option>
-		${selectOptions(options, selected)}
-	</select>
-</label>`;
+	option: InventoryFilterOption,
+	selectedValues: string[],
+	type: 'checkbox' | 'radio'
+) => {
+	const { count, image, label, value } = optionParts(option);
+	const checked = value
+		? hasFilterValue(selectedValues, value)
+		: !selectedValues.length || hasFilterValue(selectedValues, value);
+
+	return `<label class="filter-checkbox bohemcars-inventory-filter-option">
+		${image ? `<img src="${escapeHtml(image)}" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ''}
+		<input type="${type}" name="${escapeHtml(name)}" value="${escapeFilterValueAttribute(value)}" ${
+			checked ? 'checked' : ''
+		} data-inventory-filter-input>
+		<span>${escapeHtml(label)}</span>
+		${typeof count === 'number' ? `<small>${count}</small>` : ''}
+	</label>`;
+};
+
+const inventoryFilterDropdown = ({
+	label,
+	mode = 'multiple',
+	name,
+	options,
+	placeholder,
+	selected
+}: {
+	label: string;
+	mode?: 'multiple' | 'single';
+	name: string;
+	options: InventoryFilterOption[];
+	placeholder: string;
+	selected?: string | number;
+}) => {
+	const id = `bohemcars-inventory-filter-${name.replace(/[^a-z0-9-]/gi, '-')}`;
+	const selectedValues = splitFilterValues(selected);
+	const summary = selectedOptionLabels(options, selected, placeholder);
+	const inputType = mode === 'single' ? 'radio' : 'checkbox';
+	const allLabel = placeholder;
+
+	return `<div class="bohemcars-inventory-filter-field search-cars__select filter-select-dropdown bg-white" data-name="${escapeHtml(
+		name
+	)}" data-inventory-filter-field data-filter-mode="${mode}">
+		<label for="${escapeHtml(id)}" class="search-cars__label">${escapeHtml(label)}</label>
+		<input type="checkbox" id="${escapeHtml(id)}" class="filter-select-dropdown__toggle" aria-hidden="true">
+		<label for="${escapeHtml(id)}" class="filter-select-dropdown__text">
+			<span>${escapeHtml(summary)}</span>
+		</label>
+		<div class="filter-select-dropdown__menu">
+			<div class="filter-select-dropdown__list">
+				${filterDropdownOption(name, { label: allLabel, value: '' }, selectedValues, inputType)}
+				${options.map((option) => filterDropdownOption(name, option, selectedValues, inputType)).join('')}
+			</div>
+		</div>
+	</div>`;
+};
 
 const inventorySearchHiddenInputs = (state: InventoryState) =>
 	[
@@ -378,6 +522,29 @@ const inventoryUrlWithoutFilter = (state: InventoryState, filter: InventoryFilte
 	return inventoryUrlFromParams(params);
 };
 
+const inventoryUrlWithoutFilterValue = (
+	state: InventoryState,
+	filter: InventoryFilterKey,
+	value: string
+) => {
+	const params = new URLSearchParams(state.searchParams);
+	const aliases = filterParamAliases[filter];
+	const values = aliases
+		.flatMap((alias) => params.getAll(alias))
+		.flatMap(splitFilterValues)
+		.filter((item) => item.toLowerCase() !== value.toLowerCase());
+
+	for (const alias of aliases) {
+		params.delete(alias);
+	}
+
+	if (values.length) {
+		params.set(aliases[0], joinFilterValues(values));
+	}
+
+	return inventoryUrlFromParams(params);
+};
+
 const inventoryClearFiltersUrl = (state: InventoryState) => {
 	const params = new URLSearchParams();
 
@@ -387,31 +554,50 @@ const inventoryClearFiltersUrl = (state: InventoryState) => {
 	return inventoryUrlFromParams(params);
 };
 
-const filterValueLabel = (value: string | number) =>
-	typeof value === 'number'
-		? value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')
-		: escapeHtml(value);
+const multiValueFilterKeys = new Set<InventoryFilterKey>([
+	'bodyType',
+	'brand',
+	'feature',
+	'fuel',
+	'query',
+	'transmission'
+]);
 
 const inventoryActiveFilters = (state: InventoryState, modifierClass = '') => {
 	const entries = Object.entries(state.filters) as Array<[InventoryFilterKey, string | number]>;
+	const hasActiveFilters = entries.length > 0;
 
-	if (!entries.length) return '';
+	if (!hasActiveFilters) return '';
+
+	const className = ['bohemcars-inventory-active-filters', modifierClass].filter(Boolean).join(' ');
+	const chipsClassName = 'bohemcars-inventory-active-filters__chips';
 
 	const chips = entries
-		.map(
-			([key, value]) => `<a class="bohemcars-active-filter" href="${inventoryUrlWithoutFilter(
-				state,
-				key
-			)}" aria-label="Remove ${escapeHtml(filterLabels[key])} filter">
-				${escapeHtml(filterLabels[key])}: ${filterValueLabel(value)}
+		.flatMap(([key, value]) => {
+			const values =
+				typeof value === 'string' && multiValueFilterKeys.has(key)
+					? splitFilterValues(value)
+					: [value];
+
+			return values.map((item) => {
+				const href =
+					typeof item === 'string' && multiValueFilterKeys.has(key)
+						? inventoryUrlWithoutFilterValue(state, key, item)
+						: inventoryUrlWithoutFilter(state, key);
+
+				return `<a class="bohemcars-active-filter" href="${href}" aria-label="Remove ${escapeHtml(
+					filterLabels[key]
+				)} filter">
+				${escapeHtml(filterLabels[key])}: ${escapeHtml(activeFilterDisplayLabel(key, item, state))}
 				<span aria-hidden="true">×</span>
-			</a>`
-		)
+			</a>`;
+			});
+		})
 		.join('');
 
-	return `<div class="bohemcars-inventory-active-filters ${modifierClass}" aria-label="Active inventory filters">
+	return `<div class="${className}" aria-label="Active inventory filters">
 		<p class="bohemcars-inventory-active-filters__summary">${state.selected.length} ${state.selected.length === 1 ? 'match' : 'matches'}</p>
-		<div class="bohemcars-inventory-active-filters__chips">
+		<div class="${chipsClassName}">
 			${chips}
 			<a class="bohemcars-active-filter bohemcars-active-filter--clear" href="${inventoryClearFiltersUrl(state)}">
 				Clear filters
@@ -467,14 +653,64 @@ const inventorySearchSurface = (state: InventoryState) => {
 			</div>
 		</div>
 		<div class="bohemcars-inventory-filter-grid">
-			${inventoryFilterSelect('brand', 'Make', 'Make', inventoryBrandPills, state.filters.brand)}
-			${inventoryFilterSelect('model', 'Model', 'Model', modelOptions, selectedModel(state))}
-			${inventoryFilterSelect('priceTo', 'Price', 'Price', priceFilterOptions, selectedNumber(state.filters.maxPrice))}
-			${inventoryFilterSelect('mileageTo', 'Mileage', 'Mileage', mileageFilterOptions, selectedNumber(state.filters.maxMileage))}
-			${inventoryFilterSelect('fuel', 'Fuel', 'Fuel', inventoryFuelPills, state.filters.fuel)}
-			${inventoryFilterSelect('transmission', 'Transmission', 'Gearbox', transmissionOptions, state.filters.transmission)}
-			${inventoryFilterSelect('bodyType', 'Body', 'Body', inventoryBodyTypePills, state.filters.bodyType)}
-			${inventoryFilterSelect('feature', 'Extras', 'Extras', popularFeatureOptions, state.filters.feature)}
+			${inventoryFilterDropdown({
+				label: 'Make',
+				name: 'brand',
+				options: inventoryBrandPills,
+				placeholder: 'Make',
+				selected: state.filters.brand
+			})}
+			${inventoryFilterDropdown({
+				label: 'Model',
+				name: 'model',
+				options: modelOptionsForBrands(state.filters.brand),
+				placeholder: 'Model',
+				selected: selectedModel(state)
+			})}
+			${inventoryFilterDropdown({
+				label: 'Price',
+				mode: 'single',
+				name: 'priceTo',
+				options: priceFilterOptions,
+				placeholder: 'Price',
+				selected: selectedNumber(state.filters.maxPrice)
+			})}
+			${inventoryFilterDropdown({
+				label: 'Mileage',
+				mode: 'single',
+				name: 'mileageTo',
+				options: mileageFilterOptions,
+				placeholder: 'Mileage',
+				selected: selectedNumber(state.filters.maxMileage)
+			})}
+			${inventoryFilterDropdown({
+				label: 'Fuel',
+				name: 'fuel',
+				options: inventoryFuelPills,
+				placeholder: 'Fuel',
+				selected: state.filters.fuel
+			})}
+			${inventoryFilterDropdown({
+				label: 'Transmission',
+				name: 'transmission',
+				options: transmissionOptions,
+				placeholder: 'Gearbox',
+				selected: state.filters.transmission
+			})}
+			${inventoryFilterDropdown({
+				label: 'Body',
+				name: 'bodyType',
+				options: inventoryBodyTypePills,
+				placeholder: 'Body',
+				selected: state.filters.bodyType
+			})}
+			${inventoryFilterDropdown({
+				label: 'Extras',
+				name: 'feature',
+				options: popularFeatureOptions,
+				placeholder: 'Extras',
+				selected: state.filters.feature
+			})}
 		</div>
 		${inventoryUtilityToolbar(state)}
 	</form>`;
@@ -502,14 +738,14 @@ const cardMeta = (vehicle: Vehicle, tagClass = 'tag style2 mb-10') => `<ul class
 	<li><img src="/assets/icons/icon-gauge.svg" alt="mileage"><span>${km(vehicle.mileage)}</span></li>
 	<li><img src="/assets/icons/calendar.svg" alt="year"><span>${vehicle.year}</span></li>
 	<li><img src="/assets/icons/gaspump.svg" alt="fuel"><span>${escapeHtml(vehicle.fuel)}</span></li>
-	<li><img src="/assets/icons/auto.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
+	<li><img src="/assets/icons/transmission.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
 </ul>`;
 
 const compactCardMeta = (vehicle: Vehicle, tagClass = 'tag style2 mb-10 bohemcars-card-specs') =>
 	`<ul class="${tagClass}">
 	<li><img src="/assets/icons/calendar.svg" alt="year"><span>${vehicle.year}</span></li>
 	<li><img src="/assets/icons/gaspump.svg" alt="fuel"><span>${escapeHtml(vehicle.fuel)}</span></li>
-	<li><img src="/assets/icons/auto.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
+	<li><img src="/assets/icons/transmission.svg" alt="transmission"><span>${escapeHtml(vehicle.transmission)}</span></li>
 </ul>`;
 
 const gridCard = (vehicle: Vehicle, index: number) => {
@@ -708,7 +944,15 @@ const optionCheckbox = (
 	value: string,
 	selected?: string
 ) => `<label class="filter-checkbox">
-	<input type="checkbox" name="${escapeHtml(name)}" value="${escapeHtml(value)}" ${selected === value ? 'checked' : ''}>
+	<input type="checkbox" name="${escapeHtml(name)}" value="${escapeFilterValueAttribute(value)}" ${
+		value === 'all'
+			? !splitFilterValues(selected).length
+				? 'checked'
+				: ''
+			: hasFilterValue(splitFilterValues(selected), value)
+				? 'checked'
+				: ''
+	} data-inventory-filter-input>
 	<span>${escapeHtml(value)}</span>
 </label>`;
 

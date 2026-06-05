@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
+	import { goto, pushState, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
@@ -31,8 +31,37 @@
 		seoTitle?: string;
 	} = $props();
 
+	const inventoryScopeBodyClass = 'bohemcars-inventory-template';
+	const mergeBodyClasses = (...classNames: string[]) =>
+		Array.from(
+			new Set(classNames.flatMap((className) => className.trim().split(/\s+/)).filter(Boolean))
+		).join(' ');
+
+	const multiValueKeys = new Set([
+		'bodyType',
+		'bodystyle',
+		'brand',
+		'feature',
+		'features',
+		'FuelType',
+		'fuel',
+		'gearbox',
+		'model',
+		'Transmission',
+		'transmission'
+	]);
+	const isAllFilterValue = (value: string) => {
+		const normalized = value.trim().toLowerCase();
+
+		return !normalized || normalized === 'all';
+	};
+	const uniqueFilterValues = (values: string[]) =>
+		Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+
 	const inventorySuffixFromForm = (form: HTMLFormElement) => {
 		const params = new SvelteURLSearchParams();
+		const groupedValues: Record<string, string[]> = {};
+		const searchValue = form.querySelector<HTMLInputElement>('input[name="q"]')?.value.trim() ?? '';
 
 		for (const [key, value] of new FormData(form).entries()) {
 			if (typeof value !== 'string') continue;
@@ -41,8 +70,18 @@
 			const normalized = trimmed.toLowerCase();
 
 			if (!trimmed || normalized === 'all' || (key === 'view' && normalized === '4')) continue;
+			if (key === 'model' && searchValue) continue;
 
-			params.append(key, trimmed);
+			if (multiValueKeys.has(key)) {
+				groupedValues[key] = [...(groupedValues[key] ?? []), trimmed];
+				continue;
+			}
+
+			params.set(key, trimmed);
+		}
+
+		for (const [key, values] of Object.entries(groupedValues)) {
+			params.set(key, uniqueFilterValues(values).join(','));
 		}
 
 		const query = params.toString();
@@ -52,7 +91,7 @@
 
 	$effect(() => {
 		if (browser) {
-			document.body.className = pageDocument.bodyClass;
+			document.body.className = mergeBodyClasses(pageDocument.bodyClass, inventoryScopeBodyClass);
 		}
 	});
 
@@ -71,11 +110,8 @@
 				(className) =>
 					className !== 'halfmap' && !className.startsWith('auxero-template-listing-grid')
 			)
+			.concat(inventoryScopeBodyClass)
 			.join(' ');
-		const mergeBodyClasses = (...classNames: string[]) =>
-			Array.from(
-				new Set(classNames.flatMap((className) => className.trim().split(/\s+/)).filter(Boolean))
-			).join(' ');
 
 		const setSidebarOpen = (open: boolean) => {
 			const currentSidebar = sidebar();
@@ -114,12 +150,13 @@
 			return `${url.search}${url.hash}`;
 		};
 		const desktopInventorySelectors = [
-			'.bohemcars-inventory-searchbar',
+			'.bohemcars-inventory-banner',
 			'.bohemcars-inventory-active-filters--results',
 			'.bohemcars-inventory-content',
-			'.bohemcars-map-fallback',
-			'#filterSidebar'
+			'.bohemcars-map-fallback'
 		];
+		let inventoryRequestId = 0;
+		let inventoryAbortController: AbortController | undefined;
 		const inventoryBodyClass = (path: string) => {
 			const view = new URL(path, window.location.origin).searchParams.get('view');
 
@@ -133,7 +170,7 @@
 			if (view === 'map' || view === 'half-map' || view === 'halfmap') {
 				return mergeBodyClasses(
 					inventoryBaseBodyClass,
-					'inner-page auxero-template-listing-gridstyle-halfmap-html'
+					'inner-page halfmap auxero-template-listing-gridstyle-halfmap-html'
 				);
 			}
 
@@ -145,7 +182,30 @@
 
 		const replaceOptionalNode = (selector: string, fresh: Document) => {
 			const currentNode = root.querySelector<HTMLElement>(selector);
-			const freshNode = fresh.querySelector<HTMLElement>(selector);
+			const freshRoot =
+				fresh.querySelector<HTMLElement>('.bohemcars-inventory-desktop-route') ?? fresh;
+			const freshNode = freshRoot.querySelector<HTMLElement>(selector);
+
+			if (selector === '.bohemcars-inventory-banner') {
+				if (!freshNode) return;
+
+				if (currentNode) {
+					currentNode.replaceWith(freshNode);
+					return;
+				}
+
+				const stalePageTitle = root.querySelector<HTMLElement>(
+					'.page-title, .page-title-style-4, .page-title-inner'
+				);
+
+				if (stalePageTitle) {
+					stalePageTitle.replaceWith(freshNode);
+					return;
+				}
+
+				root.querySelector('section.pb-100')?.before(freshNode);
+				return;
+			}
 
 			if (currentNode && freshNode) {
 				currentNode.replaceWith(freshNode);
@@ -180,8 +240,19 @@
 			return true;
 		};
 
-		const navigateInventory = async (suffix = '', historyMode: 'push' | 'replace' = 'push') => {
-			setSidebarOpen(false);
+		const navigateInventory = async (
+			suffix = '',
+			historyMode: 'push' | 'replace' = 'push',
+			options: {
+				closeSidebar?: boolean;
+				preserveDropdownId?: string;
+				restoreSidebarOpen?: boolean;
+			} = {}
+		) => {
+			const closeSidebar = options.closeSidebar ?? true;
+			const sidebarWasOpen = sidebar()?.classList.contains('active') ?? false;
+
+			if (closeSidebar) setSidebarOpen(false);
 
 			if (window.matchMedia('(max-width: 767.98px)').matches) {
 				await goto(resolve(`/inventory${suffix}` as `/inventory${string}`));
@@ -189,11 +260,26 @@
 			}
 
 			const nextPath = resolve(`/inventory${suffix}` as `/inventory${string}`);
-			const response = await fetch(nextPath, {
-				cache: 'no-store',
-				credentials: 'same-origin',
-				headers: { 'x-bohemcars-inventory-sync': '1' }
-			});
+			const requestId = ++inventoryRequestId;
+			inventoryAbortController?.abort();
+			const abortController = new AbortController();
+			inventoryAbortController = abortController;
+			let response: Response;
+
+			try {
+				response = await fetch(nextPath, {
+					cache: 'no-store',
+					credentials: 'same-origin',
+					headers: { 'x-bohemcars-inventory-sync': '1' },
+					signal: abortController.signal
+				});
+			} catch (error) {
+				if (abortController.signal.aborted) return;
+
+				throw error;
+			}
+
+			if (requestId !== inventoryRequestId) return;
 
 			if (!response.ok) {
 				await goto(nextPath);
@@ -202,14 +288,34 @@
 
 			const fresh = new DOMParser().parseFromString(await response.text(), 'text/html');
 
+			if (requestId !== inventoryRequestId) return;
+
 			desktopInventorySelectors.forEach((selector) => replaceOptionalNode(selector, fresh));
+			if (requestId !== inventoryRequestId) return;
 			document.body.className = inventoryBodyClass(nextPath);
 			if (historyMode === 'push') {
-				window.history.pushState({}, '', nextPath);
+				pushState(nextPath, {});
 			} else {
-				window.history.replaceState({}, '', nextPath);
+				replaceState(nextPath, {});
 			}
-			setSidebarOpen(false);
+
+			if (options.preserveDropdownId) {
+				const preservedToggle = document.getElementById(options.preserveDropdownId);
+
+				if (preservedToggle instanceof HTMLInputElement) {
+					preservedToggle.checked = true;
+				}
+			}
+
+			if (closeSidebar) {
+				setSidebarOpen(false);
+			} else {
+				setSidebarOpen(options.restoreSidebarOpen ?? sidebarWasOpen);
+			}
+
+			if (requestId === inventoryRequestId) {
+				inventoryAbortController = undefined;
+			}
 		};
 
 		const handlePopState = () => {
@@ -250,6 +356,7 @@
 				if (nextUrl !== undefined) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
+
 					void navigateInventory(nextUrl);
 					return;
 				}
@@ -278,6 +385,76 @@
 			void navigateInventory(inventorySuffixFromForm(event.target));
 		};
 
+		const handleChange = (event: Event) => {
+			if (!(event.target instanceof HTMLInputElement) || !root.contains(event.target)) return;
+			if (!event.target.matches('input[data-inventory-filter-input]')) return;
+
+			const input = event.target;
+			const form = input.form;
+
+			if (!form) return;
+
+			const filterInputs = Array.from(form.elements).filter(
+				(element): element is HTMLInputElement =>
+					element instanceof HTMLInputElement &&
+					element.dataset.inventoryFilterInput !== undefined &&
+					element.name === input.name
+			);
+
+			if (input.type === 'checkbox') {
+				if (isAllFilterValue(input.value) && input.checked) {
+					for (const filterInput of filterInputs) {
+						if (filterInput !== input) filterInput.checked = false;
+					}
+				}
+
+				if (!isAllFilterValue(input.value) && input.checked) {
+					for (const filterInput of filterInputs) {
+						if (isAllFilterValue(filterInput.value)) filterInput.checked = false;
+					}
+				}
+
+				if (
+					!filterInputs.some(
+						(filterInput) => filterInput.checked && !isAllFilterValue(filterInput.value)
+					)
+				) {
+					for (const filterInput of filterInputs) {
+						if (isAllFilterValue(filterInput.value)) filterInput.checked = true;
+					}
+				}
+			}
+
+			if (input.name === 'brand') {
+				for (const modelInput of Array.from(form.elements).filter(
+					(element): element is HTMLInputElement =>
+						element instanceof HTMLInputElement &&
+						element.dataset.inventoryFilterInput !== undefined &&
+						element.name === 'model'
+				)) {
+					modelInput.checked = isAllFilterValue(modelInput.value);
+				}
+			}
+
+			if (input.name === 'model' && input.checked) {
+				const searchInput = form.querySelector<HTMLInputElement>('input[name="q"]');
+
+				if (searchInput) searchInput.value = '';
+			}
+
+			const dropdownToggle = input
+				.closest<HTMLElement>('[data-inventory-filter-field]')
+				?.querySelector<HTMLInputElement>('.filter-select-dropdown__toggle');
+			const sidebarOpen = input.closest('#filterSidebar')?.classList.contains('active') ?? false;
+
+			event.stopImmediatePropagation();
+			void navigateInventory(inventorySuffixFromForm(form), 'push', {
+				closeSidebar: !sidebarOpen,
+				preserveDropdownId: dropdownToggle?.id,
+				restoreSidebarOpen: sidebarOpen
+			});
+		};
+
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape' && sidebar()?.classList.contains('active')) {
 				event.preventDefault();
@@ -287,12 +464,14 @@
 
 		setSidebarOpen(false);
 		document.addEventListener('click', handleClick, true);
+		document.addEventListener('change', handleChange, true);
 		document.addEventListener('submit', handleSubmit, true);
 		document.addEventListener('keydown', handleKeydown);
 		window.addEventListener('popstate', handlePopState);
 
 		return () => {
 			document.removeEventListener('click', handleClick, true);
+			document.removeEventListener('change', handleChange, true);
 			document.removeEventListener('submit', handleSubmit, true);
 			document.removeEventListener('keydown', handleKeydown);
 			window.removeEventListener('popstate', handlePopState);
@@ -368,186 +547,5 @@
 	) {
 		right: -400px !important;
 		transform: none !important;
-	}
-
-	@media (min-width: 768px) {
-		:global(body.auxero-template-listing-grid3-columns-html),
-		:global(body.auxero-template-listing-grid4-columns-html),
-		:global(body.auxero-template-listing-gridstyle-halfmap-html),
-		:global(body.auxero-template-listing-grid3-columns-html #wrapper),
-		:global(body.auxero-template-listing-grid4-columns-html #wrapper),
-		:global(body.auxero-template-listing-gridstyle-halfmap-html #wrapper),
-		:global(body.auxero-template-listing-grid3-columns-html section.pb-100),
-		:global(body.auxero-template-listing-grid4-columns-html section.pb-100),
-		:global(body.auxero-template-listing-gridstyle-halfmap-html section.pb-100) {
-			background: var(--bc-bg) !important;
-			background-color: var(--bc-bg) !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html .bohemcars-inventory-searchbar__utility
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-searchbar__utility
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html .bohemcars-inventory-searchbar__utility
-		) {
-			border: 0 !important;
-			border-top: 1px solid var(--bc-border) !important;
-			border-radius: 0 !important;
-			background: transparent !important;
-			box-shadow: none !important;
-			margin-top: 12px !important;
-			margin-bottom: 0 !important;
-			padding: 12px 0 0 !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-toolbar-row
-				.core-dropdown__button
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-toolbar-row
-				.core-dropdown__button
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-toolbar-row
-				.core-dropdown__button
-		) {
-			background: #f1f3ee !important;
-			border-color: var(--bc-border) !important;
-			box-shadow: none !important;
-		}
-
-		:global(body.auxero-template-listing-grid3-columns-html .bohemcars-inventory-content),
-		:global(body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-content),
-		:global(body.auxero-template-listing-gridstyle-halfmap-html .bohemcars-inventory-content) {
-			border: 0 !important;
-			border-radius: 0 !important;
-			background: transparent !important;
-			box-shadow: none !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html .bohemcars-inventory-content .card-box-style-1
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-content .card-box-style-1
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1
-		) {
-			overflow: hidden !important;
-			border: 0 !important;
-			border-radius: 8px !important;
-			background: var(--bc-card-bg) !important;
-			box-shadow: none !important;
-			transition: background-color 0.2s ease !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1
-				.content
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1
-				.content
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1
-				.content
-		) {
-			border-radius: 0 0 8px 8px !important;
-			background: var(--bc-card-bg) !important;
-			transition: background-color 0.2s ease !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-		),
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-		) {
-			background: var(--bc-card-hover) !important;
-			box-shadow: none !important;
-			transform: none !important;
-		}
-
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-				.content
-		),
-		:global(
-			body.auxero-template-listing-grid3-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-				.content
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-				.content
-		),
-		:global(
-			body.auxero-template-listing-grid4-columns-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-				.content
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1:hover
-				.content
-		),
-		:global(
-			body.auxero-template-listing-gridstyle-halfmap-html
-				.bohemcars-inventory-content
-				.card-box-style-1.active
-				.content
-		) {
-			background: var(--bc-card-hover) !important;
-			box-shadow: none !important;
-			transform: none !important;
-		}
 	}
 </style>

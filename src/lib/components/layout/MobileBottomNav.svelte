@@ -42,7 +42,7 @@
 			tone: 'commerce'
 		},
 		{
-			href: '/account',
+			href: '/account/favorites',
 			label: 'Любими',
 			icon: HeartFilled,
 			exact: false

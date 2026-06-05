@@ -27,7 +27,7 @@
 								class={index === 0 ? 'out-brand-2 ' : 'out-brand-2'}
 							>
 								<span class="bohemcars-brand-strip__logo-frame">
-									<img class="out-brand--img" src={brand.image} alt="" />
+									<img class="out-brand--img" src={brand.image} alt="" loading="lazy" />
 								</span>
 								<p class="h5">{brand.name}</p>
 								<p class="text-muted text-sm">{brand.count}</p>

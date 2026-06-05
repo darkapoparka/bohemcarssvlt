@@ -15,6 +15,39 @@
 	} = $props();
 </script>
 
+{#snippet compareIcon()}
+	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<g clip-path="url(#clip0_13399_19575_home)">
+			<path
+				d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
+				stroke="#1C1C1C"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M6.875 10H13.125"
+				stroke="#1C1C1C"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M10 6.875V13.125"
+				stroke="#1C1C1C"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</g>
+		<defs>
+			<clipPath id="clip0_13399_19575_home">
+				<rect width="20" height="20" fill="white" />
+			</clipPath>
+		</defs>
+	</svg>
+{/snippet}
+
 <div
 	class="card-box card-box-style-1 bohemcars-no-image-zoom bohemcars-card-soft-hover"
 	data-bohemcars-slug={vehicle.slug}
@@ -61,7 +94,9 @@
 			</p>
 		</div>
 		<p class="card-box__title h6 mb-8">
-			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}>{vehicle.title}</a>
+			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)} title={vehicle.title}>
+				{vehicle.title}
+			</a>
 		</p>
 		<ul class={style2 ? 'tag style2 bohemcars-card-specs mb-10' : 'tag bohemcars-card-specs mb-10'}>
 			<li aria-label={`${copy.yearAlt}: ${vehicle.year}`}>
@@ -99,40 +134,14 @@
 				role="button"
 				tabindex="0"
 			>
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 20 20"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<g clip-path="url(#clip0_bohemcars_home_compare)">
-						<path
-							d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-						<path
-							d="M6.875 10H13.125"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-						<path
-							d="M10 6.875V13.125"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</g>
-				</svg>
+				{@render compareIcon()}
 				{copy.compare}
 			</p>
-			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)} class="view-details">
+			<a
+				href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}
+				class="view-details"
+				aria-label={`${copy.viewDetails} ${vehicle.title}`}
+			>
 				{copy.viewDetails}
 				<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt={copy.viewDetails} />
 			</a>
@@ -155,11 +164,18 @@
 
 	.card-box-style-1 .card-box__title {
 		display: -webkit-box;
-		min-height: 52px;
+		min-height: 28px;
 		overflow: hidden;
-		line-clamp: 2;
+		line-clamp: 1;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 1;
+	}
+
+	.card-box-style-1 .card-box__title a {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	/* Spec row as soft chips: more scannable/visible without heavier type. */
@@ -328,21 +344,6 @@
 			background-color: rgba(152, 188, 42, 0.2);
 			color: #14210f;
 		}
-
-		.bohemcars-card-soft-hover:hover .compare-details:not(:hover):not(:focus-visible),
-		.bohemcars-card-soft-hover:focus-within .compare-details:not(:hover):not(:focus-visible) {
-			background-color: transparent !important;
-			border-color: #1c1c1c !important;
-			color: #1c1c1c !important;
-		}
-
-		.bohemcars-card-soft-hover:hover .compare-details:not(:hover):not(:focus-visible) svg path,
-		.bohemcars-card-soft-hover:focus-within
-			.compare-details:not(:hover):not(:focus-visible)
-			svg
-			path {
-			stroke: #1c1c1c !important;
-		}
 	}
 
 	@media (min-width: 992px) {
@@ -460,10 +461,7 @@
 		}
 
 		.card-box-style-1 .top .heart {
-			top: 8px;
-			right: 8px;
-			width: 44px;
-			height: 44px;
+			display: none !important;
 		}
 
 		.card-box-style-1 .content {

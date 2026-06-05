@@ -298,9 +298,15 @@ const quickUrl = (
 			: toggleFilterValue(state.filters.brand, overrides.brand ?? '')
 		: state.filters.brand;
 	const bodyType = Object.hasOwn(overrides, 'bodyType')
-		? overrides.bodyType
+		? overrides.bodyType === null
+			? ''
+			: toggleFilterValue(state.filters.bodyType, overrides.bodyType ?? '')
 		: state.filters.bodyType;
-	const fuel = Object.hasOwn(overrides, 'fuel') ? overrides.fuel : state.filters.fuel;
+	const fuel = Object.hasOwn(overrides, 'fuel')
+		? overrides.fuel === null
+			? ''
+			: toggleFilterValue(state.filters.fuel, overrides.fuel ?? '')
+		: state.filters.fuel;
 
 	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
 	if (state.filters.query) params.set('q', state.filters.query);
@@ -369,11 +375,11 @@ export const inventoryMobileDataFromState = (
 	const transmissionCounts = countBy(vehicles.map((vehicle) => vehicle.transmission));
 	const featureCounts = countBy(vehicles.flatMap((vehicle) => vehicle.features));
 	const selectedBrands = splitFilterValues(state.filters.brand);
-	const selectedBody = state.filters.bodyType?.toLowerCase();
-	const selectedFeature = state.filters.feature?.toLowerCase();
-	const selectedFuel = state.filters.fuel?.toLowerCase();
+	const selectedBodies = splitFilterValues(state.filters.bodyType);
+	const selectedFeatures = splitFilterValues(state.filters.feature);
+	const selectedFuels = splitFilterValues(state.filters.fuel);
 	const selectedQueries = splitFilterValues(state.filters.query);
-	const selectedTransmission = state.filters.transmission?.toLowerCase();
+	const selectedTransmissions = splitFilterValues(state.filters.transmission);
 	const selectedMileageRange = activeRangeValue(state.filters.minMileage, state.filters.maxMileage);
 	const selectedPriceRange = activeRangeValue(state.filters.minPrice, state.filters.maxPrice);
 	const selectedYearRange = activeRangeValue(state.filters.minYear, state.filters.maxYear);
@@ -385,6 +391,20 @@ export const inventoryMobileDataFromState = (
 		selectedQueries.length > 1
 			? `${selectedQueries.length} ${locale === 'bg' ? 'модела' : 'models'}`
 			: selectedQueries[0] || text.all;
+	const multiValueLabel = (
+		values: string[],
+		options: Array<{ label: string; value: string }>,
+		allLabel = text.all
+	) => {
+		const labels = values
+			.map((value) => options.find((option) => option.value === value)?.label ?? value)
+			.filter(Boolean);
+
+		if (!labels.length) return allLabel;
+		if (labels.length <= 2) return labels.join(' + ');
+
+		return `${labels.length} ${locale === 'bg' ? 'избрани' : 'selected'}`;
+	};
 	const searchDisplayValue =
 		selectedQueries.length > 1 ? modelValueLabel : (state.filters.query ?? '');
 	const buildModelOptions = (brandFilter = '') => {
@@ -416,7 +436,11 @@ export const inventoryMobileDataFromState = (
 			});
 	};
 	const totalPill = {
-		active: !selectedBrands.length && !selectedBody && !selectedFuel && !selectedQueries.length,
+		active:
+			!selectedBrands.length &&
+			!selectedBodies.length &&
+			!selectedFuels.length &&
+			!selectedQueries.length,
 		href: quickUrl(state, { bodyType: null, brand: null, fuel: null }),
 		kind: 'total' as const,
 		label: text.allWithCount(state.selected.length)
@@ -456,10 +480,10 @@ export const inventoryMobileDataFromState = (
 		.slice(0, 5);
 	const bodyPills = bodyTypes
 		.map((bodyType) => ({
-			active: selectedBody === bodyType.toLowerCase(),
+			active: hasFilterValue(selectedBodies, bodyType),
 			count: bodyCounts.get(bodyType) ?? 0,
 			href: quickUrl(state, {
-				bodyType: selectedBody === bodyType.toLowerCase() ? null : bodyType
+				bodyType
 			}),
 			kind: 'body' as const,
 			label: translateVehicleTerm(locale, 'bodyTypes', bodyType)
@@ -469,7 +493,7 @@ export const inventoryMobileDataFromState = (
 		.slice(0, 4);
 	const bodyOptions: InventoryMobileOption[] = [
 		{
-			active: !selectedBody,
+			active: !selectedBodies.length,
 			countLabel: String(vehicles.length),
 			href: quickUrl(state, { bodyType: null }),
 			label: text.allBodyTypes,
@@ -477,11 +501,11 @@ export const inventoryMobileDataFromState = (
 		},
 		...bodyTypes
 			.map((bodyType) => ({
-				active: selectedBody === bodyType.toLowerCase(),
+				active: hasFilterValue(selectedBodies, bodyType),
 				count: bodyCounts.get(bodyType) ?? 0,
 				countLabel: String(bodyCounts.get(bodyType) ?? 0),
 				href: quickUrl(state, {
-					bodyType: selectedBody === bodyType.toLowerCase() ? null : bodyType
+					bodyType
 				}),
 				label: translateVehicleTerm(locale, 'bodyTypes', bodyType),
 				value: bodyType
@@ -498,11 +522,11 @@ export const inventoryMobileDataFromState = (
 	};
 	const fuelOptions = fuels
 		.map((fuel) => ({
-			active: selectedFuel === fuel.toLowerCase(),
+			active: hasFilterValue(selectedFuels, fuel),
 			count: fuelCounts.get(fuel) ?? 0,
 			countLabel: String(fuelCounts.get(fuel) ?? 0),
 			href: quickUrl(state, {
-				fuel: selectedFuel === fuel.toLowerCase() ? null : fuel
+				fuel
 			}),
 			label: translateVehicleTerm(locale, 'fuels', fuel),
 			value: fuel
@@ -511,7 +535,7 @@ export const inventoryMobileDataFromState = (
 		.slice(0, 8);
 	const transmissionOptions: InventoryMobileOption[] = [
 		{
-			active: !selectedTransmission,
+			active: !selectedTransmissions.length,
 			countLabel: String(vehicles.length),
 			href: inventoryUrl(state, { Transmission: null, gearbox: null, transmission: null }),
 			label: text.allTransmissions,
@@ -519,10 +543,14 @@ export const inventoryMobileDataFromState = (
 		},
 		...Array.from(transmissionCounts.entries())
 			.map(([transmission, count]) => ({
-				active: selectedTransmission === transmission.toLowerCase(),
+				active: hasFilterValue(selectedTransmissions, transmission),
 				count,
 				countLabel: String(count),
-				href: inventoryUrl(state, { Transmission: null, gearbox: null, transmission }),
+				href: inventoryUrl(state, {
+					Transmission: null,
+					gearbox: null,
+					transmission: toggleFilterValue(state.filters.transmission, transmission)
+				}),
 				label: translateVehicleTerm(locale, 'transmissions', transmission),
 				value: transmission
 			}))
@@ -653,7 +681,7 @@ export const inventoryMobileDataFromState = (
 	];
 	const featureOptions: InventoryMobileOption[] = [
 		{
-			active: !selectedFeature,
+			active: !selectedFeatures.length,
 			countLabel: String(vehicles.length),
 			href: inventoryUrl(state, {
 				equipment: null,
@@ -666,13 +694,13 @@ export const inventoryMobileDataFromState = (
 		},
 		...featuredExtras
 			.map((feature) => ({
-				active: selectedFeature === feature.toLowerCase(),
+				active: hasFilterValue(selectedFeatures, feature),
 				count: featureCounts.get(feature) ?? 0,
 				countLabel: String(featureCounts.get(feature) ?? 0),
 				href: inventoryUrl(state, {
 					equipment: null,
 					extra: null,
-					feature,
+					feature: toggleFilterValue(state.filters.feature, feature),
 					features: null
 				}),
 				label: featureLabels[feature]?.[locale] ?? feature,
@@ -690,19 +718,19 @@ export const inventoryMobileDataFromState = (
 		});
 	}
 
-	if (state.filters.bodyType) {
+	for (const bodyType of selectedBodies) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['body', 'bodyType', 'bodystyle']),
-			label: translateVehicleTerm(locale, 'bodyTypes', state.filters.bodyType)
+			href: withoutFilterValue(state, ['body', 'bodyType', 'bodystyle'], bodyType),
+			label: translateVehicleTerm(locale, 'bodyTypes', bodyType)
 		});
 	}
 
-	if (state.filters.fuel) {
+	for (const fuel of selectedFuels) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['fuel', 'FuelType']),
-			label: translateVehicleTerm(locale, 'fuels', state.filters.fuel)
+			href: withoutFilterValue(state, ['fuel', 'FuelType'], fuel),
+			label: translateVehicleTerm(locale, 'fuels', fuel)
 		});
 	}
 
@@ -730,21 +758,19 @@ export const inventoryMobileDataFromState = (
 		});
 	}
 
-	if (state.filters.transmission) {
+	for (const transmission of selectedTransmissions) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['Transmission', 'gearbox', 'transmission']),
-			label: translateVehicleTerm(locale, 'transmissions', state.filters.transmission)
+			href: withoutFilterValue(state, ['Transmission', 'gearbox', 'transmission'], transmission),
+			label: translateVehicleTerm(locale, 'transmissions', transmission)
 		});
 	}
 
-	if (state.filters.feature) {
+	for (const feature of selectedFeatures) {
 		activeFilters.push({
 			active: true,
-			href: without(state, ['equipment', 'extra', 'feature', 'features']),
-			label:
-				featureOptions.find((option) => option.value === state.filters.feature)?.label ??
-				state.filters.feature
+			href: withoutFilterValue(state, ['equipment', 'extra', 'feature', 'features'], feature),
+			label: featureOptions.find((option) => option.value === feature)?.label ?? feature
 		});
 	}
 
@@ -782,12 +808,11 @@ export const inventoryMobileDataFromState = (
 		drawerTitle: text.drawerTitle,
 		extrasLabel: text.extras,
 		featureOptions,
-		featureValue:
-			featureOptions.find((option) => option.value === state.filters.feature)?.label ?? text.all,
+		featureValue: multiValueLabel(selectedFeatures, featureOptions),
 		filterLabel: text.filters,
 		fuelLabel: text.fuel,
 		fuelOptions,
-		fuelValue: fuelOptions.find((option) => option.active && option.value)?.label ?? text.all,
+		fuelValue: multiValueLabel(selectedFuels, fuelOptions),
 		hiddenInputs: hiddenInputs(state.filters, state.sortParam),
 		mileageLabel: text.mileage,
 		mileageOptions,
@@ -813,8 +838,7 @@ export const inventoryMobileDataFromState = (
 		totalPill,
 		transmissionLabel: text.transmission,
 		transmissionOptions,
-		transmissionValue:
-			transmissionOptions.find((option) => option.active && option.value)?.label ?? text.all,
+		transmissionValue: multiValueLabel(selectedTransmissions, transmissionOptions),
 		yearLabel: text.year,
 		yearOptions,
 		yearValue: yearOptions.find((option) => option.active && option.value)?.label ?? text.all

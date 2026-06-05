@@ -636,6 +636,7 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/All Stock/g, 'Всички автомобили'],
 	[/No accidents/gi, 'Без катастрофи'],
 	[/Clear filters/g, 'Изчисти филтрите'],
+	[/(\d+) selected/g, '$1 избрани'],
 	[/(\d+) matches\b/g, '$1 съвпадения'],
 	[/(\d+) match\b/g, '$1 съвпадение'],
 	[/Brand:/g, 'Марка:'],

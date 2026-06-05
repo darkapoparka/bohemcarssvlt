@@ -48,6 +48,24 @@ describe('inventory-state', () => {
 		expect(state.selected.every((vehicle) => ['BMW', 'Audi'].includes(vehicle.brand))).toBe(true);
 	});
 
+	it('normalizes categorical filters as multi-value OR groups', () => {
+		const state = getInventoryState('listing-grid3-columns.html', {
+			searchParams: new URLSearchParams(
+				'bodyType=SUV,Sedan&fuel=Petrol&fuel=EV&transmission=Automatic'
+			)
+		});
+
+		expect(state.filters.bodyType).toBe('SUV,Sedan');
+		expect(state.filters.fuel).toBe('Petrol,EV');
+		expect(state.filters.transmission).toBe('Automatic');
+		expect(state.selected.length).toBeGreaterThan(0);
+		expect(state.selected.every((vehicle) => ['SUV', 'Sedan'].includes(vehicle.bodyType))).toBe(
+			true
+		);
+		expect(state.selected.every((vehicle) => ['Petrol', 'EV'].includes(vehicle.fuel))).toBe(true);
+		expect(state.selected.every((vehicle) => vehicle.transmission === 'Automatic')).toBe(true);
+	});
+
 	it('sorts selected vehicles from typed state rather than adapter markup', () => {
 		const state = getInventoryState('listing-grid3-columns.html', {
 			searchParams: new URLSearchParams('sort=lowest-price')

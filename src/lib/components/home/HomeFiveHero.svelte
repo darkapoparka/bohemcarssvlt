@@ -175,6 +175,7 @@
 			id="bohemcars-mobile-location-toggle"
 			class="bohemcars-mobile-location-toggle"
 			type="checkbox"
+			tabindex="-1"
 			aria-hidden="true"
 		/>
 		<input
@@ -411,13 +412,13 @@
 					class="bohemcars-hero-car bohemcars-hero-car--left"
 					src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.png"
 					alt=""
-					loading="eager"
+					loading="lazy"
 				/>
 				<img
 					class="bohemcars-hero-car bohemcars-hero-car--right"
 					src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.png"
 					alt=""
-					loading="eager"
+					loading="lazy"
 				/>
 			</div>
 
@@ -790,7 +791,7 @@
 		width: 272px;
 		padding: 13px 16px;
 		font-size: 16px;
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	.search-cars__advanced--hidden {
@@ -810,7 +811,7 @@
 
 	@media (max-width: 767.98px) {
 		:global(body.auxero-template-home-05-html) {
-			--bohemcars-mobile-hero-bg: #8fc51d;
+			--bohemcars-mobile-hero-bg: #4f7012;
 			--bohemcars-mobile-ink: #ffffff;
 			--bohemcars-mobile-ink-muted: rgba(255, 255, 255, 0.88);
 			--bohemcars-mobile-ink-strong: #ffffff;
@@ -896,9 +897,9 @@
 			right: 14px;
 			bottom: 0;
 			left: 14px;
-			height: 1px;
+			height: 2px;
 			border-radius: 999px;
-			background: rgba(255, 255, 255, 0.18);
+			background: rgba(255, 255, 255, 0.24);
 			content: '';
 			pointer-events: none;
 		}
@@ -913,7 +914,7 @@
 			background: transparent;
 			color: var(--bohemcars-mobile-ink-muted, rgba(255, 255, 255, 0.88));
 			font-size: 15.5px;
-			font-weight: 500;
+			font-weight: 600;
 			line-height: 20px;
 			text-align: center;
 			text-decoration: none;
@@ -927,7 +928,7 @@
 		.bohemcars-mobile-hero__tabs a.active {
 			background: transparent;
 			color: var(--bohemcars-mobile-ink-strong, #ffffff);
-			font-weight: 600;
+			font-weight: 700;
 			box-shadow: none;
 		}
 
@@ -935,9 +936,9 @@
 			position: absolute;
 			left: 50%;
 			bottom: -1px;
-			width: min(58px, calc(100% - 32px));
-			height: 2px;
-			border-radius: 999px 999px 0 0;
+			width: min(66px, calc(100% - 28px));
+			height: 4px;
+			border-radius: 999px;
 			background: transparent;
 			content: '';
 			transform: translateX(-50%);
@@ -1048,7 +1049,7 @@
 
 		.bohemcars-mobile-hero__all {
 			display: inline-flex;
-			min-height: 40px;
+			min-height: 44px;
 			min-width: 0;
 			align-items: center;
 			justify-content: center;

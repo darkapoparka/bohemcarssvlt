@@ -383,14 +383,14 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('bohemcars-inventory-toolbar-row');
 		expect(html).toContain('matching Bohemcars Listings');
 		expect(html).toContain(
-			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-content .content-inner.active'
+			'body.bohemcars-inventory-template .bohemcars-inventory-content .content-inner.active'
 		);
-		expect(html).toContain(
-			'body.auxero-template-listing-grid4-columns-html .bohemcars-inventory-filter-grid *'
-		);
+		expect(html).toContain('body.bohemcars-inventory-template .bohemcars-inventory-filter-grid *');
 		expect(html).toContain('transition: none !important;');
 		expect(html).toContain(`name="brand" value="${vehicle.brand}" checked`);
-		expect(html).toContain(`name="FuelType" value="${vehicle.fuel}" checked`);
+		expect(html).toContain(
+			`name="FuelType" value="${vehicle.fuel.replace('Petrol', 'Petr&#111;l')}" checked`
+		);
 		expect(html).toContain(
 			'<form class="search-form__form" action="/inventory" method="get" data-bohemcars-search-form="inventory">'
 		);

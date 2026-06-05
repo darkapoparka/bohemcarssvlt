@@ -260,5 +260,12 @@
 			justify-content: center;
 			row-gap: 4px;
 		}
+
+		/* Give the legal links a comfortable touch target (was ~22px tall). */
+		.footer :global(.footer-bottom-links li a) {
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
+		}
 	}
 </style>

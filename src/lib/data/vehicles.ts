@@ -183,16 +183,19 @@ export function filterVehicles(source: Vehicle[], filters: InventoryFilters) {
 	const maxYear = filters.maxYear;
 	const minMileage = filters.minMileage;
 	const maxMileage = filters.maxMileage;
-	const feature = normalizeFilterValue(filters.feature);
+	const featureValues = splitFilterValues(filters.feature);
 
 	return source.filter((vehicle) => {
 		const matchesQuery =
 			!query ||
 			queryValues.some((queryValue) => containsFilterValue(vehicleSearchText(vehicle), queryValue));
 		const matchesFeature =
-			!feature ||
-			vehicle.features.some((value) => containsFilterValue(value, feature)) ||
-			containsFilterValue(vehicleSearchText(vehicle), feature);
+			!featureValues.length ||
+			featureValues.some(
+				(feature) =>
+					vehicle.features.some((value) => containsFilterValue(value, feature)) ||
+					containsFilterValue(vehicleSearchText(vehicle), feature)
+			);
 		const matchesSourceId =
 			!sourceId ||
 			[vehicle.slug, vehicle.vin, vehicle.stockNumber, vehicle.sourceUrl].some((value) =>

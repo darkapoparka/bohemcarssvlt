@@ -186,7 +186,8 @@
 			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
 		</li>
 		<li>
-			<img src="/assets/icons/auto.svg" alt={copy.transmissionAlt} /><span>{card.transmission}</span
+			<img src="/assets/icons/transmission.svg" alt={copy.transmissionAlt} /><span
+				>{card.transmission}</span
 			>
 		</li>
 	</ul>
@@ -201,7 +202,8 @@
 			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
 		</li>
 		<li>
-			<img src="/assets/icons/auto.svg" alt={copy.transmissionAlt} /><span>{card.transmission}</span
+			<img src="/assets/icons/transmission.svg" alt={copy.transmissionAlt} /><span
+				>{card.transmission}</span
 			>
 		</li>
 	</ul>
@@ -287,14 +289,29 @@
 	}
 
 	.bohemcars-card-specs {
-		flex-wrap: nowrap !important;
-		overflow: hidden;
+		flex-wrap: wrap !important;
+		gap: 5px;
+		overflow: visible;
 	}
 
 	.bohemcars-card-specs li {
-		flex: 0 1 auto;
-		min-width: 0;
+		flex: 0 0 auto;
+		justify-content: flex-start;
+		min-width: max-content;
+		padding: 5px 8px;
 		white-space: nowrap;
+	}
+
+	.bohemcars-card-specs li img {
+		flex: 0 0 14px;
+		height: 14px;
+		object-fit: contain;
+		width: 14px;
+	}
+
+	.bohemcars-card-specs li span {
+		overflow: visible;
+		text-overflow: clip;
 	}
 
 	.bohemcars-card-price {

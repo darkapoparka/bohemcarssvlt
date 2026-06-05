@@ -118,7 +118,7 @@
 	.bohemcars-action-card__copy strong {
 		color: inherit;
 		font-size: clamp(24px, 2vw, 32px);
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 1.08;
 	}
 
@@ -129,7 +129,7 @@
 	.bohemcars-action-card__body {
 		color: inherit;
 		font-size: 15px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 1.45;
 		opacity: 0.82;
 	}
@@ -152,7 +152,7 @@
 		border-radius: 999px;
 		font-size: 14px;
 		font-style: normal;
-		font-weight: 800;
+		font-weight: 600;
 		gap: 8px;
 		line-height: 1;
 		transition: background-color 0.18s ease;

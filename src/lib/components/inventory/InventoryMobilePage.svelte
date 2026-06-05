@@ -3,8 +3,10 @@
 	import {
 		ArrowUpDown,
 		BadgeEuro,
+		Calendar,
 		Car,
 		ChevronDown,
+		Cog,
 		Fuel,
 		Gauge,
 		Search,
@@ -71,6 +73,20 @@
 			.filter((option) => option.active && option.value)
 			.map((option) => option.value)
 			.join(',');
+	const activeOptionLabel = (
+		options: InventoryMobileData['brandOptions'],
+		values: string,
+		fallback: string
+	) => {
+		const selectedLabels = splitDraftValues(values)
+			.map((value) => options.find((option) => option.value === value)?.label ?? value)
+			.filter(Boolean);
+
+		if (!selectedLabels.length) return fallback;
+		if (selectedLabels.length <= 2) return selectedLabels.join(' + ');
+
+		return `${selectedLabels.length} ${mobile.filterLabel === 'Филтри' ? 'избрани' : 'selected'}`;
+	};
 	const normalizedOptionQuery = (value: string) => value.trim().toLocaleLowerCase();
 	const optionSearchText = (option: InventoryMobileOption) =>
 		`${option.label} ${option.value}`.toLocaleLowerCase();
@@ -85,6 +101,8 @@
 		splitDraftValues(current).some(
 			(item) => item.toLocaleLowerCase() === value.toLocaleLowerCase()
 		);
+	const draftOptionActive = (current: string, value: string) =>
+		value ? hasDraftValue(current, value) : !current;
 	const toggleDraftValue = (current: string, value: string) => {
 		if (!value) return '';
 
@@ -105,15 +123,15 @@
 		};
 	};
 	const currentFilterDraft = (): FilterDraft => ({
-		body: activeOptionValue(mobile.bodyOptions),
+		body: activeOptionValues(mobile.bodyOptions),
 		brand: activeOptionValues(mobile.brandOptions),
-		feature: activeOptionValue(mobile.featureOptions),
-		fuel: activeOptionValue(mobile.fuelOptions),
+		feature: activeOptionValues(mobile.featureOptions),
+		fuel: activeOptionValues(mobile.fuelOptions),
 		mileage: activeOptionValue(mobile.mileageOptions),
 		model: mobile.searchValue || activeOptionValue(mobile.modelOptions),
 		price: activeOptionValue(mobile.priceOptions),
 		sort: activeOptionValue(mobile.sortOptions) || 'best-match',
-		transmission: activeOptionValue(mobile.transmissionOptions),
+		transmission: activeOptionValues(mobile.transmissionOptions),
 		year: activeOptionValue(mobile.yearOptions)
 	});
 
@@ -130,7 +148,7 @@
 	const modelSelected = $derived(Boolean(mobile.searchValue));
 	const bodySelected = $derived(mobile.bodyOptions.some((option) => option.active && option.value));
 	const bodyValue = $derived(
-		mobile.bodyOptions.find((option) => option.active && option.value)?.label ?? mobile.countLabel
+		activeOptionLabel(mobile.bodyOptions, currentFilterDraft().body, mobile.countLabel)
 	);
 	const extrasSelected = $derived(
 		mobile.featureOptions.some((option) => option.active && option.value)
@@ -186,7 +204,7 @@
 
 		return options.map((option) => ({
 			...option,
-			active: hasDraftValue(filterDraft.model, option.value)
+			active: draftOptionActive(filterDraft.model, option.value)
 		}));
 	});
 	const visibleBrandOptions = $derived.by(() => {
@@ -240,6 +258,11 @@
 
 		if (key === 'sort') {
 			filterDraft.sort = value || 'best-match';
+			return;
+		}
+
+		if (key === 'body' || key === 'feature' || key === 'fuel' || key === 'transmission') {
+			filterDraft[key] = toggleDraftValue(filterDraft[key], value);
 			return;
 		}
 
@@ -405,7 +428,7 @@
 					aria-expanded={searchDrawerOpen}
 					onclick={openSearchDrawer}
 				>
-					<Search size={21} strokeWidth={2.25} aria-hidden="true" />
+					<Search size={19} strokeWidth={2.2} aria-hidden="true" />
 				</button>
 			</div>
 		</div>
@@ -589,9 +612,9 @@
 						<small>{card.monthlyLabel}</small>
 						<ul>
 							<li><Gauge size={14} strokeWidth={2} aria-hidden="true" />{card.mileageLabel}</li>
-							<li>{card.year}</li>
+							<li><Calendar size={14} strokeWidth={2} aria-hidden="true" />{card.year}</li>
 							<li><Fuel size={14} strokeWidth={2} aria-hidden="true" />{card.fuel}</li>
-							<li>{card.transmission}</li>
+							<li><Cog size={14} strokeWidth={2} aria-hidden="true" />{card.transmission}</li>
 						</ul>
 					</div>
 				</article>
@@ -656,7 +679,7 @@
 						class="bohemcars-inventory-mobile-drawer__search-submit"
 						aria-label={mobile.searchLabel}
 					>
-						<span>{mobile.searchLabel}</span>
+						<Search size={18} strokeWidth={2.25} aria-hidden="true" />
 					</button>
 				</div>
 			</form>
@@ -742,8 +765,8 @@
 								{#each visibleBrandOptions as option (option.value)}
 									<button
 										type="button"
-										class:active={hasDraftValue(filterDraft.brand, option.value)}
-										aria-pressed={hasDraftValue(filterDraft.brand, option.value)}
+										class:active={draftOptionActive(filterDraft.brand, option.value)}
+										aria-pressed={draftOptionActive(filterDraft.brand, option.value)}
 										onclick={() => selectFilterOption('brand', option.value)}
 									>
 										{#if option.image}
@@ -815,8 +838,8 @@
 							{#each mobile.bodyOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={filterDraft.body === option.value}
-									aria-pressed={filterDraft.body === option.value}
+									class:active={draftOptionActive(filterDraft.body, option.value)}
+									aria-pressed={draftOptionActive(filterDraft.body, option.value)}
 									onclick={() => selectFilterOption('body', option.value)}
 								>
 									<span>{option.label}</span>
@@ -852,8 +875,8 @@
 							{#each mobile.fuelOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={filterDraft.fuel === option.value}
-									aria-pressed={filterDraft.fuel === option.value}
+									class:active={draftOptionActive(filterDraft.fuel, option.value)}
+									aria-pressed={draftOptionActive(filterDraft.fuel, option.value)}
 									onclick={() => selectFilterOption('fuel', option.value)}
 								>
 									<span>{option.label}</span>
@@ -930,8 +953,8 @@
 							{#each mobile.transmissionOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={filterDraft.transmission === option.value}
-									aria-pressed={filterDraft.transmission === option.value}
+									class:active={draftOptionActive(filterDraft.transmission, option.value)}
+									aria-pressed={draftOptionActive(filterDraft.transmission, option.value)}
 									onclick={() => selectFilterOption('transmission', option.value)}
 								>
 									<span>{option.label}</span>
@@ -950,8 +973,8 @@
 							{#each mobile.featureOptions as option (option.value)}
 								<button
 									type="button"
-									class:active={filterDraft.feature === option.value}
-									aria-pressed={filterDraft.feature === option.value}
+									class:active={draftOptionActive(filterDraft.feature, option.value)}
+									aria-pressed={draftOptionActive(filterDraft.feature, option.value)}
 									onclick={() => selectFilterOption('feature', option.value)}
 								>
 									<span>{option.label}</span>
@@ -1020,14 +1043,14 @@
 		display: flex;
 		width: 100%;
 		max-width: 100%;
-		min-height: 52px;
+		min-height: 50px;
 		min-width: 0;
 		align-items: center;
-		gap: 12px;
+		gap: 10px;
 		border: 1px solid var(--bc-border);
 		border-radius: 999px;
 		background: var(--bc-surface);
-		padding: 5px 5px 5px 15px;
+		padding: 5px 5px 5px 14px;
 		color: #1c1c1c;
 	}
 
@@ -1052,9 +1075,9 @@
 		min-width: 0;
 		overflow: hidden;
 		color: #9ba0a5;
-		font-size: 16px;
-		font-weight: 700;
-		line-height: 22px;
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 21px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
@@ -1064,16 +1087,18 @@
 	}
 
 	.bohemcars-inventory-mobile__search-label :global(svg) {
-		flex: 0 0 21px;
+		width: 20px;
+		height: 20px;
+		flex: 0 0 20px;
 	}
 
 	.bohemcars-inventory-mobile__search-action {
 		display: flex;
-		width: 44px;
-		height: 44px;
+		width: 40px;
+		height: 40px;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 44px;
+		flex: 0 0 40px;
 		border: 0 !important;
 		border-radius: 999px;
 		background: #1c1c1c;
@@ -1236,7 +1261,7 @@
 		padding: 0 8px;
 		color: #ffffff;
 		font-size: 10px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 24px;
 		text-transform: uppercase;
 	}
@@ -1246,14 +1271,14 @@
 		min-width: 0;
 		align-content: start;
 		overflow: hidden;
-		padding: 9px 10px;
+		padding: 10px 10px 10px 11px;
 	}
 
 	.bohemcars-inventory-mobile-card__body p {
-		margin: 0 0 1px;
-		color: #728093;
+		margin: 0 0 2px;
+		color: #637184;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 600;
 		line-height: 13px;
 		text-transform: uppercase;
 	}
@@ -1261,13 +1286,12 @@
 	.bohemcars-inventory-mobile-card__body h2 {
 		display: -webkit-box;
 		min-width: 0;
-		min-height: 40px;
 		margin: 0 0 5px;
 		overflow: hidden;
 		color: #101010;
 		font-size: 16px;
-		font-weight: 900;
-		line-height: 20px;
+		font-weight: 600;
+		line-height: 21px;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
@@ -1276,11 +1300,10 @@
 	.bohemcars-inventory-mobile-card__body h2 a {
 		display: -webkit-box;
 		min-width: 0;
-		min-height: 44px;
 		overflow: hidden;
 		color: inherit;
 		font-size: inherit;
-		font-weight: 500;
+		font-weight: 600;
 		line-height: inherit;
 		overflow-wrap: anywhere;
 		-webkit-box-orient: vertical;
@@ -1291,7 +1314,7 @@
 	.bohemcars-inventory-mobile-card__body strong {
 		color: #8fbd24;
 		font-size: 18px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 21px;
 	}
 
@@ -1299,7 +1322,7 @@
 		margin-bottom: 7px;
 		color: #67717d;
 		font-size: 11px;
-		font-weight: 800;
+		font-weight: 600;
 		line-height: 14px;
 	}
 
@@ -1315,18 +1338,19 @@
 	.bohemcars-inventory-mobile-card__body li {
 		display: flex;
 		min-width: 0;
-		min-height: 25px;
+		min-height: 28px;
 		align-items: center;
-		justify-content: center;
-		gap: 4px;
+		justify-content: flex-start;
+		gap: 5px;
 		overflow: hidden;
 		border-radius: 7px;
 		background: #ffffff;
-		padding: 0 5px;
+		padding: 0 8px;
 		color: #4b5563;
-		font-size: 11px;
-		font-weight: 800;
-		line-height: 13px;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 15px;
+		text-align: left;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
@@ -1518,6 +1542,7 @@
 		min-height: 50px;
 		align-items: center;
 		gap: 10px;
+		border: 1px solid #e2e8dc;
 		border-radius: 999px;
 		background: var(--bc-surface);
 		padding: 0 13px;
@@ -1538,8 +1563,8 @@
 		background: transparent !important;
 		box-shadow: none !important;
 		color: #111111;
-		font-size: 16px;
-		font-weight: 700;
+		font-size: 15px;
+		font-weight: 600;
 		line-height: 22px;
 		outline: 0;
 		padding: 0 !important;
@@ -1557,32 +1582,25 @@
 
 	.bohemcars-inventory-mobile-drawer__search-submit {
 		display: inline-flex;
-		min-width: 58px;
-		min-height: 44px;
+		width: 42px;
+		min-width: 42px;
+		height: 42px;
+		min-height: 42px;
 		align-items: center;
 		justify-content: center;
 		flex: 0 0 auto;
 		border: 0;
 		border-radius: 999px;
-		background: #1c1c1c;
+		background: #b9ee39;
 		appearance: none;
-		color: #ffffff;
+		color: #14210a;
 		cursor: pointer;
-		font-size: 12px;
-		font-weight: 900;
-		line-height: 16px;
-		padding: 0 13px;
-		text-transform: uppercase;
+		padding: 0;
 	}
 
-	:global(.bohemcars-inventory-mobile-drawer__search-submit span) {
-		color: #ffffff;
-		font-size: 12px;
-		font-weight: 900;
-		letter-spacing: 0;
-		line-height: 16px;
-		text-transform: uppercase;
-		white-space: nowrap;
+	.bohemcars-inventory-mobile-drawer__search-submit :global(svg),
+	.bohemcars-inventory-mobile-drawer__search-submit :global(path) {
+		stroke: #14210a;
 	}
 
 	.bohemcars-inventory-mobile-drawer__search-submit:focus-visible,
