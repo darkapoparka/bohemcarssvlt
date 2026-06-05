@@ -75,14 +75,15 @@ img {
 	max-width: 100%;
 }
 
-/* Vaul drawers (inventory + PDP): the library's open/close spring is 0.5s by default,
-   which reads as sluggish next to the CSS bottom-sheets. Override ONLY the duration so
-   the spring is snappier while keeping vaul's easing. This is drag-safe: while dragging,
-   vaul sets `transition: none` inline (property = none), so finger-tracking and
-   swipe-to-dismiss stay exactly 1:1 — only the programmatic open/close/snap is sped up. */
+/* Vaul drawers (inventory + PDP): the library defaults to 0.5s for both transform
+   transitions and non-snap open/close animations. Override only duration so the
+   sheets feel closer to the CSS mobile sheets while Vaul still owns drag physics,
+   snap points, easing, focus, and scroll behavior. During drag Vaul sets inline
+   transition: none, so finger tracking stays direct. */
 [data-vaul-drawer],
 [data-vaul-overlay] {
-	transition-duration: 0.3s !important;
+	animation-duration: 0.28s !important;
+	transition-duration: 0.28s !important;
 }
 
 .bohemcars-no-image-zoom.card-box.active .card--img,
