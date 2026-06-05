@@ -64,16 +64,16 @@
 			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}>{vehicle.title}</a>
 		</p>
 		<ul class={style2 ? 'tag style2 bohemcars-card-specs mb-10' : 'tag bohemcars-card-specs mb-10'}>
-			<li>
-				<Calendar size={14} strokeWidth={1.9} role="img" aria-label={copy.yearAlt} />
+			<li aria-label={`${copy.yearAlt}: ${vehicle.year}`}>
+				<Calendar size={14} strokeWidth={1.9} aria-hidden="true" />
 				<span>{vehicle.year}</span>
 			</li>
-			<li>
-				<Fuel size={14} strokeWidth={1.9} role="img" aria-label={copy.fuelAlt} />
+			<li aria-label={`${copy.fuelAlt}: ${vehicle.fuel}`}>
+				<Fuel size={14} strokeWidth={1.9} aria-hidden="true" />
 				<span>{vehicle.fuel}</span>
 			</li>
-			<li>
-				<Cog size={14} strokeWidth={1.9} role="img" aria-label={copy.transmissionAlt} />
+			<li aria-label={`${copy.transmissionAlt}: ${vehicle.transmission}`}>
+				<Cog size={14} strokeWidth={1.9} aria-hidden="true" />
 				<span>{vehicle.transmission}</span>
 			</li>
 		</ul>
@@ -172,7 +172,9 @@
 	}
 
 	.bohemcars-card-specs li {
+		align-items: center;
 		flex: 0 0 auto;
+		gap: 5px;
 		min-width: 0;
 		white-space: nowrap;
 		padding: 5px 10px;
@@ -504,6 +506,7 @@
 			flex: initial;
 			justify-content: center;
 			box-sizing: border-box;
+			gap: 0;
 			padding: 5px 9px;
 			font-size: 12px;
 			line-height: 16px;
@@ -515,15 +518,12 @@
 		.bohemcars-card-specs span {
 			min-width: 0;
 			overflow: hidden;
+			text-align: center;
 			text-overflow: ellipsis;
 		}
 
 		.bohemcars-card-specs :global(svg) {
-			flex: 0 0 auto;
-			width: 13px;
-			height: 13px;
-			color: #65705f;
-			opacity: 0.86;
+			display: none;
 		}
 
 		.bohemcars-card-price {

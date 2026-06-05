@@ -18,6 +18,10 @@
 		href: '/contact',
 		label: 'Свържи се'
 	};
+	const showSecondaryPhone = $derived(
+		services.contact.secondaryPhoneHref !== services.contact.phoneHref ||
+			services.contact.secondaryPhoneLabel !== services.contact.phoneLabel
+	);
 </script>
 
 <div class="bohemcars-services-page" data-bohemcars-services>
@@ -34,7 +38,7 @@
 						<div class="bohemcars-service-card__media radius-16 mb-22 overflow-hidden">
 							<img class="w-full" src={service.image} alt={service.title} />
 						</div>
-						<a href={resolve(service.href as '/')} class="h4 font-weight-600 mb-8 capitalize"
+						<a href={resolve(service.href as '/')} class="h4 font-weight-600 mb-8"
 							>{service.title}</a
 						>
 						<p class="text-secondary">{service.description}</p>
@@ -80,12 +84,14 @@
 								<a {...externalHref(services.contact.phoneHref)} class="text-sm text-white">
 									{services.contact.phoneLabel}
 								</a>
-								<a
-									{...externalHref(services.contact.secondaryPhoneHref)}
-									class="text-sm text-white"
-								>
-									{services.contact.secondaryPhoneLabel}
-								</a>
+								{#if showSecondaryPhone}
+									<a
+										{...externalHref(services.contact.secondaryPhoneHref)}
+										class="text-sm text-white"
+									>
+										{services.contact.secondaryPhoneLabel}
+									</a>
+								{/if}
 							</div>
 						</li>
 						<li class="contact gap-12">

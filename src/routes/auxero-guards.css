@@ -291,6 +291,12 @@ body[class*='auxero-template-'] {
 	stroke: #d9f275 !important;
 }
 
+/* Vehicle detail has a right-hand inquiry sidebar; the floating utility button
+   otherwise lands on top of form fields while the buyer is reading financing. */
+body.auxero-template-listing-details-3-html .progress-wrap {
+	display: none !important;
+}
+
 /* Scroll-to-top FAB: tuck tighter into the corner on phones. */
 @media (max-width: 767.98px) {
 	.progress-wrap {

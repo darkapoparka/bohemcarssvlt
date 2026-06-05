@@ -4,6 +4,9 @@
 	let { office }: { office: AuxeroAboutOffice } = $props();
 
 	const externalHref = (href: string) => ({ href });
+	const showSecondaryPhone = $derived(
+		office.secondaryPhoneHref !== office.phoneHref || office.secondaryPhone !== office.phone
+	);
 </script>
 
 <section class="bohemcars-about-location">
@@ -27,7 +30,9 @@
 						<div>
 							<h3>Телефон</h3>
 							<a {...externalHref(office.phoneHref)}>{office.phone}</a>
-							<a {...externalHref(office.secondaryPhoneHref)}>{office.secondaryPhone}</a>
+							{#if showSecondaryPhone}
+								<a {...externalHref(office.secondaryPhoneHref)}>{office.secondaryPhone}</a>
+							{/if}
 						</div>
 					</article>
 					<article class="bohemcars-about-location-card">

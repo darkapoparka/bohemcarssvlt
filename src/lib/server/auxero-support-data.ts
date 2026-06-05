@@ -171,9 +171,15 @@ const serviceCard = (
 	<div class="mb-22 radius-16 overflow-hidden">
 		<img class="w-full" src="${escapeHtml(service.image)}" alt="${escapeHtml(service.title)}">
 	</div>
-	<a href="${escapeHtml(service.href)}" class="h4 font-weight-600 mb-8 capitalize">${escapeHtml(service.title)}</a>
+	<a href="${escapeHtml(service.href)}" class="h4 font-weight-600 mb-8">${escapeHtml(service.title)}</a>
 	<p class="text-secondary">${sentence(service.description)}</p>
 </div>`;
+
+const secondaryPhoneLink =
+	bohemcarsContact.marketplacePhoneHref === bohemcarsContact.primaryPhoneHref &&
+	bohemcarsContact.marketplacePhoneLabel === bohemcarsContact.primaryPhoneLabel
+		? ''
+		: `<a href="${bohemcarsContact.marketplacePhoneHref}" class="text-sm text-white">${escapeHtml(bohemcarsContact.marketplacePhoneLabel)}</a>`;
 
 const consultantGrid =
 	() => `<div class="grid grid-cols-4 sm-grid-cols-1 lg-grid-cols-2 gap-30 xl-gap-16">
@@ -396,7 +402,7 @@ const applyServicesData = (html: string) => {
 						<div class="flex flex-col gap-4">
 							<p class="text-sm text-muted">Контакт с Bohemcars</p>
 							<a href="${bohemcarsContact.primaryPhoneHref}" class="text-sm text-white">${escapeHtml(bohemcarsContact.primaryPhoneLabel)}</a>
-							<a href="${bohemcarsContact.marketplacePhoneHref}" class="text-sm text-white">${escapeHtml(bohemcarsContact.marketplacePhoneLabel)}</a>
+							${secondaryPhoneLink}
 						</div>
 					</li>
 					<li class="contact gap-12">

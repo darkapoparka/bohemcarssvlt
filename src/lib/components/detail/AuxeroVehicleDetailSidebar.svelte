@@ -5,6 +5,10 @@
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
 	let inquiryStatus = $state('');
+	const showMarketplacePhone = $derived(
+		detail.contact.marketplacePhoneHref !== detail.contact.primaryPhoneHref ||
+			detail.contact.marketplacePhoneLabel !== detail.contact.primaryPhoneLabel
+	);
 
 	const handleInquirySubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -134,9 +138,11 @@
 						<a href={resolve('/contact')}>
 							{detail.contact.primaryPhoneLabel}
 						</a>
-						<a href={resolve('/contact')}>
-							{detail.contact.marketplacePhoneLabel}
-						</a>
+						{#if showMarketplacePhone}
+							<a href={resolve('/contact')}>
+								{detail.contact.marketplacePhoneLabel}
+							</a>
+						{/if}
 					</div>
 				</li>
 			</ul>

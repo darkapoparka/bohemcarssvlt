@@ -338,10 +338,12 @@ function applyBohemcarsBranding(html: string) {
 		.replaceAll('tel:1-555-678-9999', bohemcarsContact.marketplacePhoneHref)
 		.replaceAll('tel:1-333-123-6666', bohemcarsContact.marketplacePhoneHref)
 		.replaceAll('tel:1-866-288-6868', bohemcarsContact.primaryPhoneHref)
+		.replaceAll('tel:5551234567', bohemcarsContact.primaryPhoneHref)
 		.replaceAll('1-555-678-8888', bohemcarsContact.primaryPhoneLabel)
 		.replaceAll('1-555-678-9999', bohemcarsContact.marketplacePhoneLabel)
 		.replaceAll('1-333-123-6666', bohemcarsContact.marketplacePhoneLabel)
 		.replaceAll('1-866-288-6868', bohemcarsContact.primaryPhoneLabel)
+		.replaceAll('(555) 123-4567', bohemcarsContact.primaryPhoneLabel)
 		.replace(
 			/<p class="text-secondary mb-4">Username:[\s\S]*?<\/p>\s*<p class="text-secondary">Password:[\s\S]*?<\/p>/g,
 			'<p class="text-secondary mb-4">Use your Bohemcars account credentials.</p>'
@@ -350,6 +352,29 @@ function applyBohemcarsBranding(html: string) {
 			/©2026[\s\S]*?All Rights Reserved\./g,
 			`©2026 ${bohemcarsBrand.name}. All Rights Reserved.`
 		);
+}
+
+function collapseDuplicateAdjacentPhoneLinks(html: string) {
+	return html.replace(
+		/(<a\b[^>]*href=(["'])(tel:[^"']+)\2[^>]*>([\s\S]*?)<\/a>)(\s*)<a\b[^>]*href=\2\3\2[^>]*>([\s\S]*?)<\/a>/g,
+		(
+			match,
+			firstLink: string,
+			_quote: string,
+			_href: string,
+			firstText: string,
+			_space: string,
+			secondText: string
+		) => {
+			const normalize = (value: string) =>
+				value
+					.replace(/<[^>]*>/g, '')
+					.replace(/\s+/g, ' ')
+					.trim();
+
+			return normalize(firstText) === normalize(secondText) ? firstLink : match;
+		}
+	);
 }
 
 function rewriteUnfinishedAccountDashboardLinks(html: string) {
@@ -2482,7 +2507,8 @@ export function renderAuxeroTemplate(templateFile: string, options: AuxeroRender
 	const normalized = normalizeAssetUrls(sourceHtml);
 	const withBackgrounds = applyBackgroundImages(normalized);
 	const branded = applyBohemcarsBranding(withBackgrounds);
-	const withoutBlockedAnchors = stripBlockedTemplateAnchors(branded);
+	const withoutDuplicatePhones = collapseDuplicateAdjacentPhoneLinks(branded);
+	const withoutBlockedAnchors = stripBlockedTemplateAnchors(withoutDuplicatePhones);
 	const withNavigation = rewritePrimaryNavigation(withoutBlockedAnchors, templateFile);
 	const withRoutes = rewriteTemplateLinks(withNavigation);
 	const withAccountTeaserLinks = rewriteUnfinishedAccountDashboardLinks(withRoutes);

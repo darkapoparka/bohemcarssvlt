@@ -463,6 +463,10 @@
 			transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 		}
 
+		#mobile-bottom-menu-toggle:checked ~ .mobile-menu-sheet .mobile-menu-sheet__panel {
+			transform: translateY(0) !important;
+		}
+
 		.mobile-menu-sheet__handle {
 			display: block;
 			width: 42px;
