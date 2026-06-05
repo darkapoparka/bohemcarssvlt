@@ -5,7 +5,6 @@
 	import type { AuxeroVehicleDetailData, AuxeroVehicleDetailDrawerTabId } from '$lib/auxero/detail';
 	import { ArrowLeft, Check, GitCompare, Heart, PhoneCall, Send, Share2, X } from '@lucide/svelte';
 	import { Drawer } from 'vaul-svelte';
-	import { fade, fly } from 'svelte/transition';
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
 
@@ -25,7 +24,6 @@
 	let inquiryOpen = $state(false);
 	let inquiryStatus = $state('');
 	let inquirySubmitting = $state(false);
-	let drawerSnapGestureStartY: number | null = null;
 
 	const heroGalleryImages = $derived(Array.from(new Set(detail.galleryImages)));
 	const heroImage = $derived(heroGalleryImages[selectedImageIndex] ?? detail.image);
@@ -125,44 +123,6 @@
 		viewerOpen = false;
 	};
 
-	const startDrawerSnapGesture = (event: PointerEvent) => {
-		if (
-			!(event.target instanceof HTMLElement) ||
-			!event.target.closest('.bohemcars-mobile-pdp__handle')
-		) {
-			return;
-		}
-
-		drawerSnapGestureStartY = event.clientY;
-		(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
-	};
-
-	const updateDrawerSnapGesture = (event: PointerEvent) => {
-		if (drawerSnapGestureStartY === null) return;
-
-		const deltaY = event.clientY - drawerSnapGestureStartY;
-
-		if (Math.abs(deltaY) < 42) return;
-
-		activeDrawerSnapPoint = deltaY < 0 ? drawerExpandedSnapPoint : drawerRestingSnapPoint;
-		drawerSnapGestureStartY = null;
-	};
-
-	const finishDrawerSnapGesture = (event: PointerEvent) => {
-		if (drawerSnapGestureStartY === null) return;
-
-		const deltaY = event.clientY - drawerSnapGestureStartY;
-		drawerSnapGestureStartY = null;
-
-		if (Math.abs(deltaY) < 42) return;
-
-		activeDrawerSnapPoint = deltaY < 0 ? drawerExpandedSnapPoint : drawerRestingSnapPoint;
-	};
-
-	const cancelDrawerSnapGesture = () => {
-		drawerSnapGestureStartY = null;
-	};
-
 	const handleWindowKeydown = (event: KeyboardEvent) => {
 		if (event.key !== 'Escape') return;
 
@@ -174,12 +134,7 @@
 	};
 </script>
 
-<svelte:window
-	onkeydown={handleWindowKeydown}
-	onpointermove={updateDrawerSnapGesture}
-	onpointerup={finishDrawerSnapGesture}
-	onpointercancel={cancelDrawerSnapGesture}
-/>
+<svelte:window onkeydown={handleWindowKeydown} />
 
 <svelte:head>
 	<style>
@@ -289,16 +244,13 @@
 		bind:activeSnapPoint={activeDrawerSnapPoint}
 		direction="bottom"
 		dismissible={false}
+		handleOnly={true}
 		modal={false}
 		snapPoints={drawerSnapPoints}
 		snapToSequentialPoint={true}
 	>
-		<Drawer.Content
-			class="bohemcars-mobile-pdp__drawer"
-			data-mobile-pdp-drawer
-			onpointerdown={startDrawerSnapGesture}
-		>
-			<Drawer.Handle class="bohemcars-mobile-pdp__handle" />
+		<Drawer.Content class="bohemcars-mobile-pdp__drawer" data-mobile-pdp-drawer>
+			<Drawer.Handle class="bohemcars-mobile-pdp__handle" preventCycle={true} />
 
 			<div class="bohemcars-mobile-pdp__drawer-heading">
 				<div>
@@ -410,91 +362,83 @@
 		</Drawer.Content>
 	</Drawer.Root>
 
-	{#if inquiryOpen}
-		<div
+	<Drawer.Root bind:open={inquiryOpen} direction="bottom" fixed={true} handleOnly={true}>
+		<Drawer.Overlay class="bohemcars-mobile-pdp__inquiry-backdrop" onclick={closeInquiry}>
+			<span>{detail.mobileDrawer.closeLabel}</span>
+		</Drawer.Overlay>
+		<Drawer.Content
+			id="bohemcarsMobilePdpInquiryDrawer"
 			class="bohemcars-mobile-pdp__inquiry"
-			role="dialog"
-			aria-modal="true"
 			aria-labelledby="bohemcarsMobilePdpInquiryTitle"
 		>
-			<button
-				type="button"
-				class="bohemcars-mobile-pdp__inquiry-backdrop"
-				aria-label={detail.mobileDrawer.closeLabel}
-				onclick={closeInquiry}
-				transition:fade={{ duration: 180 }}
-			></button>
+			<Drawer.Handle class="bohemcars-mobile-pdp__inquiry-handle" preventCycle={true} />
 
-			<div class="bohemcars-mobile-pdp__inquiry-panel" transition:fly={{ y: 64, duration: 240 }}>
-				<span class="bohemcars-mobile-pdp__inquiry-handle" aria-hidden="true"></span>
-
-				<div class="bohemcars-mobile-pdp__inquiry-head">
-					<div>
-						<p>{detail.title}</p>
-						<strong id="bohemcarsMobilePdpInquiryTitle">{detail.copy.inquiryTitle}</strong>
-					</div>
-					<button
-						type="button"
-						class="bohemcars-mobile-pdp__inquiry-close"
-						aria-label={detail.mobileDrawer.closeLabel}
-						onclick={closeInquiry}
+			<div class="bohemcars-mobile-pdp__inquiry-head">
+				<div>
+					<p>{detail.title}</p>
+					<Drawer.Title
+						id="bohemcarsMobilePdpInquiryTitle"
+						class="bohemcars-mobile-pdp__inquiry-title-shell"
+						level={2}
 					>
-						<X size={20} strokeWidth={2.35} aria-hidden="true" />
-					</button>
+						<span class="bohemcars-mobile-pdp__inquiry-title">{detail.copy.inquiryTitle}</span>
+					</Drawer.Title>
 				</div>
-
-				<p class="bohemcars-mobile-pdp__inquiry-intro">{detail.copy.inquiryIntro}</p>
-
-				<form class="bohemcars-mobile-pdp__inquiry-form" onsubmit={submitInquiry}>
-					<label>
-						<span>{detail.copy.name}</span>
-						<input name="name" type="text" autocomplete="name" required />
-					</label>
-					<label>
-						<span>{detail.copy.phone}</span>
-						<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
-					</label>
-					<label>
-						<span>{detail.copy.subject}</span>
-						<select name="subject">
-							<option>{detail.copy.subjectViewing}</option>
-							<option>{detail.copy.subjectAvailability}</option>
-							<option>{detail.copy.subjectDocuments}</option>
-						</select>
-					</label>
-					<label>
-						<span>{detail.copy.message}</span>
-						<textarea name="message" rows="3" placeholder={detail.copy.messagePlaceholder}
-						></textarea>
-					</label>
-
-					<button
-						type="submit"
-						class="bohemcars-mobile-pdp__inquiry-submit"
-						disabled={inquirySubmitting}
-					>
-						<Send size={18} strokeWidth={2.3} aria-hidden="true" />
-						{detail.copy.sendInquiry}
-					</button>
-
-					<p class="bohemcars-mobile-pdp__inquiry-status" aria-live="polite">
-						{#if inquiryStatus}
-							<Check size={16} strokeWidth={2.4} aria-hidden="true" />
-						{/if}
-						{inquiryStatus}
-					</p>
-				</form>
-
-				<a
-					class="bohemcars-mobile-pdp__inquiry-call"
-					{...externalHref(detail.contact.primaryPhoneHref)}
+				<button
+					type="button"
+					class="bohemcars-mobile-pdp__inquiry-close"
+					aria-label={detail.mobileDrawer.closeLabel}
+					onclick={closeInquiry}
 				>
-					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
-					{detail.contact.primaryPhoneLabel}
-				</a>
+					<X size={20} strokeWidth={2.35} aria-hidden="true" />
+				</button>
 			</div>
-		</div>
-	{/if}
+
+			<Drawer.Description class="bohemcars-mobile-pdp__inquiry-description">
+				<span class="bohemcars-mobile-pdp__inquiry-intro">{detail.copy.inquiryIntro}</span>
+			</Drawer.Description>
+
+			<form class="bohemcars-mobile-pdp__inquiry-form" onsubmit={submitInquiry} data-vaul-no-drag>
+				<label>
+					<span>{detail.copy.name}</span>
+					<input name="name" type="text" autocomplete="name" required />
+				</label>
+				<label>
+					<span>{detail.copy.phone}</span>
+					<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
+				</label>
+				<label>
+					<span>{detail.copy.subject}</span>
+					<select name="subject">
+						<option>{detail.copy.subjectViewing}</option>
+						<option>{detail.copy.subjectAvailability}</option>
+						<option>{detail.copy.subjectDocuments}</option>
+					</select>
+				</label>
+				<label>
+					<span>{detail.copy.message}</span>
+					<textarea name="message" rows="3" placeholder={detail.copy.messagePlaceholder}></textarea>
+				</label>
+
+				<button type="submit" class="bohemcars-mobile-pdp__inquiry-submit" disabled={inquirySubmitting}>
+					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.sendInquiry}
+				</button>
+
+				<p class="bohemcars-mobile-pdp__inquiry-status" aria-live="polite">
+					{#if inquiryStatus}
+						<Check size={16} strokeWidth={2.4} aria-hidden="true" />
+					{/if}
+					{inquiryStatus}
+				</p>
+			</form>
+
+			<a class="bohemcars-mobile-pdp__inquiry-call" {...externalHref(detail.contact.primaryPhoneHref)}>
+				<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
+				{detail.contact.primaryPhoneLabel}
+			</a>
+		</Drawer.Content>
+	</Drawer.Root>
 
 	{#if viewerOpen}
 		<div
@@ -1114,27 +1058,12 @@
 			outline: 0;
 		}
 
-		.bohemcars-mobile-pdp__inquiry {
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry[data-vaul-drawer]) {
 			position: fixed;
-			inset: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
 			z-index: 1008;
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-end;
-		}
-
-		.bohemcars-mobile-pdp__inquiry-backdrop {
-			position: absolute;
-			inset: 0;
-			border: 0;
-			background: rgba(10, 12, 8, 0.5);
-			appearance: none;
-			cursor: pointer;
-			padding: 0;
-		}
-
-		.bohemcars-mobile-pdp__inquiry-panel {
-			position: relative;
 			display: grid;
 			gap: 12px;
 			width: 100%;
@@ -1145,19 +1074,70 @@
 			color: #1c1c1c;
 			padding: 10px 16px calc(18px + env(safe-area-inset-bottom));
 			box-shadow: 0 -22px 50px rgba(0, 0, 0, 0.3);
+			outline: 0;
 			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
 		}
 
-		.bohemcars-mobile-pdp__inquiry-panel::-webkit-scrollbar {
+		.bohemcars-mobile-pdp
+			:global(.bohemcars-mobile-pdp__inquiry[data-vaul-drawer]::-webkit-scrollbar) {
 			display: none;
 		}
 
-		.bohemcars-mobile-pdp__inquiry-handle {
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-backdrop[data-vaul-overlay]) {
+			position: fixed;
+			inset: 0;
+			z-index: 1007;
+			border: 0;
+			background: rgba(10, 12, 8, 0.5);
+			appearance: none;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-backdrop span) {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-handle[data-vaul-handle]) {
+			position: relative;
+			display: block;
+			width: 56px;
+			height: 22px;
+			justify-self: center;
+			border-radius: 0;
+			background: transparent;
+			opacity: 1;
+		}
+
+		.bohemcars-mobile-pdp
+			:global(.bohemcars-mobile-pdp__inquiry-handle[data-vaul-handle])::after {
+			position: absolute;
+			top: 50%;
+			left: 50%;
 			width: 42px;
 			height: 4px;
-			justify-self: center;
+			transform: translate(-50%, -50%);
 			border-radius: 999px;
 			background: var(--bc-border);
+			content: '';
+		}
+
+		.bohemcars-mobile-pdp
+			:global(.bohemcars-mobile-pdp__inquiry-handle [data-vaul-handle-hitarea]) {
+			position: absolute;
+			inset: 0;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			transform: none;
 		}
 
 		.bohemcars-mobile-pdp__inquiry-head {
@@ -1178,7 +1158,12 @@
 			white-space: nowrap;
 		}
 
-		.bohemcars-mobile-pdp__inquiry-head strong {
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-title-shell),
+		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry-description) {
+			margin: 0;
+		}
+
+		.bohemcars-mobile-pdp__inquiry-title {
 			display: block;
 			color: #1c1c1c;
 			font-size: 19px;
@@ -1202,6 +1187,7 @@
 		}
 
 		.bohemcars-mobile-pdp__inquiry-intro {
+			display: block;
 			margin: -2px 0 2px;
 			color: #5f6871;
 			font-size: 14px;
