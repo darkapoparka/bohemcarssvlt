@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { Calendar, Cog, Fuel } from '@lucide/svelte';
 	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
 	import type { VehicleCardCopy } from '$lib/i18n/messages';
 
@@ -64,18 +65,15 @@
 		</p>
 		<ul class={style2 ? 'tag style2 bohemcars-card-specs mb-10' : 'tag bohemcars-card-specs mb-10'}>
 			<li>
-				<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} />
+				<Calendar size={14} strokeWidth={1.9} role="img" aria-label={copy.yearAlt} />
 				<span>{vehicle.year}</span>
 			</li>
 			<li>
-				<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} />
+				<Fuel size={14} strokeWidth={1.9} role="img" aria-label={copy.fuelAlt} />
 				<span>{vehicle.fuel}</span>
 			</li>
 			<li>
-				<img
-					src={resolve(`/assets/icons/${vehicle.transmissionIcon}`)}
-					alt={copy.transmissionAlt}
-				/>
+				<Cog size={14} strokeWidth={1.9} role="img" aria-label={copy.transmissionAlt} />
 				<span>{vehicle.transmission}</span>
 			</li>
 		</ul>
@@ -183,10 +181,11 @@
 		background: var(--bc-surface-soft);
 	}
 
-	.bohemcars-card-specs li img {
+	.bohemcars-card-specs li :global(svg) {
 		width: 14px;
 		height: 14px;
 		opacity: 0.8;
+		color: #5f6b58;
 	}
 
 	.bohemcars-card-specs li span {
@@ -519,10 +518,12 @@
 			text-overflow: ellipsis;
 		}
 
-		.bohemcars-card-specs img {
+		.bohemcars-card-specs :global(svg) {
 			flex: 0 0 auto;
 			width: 13px;
 			height: 13px;
+			color: #65705f;
+			opacity: 0.86;
 		}
 
 		.bohemcars-card-price {
