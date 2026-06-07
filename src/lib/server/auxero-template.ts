@@ -536,7 +536,7 @@ function dashboardContextHeaderMarkup(templateFile: string, options: AuxeroRende
 		{
 			active: false,
 			href: '/inventory',
-			label: context.isAdmin ? 'Bohemcars Inventory' : 'Inventory'
+			label: 'Inventory'
 		},
 		{ active: context.active === 'dashboard', href: dashboardHref, label: dashboardLabel }
 	];
@@ -731,6 +731,7 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-view-toggle .item-menu {
 		align-items: center;
+		background: transparent;
 		border-radius: 999px;
 		display: inline-flex;
 		height: 40px;
@@ -761,6 +762,39 @@ function injectLocalBehavior(
 	body.${localScopeClass} .bohemcars-view-toggle .bohemcars-inventory-layout-toggle.active {
 		background: #d9f275;
 		color: #1c1c1c;
+	}
+	body.${localScopeClass} .bohemcars-inventory-filter-mode-toggle {
+		align-items: center;
+		background: #f1f3ee;
+		border: 1px solid #dde5d8;
+		border-radius: 999px;
+		display: inline-flex;
+		gap: 4px;
+		padding: 4px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-filter-mode-toggle__item {
+		align-items: center;
+		border-radius: 999px;
+		color: #1c1c1c;
+		display: inline-flex;
+		font-size: 13px;
+		font-weight: 800;
+		height: 32px;
+		justify-content: center;
+		line-height: 18px;
+		padding: 0 14px;
+		transition:
+			background-color 0.18s ease,
+			color 0.18s ease;
+		white-space: nowrap;
+	}
+	body.${localScopeClass} .bohemcars-inventory-filter-mode-toggle__item:hover {
+		background: #ffffff;
+		color: #1c1c1c;
+	}
+	body.${localScopeClass} .bohemcars-inventory-filter-mode-toggle__item.active {
+		background: #1c1c1c;
+		color: #ffffff;
 	}
 	${
 		usesPublicHeader
@@ -1432,11 +1466,14 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-view-toggle {
 		align-items: center;
+		background: #f1f3ee;
+		border: 1px solid #dde5d8;
+		border-radius: 999px;
 		display: flex;
-		gap: 12px;
+		gap: 4px;
 		justify-self: center;
 		margin: 0;
-		padding: 0 !important;
+		padding: 4px !important;
 	}
 	body.${localScopeClass} .bohemcars-inventory-result-count p {
 		margin: 0;

@@ -9,6 +9,7 @@ import {
 
 export type InventoryView = '3' | '4' | 'map';
 export type InventoryLayout = 'classic' | 'dashboard';
+export type InventoryFilterPresentation = 'popover' | 'modal';
 
 export type InventoryStateOptions = {
 	searchParams?: URLSearchParams;
@@ -16,6 +17,7 @@ export type InventoryStateOptions = {
 };
 
 export type InventoryState = {
+	filterPresentation: InventoryFilterPresentation;
 	filters: InventoryFilters;
 	layout: InventoryLayout;
 	searchParams: URLSearchParams;
@@ -96,6 +98,16 @@ export const resolveInventoryLayout = (searchParams: URLSearchParams): Inventory
 	return 'dashboard';
 };
 
+export const resolveInventoryFilterPresentation = (
+	searchParams: URLSearchParams
+): InventoryFilterPresentation => {
+	const value =
+		searchParams.get('filters')?.trim().toLowerCase() ??
+		searchParams.get('filterMode')?.trim().toLowerCase();
+
+	return value === 'modal' || value === 'dialog' ? 'modal' : 'popover';
+};
+
 export const defaultInventoryViewForLayout = (layout: InventoryLayout): InventoryView =>
 	layout === 'dashboard' ? '3' : '4';
 
@@ -149,12 +161,14 @@ export const getInventoryState = (
 	const normalizedFilters = normalizeFilters(filters);
 	const filtered = filterVehicles(vehicles, normalizedFilters);
 	const layout = resolveInventoryLayout(searchParams);
+	const filterPresentation = resolveInventoryFilterPresentation(searchParams);
 	const hasExplicitView = Boolean(options.view || searchParams.get('view'));
 	const view = hasExplicitView
 		? viewForInventoryTemplate(templateFile, options)
 		: defaultInventoryViewForLayout(layout);
 
 	return {
+		filterPresentation,
 		filters: normalizedFilters,
 		layout,
 		searchParams,

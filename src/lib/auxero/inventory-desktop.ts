@@ -1,7 +1,7 @@
 import { bohemcarsContact } from '$lib/data/bohemcars';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
-import type { InventoryState } from '$lib/server/inventory-state';
+import type { InventoryFilterPresentation, InventoryState } from '$lib/server/inventory-state';
 
 export type AuxeroInventoryFilterOption = {
 	count?: number;
@@ -50,6 +50,15 @@ export type AuxeroInventoryLayoutToggle = {
 	title: string;
 };
 
+export type AuxeroInventoryFilterPresentationOption = {
+	active: boolean;
+	ariaLabel: string;
+	href: string;
+	label: string;
+	presentation: InventoryFilterPresentation;
+	title: string;
+};
+
 export type AuxeroInventoryActiveFilter = {
 	href: string;
 	label: string;
@@ -69,7 +78,11 @@ export type AuxeroInventoryDesktopData = {
 		summary: string;
 	} | null;
 	ariaLabel: string;
+	controlsLabel: string;
 	filterButtonLabel: string;
+	filterPresentation: InventoryFilterPresentation;
+	filterPresentationLabel: string;
+	filterPresentationOptions: AuxeroInventoryFilterPresentationOption[];
 	filters: AuxeroInventoryFilter[];
 	hiddenInputs: AuxeroInventoryHiddenInput[];
 	layout: 'classic' | 'dashboard';
@@ -160,10 +173,16 @@ const text = (locale: Locale) =>
 				body: 'Купе',
 				brand: 'Марка',
 				clearFilters: 'Изчисти филтрите',
+				controlsLabel: 'Контроли за изглед и филтри',
 				emptyMap:
 					'Няма автомобили по тези филтри. Изчисти филтрите или се свържи с Bohemcars за входящи автомобили.',
 				extras: 'Екстри',
 				filterButton: 'Филтри',
+				filterPresentation: 'Филтри',
+				filterPresentationTitles: {
+					modal: 'Отваря филтрите като централен modal',
+					popover: 'Отваря филтрите като компактни popover менюта'
+				},
 				filterLabels: {
 					bodyType: 'Купе',
 					brand: 'Марка',
@@ -228,10 +247,16 @@ const text = (locale: Locale) =>
 				body: 'Body',
 				brand: 'Make',
 				clearFilters: 'Clear filters',
+				controlsLabel: 'View and filter controls',
 				emptyMap:
 					'No cars match these filters. Clear filters or contact Bohemcars for incoming vehicles.',
 				extras: 'Extras',
 				filterButton: 'Filters',
+				filterPresentation: 'Filters',
+				filterPresentationTitles: {
+					modal: 'Open filters as a centered modal',
+					popover: 'Open filters as compact popover menus'
+				},
 				filterLabels: {
 					bodyType: 'Body',
 					brand: 'Brand',
@@ -396,6 +421,7 @@ const inventoryClearFiltersUrl = (state: InventoryState) => {
 	const params = new URLSearchParams();
 	const defaultView = state.layout === 'dashboard' ? '3' : '4';
 
+	if (state.filterPresentation === 'modal') params.set('filters', 'modal');
 	if (state.layout === 'classic') params.set('layout', 'classic');
 	if (state.view !== defaultView) params.set('view', state.view);
 	if (state.sortParam !== 'best-match') params.set('sort', state.sortParam);
@@ -542,6 +568,7 @@ const hiddenInputs = (state: InventoryState): AuxeroInventoryHiddenInput[] => {
 		state.filters.sourceId ? { name: 'sourceId', value: state.filters.sourceId } : undefined,
 		state.filters.status ? { name: 'status', value: state.filters.status } : undefined,
 		state.layout === 'classic' ? { name: 'layout', value: 'classic' } : undefined,
+		state.filterPresentation === 'modal' ? { name: 'filters', value: 'modal' } : undefined,
 		state.view !== defaultView ? { name: 'view', value: state.view } : undefined,
 		state.sortParam !== 'best-match' ? { name: 'sort', value: state.sortParam } : undefined
 	].filter((input): input is AuxeroInventoryHiddenInput => Boolean(input));
@@ -755,6 +782,25 @@ const layoutToggle = (state: InventoryState): AuxeroInventoryLayoutToggle => {
 	};
 };
 
+const filterPresentationOptions = (
+	state: InventoryState,
+	locale: Locale
+): AuxeroInventoryFilterPresentationOption[] => {
+	const labels = text(locale).filterPresentationTitles;
+
+	return (['popover', 'modal'] as const).map((presentation) => ({
+		active: state.filterPresentation === presentation,
+		ariaLabel: labels[presentation],
+		href: inventoryUrl(state, {
+			filterMode: undefined,
+			filters: presentation === 'modal' ? 'modal' : undefined
+		}),
+		label: presentation === 'modal' ? 'Modal' : 'Popover',
+		presentation,
+		title: labels[presentation]
+	}));
+};
+
 const activeFilters = (
 	state: InventoryState,
 	locale: Locale,
@@ -861,7 +907,11 @@ export const inventoryDesktopDataFromState = (
 	return {
 		activeFilters: activeFilters(state, locale, options),
 		ariaLabel: 'Bohemcars inventory showcase',
+		controlsLabel: labels.controlsLabel,
 		filterButtonLabel: labels.filterButton,
+		filterPresentation: state.filterPresentation,
+		filterPresentationLabel: labels.filterPresentation,
+		filterPresentationOptions: filterPresentationOptions(state, locale),
 		filters,
 		hiddenInputs: hiddenInputs(state),
 		layout: state.layout,

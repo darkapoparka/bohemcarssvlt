@@ -8,7 +8,15 @@
 
 	let { assets, title }: Props = $props();
 
-	const links = $derived(assets?.links ?? []);
+	const stableStylesheetHrefs = new Set([
+		'/assets/scss/swiper/swiper-bundle.min.css',
+		'/assets/app.css'
+	]);
+	const links = $derived(
+		(assets?.links ?? []).filter(
+			(link) => !(link.rel.toLowerCase() === 'stylesheet' && stableStylesheetHrefs.has(link.href))
+		)
+	);
 	const meta = $derived(assets?.meta ?? []);
 	const styles = $derived(assets?.styles ?? []);
 </script>

@@ -3,6 +3,7 @@ import { vehicles } from '$lib/data/vehicles';
 import {
 	getInventoryState,
 	inventoryTemplateForView,
+	resolveInventoryFilterPresentation,
 	resolveInventoryView,
 	viewForInventoryTemplate
 } from './inventory-state';
@@ -24,6 +25,22 @@ describe('inventory-state', () => {
 
 		expect(viewForInventoryTemplate('listing-grid4-columns.html', { searchParams })).toBe('map');
 		expect(viewForInventoryTemplate('listing-topmap.html')).toBe('map');
+	});
+
+	it('resolves inventory filter presentation separately from layout mode aliases', () => {
+		expect(resolveInventoryFilterPresentation(new URLSearchParams())).toBe('popover');
+		expect(resolveInventoryFilterPresentation(new URLSearchParams('filters=modal'))).toBe('modal');
+		expect(resolveInventoryFilterPresentation(new URLSearchParams('filterMode=dialog'))).toBe(
+			'modal'
+		);
+		expect(resolveInventoryFilterPresentation(new URLSearchParams('mode=classic'))).toBe('popover');
+
+		const state = getInventoryState('listing-grid4-columns.html', {
+			searchParams: new URLSearchParams('filters=modal&layout=classic')
+		});
+
+		expect(state.filterPresentation).toBe('modal');
+		expect(state.layout).toBe('classic');
 	});
 
 	it('normalizes inventory aliases and filters Bohemcars vehicles', () => {

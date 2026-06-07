@@ -15,6 +15,7 @@
 		X
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import HeroFilterPopover from './HeroFilterPopover.svelte';
 
 	let { hero }: { hero?: HomeFiveHeroData } = $props();
 
@@ -36,6 +37,33 @@
 			: (activeAction?.submitLabel ?? '')
 	);
 	const isInventoryMode = $derived(activeAction?.mode === 'buy');
+
+	// Desktop buy box — rich popover fields replace the cramped CSS dropdowns.
+	// Selection lives here so the model list can cascade off the chosen make(s),
+	// and so each field renders hidden inputs that preserve the GET /inventory contract.
+	const brandFilter = $derived(hero?.primaryFilters.find((filter) => filter.name === 'brand'));
+	const modelFilter = $derived(hero?.primaryFilters.find((filter) => filter.name === 'q'));
+	const bodyFilter = $derived(hero?.primaryFilters.find((filter) => filter.name === 'bodyType'));
+	const priceFilter = $derived(hero?.primaryFilters.find((filter) => filter.name === 'maxPrice'));
+
+	let brandSelection = $state<string[]>([]);
+	let modelSelection = $state<string[]>([]);
+	let bodySelection = $state<string[]>([]);
+	let priceSelection = $state<string[]>([]);
+
+	const modelOptions = $derived.by(() => {
+		const all = modelFilter?.options ?? [];
+		if (!brandSelection.length) return all;
+		return all.filter((option) => option.brand && brandSelection.includes(option.brand));
+	});
+
+	// Drop a chosen model once it no longer belongs to the selected make(s).
+	$effect(() => {
+		const valid = new Set(modelOptions.map((option) => option.value));
+		if (modelSelection.some((value) => !valid.has(value))) {
+			modelSelection = modelSelection.filter((value) => valid.has(value));
+		}
+	});
 	const mobileSearchPlaceholder = $derived(
 		activeAction?.placeholder ??
 			(isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...')
@@ -525,9 +553,46 @@
 				<!-- Primary Search Filters -->
 				<div class="search-cars__filters">
 					{#if isInventoryMode}
-						{#each hero.primaryFilters as select (select.id)}
-							{@render heroSelect(select)}
-						{/each}
+						{#if brandFilter}
+							<HeroFilterPopover
+								select={brandFilter}
+								bind:selected={brandSelection}
+								mode="multi"
+								variant="grid"
+								searchable
+								{isEnglish}
+							/>
+						{/if}
+						{#if modelFilter}
+							<HeroFilterPopover
+								select={modelFilter}
+								options={modelOptions}
+								bind:selected={modelSelection}
+								mode="single"
+								variant="list"
+								searchable
+								{isEnglish}
+								emptyHint={isEnglish ? 'No models for this make' : 'Няма модели за тази марка'}
+							/>
+						{/if}
+						{#if bodyFilter}
+							<HeroFilterPopover
+								select={bodyFilter}
+								bind:selected={bodySelection}
+								mode="multi"
+								variant="list"
+								{isEnglish}
+							/>
+						{/if}
+						{#if priceFilter}
+							<HeroFilterPopover
+								select={priceFilter}
+								bind:selected={priceSelection}
+								mode="single"
+								variant="list"
+								{isEnglish}
+							/>
+						{/if}
 						<button
 							type="submit"
 							class="search-cars__search md-w-full flex items-center justify-center gap-8"
@@ -991,7 +1056,8 @@
 			background: transparent;
 			color: var(--bohemcars-mobile-ink-muted, rgba(255, 255, 255, 0.88));
 			font-size: 17px;
-			font-weight: 800;
+			font-weight: 600;
+			letter-spacing: 0.01em;
 			line-height: 22px;
 			text-align: center;
 			text-decoration: none;
@@ -999,9 +1065,7 @@
 			user-select: none;
 			-webkit-user-select: none;
 			z-index: 1;
-			transition:
-				font-weight 0.18s ease,
-				color 0.18s ease;
+			transition: color 0.18s ease;
 		}
 
 		/* Active tab is driven by the hidden radio — pure CSS, no navigation, no reload. */
@@ -1013,7 +1077,7 @@
 			background: transparent;
 			box-shadow: none;
 			color: var(--bohemcars-mobile-ink-strong, #ffffff);
-			font-weight: 900;
+			font-weight: 700;
 		}
 
 		/* Showroom intent tabs: one full rail, with only the selected intent emphasized. */

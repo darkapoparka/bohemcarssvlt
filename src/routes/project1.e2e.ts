@@ -259,9 +259,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeHero.locator('.page-title--slider.sw-single')).toBeVisible();
 	await expect(homeHero.locator('.sw-single-thumb .search-cars__title')).toHaveCount(3);
 	await expect(homeHero.locator('.menu-tab-style1 li')).toHaveCount(3);
-	await expect(
-		homeHero.locator('.search-cars__filters > .search-cars__select-wrapper')
-	).toHaveCount(4);
+	await expect(homeHero.locator('.search-cars__filters > .hfp')).toHaveCount(4);
 	await expect(homeHero.locator('#filterToggle')).toHaveCount(0);
 	await expect(page.locator('#bohemcars-desktop-search-panel')).toHaveCount(0);
 	await expect(homeHero.locator('.search-cars__advanced .search-cars__select-wrapper')).toHaveCount(
@@ -814,9 +812,10 @@ test('mobile primary routes do not expose desktop shells or fallback chrome', as
 	await bottomNav.getByRole('link', { name: 'Любими' }).click();
 	await expect(page).toHaveURL(/\/account\/favorites$/);
 	await expect(page.locator('.bohemcars-favorites-mobile')).toBeVisible();
+	await expect(bottomNav).toHaveCount(0);
 	await expectNoChromeLeaks();
 
-	await bottomNav.getByRole('link', { name: 'Начало' }).click();
+	await page.goto('/');
 	await expect(page).toHaveURL(/\/$/);
 	await expect(page.locator('.header-wrapper-style-4 .logo-mobile')).toBeHidden();
 	await expectNoChromeLeaks();
@@ -1010,7 +1009,8 @@ test('header, garage, and inquiry flows keep Auxero behavior', async ({ page }) 
 	});
 	await page.reload();
 
-	const firstCard = page.locator('[data-bohemcars-slug]').first();
+	const firstCard = page.locator('.bohemcars-inventory-content [data-bohemcars-slug]').first();
+	await expect(firstCard).toBeVisible();
 	const firstSlug = await firstCard.getAttribute('data-bohemcars-slug');
 	expect(firstSlug).toBeTruthy();
 
@@ -1103,7 +1103,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await page.goto('/inventory?layout=classic');
 	await expect(page.locator('body')).toContainText('Показани 1 – 42 от 42 обяви');
 	await expect(
-		page.locator('.bohemcars-inventory-filter-grid .filter-select-dropdown')
+		page.locator('.bohemcars-inventory-filter-grid [data-inventory-filter-field]')
 	).toHaveCount(8);
 	await expect
 		.poll(async () =>

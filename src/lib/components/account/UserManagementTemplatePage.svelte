@@ -1,18 +1,27 @@
 <script lang="ts">
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import type { AuxeroUserManagementData } from '$lib/auxero/user-management';
+	import type {
+		AuxeroUserManagementData,
+		AuxeroUserManagementNote
+	} from '$lib/auxero/user-management';
 	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
 	import UserManagementTable from './UserManagementTable.svelte';
 
 	let {
 		afterUsersHtml,
 		beforeUsersHtml,
+		notes,
 		pageDocument,
+		searchQuery,
+		selectedUserRole,
 		users
 	}: {
 		afterUsersHtml: string;
 		beforeUsersHtml: string;
+		notes: AuxeroUserManagementNote[];
 		pageDocument: AuxeroPageDocument;
+		searchQuery: string;
+		selectedUserRole: string;
 		users: AuxeroUserManagementData;
 	} = $props();
 </script>
@@ -23,5 +32,5 @@
 	afterHtml={afterUsersHtml}
 	preserveDetailsPrefix={false}
 >
-	<UserManagementTable {users} />
+	<UserManagementTable {users} {notes} {searchQuery} {selectedUserRole} />
 </AuxeroDashboardSlotShell>

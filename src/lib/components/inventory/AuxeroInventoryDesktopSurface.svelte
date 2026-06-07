@@ -10,7 +10,7 @@
 	import type { InventoryCopy } from '$lib/i18n/messages';
 	import AuxeroInventoryActiveFilters from './AuxeroInventoryActiveFilters.svelte';
 	import AuxeroInventoryContent from './AuxeroInventoryContent.svelte';
-	import AuxeroInventoryFilterDropdown from './AuxeroInventoryFilterDropdown.svelte';
+	import AuxeroInventoryFilterPopover from './AuxeroInventoryFilterPopover.svelte';
 	import AuxeroInventoryMapFallback from './AuxeroInventoryMapFallback.svelte';
 	import AuxeroInventorySidebarFilterGroup from './AuxeroInventorySidebarFilterGroup.svelte';
 
@@ -115,6 +115,7 @@
 
 		const input = event.target;
 		const form = input.form;
+		const isModalPicker = Boolean(input.closest('[data-filter-presentation="modal"]'));
 
 		if (!form) return;
 
@@ -165,6 +166,8 @@
 
 			if (searchInput) searchInput.value = '';
 		}
+
+		if (isModalPicker) return;
 
 		void navigateForm(form);
 	};
@@ -304,9 +307,8 @@
 					</div>
 				</div>
 
-				<div class="bohemcars-inventory-hero-switches">
-					<span class="bohemcars-inventory-hero-switches__label">{desktop.viewLabel}</span>
-					<div class="listing-tabs menu-tab bohemcars-view-toggle">
+				<div class="bohemcars-inventory-hero-switches" aria-label={desktop.controlsLabel}>
+					<div class="listing-tabs menu-tab bohemcars-view-toggle" aria-label={desktop.viewLabel}>
 						{#each desktop.viewOptions as option (option.view)}
 							<a
 								class={['item-menu', option.active && 'active']}
@@ -328,12 +330,29 @@
 							<span>{desktop.layoutToggle.label}</span>
 						</a>
 					</div>
+					<div
+						class="bohemcars-inventory-filter-mode-toggle"
+						role="group"
+						aria-label={desktop.filterPresentationLabel}
+					>
+						{#each desktop.filterPresentationOptions as option (option.presentation)}
+							<a
+								class={['bohemcars-inventory-filter-mode-toggle__item', option.active && 'active']}
+								{...linkHref(option.href)}
+								aria-label={option.ariaLabel}
+								title={option.title}
+								aria-current={option.active ? 'true' : undefined}
+							>
+								{option.label}
+							</a>
+						{/each}
+					</div>
 				</div>
 
 				{#if desktop.layout !== 'dashboard'}
 					<div class="bohemcars-inventory-filter-grid">
 						{#each desktop.filters as filter (filter.name)}
-							<AuxeroInventoryFilterDropdown {filter} />
+							<AuxeroInventoryFilterPopover {filter} presentation={desktop.filterPresentation} />
 						{/each}
 					</div>
 

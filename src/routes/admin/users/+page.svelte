@@ -7,6 +7,9 @@
 <UserManagementTemplatePage
 	afterUsersHtml={data.afterUsersHtml}
 	beforeUsersHtml={data.beforeUsersHtml}
+	notes={data.notes}
 	pageDocument={data.pageDocument}
+	searchQuery={data.searchQuery}
+	selectedUserRole={data.selectedUserRole}
 	users={data.users}
 />

@@ -734,6 +734,27 @@
 		font-weight: 700;
 	}
 
+	:global(.header-wrapper-style-4 #main-nav .menu > li.menu-item-has-children > .sub-menu) {
+		left: 50% !important;
+		opacity: 0 !important;
+		pointer-events: none !important;
+		position: absolute !important;
+		top: 100% !important;
+		transform: translate(-50%, 15px) !important;
+		visibility: hidden !important;
+		z-index: 30;
+	}
+
+	:global(.header-wrapper-style-4 #main-nav .menu > li.menu-item-has-children:hover > .sub-menu),
+	:global(
+		.header-wrapper-style-4 #main-nav .menu > li.menu-item-has-children:focus-within > .sub-menu
+	) {
+		opacity: 1 !important;
+		pointer-events: auto !important;
+		transform: translate(-50%, 0) !important;
+		visibility: visible !important;
+	}
+
 	:global(
 		.header-wrapper-style-4
 			#main-nav
@@ -752,12 +773,19 @@
 		gap: 0;
 		left: 50vw !important;
 		max-width: 1410px !important;
+		opacity: 0 !important;
 		overflow: hidden;
 		padding: 0;
+		pointer-events: none !important;
 		position: fixed !important;
 		right: auto !important;
 		top: 144px !important;
 		transform: translate(-50%, 15px) !important;
+		transition:
+			opacity 180ms ease,
+			transform 180ms ease,
+			visibility 180ms ease;
+		visibility: hidden !important;
 		width: min(1410px, calc(100vw - 60px)) !important;
 		z-index: 30;
 	}
@@ -769,7 +797,23 @@
 			> li.menu-item--static:hover
 			.sub-menu.bohemcars-mega--vehicles
 	) {
+		opacity: 1 !important;
+		pointer-events: auto !important;
 		transform: translate(-50%, 0) !important;
+		visibility: visible !important;
+	}
+
+	:global(
+		.header-wrapper-style-4
+			#main-nav
+			.menu
+			> li.menu-item--static:focus-within
+			.sub-menu.bohemcars-mega--vehicles
+	) {
+		opacity: 1 !important;
+		pointer-events: auto !important;
+		transform: translate(-50%, 0) !important;
+		visibility: visible !important;
 	}
 
 	:global(
