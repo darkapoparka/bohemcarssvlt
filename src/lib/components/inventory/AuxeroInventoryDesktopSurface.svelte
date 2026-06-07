@@ -349,13 +349,13 @@
 					</div>
 				</div>
 
-				{#if desktop.layout !== 'dashboard'}
-					<div class="bohemcars-inventory-filter-grid">
-						{#each desktop.filters as filter (filter.name)}
-							<AuxeroInventoryFilterPopover {filter} presentation={desktop.filterPresentation} />
-						{/each}
-					</div>
+				<div class="bohemcars-inventory-filter-grid">
+					{#each desktop.filters as filter (filter.name)}
+						<AuxeroInventoryFilterPopover {filter} presentation={desktop.filterPresentation} />
+					{/each}
+				</div>
 
+				{#if desktop.layout !== 'dashboard'}
 					{@render utilityToolbar()}
 				{/if}
 			</form>

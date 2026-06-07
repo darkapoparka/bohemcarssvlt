@@ -1014,7 +1014,9 @@ test('header, garage, and inquiry flows keep Auxero behavior', async ({ page }) 
 	const firstSlug = await firstCard.getAttribute('data-bohemcars-slug');
 	expect(firstSlug).toBeTruthy();
 
-	await firstCard.locator('.bohemcars-favorite, .heart').click();
+	const favoriteButton = firstCard.locator('.bohemcars-favorite, .heart');
+	await favoriteButton.click();
+	await expect(favoriteButton).toHaveAttribute('aria-pressed', 'true');
 	await expect
 		.poll(async () =>
 			page.evaluate(
@@ -1099,6 +1101,41 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toBeVisible();
 	await expect(page.locator('.bohemcars-inventory-dashboard-sidebar')).toBeVisible();
 	await expect(page.locator('[data-bohemcars-layout-toggle]')).toContainText('Classic');
+	await expect(page.locator('.bohemcars-inventory-hero-switches__label')).toHaveCount(0);
+	await expect(
+		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-filter-grid')
+	).toBeVisible();
+	await expect(
+		page.locator('.bohemcars-inventory-banner [data-inventory-filter-field]')
+	).toHaveCount(8);
+	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
+		'Popover'
+	);
+	const dashboardBrandFilter = page.locator(
+		'.bohemcars-inventory-banner [data-name="brand"] .ifp__field'
+	);
+	await dashboardBrandFilter.click();
+	await expect(page.locator('.bohemcars-inventory-banner [data-name="brand"]')).toHaveClass(
+		/ifp--open/
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
+	).not.toHaveAttribute('aria-modal', 'true');
+	await page.keyboard.press('Escape');
+
+	await page.goto('/inventory?filters=modal');
+	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
+		'Modal'
+	);
+	const modalBrandFilter = page.locator(
+		'.bohemcars-inventory-banner [data-name="brand"] .ifp__field'
+	);
+	await modalBrandFilter.click();
+	await expect(
+		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
+	).toHaveAttribute('aria-modal', 'true');
+	await expect(page.locator('.bohemcars-inventory-banner .ifp__backdrop')).toHaveCount(1);
+	await page.keyboard.press('Escape');
 
 	await page.goto('/inventory?layout=classic');
 	await expect(page.locator('body')).toContainText('Показани 1 – 42 от 42 обяви');
