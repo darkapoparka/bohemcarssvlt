@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import type {
 		HomeFiveHeroAction,
+		HomeFiveHeroActionMode,
 		HomeFiveHeroData,
 		HomeFiveHeroSelect
 	} from '$lib/auxero/home-five';
@@ -22,7 +23,6 @@
 	const mobileShowroomMapHref =
 		'https://www.google.com/maps/search/?api=1&query=BohemCars%20Plovdiv%20South%20Industrial%20Zone';
 	const mobileShowroomPhoneHref = 'tel:+359888899911';
-	const mobileSearchToggleId = 'bohemcars-mobile-search-toggle';
 	const inventoryFilterHref = (name: string, value: string) =>
 		`/inventory?${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 	const isEnglish = $derived(hero?.searchSubmitPrefix === 'Show');
@@ -37,6 +37,15 @@
 			: (activeAction?.submitLabel ?? '')
 	);
 	const isInventoryMode = $derived(activeAction?.mode === 'buy');
+	let mobileModeOverride = $state<HomeFiveHeroActionMode | null>(null);
+	const mobileMode = $derived(mobileModeOverride ?? activeMode);
+	const activeMobileAction = $derived.by(
+		() => hero?.actions.find((action) => action.mode === mobileMode) ?? hero?.actions[0]
+	);
+	const activeMobileActionHref = $derived(activeMobileAction?.actionHref ?? '/inventory');
+	const selectMobileMode = (mode: HomeFiveHeroActionMode) => {
+		mobileModeOverride = mode;
+	};
 
 	// Desktop buy box — rich popover fields replace the cramped CSS dropdowns.
 	// Selection lives here so the model list can cascade off the chosen make(s),
@@ -65,32 +74,32 @@
 		}
 	});
 	const mobileSearchPlaceholder = $derived(
-		activeAction?.placeholder ??
+		activeMobileAction?.placeholder ??
 			(isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...')
 	);
 	const mobileHeading = $derived(
-		activeAction?.mobileHeading ?? (isEnglish ? 'Find your car.' : 'Намери автомобила си.')
+		activeMobileAction?.mobileHeading ?? (isEnglish ? 'Find your car.' : 'Намери автомобила си.')
 	);
 	const mobileModeHeading = $derived.by(() => {
-		if (activeAction?.mode === 'import') {
+		if (activeMobileAction?.mode === 'import') {
 			return isEnglish ? 'Import a car' : 'Внеси автомобил';
 		}
 
-		if (activeAction?.mode === 'sell') {
+		if (activeMobileAction?.mode === 'sell') {
 			return isEnglish ? 'Sell your car' : 'Продай автомобил';
 		}
 
 		return isEnglish ? 'Buy a car' : 'Купи автомобил';
 	});
 	const mobileSearchDrawerTitle = $derived(
-		activeAction?.drawerTitle ?? (isEnglish ? 'Find a car' : 'Намери автомобил')
+		activeMobileAction?.drawerTitle ?? (isEnglish ? 'Find a car' : 'Намери автомобил')
 	);
 	const mobileSearchDrawerKicker = $derived(
-		activeAction?.drawerKicker ?? (isEnglish ? 'Search' : 'Търсене')
+		activeMobileAction?.drawerKicker ?? (isEnglish ? 'Search' : 'Търсене')
 	);
 	const mobileSearchDrawerClose = $derived(isEnglish ? 'Close search' : 'Затвори търсенето');
 	const mobileAllLabel = $derived(
-		activeAction?.secondaryLabel ?? (isEnglish ? 'Browse all' : 'Разгледай всички')
+		activeMobileAction?.secondaryLabel ?? (isEnglish ? 'Browse all' : 'Разгледай всички')
 	);
 	const mobileShowAllCommand = $derived(isEnglish ? 'Show all' : 'Покажи всички');
 	const mobileActionTabs = $derived.by(() => hero?.actions ?? []);
@@ -150,6 +159,14 @@
 
 		return mobileQuickFilters;
 	};
+	const activeMobileQuickLinks = $derived.by(() => quickLinksForMode(mobileMode));
+	let mobileSearchOpen = $state(false);
+	const openMobileSearch = () => {
+		mobileSearchOpen = true;
+	};
+	const closeMobileSearch = () => {
+		mobileSearchOpen = false;
+	};
 	const modeAllText = (action: { mode: string; secondaryLabel?: string }) =>
 		action.mode === 'buy' && hero
 			? `${isEnglish ? 'All' : 'Всички'} ${hero.totalMatches} ${hero.searchSubmitSuffix}`
@@ -157,7 +174,16 @@
 	const drawerSubmitLabel = (tab: HomeFiveHeroAction) =>
 		tab.mode === 'buy' ? mobileShowAllCommand : tab.submitLabel;
 	const drawerSubmitAriaLabel = (tab: HomeFiveHeroAction) =>
-		tab.mode === 'buy' ? activeSubmitLabel : tab.submitLabel;
+		tab.mode === 'buy' && hero
+			? `${hero.searchSubmitPrefix} ${hero.totalMatches} ${hero.searchSubmitSuffix}`
+			: tab.submitLabel;
+	const desktopIntentTitle = $derived(
+		activeAction?.drawerTitle ?? (isEnglish ? 'Find a car' : 'Намери автомобил')
+	);
+	const desktopIntentPlaceholder = $derived(
+		activeAction?.placeholder ??
+			(isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...')
+	);
 
 	// The hero reads as a single static block — the three intents live in the
 	// Купи/Внос/Продай tabs below, so we halt the template's auto-rotating slider
@@ -210,23 +236,11 @@
 {/snippet}
 
 {#if hero}
-	{#each mobileActionTabs as tab (tab.mode)}
-		<input
-			class="bohemcars-mode-radio"
-			type="radio"
-			autocomplete="off"
-			name="bc-home-mode"
-			id="bc-home-mode-{tab.mode}"
-			tabindex="-1"
-			aria-hidden="true"
-			checked={tab.mode === activeMode}
-		/>
-	{/each}
 	<form
 		class="bohemcars-mobile-home"
-		action={resolve(activeActionHref)}
+		action={resolve(activeMobileActionHref)}
 		method="get"
-		data-bohemcars-search-form={activeAction?.mode ?? 'buy'}
+		data-bohemcars-search-form={activeMobileAction?.mode ?? 'buy'}
 	>
 		<input
 			id="bohemcars-mobile-location-toggle"
@@ -235,12 +249,6 @@
 			tabindex="-1"
 			aria-hidden="true"
 		/>
-		<input
-			id={mobileSearchToggleId}
-			class="bohemcars-mobile-search-toggle"
-			type="checkbox"
-			aria-label={mobileSearchDrawerTitle}
-		/>
 		<section class="bohemcars-mobile-hero" aria-label={mobileHeading}>
 			<div class="container">
 				<div class="bohemcars-mobile-hero__copy">
@@ -248,46 +256,50 @@
 				</div>
 
 				<div class="bohemcars-mobile-hero__search-module">
-					<nav class="bohemcars-mobile-hero__tabs" aria-label={hero.heading}>
+					<div class="bohemcars-mobile-hero__tabs" aria-label={hero.heading} role="tablist">
 						{#each mobileActionTabs as tab (tab.mode)}
-							<label
-								class="bohemcars-mobile-hero__tab bohemcars-mobile-hero__tab--{tab.mode}"
-								for="bc-home-mode-{tab.mode}"
+							<button
+								type="button"
+								role="tab"
+								class={`bohemcars-mobile-hero__tab bohemcars-mobile-hero__tab--${tab.mode} ${tab.mode === mobileMode ? 'active' : ''}`}
+								aria-selected={tab.mode === mobileMode}
+								onclick={() => selectMobileMode(tab.mode)}
 							>
 								{tab.label}
-							</label>
+							</button>
 						{/each}
-					</nav>
+					</div>
 
 					<div class="bohemcars-mobile-hero__search">
-						<label
+						<button
+							type="button"
 							class="bohemcars-mobile-hero__search-label"
-							for={mobileSearchToggleId}
 							aria-haspopup="dialog"
 							aria-controls="bohemcars-mobile-search-panel"
+							aria-expanded={mobileSearchOpen}
+							onclick={openMobileSearch}
 						>
-							{#each mobileActionTabs as tab (tab.mode)}
-								<span class="bc-mode-text bc-mode-text--{tab.mode}"
-									>{tab.placeholder ?? mobileSearchPlaceholder}</span
-								>
-							{/each}
-						</label>
-						<label
+							<span>{mobileSearchPlaceholder}</span>
+						</button>
+						<button
+							type="button"
 							class="bohemcars-mobile-hero__search-action"
-							for={mobileSearchToggleId}
 							aria-label={hero.searchSubmitPrefix}
 							aria-controls="bohemcars-mobile-search-panel"
+							aria-expanded={mobileSearchOpen}
+							onclick={openMobileSearch}
 						>
 							<Search size={23} strokeWidth={2.25} aria-hidden="true" />
-						</label>
+						</button>
 					</div>
 				</div>
 
 				<div class="bohemcars-mobile-hero__all-row">
-					<a class="bohemcars-mobile-hero__all" href={resolve('/inventory')}>
-						{#each mobileActionTabs as tab (tab.mode)}
-							<span class="bc-mode-text bc-mode-text--{tab.mode}">{modeAllText(tab)}</span>
-						{/each}
+					<a
+						class="bohemcars-mobile-hero__all"
+						href={resolve((activeMobileAction?.secondaryHref ?? '/inventory') as '/')}
+					>
+						<span>{activeMobileAction ? modeAllText(activeMobileAction) : mobileAllLabel}</span>
 						<ArrowRight size={16} strokeWidth={2.3} aria-hidden="true" />
 					</a>
 				</div>
@@ -358,43 +370,50 @@
 			</div>
 		</div>
 
-		<div class="bohemcars-mobile-search-sheet">
-			<label
-				for={mobileSearchToggleId}
+		<div class={`bohemcars-mobile-search-sheet ${mobileSearchOpen ? 'is-open' : ''}`}>
+			<button
+				type="button"
 				class="bohemcars-mobile-search-sheet__backdrop"
 				aria-label={mobileSearchDrawerClose}
-			></label>
+				onclick={closeMobileSearch}
+			></button>
 			<div
 				id="bohemcars-mobile-search-panel"
 				class="bohemcars-mobile-search-sheet__panel"
 				role="dialog"
 				aria-modal="true"
 				aria-label={mobileSearchDrawerTitle}
+				aria-hidden={!mobileSearchOpen}
 			>
 				<span class="bohemcars-mobile-search-sheet__handle"></span>
-				{#each mobileActionTabs as tab (tab.mode)}
-					<div class="bc-drawer bc-drawer--{tab.mode}">
+				{#if activeMobileAction}
+					<div class="bc-drawer bc-drawer--{activeMobileAction.mode}">
 						<header>
 							<div>
-								<p>{tab.drawerKicker ?? mobileSearchDrawerKicker}</p>
-								<h2>{tab.drawerTitle ?? mobileSearchDrawerTitle}</h2>
+								<p>{activeMobileAction.drawerKicker ?? mobileSearchDrawerKicker}</p>
+								<h2>{activeMobileAction.drawerTitle ?? mobileSearchDrawerTitle}</h2>
 							</div>
-							<label for={mobileSearchToggleId} aria-label={mobileSearchDrawerClose}>
+							<button
+								type="button"
+								class="bohemcars-mobile-search-sheet__close"
+								aria-label={mobileSearchDrawerClose}
+								onclick={closeMobileSearch}
+							>
 								<X size={20} strokeWidth={2.2} aria-hidden="true" />
-							</label>
+							</button>
 						</header>
 						<div class="bohemcars-mobile-search-sheet__field">
 							<Search size={20} strokeWidth={2.15} aria-hidden="true" />
 							<input
-								name={tab.inputName ?? 'q'}
+								name={activeMobileAction.inputName ?? 'q'}
 								type="search"
-								placeholder={tab.placeholder ?? mobileSearchPlaceholder}
+								placeholder={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
 								autocomplete="off"
-								aria-label={tab.placeholder ?? mobileSearchPlaceholder}
+								aria-label={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
 							/>
 						</div>
 						<div class="bohemcars-mobile-search-sheet__body">
-							{#if tab.mode === 'buy'}
+							{#if activeMobileAction.mode === 'buy'}
 								{#each hero.primaryFilters.slice(0, 3) as select (select.id)}
 									<section
 										class={`bohemcars-mobile-search-sheet__group ${select.name === 'brand' ? 'bohemcars-mobile-search-sheet__group--logos' : ''}`}
@@ -437,23 +456,23 @@
 									</div>
 								</section>
 							{:else}
-								<p class="bohemcars-mobile-search-sheet__hint">{tab.helper}</p>
+								<p class="bohemcars-mobile-search-sheet__hint">{activeMobileAction.helper}</p>
 							{/if}
 						</div>
 						<div class="bohemcars-mobile-search-sheet__actions">
-							<a href={resolve(tab.secondaryHref ?? '/inventory')}
-								>{tab.secondaryLabel ?? mobileAllLabel}</a
+							<a href={resolve((activeMobileAction.secondaryHref ?? '/inventory') as '/')}
+								>{activeMobileAction.secondaryLabel ?? mobileAllLabel}</a
 							>
 							<button
 								type="submit"
-								formaction={resolve(tab.actionHref)}
-								aria-label={drawerSubmitAriaLabel(tab)}
+								formaction={resolve(activeMobileAction.actionHref)}
+								aria-label={drawerSubmitAriaLabel(activeMobileAction)}
 							>
-								{drawerSubmitLabel(tab)}
+								{drawerSubmitLabel(activeMobileAction)}
 							</button>
 						</div>
 					</div>
-				{/each}
+				{/if}
 			</div>
 		</div>
 	</form>
@@ -461,24 +480,24 @@
 	{#if mobileActionTabs.length}
 		<section class="bohemcars-mobile-home-quick" aria-label={hero.heading}>
 			<div class="container">
-				{#each mobileActionTabs as tab (tab.mode)}
-					<nav class="bohemcars-mobile-home-quick__scroller bc-quick bc-quick--{tab.mode}">
-						{#if tab.mode === 'buy'}
-							<label
-								class="bohemcars-mobile-home-quick__filter"
-								for={mobileSearchToggleId}
-								aria-haspopup="dialog"
-								aria-controls="bohemcars-mobile-search-panel"
-								aria-label={isEnglish ? 'Open filters' : 'Отвори филтри'}
-							>
-								<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
-							</label>
-						{/if}
-						{#each quickLinksForMode(tab.mode) as filter (filter.href)}
-							<a href={resolve(filter.href as '/')}>{filter.label}</a>
-						{/each}
-					</nav>
-				{/each}
+				<nav class="bohemcars-mobile-home-quick__scroller bc-quick bc-quick--{mobileMode}">
+					{#if mobileMode === 'buy'}
+						<button
+							type="button"
+							class="bohemcars-mobile-home-quick__filter"
+							aria-haspopup="dialog"
+							aria-controls="bohemcars-mobile-search-panel"
+							aria-expanded={mobileSearchOpen}
+							aria-label={isEnglish ? 'Open filters' : 'Отвори филтри'}
+							onclick={openMobileSearch}
+						>
+							<SlidersHorizontal size={18} strokeWidth={2.2} aria-hidden="true" />
+						</button>
+					{/if}
+					{#each activeMobileQuickLinks as filter (filter.href)}
+						<a href={resolve(filter.href as '/')}>{filter.label}</a>
+					{/each}
+				</nav>
 			</div>
 		</section>
 	{/if}
@@ -602,11 +621,11 @@
 						</button>
 					{:else}
 						<label class="search-cars__intent-field">
-							<span>{mobileSearchDrawerTitle}</span>
+							<span>{desktopIntentTitle}</span>
 							<input
 								name={activeAction?.inputName ?? 'vehicle'}
 								type="search"
-								placeholder={mobileSearchPlaceholder}
+								placeholder={desktopIntentPlaceholder}
 								required
 								autocomplete="off"
 							/>
@@ -928,19 +947,6 @@
 		display: none !important;
 	}
 
-	.bohemcars-mode-radio {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0 0 0 0);
-		clip-path: inset(50%);
-		opacity: 0;
-		pointer-events: none;
-		white-space: nowrap;
-	}
-
 	@media (max-width: 575px) {
 		.search-cars__title {
 			font-size: 40px;
@@ -992,8 +998,7 @@
 			color: var(--bohemcars-mobile-ink, #ffffff);
 		}
 
-		.bohemcars-mobile-location-toggle,
-		.bohemcars-mobile-search-toggle {
+		.bohemcars-mobile-location-toggle {
 			position: fixed;
 			width: 1px;
 			height: 1px;
@@ -1048,12 +1053,14 @@
 			padding: 0;
 		}
 
-		.bohemcars-mobile-hero__tabs label {
+		.bohemcars-mobile-hero__tabs button {
 			position: relative;
 			display: flex;
 			min-height: 48px;
+			width: 100%;
 			align-items: center;
 			justify-content: center;
+			border: 0;
 			border-radius: 0;
 			background: transparent;
 			color: var(--bohemcars-mobile-ink-muted, rgba(255, 255, 255, 0.88));
@@ -1070,12 +1077,7 @@
 			transition: color 0.18s ease;
 		}
 
-		/* Active tab is driven by the hidden radio — pure CSS, no navigation, no reload. */
-		:global(#bc-home-mode-buy:checked ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--buy),
-		:global(
-			#bc-home-mode-import:checked ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--import
-		),
-		:global(#bc-home-mode-sell:checked ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--sell) {
+		.bohemcars-mobile-hero__tab.active {
 			background: transparent;
 			box-shadow: none;
 			color: var(--bohemcars-mobile-ink-strong, #ffffff);
@@ -1095,7 +1097,7 @@
 			pointer-events: none;
 		}
 
-		.bohemcars-mobile-hero__tabs label::after {
+		.bohemcars-mobile-hero__tabs button::after {
 			position: absolute;
 			right: 0;
 			bottom: -1px;
@@ -1108,72 +1110,22 @@
 			transition: background-color 0.18s ease;
 		}
 
-		:global(
-			#bc-home-mode-buy:checked ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--buy::after
-		),
-		:global(
-			#bc-home-mode-import:checked
-				~ .bohemcars-mobile-home
-				.bohemcars-mobile-hero__tab--import::after
-		),
-		:global(
-			#bc-home-mode-sell:checked ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--sell::after
-		) {
+		.bohemcars-mobile-hero__tab.active::after {
 			background: #14210f;
 		}
 
-		:global(
-			#bc-home-mode-buy:focus-visible ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--buy
-		),
-		:global(
-			#bc-home-mode-import:focus-visible
-				~ .bohemcars-mobile-home
-				.bohemcars-mobile-hero__tab--import
-		),
-		:global(
-			#bc-home-mode-sell:focus-visible ~ .bohemcars-mobile-home .bohemcars-mobile-hero__tab--sell
-		) {
+		.bohemcars-mobile-hero__tab:focus-visible {
 			outline: 2px solid rgba(28, 28, 28, 0.64);
 			outline-offset: 3px;
 		}
 
 		@media (hover: hover) and (pointer: fine) {
-			.bohemcars-mobile-hero__tabs label:hover {
+			.bohemcars-mobile-hero__tabs button:hover {
 				color: var(--bohemcars-mobile-ink-strong, #ffffff);
 			}
 		}
 
-		/* Mode panels (placeholder · CTA · quick-links): only the active mode's shows,
-		   driven by the same hidden radios — pure CSS, no navigation. */
-		.bohemcars-mobile-hero__search-label .bc-mode-text,
-		.bohemcars-mobile-hero__all .bc-mode-text {
-			display: none;
-		}
-
-		:global(#bc-home-mode-buy:checked ~ .bohemcars-mobile-home .bc-mode-text--buy),
-		:global(#bc-home-mode-import:checked ~ .bohemcars-mobile-home .bc-mode-text--import),
-		:global(#bc-home-mode-sell:checked ~ .bohemcars-mobile-home .bc-mode-text--sell) {
-			display: block;
-		}
-
-		.bohemcars-mobile-home-quick .bc-quick {
-			display: none;
-		}
-
-		:global(#bc-home-mode-buy:checked ~ .bohemcars-mobile-home-quick .bc-quick--buy),
-		:global(#bc-home-mode-import:checked ~ .bohemcars-mobile-home-quick .bc-quick--import),
-		:global(#bc-home-mode-sell:checked ~ .bohemcars-mobile-home-quick .bc-quick--sell) {
-			display: flex;
-		}
-
-		/* Search drawer is mode-aware too — only the active mode's drawer shows. */
 		.bohemcars-mobile-search-sheet__panel .bc-drawer {
-			display: none;
-		}
-
-		:global(#bc-home-mode-buy:checked ~ .bohemcars-mobile-home .bc-drawer--buy),
-		:global(#bc-home-mode-import:checked ~ .bohemcars-mobile-home .bc-drawer--import),
-		:global(#bc-home-mode-sell:checked ~ .bohemcars-mobile-home .bc-drawer--sell) {
 			display: grid;
 			min-height: 0;
 			gap: 13px;
@@ -1206,8 +1158,12 @@
 			height: 100%;
 			flex: 1 1 auto;
 			align-items: center;
+			border: 0;
+			background: transparent;
 			color: #1c1c1c;
 			cursor: pointer;
+			padding: 0;
+			text-align: left;
 		}
 
 		.bohemcars-mobile-hero__search-label span {
@@ -1582,8 +1538,10 @@
 			position: absolute;
 			inset: 0;
 			display: block;
+			border: 0;
 			background: rgba(0, 0, 0, 0.34);
 			opacity: 0;
+			padding: 0;
 			transition: opacity 0.18s ease;
 		}
 
@@ -1607,24 +1565,16 @@
 			-webkit-overflow-scrolling: touch;
 		}
 
-		:global(.bohemcars-mobile-search-toggle:checked ~ .bohemcars-mobile-search-sheet) {
+		.bohemcars-mobile-search-sheet:global(.is-open) {
 			visibility: visible !important;
 			pointer-events: auto !important;
 		}
 
-		:global(
-			.bohemcars-mobile-search-toggle:checked
-				~ .bohemcars-mobile-search-sheet
-				.bohemcars-mobile-search-sheet__backdrop
-		) {
+		.bohemcars-mobile-search-sheet:global(.is-open) .bohemcars-mobile-search-sheet__backdrop {
 			opacity: 1 !important;
 		}
 
-		:global(
-			.bohemcars-mobile-search-toggle:checked
-				~ .bohemcars-mobile-search-sheet
-				.bohemcars-mobile-search-sheet__panel
-		) {
+		.bohemcars-mobile-search-sheet:global(.is-open) .bohemcars-mobile-search-sheet__panel {
 			transform: translateY(0) !important;
 		}
 
@@ -1664,7 +1614,7 @@
 			line-height: 26px;
 		}
 
-		.bohemcars-mobile-search-sheet__panel header label {
+		.bohemcars-mobile-search-sheet__close {
 			display: flex;
 			width: 44px;
 			height: 44px;
@@ -1875,7 +1825,7 @@
 		}
 
 		.bohemcars-mobile-home-quick__scroller a,
-		.bohemcars-mobile-home-quick__scroller label {
+		.bohemcars-mobile-home-quick__scroller button {
 			display: inline-flex;
 			min-width: max-content;
 			min-height: 42px;
@@ -1905,15 +1855,15 @@
 
 		.bohemcars-mobile-home-quick__scroller a:hover,
 		.bohemcars-mobile-home-quick__scroller a:focus-visible,
-		.bohemcars-mobile-home-quick__scroller label:hover,
-		.bohemcars-mobile-home-quick__scroller label:focus-visible {
+		.bohemcars-mobile-home-quick__scroller button:hover,
+		.bohemcars-mobile-home-quick__scroller button:focus-visible {
 			background: #dfe9c7;
 			box-shadow: none;
 			color: #1c1c1c;
 		}
 
 		.bohemcars-mobile-home-quick__scroller a:focus-visible,
-		.bohemcars-mobile-home-quick__scroller label:focus-visible {
+		.bohemcars-mobile-home-quick__scroller button:focus-visible {
 			outline: 2px solid rgba(28, 28, 28, 0.7);
 			outline-offset: 3px;
 		}

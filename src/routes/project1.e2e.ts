@@ -745,6 +745,71 @@ test('mobile bottom navigation returns home without leaving the Auxero preloader
 	expect(hydrationWarnings).toEqual([]);
 });
 
+test('mobile homepage intent tabs keep form, quick links, and drawer in sync', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const mobileHero = page.locator('.bohemcars-mobile-home');
+	const importTab = mobileHero.getByRole('tab', { name: 'Внос' });
+
+	await expect(mobileHero).toHaveAttribute('data-bohemcars-search-form', 'buy');
+	await expect(importTab).toHaveAttribute('aria-selected', 'false');
+
+	await importTab.click();
+
+	await expect(importTab).toHaveAttribute('aria-selected', 'true');
+	await expect(mobileHero).toHaveAttribute('data-bohemcars-search-form', 'import');
+	await expect(mobileHero).toHaveAttribute('action', /\/import$/);
+	await expect(mobileHero.locator('.bohemcars-mobile-hero__search-label')).toContainText(
+		'Линк към обява или VIN...'
+	);
+	await expect(mobileHero.locator('.bohemcars-mobile-hero__all')).toHaveAttribute(
+		'href',
+		/\/import$/
+	);
+	await expect(mobileHero.locator('.bohemcars-mobile-hero__all')).toContainText(
+		'Пълна заявка за внос'
+	);
+	await expect(page.locator('.bohemcars-mobile-home-quick')).toContainText('Калкулатор');
+	await expect(page.locator('.bohemcars-mobile-home-quick')).not.toContainText('До 10 000');
+
+	await mobileHero.locator('.bohemcars-mobile-hero__search-label').click();
+
+	const panel = mobileHero.locator('.bohemcars-mobile-search-sheet__panel');
+	await expect(mobileHero.locator('.bohemcars-mobile-search-sheet')).toHaveClass(/is-open/);
+	await expect(panel).toBeVisible();
+	await expect(panel.locator('.bc-drawer')).toHaveCount(1);
+	await expect(panel.locator('.bc-drawer--import')).toBeVisible();
+	await expect(panel.locator('h2')).toContainText('Изпрати линк за проверка');
+	await expect(panel.locator('input[name="vehicle"]')).toHaveCount(1);
+	await expect(panel.getByRole('button', { name: 'Провери линка' })).toBeVisible();
+
+	await expect
+		.poll(async () => {
+			return panel.evaluate((element) => {
+				const rect = element.getBoundingClientRect();
+				const styles = window.getComputedStyle(element);
+
+				return {
+					top: rect.top,
+					transform: styles.transform,
+					viewportHeight: window.innerHeight
+				};
+			});
+		})
+		.toMatchObject({ top: expect.any(Number), transform: 'matrix(1, 0, 0, 1, 0, 0)' });
+
+	await expect
+		.poll(async () =>
+			panel.evaluate((element) => {
+				const rect = element.getBoundingClientRect();
+
+				return rect.top < window.innerHeight;
+			})
+		)
+		.toBe(true);
+});
+
 test('mobile primary routes do not expose desktop shells or fallback chrome', async ({ page }) => {
 	const visibleChromeLeaks = async () =>
 		page.evaluate(() => {
