@@ -26,11 +26,9 @@
 
 	.bohemcars-about-page__intro {
 		overflow: hidden;
-		border-top: 1px solid var(--bc-border);
-		border-bottom: 1px solid var(--bc-border);
-		background: var(--bc-surface-soft);
-		padding-top: 52px;
-		padding-bottom: 56px;
+		background: var(--bc-bg);
+		padding-top: 38px;
+		padding-bottom: 42px;
 	}
 
 	@media (max-width: 767px) {
