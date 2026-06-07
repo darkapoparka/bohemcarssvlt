@@ -13,8 +13,8 @@
 			<p class="bohemcars-consultants__eyebrow">Екип</p>
 			<h2>Екипът зад процеса</h2>
 			<p class="bohemcars-consultants__copy">
-				Трите роли покриват най-честия път: наличен автомобил, внос от Канада, проверка, документи
-				и предаване.
+				Трите роли покриват най-честия път: наличен автомобил, внос от Канада, проверка, документи и
+				предаване.
 			</p>
 		</div>
 
@@ -119,60 +119,46 @@
 		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 16px;
-		background: var(--bc-surface-soft);
-		transition:
-			border-color 0.2s ease,
-			background-color 0.2s ease,
-			box-shadow 0.25s ease,
-			transform 0.25s ease;
+		border-radius: 8px;
+		background: #ffffff;
+		transition: border-color 0.18s ease;
 	}
 
 	.bc-team-card:hover {
 		border-color: #cbd8c1;
-		background: #ffffff;
-		box-shadow: 0 18px 42px rgb(20 33 15 / 0.09);
-		transform: translateY(-3px);
 	}
 
 	.bc-team-card__media {
 		position: relative;
 		display: block;
 		overflow: hidden;
-		aspect-ratio: 1 / 1;
-		background: var(--bc-surface);
+		aspect-ratio: 5 / 4;
+		background: var(--bc-surface-soft);
 	}
 
 	.bc-team-card__media img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		object-position: 50% 18%;
-		transition: transform 0.55s ease;
-	}
-
-	.bc-team-card:hover .bc-team-card__media img {
-		transform: scale(1.035);
+		object-position: 50% 20%;
 	}
 
 	.bc-team-card__index {
 		position: absolute;
-		top: 14px;
-		left: 14px;
+		top: 12px;
+		left: 12px;
 		z-index: 1;
 		display: inline-flex;
-		min-width: 34px;
-		height: 27px;
-		padding: 0 10px;
+		height: 22px;
+		padding: 0 9px;
 		border-radius: 999px;
-		background: rgb(20 33 15 / 0.72);
-		color: #d9f275;
-		font-size: 12px;
+		background: #98bc2a;
+		color: #1a2a16;
+		font-size: 11px;
 		font-weight: 800;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.03em;
 		align-items: center;
 		justify-content: center;
-		backdrop-filter: blur(6px);
 	}
 
 	.bc-team-card__body {

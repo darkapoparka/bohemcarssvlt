@@ -157,7 +157,7 @@
 				class="bg-sidebar text-sidebar-foreground border-sidebar-border flex h-[var(--header-height)] shrink-0 items-center gap-3 border-b px-5 lg:px-8"
 			>
 				<Sidebar.Trigger
-					class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground -ms-1 text-sidebar-foreground"
+					class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground -ms-1"
 				/>
 				<Separator
 					orientation="vertical"

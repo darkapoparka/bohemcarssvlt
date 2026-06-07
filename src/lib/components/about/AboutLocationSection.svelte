@@ -152,21 +152,19 @@
 		display: flex;
 		min-height: 0;
 		border: 1px solid var(--bc-border);
-		border-radius: 14px;
-		background: var(--bc-surface-soft);
-		padding: 16px 18px;
+		border-radius: 8px;
+		background: var(--bc-surface);
+		padding: 15px 16px;
 		gap: 14px;
 		align-items: flex-start;
 		transition:
-			background-color 0.2s ease,
-			border-color 0.2s ease,
-			box-shadow 0.25s ease;
+			background-color 0.18s ease,
+			border-color 0.18s ease;
 	}
 
 	.bohemcars-about-location-card:hover {
 		border-color: #cbd8c1;
-		background: #ffffff;
-		box-shadow: 0 14px 32px rgb(20 33 15 / 0.07);
+		background: var(--bc-surface-hover);
 	}
 
 	.bohemcars-about-location-card span {
@@ -209,12 +207,11 @@
 
 	.bohemcars-about-location__map {
 		position: relative;
-		min-height: 420px;
+		min-height: 400px;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 16px;
+		border-radius: 8px;
 		background: #eef2ec;
-		box-shadow: 0 22px 54px rgb(20 33 15 / 0.12);
 		isolation: isolate;
 	}
 
@@ -234,13 +231,13 @@
 		left: 18px;
 		display: flex;
 		max-width: min(320px, calc(100% - 36px));
-		border: 1px solid rgb(255 255 255 / 0.65);
-		border-radius: 14px;
-		background: rgb(255 255 255 / 0.9);
-		padding: 12px 15px;
+		border: 1px solid rgb(255 255 255 / 0.7);
+		border-radius: 8px;
+		background: rgb(255 255 255 / 0.92);
+		padding: 11px 14px;
 		gap: 12px;
 		align-items: center;
-		box-shadow: 0 12px 30px rgb(20 33 15 / 0.18);
+		box-shadow: 0 8px 22px rgb(20 33 15 / 0.16);
 		backdrop-filter: blur(10px);
 	}
 
@@ -281,28 +278,25 @@
 	.bohemcars-about-location__map-link {
 		position: absolute;
 		z-index: 2;
-		right: 18px;
-		bottom: 18px;
+		right: 16px;
+		bottom: 16px;
 		display: inline-flex;
-		min-height: 44px;
+		min-height: 42px;
 		align-items: center;
 		gap: 9px;
-		border-radius: 999px;
-		background: linear-gradient(150deg, #24380f, #16240e);
-		padding: 0 20px;
+		border-radius: 8px;
+		background: #16240e;
+		padding: 0 18px;
 		color: #ffffff;
 		font-size: 14px;
 		font-weight: 700;
-		box-shadow: 0 12px 28px rgb(20 33 15 / 0.32);
-		transition:
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
+		box-shadow: 0 6px 18px rgb(20 33 15 / 0.24);
+		transition: background-color 0.18s ease;
 	}
 
 	.bohemcars-about-location__map-link:hover {
 		color: #ffffff;
-		transform: translateY(-1px);
-		box-shadow: 0 16px 34px rgb(20 33 15 / 0.4);
+		background: #20330f;
 	}
 
 	@media (max-width: 991px) {

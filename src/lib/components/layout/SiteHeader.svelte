@@ -2,7 +2,7 @@
 	import { GitCompare, Heart, Menu, Plus, Search, User, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { bohemcarsAssets, isPrimaryNavActive, mainNavigation } from '$lib/data/bohemcars';
-	import { cn } from '$lib/utils/cn';
+	import { cn } from '$lib/utils';
 	import { getGarageContext } from '$lib/state/garage.svelte';
 
 	interface Props {

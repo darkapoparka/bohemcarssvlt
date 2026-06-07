@@ -77,16 +77,14 @@
 	}
 
 	.bohemcars-about-brand-card {
-		min-height: 150px;
+		min-height: 138px;
 		border: 1px solid var(--bc-border);
-		border-radius: 14px;
-		background: var(--bc-surface-soft) !important;
+		border-radius: 8px;
+		background: var(--bc-surface) !important;
 		box-shadow: none !important;
 		transition:
-			background-color 0.2s ease,
-			border-color 0.2s ease,
-			box-shadow 0.25s ease,
-			transform 0.25s ease;
+			background-color 0.18s ease,
+			border-color 0.18s ease;
 	}
 
 	.bohemcars-about-brand-card__logo-frame {
@@ -109,9 +107,8 @@
 
 	.bohemcars-about-brand-card:hover {
 		border-color: #cbd8c1;
-		background: #ffffff !important;
-		box-shadow: 0 14px 32px rgb(20 33 15 / 0.07) !important;
-		transform: translateY(-3px);
+		background: var(--bc-surface-hover) !important;
+		box-shadow: none !important;
 	}
 
 	.bohemcars-about-brand-card :global(.text-muted) {

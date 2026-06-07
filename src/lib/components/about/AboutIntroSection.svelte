@@ -31,8 +31,7 @@
 				>
 					<div class="bohemcars-about-service__media">
 						<img src={step.image} alt={step.title} loading="lazy" />
-						<span class="bohemcars-about-service__number"
-							>{String(index + 1).padStart(2, '0')}</span
+						<span class="bohemcars-about-service__number">{String(index + 1).padStart(2, '0')}</span
 						>
 					</div>
 					<div class="bohemcars-about-service__body">
@@ -98,7 +97,7 @@
 		display: flex;
 		min-height: 44px;
 		border: 1px solid var(--bc-border);
-		border-radius: 10px;
+		border-radius: 8px;
 		background: #ffffff;
 		padding: 10px 16px;
 		gap: 10px;
@@ -131,25 +130,22 @@
 		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 16px;
+		border-radius: 8px;
 		background: #ffffff;
-		box-shadow: 0 1px 2px rgb(20 33 15 / 0.04);
+		box-shadow: none;
 		color: #1c1c1c;
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
+		transition: border-color 0.18s ease;
 	}
 
 	.bohemcars-about-service:hover {
 		border-color: #cbd8c1;
-		box-shadow: 0 10px 26px rgb(20 33 15 / 0.07);
 	}
 
 	.bohemcars-about-service__media {
 		position: relative;
 		overflow: hidden;
-		aspect-ratio: 16 / 10;
-		background: var(--bc-surface);
+		aspect-ratio: 16 / 9;
+		background: var(--bc-surface-soft);
 	}
 
 	.bohemcars-about-service__media img {
@@ -161,43 +157,41 @@
 	.bohemcars-about-service__number {
 		position: absolute;
 		z-index: 2;
-		top: 12px;
-		left: 12px;
+		top: 11px;
+		left: 11px;
 		display: inline-flex;
-		min-width: 32px;
-		height: 26px;
-		padding: 0 10px;
+		height: 22px;
+		padding: 0 9px;
 		border-radius: 999px;
-		background: rgb(20 33 15 / 0.74);
-		color: #d9f275;
-		font-size: 12px;
+		background: #98bc2a;
+		color: #1a2a16;
+		font-size: 11px;
 		font-weight: 800;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.03em;
 		line-height: 1;
 		align-items: center;
 		justify-content: center;
-		backdrop-filter: blur(6px);
 	}
 
 	.bohemcars-about-service__body {
 		display: flex;
 		flex: 1 1 auto;
 		flex-direction: column;
-		padding: 16px 18px 18px;
+		padding: 14px 16px 16px;
 	}
 
 	.bohemcars-about-service h3 {
-		margin-bottom: 7px;
+		margin-bottom: 6px;
 		color: #1c1c1c;
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: 700;
-		line-height: 1.25;
+		line-height: 1.3;
 	}
 
 	.bohemcars-about-service p {
 		margin: 0;
 		color: #696665;
-		font-size: 14px;
+		font-size: 13.5px;
 		font-weight: 500;
 		line-height: 1.5;
 	}
