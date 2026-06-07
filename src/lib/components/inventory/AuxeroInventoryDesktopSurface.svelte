@@ -769,23 +769,23 @@
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field) {
 		box-sizing: border-box;
-		min-height: 68px;
-		border-color: #dfe6d9;
-		border-radius: 10px;
-		background: #ffffff;
-		padding: 10px 42px 10px 15px;
-		box-shadow: 0 1px 0 rgba(24, 31, 18, 0.03);
+		min-height: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		padding: 15px 42px 15px 18px;
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field:hover) {
-		border-color: #cfd9c5;
-		background: #fbfcf8;
+		border: 0;
+		background: #f4f7ee;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp--open .ifp__field) {
-		border-color: #9bc12d;
-		background: #ffffff;
-		box-shadow: 0 0 0 3px rgba(155, 193, 45, 0.14);
+		border: 0;
+		background: #f4f7ee;
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__label) {
@@ -809,7 +809,7 @@
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__chev) {
-		right: 15px;
+		right: 18px;
 		color: #1c1c1c;
 	}
 
@@ -818,11 +818,12 @@
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 100%;
-		margin-top: 6px;
-		border-color: #dfe6d9;
-		border-radius: 12px;
-		padding: 8px;
-		box-shadow: 0 10px 24px rgba(18, 24, 14, 0.1);
+		margin: -4px 0 4px;
+		border: 0;
+		border-radius: 0;
+		padding: 0 18px 10px;
+		background: transparent;
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__grid) {
@@ -848,10 +849,10 @@
 	.bohemcars-inventory-sidebar-fields :global(.ifp__foot) {
 		position: sticky;
 		bottom: 0;
-		margin: 0 -8px -8px;
+		margin: 0 -18px 0;
 		border-top: 1px solid #e5eadf;
 		background: #ffffff;
-		padding: 10px 8px 8px;
+		padding: 10px 18px 2px;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__done) {
@@ -877,9 +878,8 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		margin-top: 16px;
-		border-top: 1px solid #dfe7d8;
-		padding-top: 14px;
+		margin-top: 0;
+		padding: 15px 18px 17px;
 	}
 
 	.bohemcars-inventory-banner__buybox .bohemcars-inventory-searchbar {
