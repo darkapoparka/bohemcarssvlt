@@ -3,7 +3,6 @@
 $(function() {
   // Check if jQuery UI slider is available
   if (typeof $.fn.slider === 'undefined') {
-    console.error('gear-slider.js: jQuery UI slider is required. Please load https://code.jquery.com/ui/1.13.2/jquery-ui.min.js before this file.');
     return;
   }
 

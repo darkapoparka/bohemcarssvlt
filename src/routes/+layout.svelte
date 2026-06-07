@@ -30,8 +30,21 @@
 	let isInventoryDetailPage = $derived(/^\/inventory\/[^/]+\/?$/.test(page.url.pathname));
 	let isDashboardArea = $derived(/^\/(?:account|admin)(?:\/|$)/.test(page.url.pathname));
 
+	const resetAuxeroTransientUi = () => {
+		for (const element of document.querySelectorAll<HTMLElement>(
+			'.modal.active, .search-modal.active, .core-dropdown.active'
+		)) {
+			element.classList.remove('active');
+		}
+
+		document.body.classList.remove('modal-open', 'overflow-hidden');
+		document.body.style.removeProperty('overflow');
+	};
+
 	afterNavigate(() => {
 		document.documentElement.classList.remove('bohemcars-route-nav-click');
+		resetAuxeroTransientUi();
+		requestAnimationFrame(resetAuxeroTransientUi);
 	});
 
 	$effect(() => {

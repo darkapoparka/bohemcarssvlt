@@ -966,6 +966,18 @@ test('desktop client navigation resets Auxero shell state across route families'
 					(image) => image.complete && image.naturalWidth === 0
 				).length,
 				firstHeading: firstHeading?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
+				homeReviewCardWidth: Math.round(
+					document
+						.querySelector('.bohemcars-home-reviews .testimonior-box')
+						?.getBoundingClientRect().width ?? 0
+				),
+				homeReviewSwiperInitialized: Boolean(
+					(
+						document.querySelector('.bohemcars-home-reviews .swiper-testimonior') as HTMLElement & {
+							swiper?: unknown;
+						}
+					)?.swiper
+				),
 				horizontalOverflow:
 					document.documentElement.scrollWidth - document.documentElement.clientWidth,
 				marker: (window as Window & { __bcClientNavSequence?: string }).__bcClientNavSequence,
@@ -983,6 +995,12 @@ test('desktop client navigation resets Auxero shell state across route families'
 		expect(state.activeHtmlSuppression, route).toBe(false);
 		expect(state.brokenImages, route).toBe(0);
 		expect(state.horizontalOverflow, route).toBe(0);
+
+		if (route === '/') {
+			expect(state.homeReviewSwiperInitialized).toBe(true);
+			expect(state.homeReviewCardWidth).toBeGreaterThan(300);
+			expect(state.homeReviewCardWidth).toBeLessThan(500);
+		}
 	}
 
 	expect(pageErrors).toEqual([]);
@@ -1436,15 +1454,32 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page).toHaveURL(/\/inventory$/);
 	await expect(page.locator('.preload')).toBeHidden();
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toBeVisible();
-	await expect(page.locator('.bohemcars-inventory-dashboard-sidebar')).toBeVisible();
+	const sidebarRail = page.locator('.bohemcars-inventory-dashboard-sidebar');
+	await expect(sidebarRail).toBeVisible();
+	await expect(sidebarRail).toHaveCSS('background-color', 'rgb(245, 247, 241)');
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-results #filterSidebarToggle')
+	).toBeHidden();
+	await expect(page.locator('.bohemcars-inventory-dashboard')).toHaveCSS(
+		'grid-template-columns',
+		/336px/
+	);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-group')
 	).toHaveCount(8);
+	const sidebarBrandGroup = sidebarRail.locator(
+		'.bohemcars-inventory-sidebar-group[data-filter-name="brand"]'
+	);
+	await expect(sidebarBrandGroup.locator('legend span')).toHaveText('Марка');
 	await expect(
-		page
-			.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-group legend')
-			.first()
-	).toHaveText('Марка');
+		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option:has(input[value=""])')
+	).toHaveCSS('background-color', 'rgb(234, 246, 207)');
+	await expect(
+		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option__media img').first()
+	).toBeVisible();
+	await expect(
+		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option__control').first()
+	).toHaveCSS('width', '17px');
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-results .bohemcars-inventory-content')
 	).toBeVisible();

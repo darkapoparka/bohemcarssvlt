@@ -66,7 +66,12 @@ export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
 	if (!scripts.length) return '';
 
 	return `<script>{
+	window.__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__ = (window.__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__ || 0) + 1;
+	try {
+		window.localStorage.setItem('suggest_subscribe', window.localStorage.getItem('suggest_subscribe') || 'false');
+	} catch (error) {}
 	const bohemcarsBodyScripts = ${serializedScriptPayload(scripts)};
+	const bohemcarsOptionalBodyScriptSources = ['code.jquery.com/ui/1.13.2/jquery-ui.min.js'];
 	let bohemcarsBodyScriptsStarted = false;
 
 	const loadBohemcarsBodyScript = (definition) =>
@@ -89,7 +94,15 @@ export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
 			script.addEventListener('load', resolve, { once: true });
 			script.addEventListener(
 				'error',
-				() => reject(new Error('Failed to load Auxero script: ' + (script.src || 'inline'))),
+				() => {
+					const source = script.src || 'inline';
+					if (bohemcarsOptionalBodyScriptSources.some((optionalSource) => source.includes(optionalSource))) {
+						resolve();
+						return;
+					}
+
+					reject(new Error('Failed to load Auxero script: ' + source));
+				},
 				{ once: true }
 			);
 

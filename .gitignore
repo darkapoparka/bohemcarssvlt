@@ -34,6 +34,7 @@ playwright-report
 .codex-*.log
 .codex-*.out.log
 .codex-*.err.log
+codex-vite*.log
 .codex-review-screens/
 .playwright-mcp/
 .tmp/

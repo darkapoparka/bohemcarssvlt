@@ -9,6 +9,7 @@
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 	import AuxeroHead from '$lib/components/layout/AuxeroHead.svelte';
+	import AuxeroRuntimeScripts from '$lib/components/layout/AuxeroRuntimeScripts.svelte';
 	import HomeFiveFooter from '$lib/components/home/HomeFiveFooter.svelte';
 	import HomeFiveHeader from '$lib/components/home/HomeFiveHeader.svelte';
 	import HomeFiveModals from '$lib/components/home/HomeFiveModals.svelte';
@@ -79,3 +80,4 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html runtimeHtml}
 {/if}
+<AuxeroRuntimeScripts html={runtimeHtml} pageKey={pageDocument.bodyClass} />

@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import AuxeroHead from '$lib/components/layout/AuxeroHead.svelte';
+	import AuxeroRuntimeScripts from '$lib/components/layout/AuxeroRuntimeScripts.svelte';
 
 	type Props = {
 		afterHtml: string;
@@ -29,6 +30,7 @@
 	const bodyClassScript = $derived(
 		`document.body.className = ${JSON.stringify(pageDocument.bodyClass)};`
 	);
+	const scriptSourceHtml = $derived(`${beforeHtml}\n${afterHtml}`);
 
 	const findWrapperCloseIndex = (html: string) => {
 		divTagPattern.lastIndex = 0;
@@ -97,3 +99,4 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html afterHtml}
 {/if}
+<AuxeroRuntimeScripts html={scriptSourceHtml} pageKey={pageDocument.bodyClass} />
