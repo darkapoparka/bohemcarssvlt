@@ -57,7 +57,7 @@
 	</section>
 
 	<section class="px-4 lg:px-6">
-		<Card.Root data-bohemcars-account-listings>
+		<Card.Root class="overflow-hidden" data-bohemcars-account-listings>
 			<Card.Header class="border-b">
 				<div>
 					<Card.Title>Listings</Card.Title>
@@ -84,9 +84,9 @@
 				</div>
 			</Card.Content>
 			<Card.Content class="p-0">
-				<div class="overflow-x-auto">
-					<Table.Root>
-						<Table.Header>
+				<div class="max-h-[calc(100svh-22rem)] min-h-[28rem] overflow-auto">
+					<Table.Root class="min-w-[58rem]">
+						<Table.Header class="bg-card sticky top-0 z-10 shadow-[0_1px_0_var(--border)]">
 							<Table.Row>
 								<Table.Head>Vehicle</Table.Head>
 								<Table.Head>Status</Table.Head>
@@ -165,6 +165,10 @@
 					</Table.Root>
 				</div>
 			</Card.Content>
+			<Card.Footer class="text-muted-foreground justify-between border-t text-xs">
+				<span>{formatNumber(data.inventory.length)} records shown</span>
+				<span>Scroll table for the full CMS inventory</span>
+			</Card.Footer>
 		</Card.Root>
 	</section>
 </AdminShell>

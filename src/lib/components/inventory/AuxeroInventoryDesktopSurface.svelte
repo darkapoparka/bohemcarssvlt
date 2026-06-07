@@ -11,14 +11,8 @@
 	import AuxeroInventoryActiveFilters from './AuxeroInventoryActiveFilters.svelte';
 	import AuxeroInventoryContent from './AuxeroInventoryContent.svelte';
 	import AuxeroInventoryFilterPopover from './AuxeroInventoryFilterPopover.svelte';
-	import AuxeroInventorySidebarFilterGroup from './AuxeroInventorySidebarFilterGroup.svelte';
 	import AuxeroInventoryMapFallback from './AuxeroInventoryMapFallback.svelte';
 	import { X } from '@lucide/svelte';
-
-	// In the Sidebar (dashboard) layout, short categorical filters render as
-	// always-expanded inline lists (a real filter rail); long/ordinal filters
-	// (model, price, mileage) stay as compact dropdown cards.
-	const inlineSidebarFilters = new Set(['brand', 'fuel', 'transmission', 'bodyType', 'feature']);
 
 	let {
 		cards,
@@ -34,6 +28,7 @@
 	const dashboardClass = $derived(
 		`bohemcars-inventory-dashboard bohemcars-inventory-dashboard--${desktop.view}`
 	);
+	const hasSidebarActions = $derived(Boolean(desktop.activeFilters));
 
 	const inventoryAction = resolve('/inventory');
 	const multiValueKeys = new Set([
@@ -323,28 +318,25 @@
 		</div>
 		<div class="bohemcars-inventory-sidebar-fields">
 			{#each desktop.sidebar.filters as filter (filter.name)}
-				{#if inlineSidebarFilters.has(filter.name)}
-					<AuxeroInventorySidebarFilterGroup {filter} />
-				{:else}
-					<AuxeroInventoryFilterPopover
-						{filter}
-						allSelectedValue={filter.allLabel}
-						optionLayout="list"
-						presentation="popover"
-					/>
-				{/if}
+				<AuxeroInventoryFilterPopover
+					{filter}
+					allSelectedValue={filter.allLabel}
+					optionLayout="list"
+					presentation="popover"
+				/>
 			{/each}
 		</div>
-		<div class="bohemcars-inventory-sidebar-actions">
-			<a
-				{...linkHref(desktop.sidebar.actions.clearHref)}
-				class="bohemcars-active-filter bohemcars-active-filter--clear"
-				>{desktop.sidebar.actions.clearLabel}</a
-			>
-			<button class="btn btn-small btn-primary-3 font-weight-600" type="submit">
-				{desktop.sidebar.actions.showLabel}
-			</button>
-		</div>
+		{#if hasSidebarActions}
+			<div class="bohemcars-inventory-sidebar-actions">
+				<a
+					{...linkHref(desktop.sidebar.actions.clearHref)}
+					class="bohemcars-inventory-sidebar-clear">{desktop.sidebar.actions.clearLabel}</a
+				>
+				<button class="bohemcars-inventory-sidebar-apply" type="submit">
+					{desktop.sidebar.actions.showLabel}
+				</button>
+			</div>
+		{/if}
 	</form>
 {/snippet}
 
@@ -683,7 +675,7 @@
 	.bohemcars-inventory-sidebar-heading {
 		display: grid;
 		gap: 3px;
-		margin-bottom: 13px;
+		margin-bottom: 15px;
 		padding: 0 2px;
 	}
 
@@ -697,7 +689,7 @@
 
 	.bohemcars-inventory-sidebar-heading :global(.text-secondary) {
 		margin: 0;
-		color: #596572 !important;
+		color: #656d5f !important;
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 19px;
@@ -721,7 +713,7 @@
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field) {
 		box-sizing: border-box;
 		min-height: 64px;
-		border: 1px solid #d9e4ee;
+		border: 1px solid #dfe6d4;
 		border-radius: 8px;
 		background: #ffffff;
 		padding: 10px 42px 10px 15px;
@@ -729,8 +721,8 @@
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field:hover) {
-		border-color: #c5d4e2;
-		background: #ffffff;
+		border-color: #c9d3bd;
+		background: #fbfcf8;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp--open .ifp__field) {
@@ -740,7 +732,7 @@
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__label) {
-		color: #5b6773;
+		color: #6b7463;
 		font-size: 12.5px;
 		font-weight: 600;
 		letter-spacing: 0;
@@ -770,7 +762,7 @@
 		width: 100%;
 		max-width: 100%;
 		margin-top: 8px;
-		border-color: #d9e4ee;
+		border-color: #dfe6d4;
 		border-radius: 10px;
 		padding: 9px;
 		box-shadow: none;
@@ -789,24 +781,11 @@
 	.bohemcars-inventory-sidebar-fields :global(.ifp__row) {
 		box-sizing: border-box;
 		min-height: 42px;
-		background: #f8fafc;
+		background: #f7f9f3;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__chip) {
 		min-height: 68px;
-	}
-
-	.bohemcars-inventory-sidebar-fields :global(.ifp__foot) {
-		position: sticky;
-		bottom: 0;
-		margin: 0 -9px -9px;
-		border-top: 1px solid #dfe8ef;
-		background: #ffffff;
-		padding: 10px 9px 9px;
-	}
-
-	.bohemcars-inventory-sidebar-fields :global(.ifp__done) {
-		min-width: 96px;
 	}
 
 	.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-fields :global(.ifp--open) {
@@ -824,12 +803,54 @@
 	}
 
 	.bohemcars-inventory-sidebar-actions {
-		display: flex;
+		display: grid;
 		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		margin-top: 16px;
-		padding-top: 4px;
+		gap: 10px;
+		grid-template-columns: minmax(0, 1fr) auto;
+		margin-top: 14px;
+	}
+
+	.bohemcars-inventory-sidebar-clear,
+	.bohemcars-inventory-sidebar-apply {
+		display: inline-flex;
+		min-height: 40px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+		padding: 0 15px;
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 1;
+		text-decoration: none;
+		transition:
+			background-color 0.14s ease,
+			border-color 0.14s ease;
+	}
+
+	.bohemcars-inventory-sidebar-clear {
+		border: 1px solid #cfd8c5;
+		background: #ffffff;
+		color: #151515;
+	}
+
+	.bohemcars-inventory-sidebar-clear:hover {
+		border-color: #bfcbb3;
+		background: #f8faf3;
+		color: #151515;
+	}
+
+	.bohemcars-inventory-sidebar-apply {
+		border: 1px solid #9cc427;
+		background: #9cc427;
+		color: #ffffff;
+		cursor: pointer;
+		font: inherit;
+		font-weight: 800;
+	}
+
+	.bohemcars-inventory-sidebar-apply:hover {
+		border-color: #88ae1f;
+		background: #88ae1f;
 	}
 
 	.bohemcars-inventory-banner__buybox .bohemcars-inventory-searchbar {

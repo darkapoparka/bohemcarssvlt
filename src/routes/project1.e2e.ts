@@ -1187,6 +1187,12 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	);
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toBeVisible();
 	await expect(page.locator('.bohemcars-inventory-dashboard-sidebar')).toBeVisible();
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-heading')
+	).toHaveCSS('border-bottom-width', '0px');
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-actions')
+	).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Sidebar');
 	await expect(page.locator('.bohemcars-inventory-hero-switches__label')).toHaveCount(0);
 	await expect(
@@ -1206,10 +1212,10 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-sidebar [data-inventory-filter-field]')
-	).toHaveCount(3);
+	).toHaveCount(8);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-sidebar [data-filter-name]')
-	).toHaveCount(5);
+	).toHaveCount(0);
 
 	await page.goto('/inventory?layout=classic');
 	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
@@ -1342,6 +1348,15 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 
 	await page.goto('/inventory?brand=Audi');
 	await expect(page.locator('[data-bohemcars-slug]').first()).toContainText('Audi');
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-actions')
+	).toHaveCount(1);
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-clear')
+	).toHaveText('Изчисти');
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-apply')
+	).toContainText('Покажи');
 
 	await page.goto('/inventory');
 	const inventoryContent = page.locator('.bohemcars-inventory-content');
@@ -1538,7 +1553,12 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toBeVisible();
 	const sidebarRail = page.locator('.bohemcars-inventory-dashboard-sidebar');
 	await expect(sidebarRail).toBeVisible();
-	await expect(sidebarRail).toHaveCSS('background-color', 'rgb(243, 246, 249)');
+	await expect(sidebarRail).toHaveCSS('background-color', 'rgb(238, 241, 237)');
+	await expect(sidebarRail.locator('.bohemcars-inventory-sidebar-heading')).toHaveCSS(
+		'border-bottom-width',
+		'0px'
+	);
+	await expect(sidebarRail.locator('.bohemcars-inventory-sidebar-actions')).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-results #filterSidebarToggle')
 	).toHaveCount(0);
@@ -1548,12 +1568,16 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-sidebar [data-inventory-filter-field]')
-	).toHaveCount(3);
-	await expect(sidebarRail.locator('[data-filter-name]')).toHaveCount(5);
-	const sidebarBrandGroup = sidebarRail.locator('[data-filter-name="brand"]');
-	await expect(sidebarBrandGroup.locator('.sfg__legend')).toHaveText('Марка');
-	await expect(sidebarBrandGroup.locator('.sfg__option').first()).toContainText('Всички марки');
-	await expect(sidebarBrandGroup.locator('.sfg__option').first()).toHaveClass(/is-selected/);
+	).toHaveCount(8);
+	await expect(sidebarRail.locator('[data-filter-name]')).toHaveCount(0);
+	for (const name of ['brand', 'fuel', 'bodyType', 'transmission']) {
+		const sidebarField = sidebarRail.locator(`[data-name="${name}"]`);
+		await expect(sidebarField.locator('.ifp__field')).toHaveCount(1);
+		await expect(sidebarField.locator('.ifp__panel')).toHaveCSS('display', 'none');
+	}
+	const sidebarBrandField = sidebarRail.locator('[data-name="brand"]');
+	await expect(sidebarBrandField.locator('.ifp__label')).toHaveText('Марка');
+	await expect(sidebarBrandField.locator('.ifp__value')).toHaveText('Всички марки');
 	const sidebarModelField = sidebarRail.locator('[data-name="model"]');
 	await expect(sidebarModelField.locator('.ifp__label')).toHaveText('Модел');
 	await expect(sidebarModelField.locator('.ifp__value')).toHaveText('Всички модели');
@@ -1822,7 +1846,7 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(aboutContent).toBeVisible();
 	await expect(aboutContent.locator('.bohemcars-about-story')).toBeVisible();
 	await expect(aboutContent).toContainText('Внос от Канада');
-	await expect(aboutContent.locator('.bohemcars-about-service')).toHaveCount(4);
+	await expect(aboutContent.locator('.bohemcars-about-service')).toHaveCount(3);
 	await expect(aboutContent.locator('.sale-agent-box')).toHaveCount(3);
 	await expect(aboutContent.locator('.sale-agent-box.active')).toHaveCount(1);
 	await expect(aboutContent.locator('.sale-agent-social')).toHaveCount(3);

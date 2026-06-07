@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type { AuxeroServiceFormData, AuxeroServicesContent } from '$lib/auxero/services';
 	import PageBanner from '$lib/components/common/PageBanner.svelte';
+	import ServiceCard from '$lib/components/common/ServiceCard.svelte';
 	import ServiceFormCard from './ServiceFormCard.svelte';
 
 	let {
@@ -31,18 +31,14 @@
 		<div class="container">
 			<div class="lg-grid-cols-2 md-grid-cols-1 grid grid-cols-3 gap-30">
 				{#each services.cards as service, index (service.title)}
-					<div
-						class="service-box bohemcars-service-card wow fadeInUp"
-						data-wow-delay={`0.${(index % 3) + 1}s`}
-					>
-						<div class="bohemcars-service-card__media radius-16 mb-22 overflow-hidden">
-							<img class="w-full" src={service.image} alt={service.title} />
-						</div>
-						<a href={resolve(service.href as '/')} class="h4 font-weight-600 mb-8"
-							>{service.title}</a
-						>
-						<p class="text-secondary">{service.description}</p>
-					</div>
+					<ServiceCard
+						ctaLabel="Научи повече"
+						delay={`0.${(index % 3) + 1}s`}
+						description={service.description}
+						href={service.href}
+						image={service.image}
+						title={service.title}
+					/>
 				{/each}
 			</div>
 		</div>
@@ -121,45 +117,6 @@
 
 	.bohemcars-services-page__cards {
 		padding-top: 64px !important;
-	}
-
-	.bohemcars-service-card {
-		height: 100%;
-		border: 0 !important;
-		background: var(--bc-surface) !important;
-		box-shadow: none !important;
-		transform: none !important;
-		transition:
-			background-color 0.2s ease,
-			color 0.2s ease !important;
-	}
-
-	@media (hover: hover) and (pointer: fine) {
-		.bohemcars-service-card:hover,
-		.bohemcars-service-card:focus-within {
-			border: 0 !important;
-			background: var(--bc-surface-hover) !important;
-			box-shadow: none !important;
-			transform: none !important;
-		}
-	}
-
-	.bohemcars-service-card__media {
-		aspect-ratio: 16 / 9;
-		background: var(--bc-surface-soft);
-	}
-
-	.bohemcars-service-card__media img {
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.bohemcars-service-card > a {
-		display: inline-flex;
-		min-height: 44px;
-		align-items: center;
-		margin-block: -6px;
-		padding-block: 6px;
 	}
 
 	.bohemcars-services-contact {

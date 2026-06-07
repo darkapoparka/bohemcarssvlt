@@ -1642,8 +1642,8 @@ function injectLocalBehavior(
 		min-width: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-sidebar {
-		background: #f3f6f9;
-		border: 1px solid #d8e2eb;
+		background: #eef1ed;
+		border: 1px solid #dfe6d4;
 		border-radius: 10px;
 		max-height: none;
 		overflow: visible;
@@ -1663,9 +1663,9 @@ function injectLocalBehavior(
 		gap: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading {
-		border-bottom: 1px solid #dfe8ef;
-		margin-bottom: 2px;
-		padding: 0 0 16px;
+		border-bottom: 0;
+		margin-bottom: 15px;
+		padding: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading p {
 		margin: 0;
@@ -1678,7 +1678,7 @@ function injectLocalBehavior(
 		line-height: 22px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading .text-secondary {
-		color: #596572 !important;
+		color: #656d5f !important;
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 18px;
@@ -1686,7 +1686,7 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-group {
 		border: 0;
-		border-bottom: 1px solid #dfe8ef;
+		border-bottom: 1px solid #dde5d8;
 		min-inline-size: 0;
 		margin: 0;
 		padding: 15px 0;
@@ -1841,22 +1841,30 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-actions {
 		align-items: center;
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 22%);
-		bottom: -20px;
 		display: grid;
 		gap: 10px;
 		grid-template-columns: minmax(0, 1fr) auto;
-		margin-top: 4px;
-		padding: 14px 0 4px;
-		position: sticky;
+		margin-top: 14px;
 	}
-	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-active-filter {
+	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-inventory-sidebar-clear,
+	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-inventory-sidebar-apply {
+		align-items: center;
+		border-radius: 8px;
+		display: inline-flex;
 		justify-content: center;
 		min-height: 40px;
+		padding: 0 15px;
+		text-decoration: none;
 	}
-	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .btn {
-		min-height: 40px;
-		padding: 0 18px;
+	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-inventory-sidebar-clear {
+		background: #ffffff;
+		border: 1px solid #cfd8c5;
+		color: #151515;
+	}
+	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-inventory-sidebar-apply {
+		background: #9cc427;
+		border: 1px solid #9cc427;
+		color: #ffffff;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results {
 		padding: 0;

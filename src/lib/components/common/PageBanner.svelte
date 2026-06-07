@@ -122,9 +122,16 @@
 		transition: none !important;
 	}
 
-	.bohemcars-page-banner__actions :global(.btn.btn-primary:hover) {
+	.bohemcars-page-banner__actions :global(.btn.btn-primary) {
 		border-color: #98bc2a !important;
 		background: #98bc2a !important;
+		color: #1c1c1c !important;
+	}
+
+	.bohemcars-page-banner__actions :global(.btn.btn-primary:hover),
+	.bohemcars-page-banner__actions :global(.btn.btn-primary:focus-visible) {
+		border-color: #d9f275 !important;
+		background: #d9f275 !important;
 		color: #1c1c1c !important;
 	}
 

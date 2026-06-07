@@ -4,6 +4,7 @@ import { agents } from '$lib/data/agents';
 import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 import { brands, vehicles } from '$lib/data/vehicles';
 import type { AuxeroPageBanner } from './page-banner';
+import { auxeroServiceCards } from './services';
 
 export type AuxeroAboutBrandCard = {
 	count: string;
@@ -173,35 +174,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 			'Проверка по VIN и история',
 			'Документи, разходи и оглед с уговорка'
 		],
-		steps: [
-			{
-				title: 'Внос от Канада',
-				href: '/services',
-				image: '/assets/bohemcars/services/import-canada-service.webp',
-				description:
-					'Работа по конкретен модел, бюджет, срок и реалистична крайна цена до България.'
-			},
-			{
-				title: 'Налични автомобили',
-				href: '/inventory',
-				image: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
-				description: 'Огледи с уговорка, контекст за произход, състояние, пробег и следващи стъпки.'
-			},
-			{
-				title: 'Проверка и документи',
-				href: '/services',
-				image: '/assets/bohemcars/services/evaluate-link-service.webp',
-				description:
-					'Преглед на VIN, история, снимки, сервизни следи, документи и готовност за регистрация.'
-			},
-			{
-				title: 'Продажба и предаване',
-				href: '/sell-your-car',
-				image: '/assets/bohemcars/services/sell-car-service.webp',
-				description:
-					'Съдействие при клиентски автомобили, подготвяне на оглед, документи и спокойно предаване.'
-			}
-		]
+		steps: auxeroServiceCards.slice(0, 3)
 	},
 	process: [
 		{

@@ -203,35 +203,46 @@
 				</Card.Action>
 			</Card.Header>
 			<Card.Content class="p-0">
-				<div class="grid divide-y">
-					{#each data.cms.recentInventory as vehicle (vehicle.id)}
-						<a
-							class="hover:bg-muted/70 grid min-h-20 gap-3 px-4 py-3 transition-colors md:grid-cols-[minmax(0,1fr)_auto]"
-							href={resolve('/admin/inventory/edit/[id]', { id: vehicle.id })}
-						>
-							<span class="flex min-w-0 items-center gap-3">
-								<img
-									class="ring-border size-14 rounded-lg object-cover ring-1"
-									src={vehicle.image}
-									alt=""
-								/>
-								<span class="min-w-0">
-									<span class="block truncate font-medium">{vehicle.title}</span>
-									<span class="text-muted-foreground block truncate text-sm">
-										{vehicle.brand} / {vehicle.year} / {vehicle.fuel}
+				<ScrollArea.Root class="h-[24rem]">
+					<div class="grid divide-y">
+						{#each data.cms.recentInventory as vehicle (vehicle.id)}
+							<a
+								class="hover:bg-muted/70 grid min-h-20 gap-3 px-4 py-3 transition-colors md:grid-cols-[minmax(0,1fr)_auto]"
+								href={resolve('/admin/inventory/edit/[id]', { id: vehicle.id })}
+							>
+								<span class="flex min-w-0 items-center gap-3">
+									<img
+										class="ring-border size-14 rounded-lg object-cover ring-1"
+										src={vehicle.image}
+										alt=""
+									/>
+									<span class="min-w-0">
+										<span class="block truncate font-medium">{vehicle.title}</span>
+										<span class="text-muted-foreground block truncate text-sm">
+											{vehicle.brand} / {vehicle.year} / {vehicle.fuel}
+										</span>
 									</span>
 								</span>
-							</span>
-							<span class="flex items-center justify-between gap-3 md:justify-end">
-								<Badge variant={statusVariant(vehicle.status)} class="capitalize">
-									{formatStatus(vehicle.status)}
-								</Badge>
-								<span class="min-w-24 text-right font-medium">{vehicle.priceLabel}</span>
-							</span>
-						</a>
-					{/each}
-				</div>
+								<span class="flex items-center justify-between gap-3 md:justify-end">
+									<Badge variant={statusVariant(vehicle.status)} class="capitalize">
+										{formatStatus(vehicle.status)}
+									</Badge>
+									<span class="min-w-24 text-right font-medium">{vehicle.priceLabel}</span>
+								</span>
+							</a>
+						{/each}
+					</div>
+				</ScrollArea.Root>
 			</Card.Content>
+			<Card.Footer class="justify-between gap-3 text-sm">
+				<span class="text-muted-foreground">
+					Latest {formatNumber(data.cms.recentInventory.length)} inventory records
+				</span>
+				<Button href="/admin/inventory" variant="ghost" size="sm">
+					Open table
+					<ArrowUpRight data-icon="inline-end" aria-hidden="true" />
+				</Button>
+			</Card.Footer>
 		</Card.Root>
 
 		<div class="grid content-start gap-4">
@@ -249,7 +260,7 @@
 							<span class="comment-box">{item.label}</span>
 						{/each}
 					</div>
-					<ScrollArea.Root class="h-[28rem]">
+					<ScrollArea.Root class="h-[20rem]">
 						<div class="grid gap-1 p-2">
 							{#each data.cms.recentWork as item (item.id)}
 								<a

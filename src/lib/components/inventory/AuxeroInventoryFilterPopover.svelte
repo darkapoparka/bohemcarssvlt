@@ -53,7 +53,7 @@
 	const listClass = $derived(
 		usesModal ? 'ifp__modal-list' : usesGridOptions ? 'ifp__grid' : 'ifp__list'
 	);
-	const showDone = $derived(usesModal || filter.mode === 'multiple');
+	const showDone = $derived(usesModal);
 
 	function close(focusTrigger = true) {
 		open = false;
