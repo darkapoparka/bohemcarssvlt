@@ -1121,6 +1121,28 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(
 		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
 	).not.toHaveAttribute('aria-modal', 'true');
+	const popoverLayer = await page.evaluate(() => {
+		const panel = document.querySelector(
+			'.bohemcars-inventory-banner [data-name="brand"] .ifp__panel'
+		);
+		const main = document.querySelector('.bohemcars-inventory-main');
+		if (!panel || !main) return null;
+
+		const panelRect = panel.getBoundingClientRect();
+		const mainRect = main.getBoundingClientRect();
+		const sampleX = panelRect.left + panelRect.width / 2;
+		const sampleY = Math.min(panelRect.bottom - 8, window.innerHeight - 8);
+		const topElement = document.elementFromPoint(sampleX, sampleY);
+
+		return {
+			mainTop: Math.round(mainRect.top),
+			panelBottom: Math.round(panelRect.bottom),
+			topInsidePanel: Boolean(topElement && panel.contains(topElement))
+		};
+	});
+	expect(popoverLayer).not.toBeNull();
+	expect(popoverLayer?.panelBottom).toBeGreaterThan(popoverLayer?.mainTop ?? 0);
+	expect(popoverLayer?.topInsidePanel).toBe(true);
 	await page.keyboard.press('Escape');
 
 	await page.goto('/inventory?filters=modal');
@@ -1135,6 +1157,26 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
 	).toHaveAttribute('aria-modal', 'true');
 	await expect(page.locator('.bohemcars-inventory-banner .ifp__backdrop')).toHaveCount(1);
+	const modalLayer = await page.evaluate(() => {
+		const panel = document.querySelector(
+			'.bohemcars-inventory-banner [data-name="brand"] .ifp__panel'
+		);
+		if (!panel) return null;
+
+		const panelRect = panel.getBoundingClientRect();
+		const topElement = document.elementFromPoint(
+			panelRect.left + panelRect.width / 2,
+			panelRect.top + panelRect.height / 2
+		);
+
+		return {
+			centered: Math.abs(panelRect.top + panelRect.height / 2 - window.innerHeight / 2) < 60,
+			topInsidePanel: Boolean(topElement && panel.contains(topElement))
+		};
+	});
+	expect(modalLayer).not.toBeNull();
+	expect(modalLayer?.centered).toBe(true);
+	expect(modalLayer?.topInsidePanel).toBe(true);
 	await page.keyboard.press('Escape');
 
 	await page.goto('/inventory?layout=classic');

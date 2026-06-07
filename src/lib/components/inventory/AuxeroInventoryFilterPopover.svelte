@@ -261,6 +261,10 @@
 		position: relative;
 	}
 
+	.ifp--open {
+		z-index: 120;
+	}
+
 	.ifp__field {
 		position: relative;
 		display: grid;
@@ -341,7 +345,7 @@
 	.ifp__backdrop {
 		position: fixed;
 		inset: 0;
-		z-index: 998;
+		z-index: 10000;
 		border: 0;
 		background: rgba(13, 19, 26, 0.58);
 		backdrop-filter: blur(5px);
@@ -352,7 +356,7 @@
 		position: absolute;
 		top: calc(100% + 8px);
 		left: 0;
-		z-index: 40;
+		z-index: 1001;
 		display: none;
 		width: min(320px, 86vw);
 		border: 1px solid #ececec;
@@ -364,18 +368,19 @@
 
 	.ifp__panel--modal {
 		position: fixed;
-		top: clamp(72px, 13vh, 112px);
+		top: 50%;
 		right: 0;
 		left: 0;
-		z-index: 999;
+		z-index: 10001;
 		display: none;
 		width: min(464px, calc(100vw - 32px));
-		max-height: min(620px, calc(100vh - 52px));
+		max-height: min(680px, calc(100vh - 48px));
 		margin: 0 auto;
 		padding: 16px;
 		border-color: #f0f1ec;
 		border-radius: 18px;
 		box-shadow: 0 28px 70px rgba(10, 15, 20, 0.35);
+		transform: translateY(-50%);
 	}
 
 	.ifp--grid .ifp__panel {
@@ -712,6 +717,7 @@
 		.ifp__panel--modal {
 			top: 24px;
 			max-height: calc(100vh - 48px);
+			transform: none;
 		}
 	}
 </style>
