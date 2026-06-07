@@ -2,6 +2,7 @@
 	import './auxero-guards.css';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
 	import MobileBottomNav from '$lib/components/layout/MobileBottomNav.svelte';
@@ -17,6 +18,9 @@
 	let { children } = $props();
 	const garage = new GarageState();
 	setGarageContext(garage);
+	onMount(() => {
+		garage.hydrateFromStorage();
+	});
 	const auxeroStableStylesheetHrefs = [
 		'/assets/scss/swiper/swiper-bundle.min.css',
 		'/assets/app.css'

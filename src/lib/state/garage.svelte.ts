@@ -97,9 +97,16 @@ const compareSlugsWith = (slug: string) =>
 	[slug, ...readStoredList(compareKey).filter((item) => item !== slug)].slice(0, compareLimit);
 
 export class GarageState {
-	favorites = $state<string[]>(readStoredList(favoriteKey));
-	compare = $state<string[]>(readStoredList(compareKey));
+	favorites = $state<string[]>([]);
+	compare = $state<string[]>([]);
 	formMessage = $state('');
+
+	hydrateFromStorage() {
+		this.favorites = readStoredList(favoriteKey);
+		this.compare = readStoredList(compareKey).slice(0, compareLimit);
+		syncGarageDom(this.favorites, this.compare);
+		void syncGarageApi();
+	}
 
 	toggleFavorite(slug: string) {
 		this.favorites = favoriteSlugsWith(slug);
