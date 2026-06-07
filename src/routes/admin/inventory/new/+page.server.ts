@@ -40,6 +40,6 @@ export const actions: Actions = {
 
 		const listing = createInventoryListing(values);
 
-		redirect(303, `/admin/listings/${listing.id}?created=1`);
+		redirect(303, `/admin/inventory/edit/${listing.id}?created=1`);
 	}
 };

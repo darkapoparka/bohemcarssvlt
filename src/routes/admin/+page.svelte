@@ -187,7 +187,7 @@
 					{#each data.cms.recentInventory as vehicle (vehicle.id)}
 						<a
 							class="hover:bg-muted/70 grid min-h-20 gap-3 px-4 py-3 transition-colors md:grid-cols-[minmax(0,1fr)_auto]"
-							href={resolve('/admin/listings/[id]', { id: vehicle.id })}
+							href={resolve('/admin/inventory/edit/[id]', { id: vehicle.id })}
 						>
 							<span class="flex min-w-0 items-center gap-3">
 								<img

@@ -69,6 +69,6 @@ export const actions: Actions = {
 			});
 		}
 
-		redirect(303, `/admin/listings/${listing.id}?updated=1`);
+		redirect(303, `/admin/inventory/edit/${listing.id}?updated=1`);
 	}
 };

@@ -132,7 +132,7 @@
 									</Table.Cell>
 									<Table.Cell class="text-right">
 										<Button
-											href={`/admin/listings/${encodeURIComponent(vehicle.id)}`}
+											href={`/admin/inventory/edit/${encodeURIComponent(vehicle.id)}`}
 											variant="outline"
 											size="sm"
 										>
