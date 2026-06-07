@@ -8,10 +8,15 @@ const value = (formData: FormData, key: string) => String(formData.get(key) ?? '
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const session = requireBohemcarsPageSession(request, 'admin/inquiries', url.searchParams);
+	const cms = getAdminCmsOverview();
+	const requestedInquiryId = url.searchParams.get('lead');
+	const activeInquiry =
+		cms.inquiries.find((inquiry) => inquiry.id === requestedInquiryId) ?? cms.inquiries[0] ?? null;
 
 	return {
+		activeInquiryId: activeInquiry?.id ?? null,
 		auxeroFullPage: true,
-		cms: getAdminCmsOverview(),
+		cms,
 		session
 	};
 };
@@ -36,6 +41,6 @@ export const actions: Actions = {
 			return fail(404, { error: 'Inquiry not found.' });
 		}
 
-		redirect(303, '/admin/inquiries');
+		redirect(303, `/admin/inquiries?lead=${encodeURIComponent(inquiry.id)}`);
 	}
 };
