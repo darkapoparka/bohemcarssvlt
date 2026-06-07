@@ -32,11 +32,41 @@ import { applyHome05TemplateData, applyHomeTemplateData } from './auxero-home-da
 import { applySupportTemplateData, isSupportTemplate } from './auxero-support-data';
 import { inventoryTemplateForView, resolveInventoryView } from './inventory-state';
 
-const templateModules = import.meta.glob('../../../.template-ref/*.html', {
-	query: '?raw',
-	import: 'default',
-	eager: true
-}) as Record<string, string>;
+const templateModules = import.meta.glob(
+	[
+		'../../../.template-ref/about-us.html',
+		'../../../.template-ref/add-listings-2.html',
+		'../../../.template-ref/blog-details-1.html',
+		'../../../.template-ref/blog-grid-style-1.html',
+		'../../../.template-ref/calculator.html',
+		'../../../.template-ref/change-password.html',
+		'../../../.template-ref/clients-reviews.html',
+		'../../../.template-ref/compare.html',
+		'../../../.template-ref/contact-us.html',
+		'../../../.template-ref/dashboard.html',
+		'../../../.template-ref/faqs.html',
+		'../../../.template-ref/home-05.html',
+		'../../../.template-ref/home-09.html',
+		'../../../.template-ref/listing-details-3.html',
+		'../../../.template-ref/listing-grid3-columns.html',
+		'../../../.template-ref/listing-grid4-columns.html',
+		'../../../.template-ref/listing-gridstyle-halfmap.html',
+		'../../../.template-ref/message.html',
+		'../../../.template-ref/my-favorites.html',
+		'../../../.template-ref/my-listings.html',
+		'../../../.template-ref/my-profile.html',
+		'../../../.template-ref/sale-agents-details.html',
+		'../../../.template-ref/sale-agents.html',
+		'../../../.template-ref/sell-your-car.html',
+		'../../../.template-ref/services-center.html',
+		'../../../.template-ref/terms.html'
+	],
+	{
+		query: '?raw',
+		import: 'default',
+		eager: true
+	}
+) as Record<string, string>;
 
 const htmlByFile = Object.fromEntries(
 	Object.entries(templateModules).map(([path, html]) => [path.split('/').pop() ?? path, html])
@@ -178,6 +208,8 @@ for (const file of duplicateHomeFiles) {
 for (const file of duplicateDetailFiles) {
 	canonicalTemplateRoutes[file] = `/inventory/${firstVehicleSlug}`;
 }
+
+const rawTemplateRouteFiles = new Set(Object.keys(canonicalTemplateRoutes));
 
 function normalizeAssetUrls(html: string) {
 	return html
@@ -3177,7 +3209,7 @@ export function resolveAuxeroTemplateFile(routePath: string) {
 		return prettyRouteToFile[normalizedPath];
 	}
 
-	if (htmlByFile[normalizedPath]) {
+	if (htmlByFile[normalizedPath] || rawTemplateRouteFiles.has(normalizedPath)) {
 		return normalizedPath;
 	}
 
@@ -3186,7 +3218,7 @@ export function resolveAuxeroTemplateFile(routePath: string) {
 		return undefined;
 	}
 
-	if (htmlByFile[htmlFile]) {
+	if (htmlByFile[htmlFile] || rawTemplateRouteFiles.has(htmlFile)) {
 		return htmlFile;
 	}
 
