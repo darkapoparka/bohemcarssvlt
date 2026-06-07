@@ -1,239 +1,274 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { homeTwoDealCards, type HomeTwoDealCard } from '$lib/auxero/home-two';
+	import { CheckCircle2, ChevronRight, MapPin, Zap } from '@lucide/svelte';
 </script>
 
-<section class="home2-deals">
-	<div class="container">
-		<div class="home2-deals__header">
+<section class="home2-deals" aria-labelledby="home2-deals-title">
+	<div class="home2-deals__inner">
+		<div class="home2-section-title">
+			<Zap size={54} fill="currentColor" strokeWidth={2.4} />
 			<div>
-				<h2>Популярни оферти</h2>
-				<p>Налични и по заявка</p>
+				<h2 id="home2-deals-title">Премиум изборът е актуален</h2>
+				<p>Популярни Bohemcars предложения, готови за сравнение и оглед.</p>
 			</div>
-			<a href={resolve('/inventory?view=4')}>Виж всички</a>
 		</div>
 
-		<div class="home2-deals__viewport">
-			<div class="home2-deals__rail">
-				{#snippet cardContent(card: HomeTwoDealCard)}
-					<span class="home2-deal-card__copy">
+		<div class="home2-deals__rail">
+			{#snippet cardContent(card: HomeTwoDealCard)}
+				<span class="home2-deal-card__top">
+					<span>
 						<strong>{card.title}</strong>
 						<span class="home2-deal-card__description">{card.description}</span>
-						<span class="home2-deal-card__saving">{card.saving}</span>
-						<span class="home2-deal-card__badge">{card.badge}</span>
+						<small>{card.meta}</small>
 					</span>
+					<span class="home2-deal-card__badge">{card.badge}</span>
+				</span>
 
-					<span class="home2-deal-card__image">
-						<img
-							src={card.image}
-							alt=""
-							loading="lazy"
-							class:home2-deal-card__image--flip={card.flip}
-						/>
-					</span>
+				<span class="home2-deal-card__saving">
+					<CheckCircle2 size={15} strokeWidth={3} />
+					{card.saving}
+				</span>
 
-					<span class="home2-deal-card__footer">
-						<span class="home2-deal-card__offer">
-							<span class="home2-deal-card__price">
-								<small>{card.priceLabel}</small>
-								<b>{card.price}</b>
-							</span>
-							<span class="home2-deal-card__monthly">{card.monthly}</span>
+				<span class="home2-deal-card__stock">
+					<MapPin size={14} strokeWidth={2.8} />
+					{card.stock}
+				</span>
+
+				<span class="home2-deal-card__image">
+					<img
+						src={card.image}
+						alt=""
+						loading="lazy"
+						class={card.flip ? 'home2-deal-card__image--flip' : undefined}
+					/>
+				</span>
+
+				<span class="home2-deal-card__footer">
+					<span class="home2-deal-card__offer">
+						<span class="home2-deal-card__price">
+							<small>{card.priceLabel}</small>
+							<b>{card.price}</b>
 						</span>
-						<span class="home2-deal-card__arrow" aria-hidden="true">
-							<svg viewBox="0 0 20 20" focusable="false" aria-hidden="true">
-								<path d="M7.5 4.5 13 10l-5.5 5.5" />
-							</svg>
-						</span>
+						<span class="home2-deal-card__monthly">{card.monthly}</span>
 					</span>
-				{/snippet}
+					<span class="home2-deal-card__arrow" aria-hidden="true">
+						<ChevronRight size={22} strokeWidth={3} />
+					</span>
+				</span>
+			{/snippet}
 
-				{#each homeTwoDealCards as card (card.title)}
-					{#if card.kind === 'vehicle'}
-						<a
-							href={resolve('/inventory/[slug]', { slug: card.slug })}
-							class="home2-deal-card"
-							style:--image-max={card.imageMax}
-						>
-							{@render cardContent(card)}
-						</a>
-					{:else}
-						<a
-							href={resolve('/services')}
-							class="home2-deal-card"
-							style:--image-max={card.imageMax}
-						>
-							{@render cardContent(card)}
-						</a>
-					{/if}
-				{/each}
-			</div>
+			{#each homeTwoDealCards as card (card.title)}
+				{#if card.kind === 'vehicle'}
+					<a
+						href={resolve('/inventory/[slug]', { slug: card.slug })}
+						class="home2-deal-card"
+						style:--image-max={card.imageMax}
+					>
+						{@render cardContent(card)}
+					</a>
+				{:else}
+					<a
+						href={resolve('/import')}
+						class="home2-deal-card home2-deal-card--service"
+						style:--image-max={card.imageMax}
+					>
+						{@render cardContent(card)}
+					</a>
+				{/if}
+			{/each}
 		</div>
 	</div>
 </section>
 
 <style>
 	.home2-deals {
-		background: #f6f8f6;
-		padding: 42px 0 56px;
+		background: #f3f4f6;
+		padding: 0 39px 66px;
 	}
 
-	.home2-deals__header {
-		align-items: flex-end;
+	.home2-deals__inner {
+		margin: 0 auto;
+		max-width: 1298px;
+	}
+
+	.home2-section-title {
+		align-items: center;
+		color: #98bc2a;
 		display: flex;
-		gap: 24px;
-		justify-content: space-between;
-		margin-bottom: 22px;
+		gap: 14px;
+		margin-bottom: 31px;
 	}
 
-	.home2-deals__header > div {
-		display: block;
+	.home2-section-title :global(svg) {
+		color: #98bc2a !important;
+		fill: #98bc2a !important;
+		stroke: #98bc2a !important;
 	}
 
-	.home2-deals__header h2 {
-		color: #111513;
-		font-size: clamp(28px, 2.5vw, 40px);
-		font-weight: 800;
-		line-height: 1.08;
+	.home2-section-title h2 {
+		color: #121214;
+		font-family: 'Arial Black', Impact, Inter, ui-sans-serif, system-ui, sans-serif;
+		font-size: clamp(29px, 3vw, 42px);
+		font-weight: 1000;
+		letter-spacing: 0;
+		line-height: 1.05;
 		margin: 0;
 	}
 
-	.home2-deals__header p {
-		color: #56625c;
-		font-size: 15px;
-		font-weight: 700;
-		line-height: 20px;
-		margin: 6px 0 0;
-	}
-
-	.home2-deals__header a {
-		color: #121715;
-		font-size: 15px;
-		font-weight: 800;
-		line-height: 20px;
-		white-space: nowrap;
-	}
-
-	.home2-deals__header a:hover {
-		color: #7ca017;
-	}
-
-	.home2-deals__viewport {
-		margin: 0;
-		overflow: hidden;
-		padding: 0;
+	.home2-section-title p {
+		color: #3f3f46;
+		font-size: 18px;
+		font-weight: 600;
+		margin: 8px 0 0;
 	}
 
 	.home2-deals__rail {
 		display: grid;
-		gap: 14px;
+		gap: 18px;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
 	.home2-deal-card {
-		background: #eaf0ed;
+		background: #dddbd7;
 		border-radius: 8px;
-		color: #121715;
+		color: #121214;
 		display: grid;
-		gap: 14px;
-		grid-template-areas:
-			'copy'
-			'image'
-			'footer';
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: auto minmax(138px, 1fr) auto;
-		min-height: 354px;
+		grid-template-rows: auto auto auto 1fr auto;
+		min-height: 398px;
 		overflow: hidden;
-		padding: 18px 16px 16px;
+		padding: 16px;
 		position: relative;
+	}
+
+	.home2-deal-card::before {
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.44), rgb(255 255 255 / 0));
+		content: '';
+		height: 96px;
+		inset: 0 0 auto;
+		pointer-events: none;
+		position: absolute;
+	}
+
+	.home2-deal-card--service {
+		background: #dce4d6;
 	}
 
 	.home2-deal-card:hover {
-		background: #e2ebe7;
+		background: #d4d8d0;
 		box-shadow: none;
-		color: #121715;
+		color: #121214;
 		transform: none;
 	}
 
-	.home2-deal-card__copy {
-		align-self: start;
-		display: block;
-		grid-area: copy;
-		min-height: 94px;
-		padding-right: 0;
+	.home2-deal-card__top {
+		align-items: flex-start;
+		display: flex;
+		gap: 12px;
+		justify-content: space-between;
+		min-height: 104px;
 		position: relative;
+		z-index: 1;
 	}
 
-	.home2-deal-card__badge {
-		background: #cce9e4;
-		border-radius: 6px;
-		color: #0f5a55;
-		display: inline-flex;
-		font-size: 11px;
-		font-weight: 800;
-		line-height: 15px;
-		margin-top: 8px;
-		padding: 5px 8px;
-		width: fit-content;
-	}
-
-	.home2-deal-card__saving {
-		background: #11211c;
-		border-radius: 5px;
-		color: #72c9c0;
-		display: inline-flex;
-		font-size: 13px;
-		font-weight: 800;
-		line-height: 17px;
-		margin-top: 9px;
-		padding: 4px 8px;
-		width: fit-content;
-	}
-
-	.home2-deal-card__copy .home2-deal-card__badge {
-		position: absolute;
-		right: 0;
-		top: 0;
-	}
-
-	.home2-deal-card__copy strong {
-		color: inherit;
+	.home2-deal-card__top strong {
+		color: #0f1115;
 		display: -webkit-box;
-		font-size: 22px;
-		font-weight: 800;
+		font-size: clamp(21px, 1.72vw, 25px);
+		font-weight: 1000;
 		line-clamp: 2;
-		line-height: 27px;
-		padding-right: 78px;
+		line-height: 1.02;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
 		overflow: hidden;
 	}
 
 	.home2-deal-card__description {
-		color: #66706a;
+		color: #17181d;
 		display: block;
 		font-size: 14px;
-		font-weight: 700;
-		line-height: 19px;
-		margin-top: 5px;
+		font-weight: 720;
+		line-height: 1.22;
+		margin-top: 8px;
+		max-width: 300px;
+	}
+
+	.home2-deal-card__top small {
+		color: #44464c;
+		display: block;
+		font-size: 12px;
+		font-weight: 820;
+		line-height: 1.2;
+		margin-top: 7px;
+	}
+
+	.home2-deal-card__badge {
+		background: #98bc2a;
+		border-radius: 5px;
+		color: #111513;
+		flex: 0 0 auto;
+		font-size: 11px;
+		font-weight: 1000;
+		min-width: 82px;
+		padding: 8px 9px;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	.home2-deal-card__saving {
+		align-items: center;
+		background: #121316;
+		border-radius: 4px;
+		color: #ffffff;
+		display: inline-flex;
+		font-size: 13px;
+		font-weight: 950;
+		gap: 6px;
+		line-height: 1.05;
+		margin-top: 10px;
+		max-width: calc(100% - 42px);
+		padding: 5px 8px;
+		position: relative;
+		width: fit-content;
+		z-index: 1;
+	}
+
+	.home2-deal-card__saving :global(svg) {
+		color: #98bc2a;
+		stroke: currentColor !important;
+	}
+
+	.home2-deal-card__stock {
+		align-items: center;
+		color: #343840;
+		display: inline-flex;
+		font-size: 12px;
+		font-weight: 900;
+		gap: 5px;
+		line-height: 1.1;
+		margin-top: 8px;
+		position: relative;
+		width: fit-content;
+		z-index: 1;
+	}
+
+	.home2-deal-card__stock :global(svg) {
+		color: #98bc2a;
+		stroke: currentColor !important;
 	}
 
 	.home2-deal-card__image {
 		align-items: flex-end;
-		background: transparent;
-		border-radius: 0;
 		display: flex;
-		grid-area: image;
 		justify-content: center;
-		margin: 0 -12px;
 		min-height: 150px;
-		overflow: hidden;
-		padding: 0 0 2px;
+		overflow: visible;
+		padding: 5px 0 2px;
 		position: relative;
 	}
 
 	.home2-deal-card__image::after {
-		background: radial-gradient(ellipse at center, rgba(18, 23, 21, 0.18), rgba(18, 23, 21, 0) 68%);
+		background: radial-gradient(ellipse at center, rgb(18 23 21 / 0.18), rgb(18 23 21 / 0) 68%);
 		bottom: 14px;
 		content: '';
 		height: 18px;
@@ -243,6 +278,7 @@
 	}
 
 	.home2-deal-card__image img {
+		filter: drop-shadow(0 13px 10px rgb(0 0 0 / 0.18));
 		max-height: 158px;
 		max-width: var(--image-max);
 		object-fit: contain;
@@ -258,28 +294,32 @@
 	.home2-deal-card__footer {
 		align-items: end;
 		display: grid;
-		gap: 8px;
-		grid-area: footer;
-		grid-template-columns: minmax(0, 1fr) 46px;
+		gap: 10px;
+		grid-template-columns: minmax(0, 1fr) 50px;
+		position: relative;
+		z-index: 1;
 	}
 
 	.home2-deal-card__offer {
-		align-items: flex-end;
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
 		gap: 6px;
+		justify-items: start;
 		min-width: 0;
 	}
 
-	.home2-deal-card__price {
+	.home2-deal-card__price,
+	.home2-deal-card__monthly {
 		align-items: baseline;
-		background: rgba(255, 255, 255, 0.8);
-		border-radius: 5px;
-		color: #121715;
+		background: #ffffff;
+		border-radius: 4px;
+		color: #101115;
 		display: inline-flex;
-		gap: 6px;
-		line-height: 18px;
-		padding: 5px 8px;
+		font-size: 14px;
+		font-weight: 760;
+		gap: 5px;
+		line-height: 1;
+		min-height: 24px;
+		padding: 0 9px;
 		white-space: nowrap;
 		width: fit-content;
 	}
@@ -291,102 +331,65 @@
 	}
 
 	.home2-deal-card__price b {
-		font-size: 15px;
-		font-weight: 900;
+		color: #111318;
+		font-size: 14px;
+		font-weight: 1000;
 	}
 
 	.home2-deal-card__monthly {
-		background: rgba(255, 255, 255, 0.8);
-		border-radius: 5px;
-		color: #121715;
-		font-size: 14px;
-		font-weight: 800;
-		line-height: 18px;
-		padding: 5px 8px;
-		width: fit-content;
+		font-size: 13px;
+		font-weight: 900;
 	}
 
 	.home2-deal-card__arrow {
 		align-items: center;
-		background: #121715;
+		background: #121214;
 		border-radius: 50%;
 		color: #ffffff;
 		display: inline-flex;
-		height: 46px;
+		height: 50px;
 		justify-content: center;
-		width: 46px;
+		width: 50px;
 	}
 
-	.home2-deal-card__arrow svg {
-		height: 22px;
-		width: 22px;
-	}
-
-	.home2-deal-card__arrow svg path {
-		fill: none;
+	.home2-deal-card__arrow :global(svg),
+	.home2-deal-card__arrow :global(svg *) {
+		color: #ffffff !important;
 		stroke: #ffffff !important;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-		stroke-width: 2.3;
 	}
 
 	.home2-deal-card:hover .home2-deal-card__arrow {
 		background: #98bc2a;
+		color: #121214;
 	}
 
-	@media (max-width: 1199px) {
+	.home2-deal-card:hover .home2-deal-card__arrow :global(svg),
+	.home2-deal-card:hover .home2-deal-card__arrow :global(svg *) {
+		color: #121214 !important;
+		stroke: #121214 !important;
+	}
+
+	@media (max-width: 1100px) {
 		.home2-deals__rail {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
-
-		.home2-deal-card {
-			min-height: 342px;
-		}
 	}
 
-	@media (max-width: 575px) {
+	@media (max-width: 760px) {
 		.home2-deals {
-			padding: 42px 0 54px;
+			padding-inline: 16px;
 		}
 
-		.home2-deals__header {
+		.home2-section-title {
 			align-items: flex-start;
-			flex-direction: column;
-			gap: 10px;
+		}
+
+		.home2-section-title h2 {
+			font-size: 31px;
 		}
 
 		.home2-deals__rail {
-			gap: 16px;
 			grid-template-columns: 1fr;
-		}
-
-		.home2-deal-card {
-			gap: 10px;
-			grid-template-rows: auto 170px auto;
-			min-height: 0;
-		}
-
-		.home2-deal-card__copy {
-			min-height: 90px;
-			padding-right: 0;
-		}
-
-		.home2-deal-card__image {
-			margin: 0;
-			min-height: 170px;
-		}
-
-		.home2-deal-card__image img {
-			max-height: 160px;
-		}
-
-		.home2-deal-card__footer {
-			grid-template-columns: 1fr 46px;
-		}
-
-		.home2-deal-card__arrow {
-			height: 46px;
-			width: 46px;
 		}
 	}
 </style>

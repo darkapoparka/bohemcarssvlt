@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+	import AuxeroHead from '$lib/components/layout/AuxeroHead.svelte';
 
 	type Props = {
 		afterHtml: string;
@@ -21,6 +23,12 @@
 
 	const wrapperOpenTag = '<div id="wrapper">';
 	const divTagPattern = /<\/?div\b[^>]*>/gi;
+	const resolvedTitle = $derived(
+		title ?? pageDocument.headHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim()
+	);
+	const bodyClassScript = $derived(
+		`document.body.className = ${JSON.stringify(pageDocument.bodyClass)};`
+	);
 
 	const findWrapperCloseIndex = (html: string) => {
 		divTagPattern.lastIndex = 0;
@@ -37,9 +45,6 @@
 		return -1;
 	};
 
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
-	);
 	let wrapperShell: WrapperShell | undefined = $derived.by(() => {
 		const wrapperStart = beforeHtml.lastIndexOf(wrapperOpenTag);
 
@@ -56,20 +61,23 @@
 			beforeWrapperHtml: beforeHtml.slice(0, wrapperStart)
 		};
 	});
+
+	$effect(() => {
+		document.body.className = pageDocument.bodyClass;
+		if (resolvedTitle) {
+			document.title = resolvedTitle;
+		}
+	});
+
+	onMount(() => {
+		window.dispatchEvent(new Event('bohemcars:svelte-mounted'));
+	});
 </script>
 
-<svelte:head>
-	{#if title}
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html pageDocument.headHtml.replace(/<title>[\s\S]*?<\/title>/i, '')}
-		<title>{title}</title>
-	{:else}
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html pageDocument.headHtml}
-	{/if}
-</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
+<AuxeroHead assets={pageDocument.headAssets} title={resolvedTitle} />
+<svelte:element this={'script'}>
+	{bodyClassScript}
+</svelte:element>
 {#if wrapperShell}
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html wrapperShell.beforeWrapperHtml}

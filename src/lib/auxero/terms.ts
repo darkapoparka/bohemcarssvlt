@@ -4,6 +4,8 @@ export type AuxeroTermsSection = {
 	title: string;
 };
 
+export const auxeroTermsPageTitle = 'Условия за използване на Bohemcars';
+
 export const auxeroTermsSections: AuxeroTermsSection[] = [
 	{
 		id: 'section1',

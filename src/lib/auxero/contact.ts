@@ -1,3 +1,5 @@
+import { bohemcarsContact } from '$lib/data/bohemcars';
+
 export type AuxeroContactInputField = {
 	active: boolean;
 	id: string;
@@ -14,6 +16,48 @@ export type AuxeroContactFormData = {
 	submitLabel: string;
 	subtitle: string;
 	title: string;
+};
+
+export type AuxeroContactPageInfo = {
+	description: string;
+	emailHref: string;
+	emailLabel: string;
+	eyebrow: string;
+	mapSrc: string;
+	officeLabel: string;
+	phoneHref: string;
+	phoneLabel: string;
+	secondaryPhoneHref: string;
+	secondaryPhoneLabel: string;
+	socials: Array<{
+		href: string;
+		icon: string;
+		label: string;
+	}>;
+	title: string;
+	workNote: string;
+};
+
+export const contactPageInfo: AuxeroContactPageInfo = {
+	description:
+		'Огледи, внос от Канада, документи и продажба на автомобил се уточняват с предварителна уговорка.',
+	emailHref: bohemcarsContact.emailHref,
+	emailLabel: bohemcarsContact.emailLabel,
+	eyebrow: 'Контакт',
+	mapSrc:
+		'https://maps.google.com/maps?q=Plovdiv%20South%20Industrial%20Zone&t=&z=13&ie=UTF8&iwloc=&output=embed',
+	officeLabel: 'Офис Bohemcars',
+	phoneHref: bohemcarsContact.primaryPhoneHref,
+	phoneLabel: bohemcarsContact.primaryPhoneLabel,
+	secondaryPhoneHref: bohemcarsContact.marketplacePhoneHref,
+	secondaryPhoneLabel: bohemcarsContact.marketplacePhoneLabel,
+	socials: [
+		{ href: bohemcarsContact.facebookHref, icon: 'input-facebook.svg', label: 'Facebook' },
+		{ href: bohemcarsContact.viberHref, icon: 'ChatCircleDots.svg', label: 'Viber' },
+		{ href: bohemcarsContact.youtubeHref, icon: 'input-youtube.svg', label: 'YouTube' }
+	],
+	title: 'Свържете се с Bohemcars',
+	workNote: bohemcarsContact.appointmentNote
 };
 
 export const contactFormData: AuxeroContactFormData = {

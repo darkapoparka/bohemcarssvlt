@@ -9,4 +9,5 @@
 	beforePasswordHtml={data.beforePasswordHtml}
 	pageDocument={data.pageDocument}
 	password={data.password}
+	passwordHtml={data.passwordHtml}
 />

@@ -1,4 +1,4 @@
-import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+import { parseAuxeroHeadAssets, type AuxeroPageDocument } from '$lib/auxero/page-document';
 
 export const locales = ['bg', 'en'] as const;
 export type Locale = (typeof locales)[number];
@@ -717,7 +717,6 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/Viewing appointment/g, 'Оглед по уговорка'],
 	[/Bohemcars Consultants/g, 'Консултанти на Bohemcars'],
 	[/Bohemcars Consultant/g, 'Консултант на Bohemcars'],
-	[/Bohemcars Sales/g, 'Продажби Bohemcars'],
 	[/Call Bohemcars/g, 'Обади се на Bohemcars'],
 	[/Chat on Viber/g, 'Пиши във Viber'],
 	[/EUR\/mo/g, 'EUR/мес.'],
@@ -731,7 +730,6 @@ const auxeroBgReplacements: Array<[RegExp, string]> = [
 	[/WHAT ARE YOU LOOKING FOR\?/g, 'Какво търсите?'],
 	[/\bPages\b/g, 'Раздели'],
 	[/\bHome\b/g, 'Начало'],
-	[/\bInventory\b/g, 'Автомобили'],
 	[/\bServices\b/g, 'Услуги'],
 	[/\bAbout\b/g, 'За нас'],
 	[/\bContact\b/g, 'Контакти'],
@@ -798,21 +796,43 @@ const localizeAuxeroHtmlSegment = (html: string) =>
 		html
 	);
 
+const localizeAuxeroTagAttributes = (tag: string) =>
+	tag.replace(
+		/\s(aria-label|alt|placeholder|title)=(["'])(.*?)\2/gi,
+		(match, name: string, quote: string, value: string) =>
+			` ${name}=${quote}${localizeAuxeroHtmlSegment(value)}${quote}`
+	);
+
 export const localizeAuxeroHtml = (html: string, locale: Locale) =>
 	locale === 'bg'
 		? html
-				.split(/(<!--[\s\S]*?-->)/g)
-				.map((segment) =>
-					segment.startsWith('<!--') ? segment : localizeAuxeroHtmlSegment(segment)
-				)
+				.split(/(<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>|<!--[\s\S]*?-->|<[^>]+>)/gi)
+				.map((segment) => {
+					if (
+						segment.startsWith('<!--') ||
+						/^<script\b/i.test(segment) ||
+						/^<style\b/i.test(segment)
+					) {
+						return segment;
+					}
+
+					return segment.startsWith('<')
+						? localizeAuxeroTagAttributes(segment)
+						: localizeAuxeroHtmlSegment(segment);
+				})
 				.join('')
 		: html;
 
 export const localizeAuxeroPageDocument = (
 	pageDocument: AuxeroPageDocument,
 	locale: Locale
-): AuxeroPageDocument => ({
-	...pageDocument,
-	bodyHtml: localizeAuxeroHtml(pageDocument.bodyHtml, locale),
-	headHtml: localizeAuxeroHtml(pageDocument.headHtml, locale)
-});
+): AuxeroPageDocument => {
+	const headHtml = localizeAuxeroHtml(pageDocument.headHtml, locale);
+
+	return {
+		...pageDocument,
+		bodyHtml: localizeAuxeroHtml(pageDocument.bodyHtml, locale),
+		headAssets: parseAuxeroHeadAssets(headHtml),
+		headHtml
+	};
+};

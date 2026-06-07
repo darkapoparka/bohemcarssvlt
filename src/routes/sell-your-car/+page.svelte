@@ -5,8 +5,13 @@
 </script>
 
 <SellYourCarTemplatePage
-	afterSellFormHtml={data.afterSellFormHtml}
-	beforeSellFormHtml={data.beforeSellFormHtml}
 	form={data.form}
+	hero={data.hero}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
+	steps={data.steps}
 />

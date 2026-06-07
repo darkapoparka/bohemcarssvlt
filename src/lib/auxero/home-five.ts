@@ -328,6 +328,7 @@ const brokenHomeImageSlugs = new Set(['21779200396408437']);
 // use so the card thumbnail and the detail hero stay consistent.
 const cardImageOverrides: Record<string, string> = {
 	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
+	'21778067767337633': '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp',
 	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp'
 };
 
@@ -979,6 +980,7 @@ const modalBrandLogos: Record<string, string> = {
 	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
 	Mazda: '/assets/images/brand/brand-10.webp',
 	'Mercedes-Benz': '/assets/images/brand/brand-2.webp',
+	Porsche: '/assets/bohemcars/brands/porsche.webp',
 	Tesla: '/assets/images/brand/brand-12.webp',
 	Toyota: '/assets/images/brand/brand-5.webp',
 	Volvo: '/assets/images/brand/brand-6.webp',
@@ -1091,7 +1093,7 @@ const heroTextSlidesForLocale = (locale: Locale): Omit<HomeFiveHeroTextSlide, 'i
 				{
 					ctaHref: '/inventory',
 					ctaLabel: 'Виж наличните',
-					heading: 'Налични автомобили',
+					heading: 'Купи автомобил',
 					subtitle: 'Проверени автомобили с ясна история и съдействие до регистрация.'
 				},
 				{
@@ -1111,7 +1113,7 @@ const heroTextSlidesForLocale = (locale: Locale): Omit<HomeFiveHeroTextSlide, 'i
 				{
 					ctaHref: '/inventory',
 					ctaLabel: 'View available cars',
-					heading: 'Available Vehicles',
+					heading: 'Buy a car',
 					subtitle: 'Verified vehicles with clear history and registration support.'
 				},
 				{
@@ -1127,6 +1129,20 @@ const heroTextSlidesForLocale = (locale: Locale): Omit<HomeFiveHeroTextSlide, 'i
 					subtitle: 'Valuation, presentation, and support through the final deal.'
 				}
 			];
+
+const orderHeroTextSlidesByMode = (
+	slides: HomeFiveHeroTextSlide[],
+	activeMode: HomeFiveHeroActionMode
+): HomeFiveHeroTextSlide[] => {
+	const modeOrder: HomeFiveHeroActionMode[] = ['buy', 'import', 'sell'];
+	const activeIndex = modeOrder.indexOf(activeMode);
+	if (activeIndex <= 0) return slides;
+
+	const activeSlide = slides[activeIndex];
+	if (!activeSlide) return slides;
+
+	return [activeSlide, ...slides.filter((_, index) => index !== activeIndex)];
+};
 
 const heroActionsForLocale = (locale: Locale): HomeFiveHeroAction[] =>
 	locale === 'bg'
@@ -1244,6 +1260,7 @@ export function homeFiveHeroDataFromVehicles(
 			...slide
 		})
 	);
+	const orderedTextSlides = orderHeroTextSlidesByMode(textSlides, activeMode);
 	const brandCounts = countBy(vehicles.map((vehicle) => vehicle.brand));
 
 	return {
@@ -1336,7 +1353,7 @@ export function homeFiveHeroDataFromVehicles(
 		searchSubmitPrefix: t.searchSubmitPrefix,
 		searchSubmitSuffix: t.searchSubmitSuffix,
 		tabs: t.tabs,
-		textSlides,
+		textSlides: orderedTextSlides,
 		totalMatches: vehicles.length,
 		yearLabel: t.yearLabel,
 		yearRange: { min: 2015, max: 2026 }

@@ -9,4 +9,5 @@
 	beforeReviewsHtml={data.beforeReviewsHtml}
 	cards={data.cards}
 	pageDocument={data.pageDocument}
+	reviewsPage={data.reviewsPage}
 />

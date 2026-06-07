@@ -437,7 +437,7 @@ const applyServicesData = (html: string) => {
 			</div>
 		</div>
 	</div>
-</section></div>`;
+</section>`;
 	const chrome = html
 		.replaceAll('<a href="/">Home</a>', '<a href="/">Начало</a>')
 		.replaceAll('<span>Pages</span>', '<span>Раздели</span>')
@@ -525,13 +525,13 @@ const applyAboutData = (html: string) => {
 <section>
 	<h2 class="mb-40 text-center">Екипът зад процеса</h2>
 	<div class="container">${consultantGrid()}</div>
-</section></div>`;
+</section>`;
 
 	return replaceBodyAfterBreadcrumb(html, body);
 };
 
 const applyReviewsData = (html: string) => {
-	const body = `<section class="pb-100">
+	const body = `<section class="pb-100" data-bohemcars-reviews-page>
 	<div class="container">
 		<h1 class="h2">Отзиви от клиенти</h1>
 		<div class="tf-spacing-style3"></div>
@@ -583,7 +583,7 @@ const applyTermsData = (html: string) => {
 			</div>`
 		)
 		.join('\n');
-	const body = `<section class="bg-white pb-100">
+	const body = `<section class="bg-white pb-100" data-bohemcars-terms-page>
 	<div class="container">
 		<h1 class="h2 capitalize">Условия за използване на Bohemcars</h1>
 		<div class="tf-spacing-style3"></div>
@@ -611,7 +611,8 @@ const applyCalculatorData = (html: string) => {
 		['SUV кандидати', 'До 60k EUR', 'newest-year'],
 		['Премиум автомобили', 'Над 60k EUR', 'highest-price']
 	];
-	const body = `<section class="pb-100">
+	const body = `<div data-bohemcars-calculator-page>
+<section class="pb-100">
 	<div class="tf-spacing-style3"></div>
 	<div class="container">
 		<h1 class="h2 text-center mb-12">Калкулатор за внос</h1>
@@ -669,7 +670,8 @@ const applyCalculatorData = (html: string) => {
 			true
 		)}</div>
 	</div>
-</section>`;
+</section>
+</div>`;
 
 	return replaceBodyAfterBreadcrumb(html, body);
 };
@@ -691,7 +693,7 @@ const blogCard = (
 
 const applyBlogListData = (html: string) => {
 	const posts = listBlogPosts();
-	const body = `<section class="pb-100">
+	const body = `<section class="pb-100" data-bohemcars-blog-page>
 	<div class="container"><h1 class="h2">Съвети от Bohemcars</h1></div>
 	<div class="tf-spacing-style3"></div>
 	<div class="container">
@@ -717,7 +719,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 	const { post, related } = detailState;
 	const firstRelated = related[0] ?? post;
 	const secondRelated = related[1] ?? post;
-	const body = `<section class="blog-details-banner">
+	const body = `<div data-bohemcars-blog-detail-page><section class="blog-details-banner">
 	<img class="overlay-image" src="/assets/images/blog/overlay-blogdetails.webp" alt="blog-details-banner">
 	<div class="breadcrumb-wrapper">
 		<div class="container">
@@ -841,7 +843,7 @@ const applyBlogDetailData = (html: string, options: AuxeroRenderOptions = {}) =>
 		<h2 class="mb-40">Свързани публикации</h2>
 		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30">${related.map(blogCard).join('\n')}</div>
 	</div>
-</section>`;
+</section></div>`;
 
 	return replaceFromFirstSection(html, body);
 };

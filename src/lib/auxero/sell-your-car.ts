@@ -1,3 +1,5 @@
+import type { AuxeroPageBanner } from './page-banner';
+
 export type AuxeroSellCarInputField = {
 	active: boolean;
 	id: string;
@@ -17,6 +19,14 @@ export type AuxeroSellCarFormData = {
 export type AuxeroSellCarStep = {
 	text: string;
 	title: string;
+};
+
+export const sellYourCarHero: AuxeroPageBanner = {
+	description:
+		'Изпрати VIN, пробег, очаквана цена и телефон. Bohemcars ще прегледа автомобила и ще предложи реалистичен следващ ход.',
+	eyebrow: 'Bohemcars оценка',
+	image: '/assets/bohemcars/services/sell-car-service.webp',
+	title: 'Продай автомобила си с Bohemcars'
 };
 
 export const auxeroSellSteps: AuxeroSellCarStep[] = [

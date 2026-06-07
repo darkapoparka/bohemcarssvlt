@@ -12,12 +12,14 @@ import { vehicles } from '$lib/data/vehicles';
 import { accountContext, type AccountContext } from './account-dashboard-state';
 import { accountProfileMapEmbedUrl } from './account-profile-state';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
-import { listInventoryForAdmin } from './inventory';
+import { listInventoryForAdmin, listVehicleSubmissions } from './inventory';
 
 const km = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
 
 const editListingIdFromRoute = (routePath = '') => {
-	const match = routePath.replace(/^\/+|\/+$/g, '').match(/^admin\/inventory\/edit\/([^/]+)$/);
+	const match = routePath
+		.replace(/^\/+|\/+$/g, '')
+		.match(/^(?:admin\/inventory|account\/listings)\/edit\/([^/]+)$/);
 
 	if (!match) return undefined;
 
@@ -170,6 +172,10 @@ export const accountListingFormData = (
 					listing.routePath.endsWith(`/${editListingId}`)
 			)
 		: undefined;
+	const editSubmission =
+		!context.isAdmin && editListingId
+			? listVehicleSubmissions().find((submission) => submission.id === editListingId)
+			: undefined;
 	const editVehicle = editListing
 		? vehicles.find(
 				(candidate) =>
@@ -179,16 +185,16 @@ export const accountListingFormData = (
 			)
 		: undefined;
 	const vehicle = vehicles[0];
-	const title = editListing?.title ?? vehicle.title;
-	const priceLabel = editListing?.priceLabel ?? vehicle.priceLabel;
-	const vin = editListing?.vin ?? vehicle.stockNumber;
-	const mileage = editListing?.mileage ?? km(vehicle.mileage);
+	const title = editSubmission?.title ?? editListing?.title ?? vehicle.title;
+	const priceLabel = editSubmission?.expectedPrice ?? editListing?.priceLabel ?? vehicle.priceLabel;
+	const vin = editSubmission?.vin ?? editListing?.vin ?? vehicle.stockNumber;
+	const mileage = editSubmission?.mileage ?? editListing?.mileage ?? km(vehicle.mileage);
 	const engine = editVehicle?.engine ?? vehicle.engine;
 	const color = editVehicle?.exterior ?? vehicle.exterior;
 	const sourceUrl = editVehicle?.sourceUrl ?? vehicle.sourceUrl;
 	const address = editVehicle?.location ?? bohemcarsContact.addressLabel;
 	const mode: AuxeroListingFormMode =
-		editListing?.source === 'admin-listing'
+		editSubmission || editListing?.source === 'admin-listing'
 			? 'edit'
 			: editListing?.source === 'static-vehicle'
 				? 'clone-static'
@@ -198,9 +204,11 @@ export const accountListingFormData = (
 		{ name: 'role', value: context.session.role },
 		{
 			name: 'routePath',
-			value: options.routePath ?? (context.isAdmin ? '/admin/inventory/new' : '/sell-your-car')
+			value:
+				options.routePath ?? (context.isAdmin ? '/admin/inventory/new' : '/account/listings/new')
 		},
-		{ name: 'status', value: editListing?.status ?? 'draft' },
+		{ name: 'status', value: editSubmission?.status ?? editListing?.status ?? 'draft' },
+		...(editSubmission ? [{ name: 'submissionId', value: editSubmission.id }] : []),
 		...(editListing?.source === 'admin-listing'
 			? [{ name: 'listingId', value: editListing.id }]
 			: []),
@@ -316,7 +324,7 @@ export const accountListingFormData = (
 				required: true,
 				rows: 5,
 				type: 'textarea',
-				value: '',
+				value: editSubmission?.message ?? '',
 				wrapperClass: 'padding-0 col-span-4'
 			}
 		],

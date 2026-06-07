@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { AuxeroUserManagementData } from '$lib/auxero/user-management';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
 	import UserManagementTable from './UserManagementTable.svelte';
 
 	let {
@@ -17,6 +17,11 @@
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeUsersHtml} afterHtml={afterUsersHtml}>
+<AuxeroDashboardSlotShell
+	{pageDocument}
+	beforeHtml={beforeUsersHtml}
+	afterHtml={afterUsersHtml}
+	preserveDetailsPrefix={false}
+>
 	<UserManagementTable {users} />
-</AuxeroPageShell>
+</AuxeroDashboardSlotShell>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { AuxeroFavoriteVehicleCard } from '$lib/auxero/favorites';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
 	import AccountFavoritesGrid from './AccountFavoritesGrid.svelte';
 	import AccountFavoritesMobilePage from './AccountFavoritesMobilePage.svelte';
 
@@ -19,9 +19,13 @@
 </script>
 
 <div class="bohemcars-favorites-desktop-route">
-	<AuxeroPageShell {pageDocument} beforeHtml={beforeFavoritesHtml} afterHtml={afterFavoritesHtml}>
+	<AuxeroDashboardSlotShell
+		{pageDocument}
+		beforeHtml={beforeFavoritesHtml}
+		afterHtml={afterFavoritesHtml}
+	>
 		<AccountFavoritesGrid {cards} />
-	</AuxeroPageShell>
+	</AuxeroDashboardSlotShell>
 </div>
 
 <div class="bohemcars-favorites-mobile-route">

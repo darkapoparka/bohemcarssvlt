@@ -462,7 +462,7 @@ function applyAuxeroAccessibilityLabels(html: string, templateFile: string) {
 function findClosingTagIndex(html: string, openTagIndex: number, tagName: string) {
 	if (openTagIndex < 0) return -1;
 
-	const pattern = new RegExp(`<\\/?${tagName}\\b[^>]*>`, 'gi');
+	const pattern = new RegExp(`</?${tagName}\\b[^>]*>`, 'gi');
 	pattern.lastIndex = openTagIndex;
 	let depth = 0;
 	let match: RegExpExecArray | null;
@@ -514,7 +514,7 @@ const accountDashboardTitles: Record<string, string> = {
 };
 
 const adminDashboardTitles: Record<string, string> = {
-	add: 'Add Bohemcars Listing',
+	add: 'Add Listing',
 	agents: 'Agents',
 	dashboard: 'Admin Dashboard',
 	inquiries: 'Inquiries',
@@ -536,7 +536,7 @@ function dashboardContextHeaderMarkup(templateFile: string, options: AuxeroRende
 		{
 			active: false,
 			href: '/inventory',
-			label: context.isAdmin ? 'Bohemcars Автомобили' : 'Inventory'
+			label: context.isAdmin ? 'Bohemcars Inventory' : 'Inventory'
 		},
 		{ active: context.active === 'dashboard', href: dashboardHref, label: dashboardLabel }
 	];
@@ -2307,7 +2307,7 @@ function injectLocalBehavior(
 		'"': '&quot;',
 		"'": '&#39;'
 	})[char]);
-	const formatKm = (value) => Number(value || 0).toLocaleString('fr-FR').replace(/\\u202f/g, ' ') + ' km';
+	const formatKm = (value) => Number(value || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' km';
 	const compareRows = [
 		['mileage.svg', 'Mileage', (vehicle) => formatKm(vehicle.mileage)],
 		['years.svg', 'Years', (vehicle) => vehicle.year],
@@ -2540,8 +2540,11 @@ function injectLocalBehavior(
 	});
 	const vehicleImageFallback = ${JSON.stringify(bohemcarsAssets.hero)};
 	const isVehicleImage = (img) =>
-		Boolean(img.closest('[data-bohemcars-slug], [data-bohemcars-compare-column], .listing-details')) ||
-		/mobistatic\\d*\\.focus\\.bg/.test(img.currentSrc || img.src || '');
+		!img.closest('.bohemcars-inventory-desktop-route .bohemcars-inventory-content') &&
+		(
+			Boolean(img.closest('[data-bohemcars-slug], [data-bohemcars-compare-column], .listing-details')) ||
+			/mobistatic\\d*\\.focus\\.bg/.test(img.currentSrc || img.src || '')
+		);
 	const applyVehicleImageFallback = (img) => {
 		if (!isVehicleImage(img) || img.dataset.bohemcarsFallbackApplied === 'true') return;
 
@@ -2558,6 +2561,31 @@ function injectLocalBehavior(
 				applyVehicleImageFallback(img);
 			}
 		});
+	};
+	let vehicleImagePreparationReady = false;
+	let vehicleImagePreparationScheduled = false;
+	const runVehicleImagePreparation = () => {
+		vehicleImagePreparationReady = true;
+		prepareVehicleImages();
+	};
+	const scheduleVehicleImagePreparation = () => {
+		if (vehicleImagePreparationReady) {
+			prepareVehicleImages();
+			return;
+		}
+
+		if (vehicleImagePreparationScheduled) return;
+		vehicleImagePreparationScheduled = true;
+
+		const afterHydrationFrame = () => {
+			requestAnimationFrame(() => requestAnimationFrame(runVehicleImagePreparation));
+		};
+
+		if (document.readyState === 'complete') {
+			afterHydrationFrame();
+		} else {
+			window.addEventListener('load', afterHydrationFrame, { once: true });
+		}
 	};
 	const updateGarageState = (garage) => {
 		const favorites = Array.isArray(garage?.favorites) ? garage.favorites : readList(favoriteKey);
@@ -2578,7 +2606,7 @@ function injectLocalBehavior(
 		});
 		renderCompareTables(compare);
 		renderAccountFavorites(favorites);
-		prepareVehicleImages();
+		scheduleVehicleImagePreparation();
 	};
 	const mainNav = document.getElementById('menu-primary-menu');
 	if (mainNav && !mainNav.hasAttribute('data-bohemcars-dashboard-context-nav') && !mainNav.querySelector('.sub-menu')) {
@@ -2820,7 +2848,7 @@ function injectLocalBehavior(
 		const value = Number(String(input?.value || '0').replace(/[^0-9.-]/g, ''));
 		return Number.isFinite(value) ? value : 0;
 	};
-	const formatEur = (value) => Math.round(value).toLocaleString('fr-FR').replace(/\\u202f/g, ' ') + ' EUR';
+	const formatEur = (value) => Math.round(value).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' EUR';
 	const updateCalculator = (calculator) => {
 		const price = readCalcNumber(calculator, 'price');
 		const transport = readCalcNumber(calculator, 'transport');

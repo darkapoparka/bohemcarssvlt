@@ -245,3 +245,16 @@
 		/>
 	</svg>
 {/snippet}
+
+<style>
+	:global(#SearchModal.search-modal:not(.active)) {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		transition: none !important;
+		visibility: hidden !important;
+	}
+
+	:global(#SearchModal.search-modal.active) {
+		pointer-events: auto !important;
+	}
+</style>

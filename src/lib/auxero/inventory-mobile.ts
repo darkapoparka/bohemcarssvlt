@@ -94,16 +94,16 @@ const featuredExtras = [
 	'4x4',
 	'Панорамен люк',
 	'LED фарове',
-	'Apple CarPlay \\ Android Auto',
-	'360 camera \\ Задна камера',
+	'Apple CarPlay / Android Auto',
+	'360 camera / Задна камера',
 	'Head up display',
 	'Подгряване на седалките',
 	'Безключово палене'
 ] as const;
 
 const featureLabels: Record<string, Partial<Record<Locale, string>>> = {
-	'360 camera \\ Задна камера': { bg: '360 камера', en: '360 camera' },
-	'Apple CarPlay \\ Android Auto': { bg: 'CarPlay / Android Auto', en: 'CarPlay / Android Auto' },
+	'360 camera / Задна камера': { bg: '360 камера', en: '360 camera' },
+	'Apple CarPlay / Android Auto': { bg: 'CarPlay / Android Auto', en: 'CarPlay / Android Auto' },
 	'Безключово палене': { bg: 'Безключово', en: 'Keyless start' },
 	'Панорамен люк': { bg: 'Панорама', en: 'Panorama' },
 	'Подгряване на седалките': { bg: 'Подгрев', en: 'Heated seats' },

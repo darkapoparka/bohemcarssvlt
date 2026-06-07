@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveHeroData } from '$lib/auxero/home-five';
+	import { Search } from '@lucide/svelte';
 
 	let {
 		hero
@@ -9,160 +10,151 @@
 	} = $props();
 
 	const serviceTabs = [
-		{ href: '/inventory', label: 'Купи' },
-		{ href: '/sell-your-car', label: 'Продай' },
-		{ href: '/services', label: 'Внос' }
+		{ href: '/inventory', label: 'Намери автомобил' },
+		{ href: '/sell-your-car', label: 'Продай автомобил' },
+		{ href: '/import', label: 'Внос от Канада' }
 	] as const;
 </script>
 
 {#if hero}
-	<section class="home2-hero">
+	<section class="home2-hero" aria-labelledby="home2-title">
 		<img
-			class="home2-hero__car home2-hero__car--left"
-			src="/assets/bohemcars/home2/home2-hero-suv.webp"
+			class="home2-hero__scene"
+			src="/assets/bohemcars/hero/home-hero-available-inventory-two-car-v13.webp"
 			alt=""
 			loading="eager"
-		/>
-		<img
-			class="home2-hero__car home2-hero__car--right"
-			src="/assets/bohemcars/home2/home2-hero-sedan.webp"
-			alt=""
-			loading="eager"
+			aria-hidden="true"
 		/>
 
-		<div class="container">
-			<div class="home2-hero__content">
-				<h1>Купи. Продай. Внеси.</h1>
+		<h1 id="home2-title">Сменяш автомобила? Bohemcars помага</h1>
 
-				<form
-					class="home2-search"
-					action={resolve('/inventory')}
-					method="get"
-					data-bohemcars-search-form="inventory"
-				>
-					<div class="home2-search__tabs" aria-label="Основни действия">
-						{#each serviceTabs as tab (tab.href)}
-							<a href={resolve(tab.href)} class:active={tab.label === 'Купи'}>
-								{tab.label}
-							</a>
-						{/each}
-					</div>
-
-					<div class="home2-search__surface">
-						<div class="home2-search__bar">
-							<input
-								name="q"
-								type="search"
-								placeholder="Търси по марка, модел или тип"
-								autocomplete="off"
-							/>
-							<button
-								type="submit"
-								aria-label={`${hero.searchSubmitPrefix} ${hero.totalMatches} ${hero.searchSubmitSuffix}`}
-							>
-								<img src="/assets/icons/search.svg" alt="" />
-							</button>
-						</div>
-					</div>
-
-					<p>
-						или <a href={resolve('/inventory')}
-							>{hero.searchSubmitPrefix.toLowerCase()}
-							{hero.totalMatches}
-							{hero.searchSubmitSuffix}</a
-						>
-					</p>
-				</form>
+		<form
+			class="home2-search"
+			action={resolve('/inventory')}
+			method="get"
+			data-bohemcars-search-form="inventory"
+			aria-label="Търсене на автомобил"
+		>
+			<div class="home2-search__tabs" aria-label="Основни действия">
+				{#each serviceTabs as tab (tab.href)}
+					<a
+						href={resolve(tab.href as '/inventory')}
+						class={tab.href === '/inventory' ? 'active' : undefined}
+					>
+						{tab.label}
+					</a>
+				{/each}
 			</div>
-		</div>
+
+			<label class="home2-search__input">
+				<span class="home2-search__label">Търси в наличните автомобили</span>
+				<input
+					name="q"
+					type="search"
+					placeholder="Търси по марка, модел или тип"
+					autocomplete="off"
+				/>
+				<button
+					type="submit"
+					aria-label={`${hero.searchSubmitPrefix} ${hero.totalMatches} ${hero.searchSubmitSuffix}`}
+				>
+					<Search size={26} strokeWidth={2.6} />
+				</button>
+			</label>
+
+			<p>
+				или остави ни да помогнем
+				<a href={resolve('/inventory')}
+					>{hero.searchSubmitPrefix.toLowerCase()} {hero.totalMatches} {hero.searchSubmitSuffix}</a
+				>
+			</p>
+		</form>
 	</section>
 {/if}
 
 <style>
 	.home2-hero {
-		background:
-			radial-gradient(circle at 28% 75%, rgba(255, 255, 255, 0.24), transparent 24%),
-			radial-gradient(circle at 78% 28%, rgba(255, 255, 255, 0.2), transparent 22%),
-			linear-gradient(180deg, #55d8cf 0%, #55d8cf 70%, #4fd0c6 100%);
-		min-height: 390px;
+		background: #080a09;
+		isolation: isolate;
+		min-height: 386px;
 		overflow: hidden;
-		padding-bottom: 0;
 		position: relative;
 	}
 
-	.home2-hero__content {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		min-height: 390px;
-		padding: 0;
-		position: relative;
-		z-index: 2;
+	.home2-hero::after {
+		background:
+			linear-gradient(180deg, rgb(4 6 7 / 0.58), rgb(4 6 7 / 0.18) 44%, rgb(4 6 7 / 0.58)),
+			radial-gradient(circle at 50% 34%, rgb(185 238 57 / 0.2), transparent 35%);
+		content: '';
+		inset: 0;
+		pointer-events: none;
+		position: absolute;
+		z-index: -1;
+	}
+
+	.home2-hero__scene {
+		height: auto;
+		inset: 0;
+		min-height: 100%;
+		object-fit: cover;
+		object-position: center center;
+		position: absolute;
+		width: 100%;
+		z-index: -2;
 	}
 
 	.home2-hero h1 {
-		color: #101514;
-		font-size: clamp(40px, 4.05vw, 58px);
-		font-weight: 800;
+		color: #ffffff;
+		font-family: 'Arial Black', Impact, Inter, ui-sans-serif, system-ui, sans-serif;
+		font-size: clamp(36px, 3.1vw, 48px);
+		font-weight: 1000;
+		left: 50%;
 		letter-spacing: 0;
-		line-height: 1.03;
-		margin: 0 0 18px;
-		max-width: 960px;
-		text-align: center;
-	}
-
-	.home2-hero__car {
-		filter: drop-shadow(0 26px 34px rgba(0, 0, 0, 0.16));
-		height: auto;
-		max-width: none;
-		opacity: 0.96;
+		line-height: 0.98;
+		margin: 0;
 		position: absolute;
-		user-select: none;
-		width: min(26vw, 374px);
-	}
-
-	.home2-hero__car--left {
-		bottom: 14px;
-		left: max(16px, calc((100vw - 1320px) / 2 - 70px));
-	}
-
-	.home2-hero__car--right {
-		bottom: 14px;
-		right: max(16px, calc((100vw - 1320px) / 2 - 86px));
-		width: min(28vw, 404px);
+		text-align: center;
+		text-shadow: 0 14px 34px rgb(0 0 0 / 0.45);
+		text-transform: uppercase;
+		text-wrap: balance;
+		top: 100px;
+		transform: translateX(-50%);
+		width: min(1280px, calc(100% - 56px));
+		z-index: 1;
 	}
 
 	.home2-search {
-		background: #ffffff;
+		background: #17191d;
 		border-radius: 8px;
-		box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
-		max-width: 640px;
-		padding: 8px;
-		width: min(640px, 100%);
+		bottom: 0;
+		box-shadow: 0 16px 36px rgb(12 12 12 / 0.18);
+		color: #ffffff;
+		left: 50%;
+		overflow: hidden;
+		position: absolute;
+		transform: translateX(-50%);
+		width: min(690px, calc(100% - 36px));
+		z-index: 3;
 	}
 
 	.home2-search__tabs {
 		align-items: center;
-		border-bottom: 1px solid #e2e7e3;
+		border-bottom: 1px solid rgb(255 255 255 / 0.12);
 		display: flex;
-		gap: 30px;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+		height: 56px;
 		justify-content: center;
-		padding: 4px 8px 0;
 	}
 
 	.home2-search__tabs a {
 		align-items: center;
-		color: #1b1f1d;
+		color: #ffffff;
 		display: flex;
-		font-size: 16px;
-		font-weight: 800;
+		font-size: 18px;
+		font-weight: 950;
 		justify-content: center;
-		line-height: 20px;
-		min-width: 44px;
-		min-height: 44px;
-		padding: 8px 2px 12px;
+		line-height: 1;
+		min-height: 56px;
 		position: relative;
 		text-align: center;
 	}
@@ -170,136 +162,141 @@
 	.home2-search__tabs a.active,
 	.home2-search__tabs a:hover {
 		background: transparent;
-		color: #101514;
+		color: #ffffff;
 	}
 
 	.home2-search__tabs a::after {
 		background: transparent;
-		border-radius: 999px 999px 0 0;
-		bottom: -1px;
+		bottom: 0;
 		content: '';
-		height: 3px;
-		left: 0;
+		height: 2px;
+		left: 50%;
 		position: absolute;
-		right: 0;
+		transform: translateX(-50%);
+		transition: width 160ms ease;
+		width: 0;
 	}
 
 	.home2-search__tabs a.active::after,
 	.home2-search__tabs a:hover::after {
-		background: #101514;
+		background: #ffffff;
+		width: 92px;
 	}
 
-	.home2-search__surface {
-		padding: 14px 10px 2px;
-	}
-
-	.home2-search__bar {
+	.home2-search__input {
 		align-items: center;
-		background: #f5f6f3;
+		background: #ffffff;
 		border-radius: 999px;
-		display: grid;
-		grid-template-columns: 1fr 54px;
-		margin: 0 auto 7px;
-		min-height: 54px;
+		display: flex;
+		height: 53px;
+		margin: 13px auto;
 		overflow: hidden;
+		position: relative;
 		width: min(520px, 100%);
 	}
 
-	.home2-search__bar input {
+	.home2-search__label {
 		border: 0;
-		color: #1c1c1c;
-		font-size: 16px;
-		font-weight: 500;
+		clip: rect(0, 0, 0, 0);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		white-space: nowrap;
+		width: 1px;
+	}
+
+	.home2-search__input input {
+		border: 0;
+		color: #121214;
+		flex: 1 1 auto;
+		font-size: 19px;
+		font-weight: 650;
 		height: 54px;
 		min-width: 0;
-		padding: 0 4px 0 22px;
-	}
-
-	.home2-search__bar input:focus {
 		outline: 0;
+		padding: 0 20px;
 	}
 
-	.home2-search__bar button {
+	.home2-search__input input::placeholder {
+		color: #8a888d;
+	}
+
+	.home2-search__input button {
 		align-items: center;
 		background: #98bc2a;
 		border: 0;
 		border-radius: 50%;
+		color: #101514;
+		cursor: pointer;
 		display: flex;
-		height: 44px;
+		flex: 0 0 auto;
+		height: 52px;
 		justify-content: center;
-		margin-right: 5px;
-		width: 44px;
-	}
-
-	.home2-search__bar button img {
-		filter: brightness(0) invert(1);
-		height: 20px;
-		width: 20px;
+		margin-right: 1px;
+		width: 52px;
 	}
 
 	.home2-search p {
 		align-items: center;
-		color: #4c5652;
+		color: #ffffff;
 		display: flex;
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 850;
 		gap: 8px;
 		justify-content: center;
-		line-height: 20px;
-		margin: 2px 0 4px;
+		line-height: 1;
+		margin: 4px 0 15px;
 	}
 
 	.home2-search p a {
 		align-items: center;
-		border: 0;
-		color: #101514;
+		border: 1px solid #ffffff;
+		border-radius: 5px;
+		color: #ffffff;
 		display: inline-flex;
-		font-weight: 800;
-		min-height: 44px;
-		margin-block: -12px;
-		padding: 0;
+		font-weight: 950;
+		min-height: 36px;
+		padding: 0 13px;
 	}
 
 	.home2-search p a:hover {
-		color: #7ca017;
+		background: #ffffff;
+		color: #121214;
 	}
 
-	@media (max-width: 991px) {
-		.home2-hero__car {
-			opacity: 0.16;
-			width: 430px;
-		}
-
-		.home2-hero__car--left {
-			left: -250px;
-		}
-
-		.home2-hero__car--right {
-			right: -270px;
+	@media (max-width: 1199px) {
+		.home2-hero h1 {
+			font-size: 38px;
 		}
 	}
 
-	@media (max-width: 575px) {
-		.home2-hero,
-		.home2-hero__content {
-			min-height: auto;
-		}
-
-		.home2-hero__content {
-			padding: 24px 0 30px;
+	@media (max-width: 760px) {
+		.home2-hero {
+			min-height: 536px;
 		}
 
 		.home2-hero h1 {
-			font-size: 36px;
+			font-size: 39px;
+			top: 96px;
 		}
 
-		.home2-search__bar {
-			width: 100%;
+		.home2-search {
+			bottom: 24px;
 		}
 
-		.home2-search p {
+		.home2-search__tabs {
 			flex-wrap: wrap;
-			padding: 0 14px;
+			gap: 10px;
+		}
+
+		.home2-search__tabs a {
+			font-size: 15px;
+		}
+
+		.home2-search__input {
+			width: calc(100% - 28px);
 		}
 	}
 </style>

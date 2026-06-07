@@ -6,9 +6,11 @@
 </script>
 
 <VehicleDetailTemplatePage
-	afterDetailHtml={data.afterDetailHtml}
-	beforeDetailHtml={data.beforeDetailHtml}
 	detail={data.detail}
-	detailHtml={data.detailHtml}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

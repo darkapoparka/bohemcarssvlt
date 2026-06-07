@@ -21,9 +21,9 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		'sale-agents-details.html',
 		renderOptions,
 		{
-			marker: 'class="innerpage__content md-mb-30"',
+			marker: 'class="container innerpage-container"',
 			templateError: 'Agent detail template could not be rendered',
-			slotError: 'Agent detail slot could not be located'
+			slotError: 'Agent detail container slot could not be located'
 		}
 	);
 

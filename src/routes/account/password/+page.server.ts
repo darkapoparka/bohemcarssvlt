@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountPasswordFormData } from '$lib/server/account-profile-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
@@ -28,7 +29,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterPasswordHtml: passwordSlot.afterHtml,
 		auxeroFullPage: true,
 		beforePasswordHtml: passwordSlot.beforeHtml,
+		dashboard: getAccountDashboardPageData('change-password.html', renderOptions, {
+			subtitle: 'Update account credentials for this Bohemcars workspace.',
+			title: 'Profile Security'
+		}),
 		pageDocument,
-		password: getAccountPasswordFormData('change-password.html', renderOptions)
+		password: getAccountPasswordFormData('change-password.html', renderOptions),
+		passwordHtml: passwordSlot.sectionHtml
 	};
 };

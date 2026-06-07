@@ -1,8 +1,16 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
 	import type { HomePageCopy } from '$lib/i18n/messages';
+	import HomeFiveVehicleCard from './HomeFiveVehicleCard.svelte';
 
-	let { copy }: { copy: HomePageCopy } = $props();
+	let {
+		copy,
+		vehicles = []
+	}: {
+		copy: HomePageCopy;
+		vehicles?: HomeFiveVehicleCardData[];
+	} = $props();
 
 	const budgetTabHref = (index: number) =>
 		(
@@ -32,6 +40,13 @@
 				</ul>
 			</div>
 		</div>
+		{#if vehicles.length}
+			<div class="bohemcars-budget-grid lg-grid-cols-2 sm-grid-cols-1 grid grid-cols-4 gap-30">
+				{#each vehicles as vehicle (vehicle.slug)}
+					<HomeFiveVehicleCard {vehicle} copy={copy.vehicleCard} style2 />
+				{/each}
+			</div>
+		{/if}
 	</div>
 </section>
 
@@ -53,6 +68,10 @@
 		background: var(--bc-surface-soft);
 		padding: 26px 28px;
 		box-shadow: none;
+	}
+
+	.bohemcars-budget-grid {
+		margin-top: 30px;
 	}
 
 	.bohemcars-budget-heading {
@@ -146,6 +165,10 @@
 			border-radius: 0;
 			background: transparent;
 			padding: 0;
+		}
+
+		.bohemcars-budget-grid {
+			margin-top: 16px;
 		}
 
 		.bohemcars-budget-heading {

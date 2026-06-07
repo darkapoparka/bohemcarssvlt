@@ -8,15 +8,17 @@
 		afterTermsHtml,
 		beforeTermsHtml,
 		pageDocument,
-		sections
+		sections,
+		title
 	}: {
 		afterTermsHtml: string;
 		beforeTermsHtml: string;
 		pageDocument: AuxeroPageDocument;
 		sections: AuxeroTermsSection[];
+		title: string;
 	} = $props();
 </script>
 
 <AuxeroPageShell {pageDocument} beforeHtml={beforeTermsHtml} afterHtml={afterTermsHtml}>
-	<TermsContent {sections} />
+	<TermsContent {sections} {title} />
 </AuxeroPageShell>

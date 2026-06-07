@@ -10,8 +10,8 @@ describe('account route state boundaries', () => {
 		const adminDashboard = routeSource('./admin/+page.server.ts');
 
 		expect([accountDashboard, adminDashboard].join('\n')).not.toContain('auxero-account-data');
-		expect(accountDashboard).toContain('getAccountDashboardRecentData');
-		expect(adminDashboard).toContain('getAccountDashboardRecentData');
+		expect(accountDashboard).toContain('getAccountDashboardPageData');
+		expect(adminDashboard).toContain('getAccountDashboardPageData');
 	});
 
 	it('loads message thread data from the server state module, not the raw adapter', () => {

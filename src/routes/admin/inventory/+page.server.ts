@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountListingsData } from '$lib/server/account-listings-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
@@ -27,7 +28,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterListingsHtml: listingsSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeListingsHtml: listingsSlot.beforeHtml,
+		dashboard: getAccountDashboardPageData('my-listings.html', renderOptions, {
+			subtitle: 'Manage Bohemcars inventory, edit listings, and review availability.',
+			title: 'Inventory'
+		}),
 		listings: getAccountListingsData('my-listings.html', renderOptions),
+		listingsHtml: listingsSlot.sectionHtml,
 		pageDocument
 	};
 };

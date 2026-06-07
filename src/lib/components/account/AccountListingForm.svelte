@@ -1,175 +1,207 @@
 <script lang="ts">
+	import { FileText, ImagePlus, Save, Send } from '@lucide/svelte';
 	import type {
 		AuxeroAccountListingFormData,
 		AuxeroListingFormDropdownField
 	} from '$lib/auxero/account-listing-form';
 
 	let { form }: { form: AuxeroAccountListingFormData } = $props();
-</script>
 
-{#snippet dropdown(field: AuxeroListingFormDropdownField)}
-	<div class={field.wrapperClass}>
-		<p class="font-weight-600 mb-8">{field.label}*</p>
-		<div class="filter-select-dropdown style2 bg-white" data-name={field.id}>
-			<input type="checkbox" id={field.id} class="filter-select-dropdown__toggle" />
-			<label for={field.id} class="filter-select-dropdown__text">
-				<span>Select</span>
-			</label>
-			<div class="filter-select-dropdown__menu">
-				<div class="filter-select-dropdown__list">
-					{#each field.options as option (field.id + option.value + option.label)}
-						<label class="filter-checkbox">
-							<input
-								type="checkbox"
-								name={option.name ?? field.name}
-								value={option.value}
-								checked={option.checked}
-							/>
-							<span>{option.label}</span>
-						</label>
-					{/each}
-				</div>
-			</div>
-		</div>
-	</div>
-{/snippet}
+	let listingStatus = $state<'draft' | 'published' | 'submitted'>('draft');
+	let status = $state('');
+
+	const isSubmissionForm = $derived(
+		form.hiddenFields.some(
+			(field) => field.name === 'routePath' && field.value.startsWith('account/listings')
+		)
+	);
+	const primaryListingStatus = $derived(isSubmissionForm ? 'submitted' : 'published');
+	const primaryActionLabel = $derived(isSubmissionForm ? 'Submit for Review' : 'Publish Listing');
+	const draftStatusMessage = $derived(
+		isSubmissionForm
+			? 'Vehicle submission draft saved locally'
+			: 'Listing draft saved locally for Bohemcars review'
+	);
+	const primaryStatusMessage = $derived(
+		isSubmissionForm
+			? 'Vehicle submission sent locally for Bohemcars review'
+			: 'Listing published locally for Bohemcars'
+	);
+
+	const saveListing = (event: SubmitEvent) => {
+		event.preventDefault();
+		status = listingStatus === 'draft' ? draftStatusMessage : primaryStatusMessage;
+	};
+
+	const saveListingAs = (event: MouseEvent, nextStatus: 'draft' | 'published' | 'submitted') => {
+		event.preventDefault();
+		listingStatus = nextStatus;
+		status = nextStatus === 'draft' ? draftStatusMessage : primaryStatusMessage;
+	};
+
+	const selectedDropdownValue = (field: AuxeroListingFormDropdownField) =>
+		field.options.find((option) => option.checked)?.value ?? '';
+</script>
 
 <form
 	action="#"
-	class="bohemcars-add-listing-form"
+	class="bohemcars-add-listing-form dash-form"
 	novalidate
 	data-bohemcars-admin-listing-mode={form.mode}
+	data-bohemcars-listing-context={isSubmissionForm ? 'submission' : 'inventory'}
 	data-bohemcars-add-listing-form
+	onsubmit={saveListing}
 >
 	{#each form.hiddenFields as field (field.name)}
 		<input type="hidden" name={field.name} value={field.value} />
 	{/each}
+	<input type="hidden" name="listingStatus" value={listingStatus} />
 
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Gallery</p>
-
-		<div class="car-preview-upload mb-20">
-			<p class="h4 mb-20">Car Preview</p>
-			<div class="car-preview-upload__image-wrapper">
-				<img
-					id="carPreviewImage"
-					src={form.previewImage.src}
-					alt={form.previewImage.alt}
-					class="car-preview-upload__image"
-				/>
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Gallery</h2>
+				<p class="dash-card__subtitle">Primary listing media and gallery images.</p>
 			</div>
-			<div class="car-preview-upload__actions">
-				<button
-					type="button"
-					class="btn btn-line-1 btn-large font-weight-600 car-preview-upload__btn"
+			<ImagePlus
+				class="text-[var(--dash-primary)]"
+				size={22}
+				strokeWidth={2.1}
+				aria-hidden="true"
+			/>
+		</div>
+		<div class="dash-card__body dash-upload">
+			<div class="dash-upload__preview dash-upload__preview--wide">
+				<img src={form.previewImage.src} alt={form.previewImage.alt} />
+			</div>
+			<div class="flex flex-wrap items-center gap-3">
+				<label class="dash-secondary-button cursor-pointer" for="carPreviewInput"
+					>Choose preview</label
 				>
-					Choose File
-				</button>
 				<input
 					type="file"
 					id="carPreviewInput"
 					accept="image/jpeg,image/png,image/jpg"
-					class="car-preview-upload__input"
+					class="hidden"
 				/>
-				<span class="text-secondary text-sm">Upload file JPG, PNG</span>
+				<span class="text-sm font-bold text-[var(--dash-muted)]">Upload JPG or PNG</span>
 			</div>
-		</div>
 
-		<div class="car-gallery-upload">
-			<p class="h4 mb-20">Car Gallery</p>
-			<div class="car-gallery-upload__grid">
+			<div class="dash-gallery">
 				{#each form.galleryImages as image (image.src)}
-					<div class="car-gallery-upload__item">
-						<img src={image.src} alt={image.alt} class="car-gallery-upload__image" />
+					<div class="dash-gallery__item">
+						<img src={image.src} alt={image.alt} />
 					</div>
 				{/each}
 			</div>
-			<div class="car-gallery-upload__actions">
-				<button
-					type="button"
-					class="btn btn-line-1 btn-large font-weight-600 car-gallery-upload__btn"
+			<div class="flex flex-wrap items-center gap-3">
+				<label class="dash-secondary-button cursor-pointer" for="carGalleryInput"
+					>Choose gallery</label
 				>
-					Choose File
-				</button>
 				<input
 					type="file"
 					id="carGalleryInput"
 					accept="image/jpeg,image/png,image/jpg"
 					multiple
-					class="car-gallery-upload__input"
+					class="hidden"
 				/>
-				<span class="text-secondary text-sm">Upload file JPG, PNG</span>
+				<span class="text-sm font-bold text-[var(--dash-muted)]">Multiple JPG or PNG files</span>
 			</div>
 		</div>
-	</div>
+	</section>
 
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Car Details</p>
-
-		<div class="sm-grid-cols-1 grid grid-cols-4 gap-20">
-			{#each form.detailFields as field (field.id)}
-				{#if field.type === 'input'}
-					<div class={field.wrapperClass}>
-						<p class="font-weight-600 mb-8">{field.label}*</p>
-						<input
-							class="input-large"
-							type="text"
-							id={field.id}
-							name={field.name}
-							placeholder={field.placeholder}
-							value={field.value}
-							required={field.required}
-						/>
-					</div>
-				{:else if field.type === 'textarea'}
-					<div class={field.wrapperClass}>
-						<p class="font-weight-600 mb-8">{field.label}*</p>
-						<textarea
-							placeholder={field.placeholder}
-							rows={field.rows}
-							name={field.name}
-							class="Doors"
-							id={field.id}
-							value={field.value}
-							required={field.required}
-						></textarea>
-					</div>
-				{:else}
-					{@render dropdown(field)}
-				{/if}
-			{/each}
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Vehicle details</h2>
+				<p class="dash-card__subtitle">Core information shown across inventory and detail pages.</p>
+			</div>
 		</div>
-	</div>
+		<div class="dash-card__body">
+			<div class="dash-form-grid dash-form-grid--4">
+				{#each form.detailFields as field (field.id)}
+					{#if field.type === 'input'}
+						<label class="dash-field" for={field.id}>
+							<span class="dash-label">{field.label}*</span>
+							<input
+								class="dash-input"
+								type="text"
+								id={field.id}
+								name={field.name}
+								placeholder={field.placeholder}
+								value={field.value}
+								required={field.required}
+							/>
+						</label>
+					{:else if field.type === 'textarea'}
+						<label class="dash-field md:col-span-2" for={field.id}>
+							<span class="dash-label">{field.label}*</span>
+							<textarea
+								placeholder={field.placeholder}
+								rows={field.rows}
+								name={field.name}
+								class="dash-textarea"
+								id={field.id}
+								required={field.required}>{field.value}</textarea
+							>
+						</label>
+					{:else}
+						<label class="dash-field" for={field.id}>
+							<span class="dash-label">{field.label}*</span>
+							<select
+								class="dash-select"
+								id={field.id}
+								name={field.name}
+								value={selectedDropdownValue(field)}
+							>
+								<option value="">Select</option>
+								{#each field.options as option (field.id + option.value + option.label)}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
+						</label>
+					{/if}
+				{/each}
+			</div>
+		</div>
+	</section>
 
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Features</p>
-		<div
-			class="search-cars__features-grid xl-grid-cols-3 md-grid-cols-2 sm-grid-cols-1 grid grid-cols-5 gap-30"
-		>
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Features</h2>
+				<p class="dash-card__subtitle">Equipment, comfort, safety, and listing highlights.</p>
+			</div>
+		</div>
+		<div class="dash-card__body grid gap-5 lg:grid-cols-3">
 			{#each form.featureGroups as group (group.title)}
-				<div class="flex flex-col gap-12">
-					<div>
-						<p class="h7 font-weight-500">{group.title}</p>
+				<div>
+					<p class="m-0 mb-3 text-sm font-black text-[var(--dash-heading)]">{group.title}</p>
+					<div class="dash-checkbox-grid">
+						{#each group.features as feature (feature.id)}
+							<label class="dash-check" for={feature.id}>
+								<input type="checkbox" id={feature.id} checked={feature.checked} />
+								<span>{feature.label}</span>
+							</label>
+						{/each}
 					</div>
-					{#each group.features as feature (feature.id)}
-						<div class="form-group">
-							<input type="checkbox" id={feature.id} checked={feature.checked} />
-							<label for={feature.id}>{feature.label}</label>
-						</div>
-					{/each}
 				</div>
 			{/each}
 		</div>
-	</div>
+	</section>
 
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Car Price</p>
-
-		<div class="md-grid-cols-2 sm-grid-cols-1 grid grid-cols-4 gap-20">
-			<div class="padding-0 col-span-4">
-				<p class="font-weight-600 mb-8">Price (EUR)*</p>
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Pricing and location</h2>
+				<p class="dash-card__subtitle">Commercial details and dealership location.</p>
+			</div>
+		</div>
+		<div class="dash-card__body dash-form-grid dash-form-grid--2">
+			<label class="dash-field" for="PriceListing2">
+				<span class="dash-label">Price (EUR)*</span>
 				<input
-					class="input-large"
+					class="dash-input"
 					type="text"
 					id="PriceListing2"
 					name="PriceListing"
@@ -177,73 +209,32 @@
 					value={form.priceLabel}
 					required
 				/>
-			</div>
-		</div>
-	</div>
-
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Location</p>
-
-		<div class="md-grid-cols-1 mb-20 grid grid-cols-2 gap-20">
-			<div>
-				<p class="font-weight-600 mb-8">Full Address*</p>
+			</label>
+			<label class="dash-field" for="ListingAddress">
+				<span class="dash-label">Full address*</span>
 				<input
-					class="input-large"
+					class="dash-input"
 					type="text"
-					id="PriceListing"
-					name="PriceListing"
+					id="ListingAddress"
+					name="ListingAddress"
 					placeholder={form.address}
 					value={form.address}
 					required
 				/>
-			</div>
-			<div>
-				<p class="font-weight-600 mb-8">Map Location*</p>
-				<div class="filter-select-dropdown style2 bg-white" data-name="SelectLocation">
-					<input type="checkbox" id="SelectLocation" class="filter-select-dropdown__toggle" />
-					<label for="SelectLocation" class="filter-select-dropdown__text">
-						<span>Select</span>
-					</label>
-					<div class="filter-select-dropdown__menu">
-						<div class="filter-select-dropdown__list">
-							{#each form.locationOptions as option (option.value + option.label)}
-								<label class="filter-checkbox">
-									<input
-										type="checkbox"
-										name="type"
-										value={option.value}
-										checked={option.checked}
-									/>
-									<span>{option.label}</span>
-								</label>
-							{/each}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="widget-gg-map radius-8 flex overflow-hidden">
-			<iframe
-				src={form.mapEmbedUrl}
-				height="281"
-				style="border:0;width: 100%;"
-				allowfullscreen
-				loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"
-				title="Bohemcars listing location"
-			></iframe>
-		</div>
-	</div>
-
-	<div class="dashboard-box style-3 mb-30 bg-white">
-		<p class="h4 mb-20">Video</p>
-
-		<div class="md-grid-cols-1 grid grid-cols-4 gap-20">
-			<div class="padding-0 col-span-4">
-				<p class="font-weight-600 mb-8">Video URL*</p>
+			</label>
+			<label class="dash-field" for="SelectLocation">
+				<span class="dash-label">Map location*</span>
+				<select class="dash-select" id="SelectLocation" name="location">
+					<option value="">Select</option>
+					{#each form.locationOptions as option (option.value + option.label)}
+						<option value={option.value} selected={option.checked}>{option.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="dash-field" for="Yoururl">
+				<span class="dash-label">Video URL*</span>
 				<input
-					class="input-large"
+					class="dash-input"
 					type="text"
 					id="Yoururl"
 					name="Yoururl"
@@ -251,49 +242,74 @@
 					value={form.sourceUrl}
 					required
 				/>
+			</label>
+			<div class="dash-field md:col-span-2">
+				<span class="dash-label">Map preview</span>
+				<div class="dash-map">
+					<iframe
+						src={form.mapEmbedUrl}
+						height="281"
+						style="border:0;width: 100%;"
+						allowfullscreen
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						title="Bohemcars listing location"
+					></iframe>
+				</div>
 			</div>
 		</div>
+	</section>
+
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Attachments</h2>
+				<p class="dash-card__subtitle">Documents shown to staff during listing review.</p>
+			</div>
+			<FileText class="text-[var(--dash-primary)]" size={22} strokeWidth={2.1} aria-hidden="true" />
+		</div>
+		<div class="dash-card__body grid gap-4">
+			<div class="dash-attachments">
+				{#each form.attachments as attachment (attachment.type)}
+					<div class="dash-attachment">
+						<img class="h-7 w-7 object-contain" src={attachment.icon} alt="" />
+						<div class="min-w-0">
+							<p class="m-0 truncate text-sm font-black text-[var(--dash-heading)]">
+								{attachment.label}
+							</p>
+							<p class="m-0 text-xs font-bold text-[var(--dash-muted)]">{attachment.type}</p>
+						</div>
+					</div>
+				{/each}
+			</div>
+			<div class="flex flex-wrap items-center gap-3">
+				<label class="dash-secondary-button cursor-pointer" for="attachmentsInput"
+					>Choose documents</label
+				>
+				<input type="file" id="attachmentsInput" accept=".pdf,.doc,.docx" multiple class="hidden" />
+				<span class="text-sm font-bold text-[var(--dash-muted)]">Upload PDF, DOC, or DOCX</span>
+			</div>
+		</div>
+	</section>
+
+	<div class="flex flex-wrap justify-end gap-3">
+		<button
+			type="button"
+			class="dash-secondary-button"
+			onclick={(event) => saveListingAs(event, 'draft')}
+		>
+			<Save size={17} strokeWidth={2.1} aria-hidden="true" />
+			Save Draft
+		</button>
+		<button
+			type="button"
+			class="dash-primary-button"
+			onclick={(event) => saveListingAs(event, primaryListingStatus)}
+		>
+			<Send size={17} strokeWidth={2.1} aria-hidden="true" />
+			{primaryActionLabel}
+		</button>
 	</div>
 
-	<div class="dashboard-box style-3 mb-30 bg-white" id="Attachments">
-		<p class="h4 mb-20">Attachments</p>
-
-		<div class="attachments-box mb-20 flex flex-wrap gap-20">
-			{#each form.attachments as attachment (attachment.type)}
-				<div class="flex">
-					<a class="item" href="#Attachments">
-						<img class="type-icon" src={attachment.icon} alt="" />
-						<p class="text-secondary flex flex-col">
-							{attachment.label}
-							<span class="h7 font-weight-600 line-height-28 text-primary">
-								{attachment.type}
-							</span>
-						</p>
-
-						<p class="trash">
-							<img class="type-icon" src="/assets/icons/trash.svg" alt="" />
-						</p>
-					</a>
-				</div>
-			{/each}
-		</div>
-		<div class="car-gallery-upload__actions">
-			<button
-				type="button"
-				class="btn btn-line-1 btn-large font-weight-600 car-gallery-upload__btn"
-				id="attachmentsChooseFileBtn"
-			>
-				Choose File
-			</button>
-			<input
-				type="file"
-				id="attachmentsInput"
-				accept=".pdf,.doc,.docx"
-				multiple
-				class="car-gallery-upload__input"
-				style="display: none;"
-			/>
-			<span class="text-secondary text-sm">Upload file PDF, Doc, Docx</span>
-		</div>
-	</div>
+	<p class="m-0 min-h-5 text-sm font-black text-[#0f9f7a]" aria-live="polite">{status}</p>
 </form>

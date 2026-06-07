@@ -9,4 +9,5 @@
 	beforeTermsHtml={data.beforeTermsHtml}
 	pageDocument={data.pageDocument}
 	sections={data.sections}
+	title={data.title}
 />

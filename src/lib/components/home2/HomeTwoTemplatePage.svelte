@@ -8,8 +8,10 @@
 		HomeFiveTypeCard,
 		HomeFiveVehiclePill
 	} from '$lib/auxero/home-five';
+	import type { HomeTwoBudgetTile } from '$lib/auxero/home-two';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroHead from '$lib/components/layout/AuxeroHead.svelte';
 	import HomeFiveFooter from '../home/HomeFiveFooter.svelte';
 	import HomeFiveModals from '../home/HomeFiveModals.svelte';
 	import HomeTwoBrowsePaths from './HomeTwoBrowsePaths.svelte';
@@ -17,65 +19,120 @@
 	import HomeTwoExploreMore from './HomeTwoExploreMore.svelte';
 	import HomeTwoHeader from './HomeTwoHeader.svelte';
 	import HomeTwoHero from './HomeTwoHero.svelte';
+	import HomeTwoTrustSection from './HomeTwoTrustSection.svelte';
 
 	let {
-		afterFooterHtml,
-		afterHeaderHtml,
-		afterModalsHtml,
 		brandCards,
+		budgetTiles,
 		copy,
 		footer,
 		header,
 		hero,
 		modals,
 		pageDocument,
+		runtimeHtml,
 		typeCards,
 		vehiclePills
 	}: {
-		afterFooterHtml: string;
-		afterHeaderHtml: string;
-		afterModalsHtml: string;
 		brandCards: HomeFiveBrandCard[];
+		budgetTiles: HomeTwoBudgetTile[];
 		copy: HomePageCopy;
 		footer?: HomeFiveFooterData;
 		header?: HomeFiveHeaderData;
 		hero?: HomeFiveHeroData;
 		modals?: HomeFiveModalsData;
 		pageDocument: AuxeroPageDocument;
+		runtimeHtml?: string;
 		typeCards: HomeFiveTypeCard[];
 		vehiclePills: HomeFiveVehiclePill[];
 	} = $props();
 
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
+	const bodyClassScript = $derived(
+		`document.body.className = ${JSON.stringify(pageDocument.bodyClass)};`
 	);
 
 	$effect(() => {
 		document.body.className = pageDocument.bodyClass;
+		document.title = 'Bohemcars Marketplace | Home2';
 	});
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html pageDocument.bodyHtml}
-<HomeTwoHeader {header} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterHeaderHtml}
-<HomeTwoHero {hero} />
-<HomeTwoBrowsePaths pills={vehiclePills} />
-<HomeTwoDeals />
-<HomeTwoExploreMore {brandCards} {typeCards} {copy} />
-<HomeFiveFooter {footer} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterFooterHtml}
+<AuxeroHead assets={pageDocument.headAssets} title="Bohemcars Marketplace | Home2" />
+<svelte:element this={'script'}>
+	{bodyClassScript}
+</svelte:element>
+<svelte:head>
+	<meta
+		name="description"
+		content="Купи, продай или внеси автомобил с Bohemcars през Carwow-вдъхновена marketplace начална страница."
+	/>
+</svelte:head>
+
+<div id="wrapper" class="bohemcars-home-two-shell">
+	<div class="home2-stage">
+		<HomeTwoHeader {header} />
+		<HomeTwoHero {hero} />
+	</div>
+	<main>
+		<HomeTwoBrowsePaths {budgetTiles} {copy} pills={vehiclePills} />
+		<HomeTwoDeals />
+		<HomeTwoTrustSection />
+		<HomeTwoExploreMore {brandCards} {typeCards} {copy} />
+	</main>
+	<HomeFiveFooter {footer} />
+</div>
+
 <HomeFiveModals {modals} {copy} {header} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterModalsHtml}
+
+{#if runtimeHtml}
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html runtimeHtml}
+{/if}
 
 <style>
+	:global(body:has(.bohemcars-home-two-shell)) {
+		background: #f3f4f6;
+		color: #121214;
+	}
+
+	.bohemcars-home-two-shell {
+		background: #f3f4f6;
+		color: #121214;
+		font-family:
+			Inter,
+			ui-sans-serif,
+			system-ui,
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			sans-serif;
+		letter-spacing: 0;
+		min-height: 100vh;
+		overflow: clip;
+	}
+
+	.bohemcars-home-two-shell :global(a) {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.bohemcars-home-two-shell :global(button),
+	.bohemcars-home-two-shell :global(input) {
+		font: inherit;
+		letter-spacing: 0;
+	}
+
+	.bohemcars-home-two-shell :global(img) {
+		display: block;
+		max-width: 100%;
+	}
+
+	.home2-stage {
+		background: #080a09;
+		isolation: isolate;
+		position: relative;
+	}
+
 	:global(.switcher-container) {
 		display: none !important;
 	}

@@ -170,6 +170,8 @@
 				<div>
 					<p class="mb-8">{detail.copy.name}</p>
 					<input
+						aria-label={detail.copy.name}
+						autocomplete="name"
 						class="active input-large"
 						id="SendInquiryname"
 						name="SendInquiryname"
@@ -181,10 +183,12 @@
 				<div>
 					<p class="mb-8">{detail.copy.email}</p>
 					<input
+						aria-label={detail.copy.email}
+						autocomplete="email"
 						class="input-large"
 						name="SendInquiryemail"
 						id="SendInquiryemail"
-						type="text"
+						type="email"
 						value={detail.contact.email}
 						required
 					/>
@@ -192,6 +196,7 @@
 				<div>
 					<p class="mb-8">{detail.copy.phone}</p>
 					<input
+						aria-label={detail.copy.phone}
 						placeholder={detail.copy.phone}
 						class="input-large"
 						name="SendInquiryphone"
@@ -204,7 +209,11 @@
 
 				<div>
 					<p class="mb-8">{detail.copy.subject}</p>
-					<select>
+					<select
+						aria-label={detail.copy.subject}
+						id="SendInquirysubject"
+						name="SendInquirysubject"
+					>
 						<option>{detail.copy.subjectAvailability}</option>
 						<option>{detail.copy.subjectDocuments}</option>
 						<option>{detail.copy.subjectViewing}</option>

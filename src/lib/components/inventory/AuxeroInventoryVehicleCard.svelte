@@ -3,6 +3,7 @@
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
 	import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 	import { getMessages, type VehicleCardCopy } from '$lib/i18n/messages';
+	import { onMount } from 'svelte';
 
 	let {
 		card,
@@ -14,15 +15,31 @@
 		variant?: 'grid' | 'list';
 	} = $props();
 
-	const handleCardImageError = (event: Event) => {
-		const image = event.currentTarget;
+	let cardImage = $state<HTMLImageElement>();
 
-		if (!(image instanceof HTMLImageElement) || image.src.endsWith(bohemcarsAssets.hero)) {
+	const applyCardImageFallback = (image: HTMLImageElement | undefined) => {
+		if (!image || image.src.endsWith(bohemcarsAssets.hero)) {
 			return;
 		}
 
 		image.src = bohemcarsAssets.hero;
 	};
+
+	onMount(() => {
+		const image = cardImage;
+		const handleCardImageError = () => {
+			applyCardImageFallback(image);
+		};
+
+		image?.addEventListener('error', handleCardImageError);
+		if (image?.complete && image.naturalWidth === 0) {
+			applyCardImageFallback(image);
+		}
+
+		return () => {
+			image?.removeEventListener('error', handleCardImageError);
+		};
+	});
 </script>
 
 {#if variant === 'list'}
@@ -59,7 +76,7 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
+				<img bind:this={cardImage} class="card--img" src={card.image} alt={card.title} />
 			</a>
 		</div>
 		<div class="content">
@@ -112,7 +129,7 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
+				<img bind:this={cardImage} class="card--img" src={card.image} alt={card.title} />
 			</a>
 		</div>
 		<div class="content border-light border-top-none">
@@ -194,15 +211,31 @@
 {/snippet}
 
 {#snippet compactCardMeta(card: AuxeroInventoryVehicleCard, tagClass: string)}
-	<ul class={tagClass}>
-		<li>
-			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span>{card.year}</span>
+	<ul
+		class={tagClass}
+		style="display: flex !important; flex-wrap: nowrap !important; gap: 5px !important; overflow: hidden !important;"
+	>
+		<li
+			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
+		>
+			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span
+				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
+				>{card.year}</span
+			>
 		</li>
-		<li>
-			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
+		<li
+			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
+		>
+			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span
+				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
+				>{card.fuel}</span
+			>
 		</li>
-		<li>
+		<li
+			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
+		>
 			<img src="/assets/icons/transmission.svg" alt={copy.transmissionAlt} /><span
+				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
 				>{card.transmission}</span
 			>
 		</li>
@@ -289,16 +322,16 @@
 	}
 
 	.bohemcars-card-specs {
-		flex-wrap: wrap !important;
+		flex-wrap: nowrap !important;
 		gap: 5px;
-		overflow: visible;
+		overflow: hidden;
 	}
 
 	.bohemcars-card-specs li {
-		flex: 0 0 auto;
+		flex: 1 1 0;
 		justify-content: flex-start;
-		min-width: max-content;
-		padding: 5px 8px;
+		min-width: 0;
+		padding: 5px 6px;
 		white-space: nowrap;
 	}
 
@@ -310,8 +343,9 @@
 	}
 
 	.bohemcars-card-specs li span {
-		overflow: visible;
-		text-overflow: clip;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.bohemcars-card-price {

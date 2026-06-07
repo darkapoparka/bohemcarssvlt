@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { managedAgentCardsFromAgents } from '$lib/auxero/agents';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { listManagedAgents } from '$lib/server/agents';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
@@ -25,6 +26,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeAgentsHtml: agentsSlot.beforeHtml,
 		cards: managedAgentCardsFromAgents(listManagedAgents()),
+		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
+			subtitle: 'Manage Bohemcars agents, lead ownership, and message shortcuts.',
+			title: 'Agents'
+		}),
 		dashboardShell: true,
 		management: true,
 		pageDocument

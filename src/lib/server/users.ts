@@ -57,25 +57,32 @@ export const normalizeManagedUserStatus = (value: string | undefined) => {
 	return undefined;
 };
 
+const visibleManagedLeadInquiries = () => {
+	const records = listBohemcarsInquiries();
+	const seedLead = records.find((record) => record.id === 'inquiry-seed-1');
+
+	if (!seedLead) return records.slice(0, 3);
+
+	return [...records.filter((record) => record.id !== seedLead.id).slice(0, 2), seedLead];
+};
+
 export const listManagedUsers = () => [
 	...listBohemcarsUsers().map(managedUserFromAccount),
-	...listBohemcarsInquiries()
-		.slice(0, 3)
-		.map(
-			(inquiry): ManagedUser => ({
-				avatarRole: 'customer',
-				context: inquiry.vehicleTitle ?? inquiry.message,
-				email: inquiry.contactEmail,
-				id: inquiry.id,
-				kind: 'lead',
-				name: inquiry.contactName,
-				phone: inquiry.contactPhone,
-				role: 'lead',
-				roleLabel: 'Lead',
-				status: 'lead',
-				statusLabel: statusLabel('lead')
-			})
-		)
+	...visibleManagedLeadInquiries().map(
+		(inquiry): ManagedUser => ({
+			avatarRole: 'customer',
+			context: inquiry.vehicleTitle ?? inquiry.message,
+			email: inquiry.contactEmail,
+			id: inquiry.id,
+			kind: 'lead',
+			name: inquiry.contactName,
+			phone: inquiry.contactPhone,
+			role: 'lead',
+			roleLabel: 'Lead',
+			status: 'lead',
+			statusLabel: statusLabel('lead')
+		})
+	)
 ];
 
 export const updateManagedUser = ({

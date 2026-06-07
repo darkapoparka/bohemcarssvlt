@@ -209,7 +209,7 @@
 {/if}
 
 {#snippet closeButton()}
-	<button class="close-modal" type="button">
-		<img src={closeIcon} alt="close-modal" />
+	<button class="close-modal" type="button" aria-label="Затвори">
+		<img src={closeIcon} alt="" aria-hidden="true" />
 	</button>
 {/snippet}

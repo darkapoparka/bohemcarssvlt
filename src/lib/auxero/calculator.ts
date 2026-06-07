@@ -1,3 +1,5 @@
+import { supportFaqs } from './faqs';
+
 export type AuxeroCalculatorInputKey = 'dutyRate' | 'prep' | 'price' | 'transport' | 'vatRate';
 
 export type AuxeroCalculatorOutputKey =
@@ -35,6 +37,12 @@ export type AuxeroCalculatorData = {
 	title: string;
 	total: number;
 	totalNote: string;
+};
+
+export type AuxeroCalculatorBudgetLink = {
+	href: string;
+	label: string;
+	price: string;
 };
 
 export const auxeroCalculatorInitial = {
@@ -133,3 +141,15 @@ export const createAuxeroCalculatorData = (): AuxeroCalculatorData => {
 };
 
 export const auxeroCalculatorData = createAuxeroCalculatorData();
+
+export const auxeroCalculatorBudgetLinks: AuxeroCalculatorBudgetLink[] = [
+	{ href: '/inventory?sort=highest-price', label: 'Налични автомобили', price: 'До 20k EUR' },
+	{ href: '/inventory?sort=best-match', label: 'Внос от Канада', price: 'До 30k EUR' },
+	{ href: '/inventory?sort=newest-listed', label: 'Клиентски автомобили', price: 'До 40k EUR' },
+	{ href: '/inventory?sort=newest-year', label: 'SUV кандидати', price: 'До 60k EUR' },
+	{ href: '/inventory?sort=highest-price', label: 'Премиум автомобили', price: 'Над 60k EUR' }
+];
+
+export const auxeroCalculatorFaqs = supportFaqs.filter((faq) =>
+	['Costs', 'Documents', 'Timing'].includes(faq.topic)
+);

@@ -1,5 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { getAccountUserManagementData } from '$lib/server/account-users-state';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
+import {
+	accountUserManagementNotesData,
+	getAccountUserManagementData
+} from '$lib/server/account-users-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
@@ -23,6 +27,11 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterUsersHtml: usersSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeUsersHtml: usersSlot.beforeHtml,
+		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
+			subtitle: 'Review customer, agent, and admin activity in one table.',
+			title: 'Users'
+		}),
+		notes: accountUserManagementNotesData(),
 		pageDocument,
 		users: getAccountUserManagementData('dashboard.html', renderOptions)
 	};

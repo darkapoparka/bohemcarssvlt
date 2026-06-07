@@ -1,5 +1,5 @@
 import { agents } from '$lib/data/agents';
-import { bohemcarsConsultants } from '$lib/data/bohemcars';
+import { bohemcarsConsultants, bohemcarsContact } from '$lib/data/bohemcars';
 
 export type AuxeroReviewCard = {
 	avatar: string;
@@ -8,6 +8,13 @@ export type AuxeroReviewCard = {
 	role: string;
 	stars: number;
 	text: string;
+};
+
+export type AuxeroReviewsPageData = {
+	facebookHref: string;
+	facebookLabel: string;
+	pageLabel: string;
+	title: string;
 };
 
 const baseReviews = [
@@ -54,3 +61,10 @@ export const auxeroReviewCards: AuxeroReviewCard[] = baseReviews.map((review, in
 		.replace(/^-|-$/g, ''),
 	stars: 5
 }));
+
+export const auxeroReviewsPage: AuxeroReviewsPageData = {
+	facebookHref: bohemcarsContact.reviewsHref,
+	facebookLabel: 'Facebook',
+	pageLabel: '1',
+	title: 'Отзиви от клиенти'
+};

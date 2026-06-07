@@ -1,385 +1,265 @@
 <script lang="ts">
+	import { MapPin, Save, Upload } from '@lucide/svelte';
 	import type { AuxeroAccountProfileFormData } from '$lib/auxero/account-forms';
 
 	let { profile }: { profile: AuxeroAccountProfileFormData } = $props();
 
+	let status = $state('');
 	let primarySocialLinks = $derived(profile.socialLinks.slice(0, 3));
 	let secondarySocialLinks = $derived(profile.socialLinks.slice(3));
+
+	const saveProfile = (event: SubmitEvent) => {
+		event.preventDefault();
+		status = `Profile saved locally for ${profile.firstName} ${profile.lastName}`;
+	};
 </script>
 
-<form action="#" class="bohemcars-profile-form" novalidate data-bohemcars-profile-form>
+<form action="#" class="dash-form" novalidate data-bohemcars-profile-form onsubmit={saveProfile}>
 	<input type="hidden" name="role" value={profile.role} />
 	<input type="hidden" name="actorRole" value={profile.role} />
-	<div class="dashboard-box style-5 mb-38 bg-white">
-		<p class="h4 mb-20">Account Role</p>
 
-		<p class="hightlight-text text-primary mb-20 text-sm">{profile.roleNote}</p>
-
-		<div class="mb-40 flex">
-			<a href="#profile-information" class="btn btn-primary btn-large-3 font-weight-600">
-				{profile.roleLabel}
-			</a>
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Account role</h2>
+				<p class="dash-card__subtitle">{profile.roleNote}</p>
+			</div>
+			<span class="dash-role-pill">{profile.roleLabel}</span>
 		</div>
-
-		<p class="h4 mb-20" id="profile-information">Information</p>
-
-		<p class="font-weight-600 mb-12">Upload Avatar*</p>
-		<div class="upload-section mb-18">
-			<div class="flex items-start gap-20">
-				<div class="upload-preview upload-preview--avatar">
-					<img id="avatarPreview" src={profile.avatarImage} alt="Avatar Preview" />
-				</div>
-				<div class="upload-content flex-1">
-					<p class="font-weight-600 mb-6">Upload File</p>
-					<p class="text-secondary mb-6 text-xs">
-						PNG, JPG, SVG dimension (400 * 400) max file not more then size 4 mb.
-					</p>
-					<div class="flex">
-						<div class="upload-action">
-							<button type="button" class="upload-btn" data-target="avatarInput">
-								Choose File
-							</button>
-							<input
-								type="file"
-								id="avatarInput"
-								accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-								class="upload-input"
-							/>
-							<span class="text-muted file-name text-xs" data-target="avatarInput"
-								>No file choose</span
-							>
-						</div>
+		<div class="dash-card__body dash-form-grid dash-form-grid--2">
+			<div class="dash-field">
+				<span class="dash-label">Avatar</span>
+				<div class="flex flex-wrap items-center gap-4">
+					<div class="dash-upload__preview dash-upload__preview--avatar">
+						<img src={profile.avatarImage} alt="Avatar Preview" />
+					</div>
+					<div class="grid gap-2">
+						<label class="dash-secondary-button cursor-pointer" for="avatarInput">
+							<Upload size={17} strokeWidth={2.1} aria-hidden="true" />
+							Choose avatar
+						</label>
+						<input
+							type="file"
+							id="avatarInput"
+							accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+							class="hidden"
+						/>
+						<span class="text-xs font-bold text-[var(--dash-muted)]"
+							>PNG, JPG or SVG up to 4 MB</span
+						>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<p class="font-weight-600 mb-12">Dealer Poster*</p>
-		<div class="upload-section mb-20">
-			<div class="upload-preview--poster-wrapper">
-				<div class="upload-preview--poster">
-					<img id="posterPreview" src={profile.posterImage} alt="Dealer Poster Preview" />
+			<div class="dash-field">
+				<span class="dash-label">Dealer poster</span>
+				<div class="dash-upload__preview dash-upload__preview--poster">
+					<img src={profile.posterImage} alt="Dealer Poster Preview" />
 				</div>
-				<div class="upload-content flex-1">
-					<p class="font-weight-600 mb-4">Upload File</p>
-					<p class="text-secondary mb-12 text-xs">
-						PNG, JPG, SVG dimension (400 * 400) max file not more then size 4 mb.
-					</p>
-
-					<div class="flex">
-						<div class="upload-action">
-							<button type="button" class="upload-btn" data-target="posterInput">
-								Choose File
-							</button>
-							<input
-								type="file"
-								id="posterInput"
-								accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-								class="upload-input"
-							/>
-							<span class="text-muted file-name text-xs" data-target="posterInput"
-								>No file choose</span
-							>
-						</div>
-					</div>
-				</div>
+				<label class="dash-secondary-button mt-3 w-fit cursor-pointer" for="posterInput">
+					<Upload size={17} strokeWidth={2.1} aria-hidden="true" />
+					Choose poster
+				</label>
+				<input
+					type="file"
+					id="posterInput"
+					accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+					class="hidden"
+				/>
 			</div>
 		</div>
+	</section>
 
-		<div class="mb-14 grid grid-cols-2 gap-20">
-			<div class="md-col-span-2 padding-0">
-				<p class="font-weight-600 mb-8">Fist Name*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large input-clear active"
-						type="text"
-						name="first_name"
-						id="first_name"
-						value={profile.firstName}
-						placeholder="Fist Name*"
-					/>
-					<button type="button" class="input-clear-btn" data-target="first_name">
-						<img src="/assets/icons/clear.svg" alt="Clear" />
-					</button>
-				</div>
-			</div>
-
-			<div class="md-col-span-2 padding-0">
-				<p class="font-weight-600 mb-8">Last Name*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large input-clear"
-						type="text"
-						name="last_name"
-						id="last_name"
-						value={profile.lastName}
-						placeholder="Last Name*"
-					/>
-					<button type="button" class="input-clear-btn" data-target="last_name">
-						<img src="/assets/icons/clear.svg" alt="Clear" />
-					</button>
-				</div>
-			</div>
-
-			<div class="padding-0 col-span-2">
-				<p class="font-weight-600 mb-8">Description*</p>
-				<textarea
-					placeholder="Profile notes"
-					rows="4"
-					name="message"
-					class="message textarea-primary text-secondary"
-					id="message"
-					value={profile.description}
-					required
-				></textarea>
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Information</h2>
+				<p class="dash-card__subtitle">Profile details used by the dashboard and sales pages.</p>
 			</div>
 		</div>
-
-		<div class="lg-grid-cols-2 md-grid-cols-1 mb-22 grid grid-cols-4 gap-20">
-			<div>
-				<p class="font-weight-600 mb-8">Phone*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large"
-						type="text"
-						name="Phone"
-						id="Phone"
-						value={profile.phone}
-						placeholder="Phone"
-					/>
-				</div>
-			</div>
-
-			<div>
-				<p class="font-weight-600 mb-8">Sales Phone*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large"
-						type="text"
-						name="SalesPhone"
-						id="SalesPhone"
-						value={profile.marketplacePhone}
-						placeholder="Marketplace Phone*"
-					/>
-				</div>
-			</div>
-			<div>
-				<p class="font-weight-600 mb-8">Email Address*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large"
-						type="text"
-						name="EmailAddress"
-						id="EmailAddress"
-						value={profile.email}
-						placeholder="Email Address*"
-					/>
-				</div>
-			</div>
-			<div>
-				<p class="font-weight-600 mb-8">Company*</p>
-				<div class="input-clear-wrapper">
-					<input
-						class="input-large"
-						type="text"
-						name="Company"
-						id="Company"
-						value={profile.company}
-						placeholder="Company*"
-					/>
-				</div>
-			</div>
-		</div>
-
-		<div class="md-grid-cols-1 grid grid-cols-2 gap-20">
-			<div>
-				<p class="font-weight-600 mb-8">Gender*</p>
-				<select name="Gender" id="Gender" value={profile.gender}>
+		<div class="dash-card__body dash-form-grid dash-form-grid--4">
+			<label class="dash-field" for="first_name">
+				<span class="dash-label">First name*</span>
+				<input
+					class="dash-input"
+					type="text"
+					name="first_name"
+					id="first_name"
+					value={profile.firstName}
+					placeholder="First name"
+				/>
+			</label>
+			<label class="dash-field" for="last_name">
+				<span class="dash-label">Last name*</span>
+				<input
+					class="dash-input"
+					type="text"
+					name="last_name"
+					id="last_name"
+					value={profile.lastName}
+					placeholder="Last name"
+				/>
+			</label>
+			<label class="dash-field md:col-span-2" for="message">
+				<span class="dash-label">Description*</span>
+				<textarea class="dash-textarea" rows="4" name="message" id="message" required
+					>{profile.description}</textarea
+				>
+			</label>
+			<label class="dash-field" for="Phone">
+				<span class="dash-label">Phone*</span>
+				<input class="dash-input" type="text" name="Phone" id="Phone" value={profile.phone} />
+			</label>
+			<label class="dash-field" for="SalesPhone">
+				<span class="dash-label">Sales phone*</span>
+				<input
+					class="dash-input"
+					type="text"
+					name="SalesPhone"
+					id="SalesPhone"
+					value={profile.marketplacePhone}
+				/>
+			</label>
+			<label class="dash-field" for="EmailAddress">
+				<span class="dash-label">Email address*</span>
+				<input
+					class="dash-input"
+					type="text"
+					name="EmailAddress"
+					id="EmailAddress"
+					value={profile.email}
+				/>
+			</label>
+			<label class="dash-field" for="Company">
+				<span class="dash-label">Company*</span>
+				<input class="dash-input" type="text" name="Company" id="Company" value={profile.company} />
+			</label>
+			<label class="dash-field" for="Gender">
+				<span class="dash-label">Gender*</span>
+				<select class="dash-select" name="Gender" id="Gender" value={profile.gender}>
 					<option value="Male">Male</option>
 					<option value="Female">Female</option>
 				</select>
-			</div>
-
-			<div>
-				<p class="font-weight-600 mb-8">Day of Birth*</p>
-				<input type="date" name="DayofBirth" id="DayofBirth" value={profile.birthDate} />
-			</div>
-		</div>
-	</div>
-
-	<div class="dashboard-box style-5 mb-40 bg-white">
-		<p class="h4 mb-20">Social Network</p>
-
-		<div class="md-grid-cols-1 mb-20 grid grid-cols-3 gap-32">
-			{#each primarySocialLinks as link (link.id)}
-				<div class="input-clear-wrapper input-social-wrapper">
-					<img class="prefix-icon" src={link.icon} alt="Clear" />
-					<input
-						class="input-large input-clear"
-						type="text"
-						name={link.name}
-						id={link.id}
-						value={link.value}
-						placeholder="URL"
-					/>
-					<button type="button" class="input-clear-btn" data-target={link.id}>
-						<img src="/assets/icons/clear.svg" alt="Clear" />
-					</button>
-				</div>
-			{/each}
-		</div>
-
-		<div class="md-grid-cols-1 grid grid-cols-3 gap-32">
-			{#each secondarySocialLinks as link (link.id)}
-				<div class="input-clear-wrapper input-social-wrapper">
-					<img class="prefix-icon" src={link.icon} alt="Clear" />
-					<input
-						class="input-large input-clear"
-						type="text"
-						name={link.name}
-						id={link.id}
-						value={link.value}
-						placeholder="URL"
-					/>
-					<button type="button" class="input-clear-btn" data-target={link.id}>
-						<img src="/assets/icons/clear.svg" alt="Clear" />
-					</button>
-				</div>
-			{/each}
-		</div>
-	</div>
-
-	<div class="dashboard-box style-3 bg-white">
-		<p class="h4 mb-20">Location</p>
-
-		<div class="md-grid-cols-1 mb-20 grid grid-cols-2 gap-20">
-			<div>
-				<p class="font-weight-600 mb-8">Full Address*</p>
+			</label>
+			<label class="dash-field" for="DayofBirth">
+				<span class="dash-label">Day of birth*</span>
 				<input
-					class="input-large"
+					class="dash-input"
+					type="date"
+					name="DayofBirth"
+					id="DayofBirth"
+					value={profile.birthDate}
+				/>
+			</label>
+		</div>
+	</section>
+
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Social network</h2>
+				<p class="dash-card__subtitle">Links displayed on consultant and dealer surfaces.</p>
+			</div>
+		</div>
+		<div class="dash-card__body dash-form-grid">
+			<div class="dash-form-grid dash-form-grid--3">
+				{#each primarySocialLinks as link (link.id)}
+					<label class="dash-field" for={link.id}>
+						<span class="dash-label">{link.name}</span>
+						<span class="relative block">
+							<img
+								class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 object-contain"
+								src={link.icon}
+								alt=""
+							/>
+							<input
+								class="dash-input pl-10"
+								type="text"
+								name={link.name}
+								id={link.id}
+								value={link.value}
+								placeholder="URL"
+							/>
+						</span>
+					</label>
+				{/each}
+			</div>
+			<div class="dash-form-grid dash-form-grid--3">
+				{#each secondarySocialLinks as link (link.id)}
+					<label class="dash-field" for={link.id}>
+						<span class="dash-label">{link.name}</span>
+						<span class="relative block">
+							<img
+								class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 object-contain"
+								src={link.icon}
+								alt=""
+							/>
+							<input
+								class="dash-input pl-10"
+								type="text"
+								name={link.name}
+								id={link.id}
+								value={link.value}
+								placeholder="URL"
+							/>
+						</span>
+					</label>
+				{/each}
+			</div>
+		</div>
+	</section>
+
+	<section class="dash-card">
+		<div class="dash-card__head">
+			<div>
+				<h2 class="dash-card__title">Location</h2>
+				<p class="dash-card__subtitle">Dealer address and map context.</p>
+			</div>
+			<MapPin class="text-[var(--dash-primary)]" size={22} strokeWidth={2.1} aria-hidden="true" />
+		</div>
+		<div class="dash-card__body dash-form-grid dash-form-grid--2">
+			<label class="dash-field" for="ProfileAddress">
+				<span class="dash-label">Full address*</span>
+				<input
+					class="dash-input"
 					type="text"
-					id="PriceListing"
-					name="PriceListing"
+					id="ProfileAddress"
+					name="ProfileAddress"
 					placeholder={profile.address}
 					value={profile.address}
 					required
 				/>
-			</div>
-			<div>
-				<p class="font-weight-600 mb-8">Map Location*</p>
-				<div class="filter-select-dropdown style2 bg-white" data-name="SelectLocation">
-					<input type="checkbox" id="SelectLocation" class="filter-select-dropdown__toggle" />
-					<label for="SelectLocation" class="filter-select-dropdown__text">
-						<span>Select</span>
-					</label>
-					<div class="filter-select-dropdown__menu">
-						<div class="filter-select-dropdown__list">
-							{#each profile.mapOptions as option, index (option)}
-								<label class="filter-checkbox">
-									<input type="checkbox" name="type" value={option} checked={index === 0} />
-									<span>{option}</span>
-								</label>
-							{/each}
-						</div>
-					</div>
+			</label>
+			<label class="dash-field" for="ProfileLocation">
+				<span class="dash-label">Map location*</span>
+				<select class="dash-select" id="ProfileLocation" name="ProfileLocation">
+					{#each profile.mapOptions as option (option)}
+						<option value={option}>{option}</option>
+					{/each}
+				</select>
+			</label>
+			<div class="dash-field md:col-span-2">
+				<span class="dash-label">Map preview</span>
+				<div class="dash-map">
+					<iframe
+						src={profile.mapEmbedUrl}
+						height="281"
+						style="border:0;width: 100%;"
+						allowfullscreen
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						title="Bohemcars map"
+					></iframe>
 				</div>
 			</div>
 		</div>
+	</section>
 
-		<div class="widget-gg-map radius-8 flex overflow-hidden">
-			<iframe
-				src={profile.mapEmbedUrl}
-				height="281"
-				style="border:0;width: 100%;"
-				allowfullscreen
-				loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"
-				title="Bohemcars map"
-			></iframe>
-		</div>
-	</div>
-
-	<div class="mt-24 flex justify-end">
-		<button type="submit" class="btn btn-primary btn-large-3 font-weight-600">
+	<div class="flex justify-end">
+		<button type="submit" class="dash-primary-button">
+			<Save size={17} strokeWidth={2.1} aria-hidden="true" />
 			Save Locally
 		</button>
 	</div>
+	<p class="m-0 min-h-5 text-sm font-black text-[#0f9f7a]" aria-live="polite">{status}</p>
 </form>
-
-<style>
-	@media (max-width: 767.98px) {
-		.bohemcars-profile-form {
-			display: grid;
-			gap: 14px;
-		}
-
-		.bohemcars-profile-form :global(.dashboard-box) {
-			margin-bottom: 0 !important;
-			border: 1px solid var(--bc-border) !important;
-			border-radius: 8px !important;
-			background: var(--bc-surface) !important;
-			padding: 20px 16px !important;
-		}
-
-		.bohemcars-profile-form :global(.dashboard-box > .h4) {
-			margin-bottom: 14px !important;
-			font-size: 24px !important;
-			font-weight: 850 !important;
-			line-height: 30px !important;
-		}
-
-		.bohemcars-profile-form :global(.hightlight-text) {
-			border: 1px solid var(--bc-border);
-			border-radius: 8px;
-			background: var(--bc-surface-soft);
-			padding: 12px;
-		}
-
-		.bohemcars-profile-form :global(.grid) {
-			grid-template-columns: 1fr !important;
-			gap: 14px !important;
-		}
-
-		.bohemcars-profile-form :global(.upload-section .flex),
-		.bohemcars-profile-form :global(.upload-preview--poster-wrapper) {
-			display: grid !important;
-			grid-template-columns: 1fr !important;
-			gap: 12px !important;
-		}
-
-		.bohemcars-profile-form :global(.upload-preview--avatar) {
-			width: 176px !important;
-			height: 176px !important;
-		}
-
-		.bohemcars-profile-form :global(.upload-preview--poster) {
-			width: 100% !important;
-			max-width: none !important;
-		}
-
-		.bohemcars-profile-form :global(input),
-		.bohemcars-profile-form :global(select),
-		.bohemcars-profile-form :global(textarea),
-		.bohemcars-profile-form :global(.filter-select-dropdown) {
-			border-color: var(--bc-border) !important;
-			border-radius: 8px !important;
-			background: #ffffff !important;
-			box-shadow: none !important;
-		}
-
-		.bohemcars-profile-form :global(.upload-btn) {
-			border: 0 !important;
-			border-radius: 8px !important;
-			background: var(--bc-surface-hover) !important;
-		}
-
-		.bohemcars-profile-form > .mt-24 {
-			margin-top: 0 !important;
-			justify-content: stretch !important;
-		}
-
-		.bohemcars-profile-form > .mt-24 :global(.btn) {
-			width: 100%;
-		}
-	}
-</style>

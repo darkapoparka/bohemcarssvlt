@@ -292,7 +292,7 @@
 				{/each}
 			</div>
 
-			<div class="bohemcars-mobile-pdp__panel" role="tabpanel" data-vaul-no-drag>
+			<div class="bohemcars-mobile-pdp__panel" role="tabpanel" tabindex="0" data-vaul-no-drag>
 				{#if activeTab === 'info'}
 					<div class="bohemcars-mobile-pdp__section">
 						<p class="bohemcars-mobile-pdp__eyebrow">{detail.copy.description}</p>

@@ -1,5 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { auxeroCalculatorData } from '$lib/auxero/calculator';
+import {
+	auxeroCalculatorBudgetLinks,
+	auxeroCalculatorData,
+	auxeroCalculatorFaqs
+} from '$lib/auxero/calculator';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -11,9 +15,9 @@ export const load: PageServerLoad = ({ request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'data-bohemcars-calculator',
+			marker: 'data-bohemcars-calculator-page',
 			templateError: 'Calculator template could not be rendered',
-			slotError: 'Calculator slot could not be located'
+			slotError: 'Calculator page slot could not be located'
 		}
 	);
 
@@ -21,7 +25,9 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterCalculatorHtml: calculatorSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeCalculatorHtml: calculatorSlot.beforeHtml,
+		budgetLinks: auxeroCalculatorBudgetLinks,
 		calculator: auxeroCalculatorData,
+		faqs: auxeroCalculatorFaqs,
 		pageDocument
 	};
 };

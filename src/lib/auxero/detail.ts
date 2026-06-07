@@ -234,7 +234,7 @@ export const vehicleDetailFromVehicle = (
 	const primaryImage = vehicleImageOverrides[vehicle.slug] ?? vehicle.image;
 	const galleryImages = Array.from(
 		new Set([primaryImage, ...vehicle.gallery, ...vehicle.images].filter(Boolean))
-	);
+	).slice(0, 7);
 
 	return {
 		consultant: {

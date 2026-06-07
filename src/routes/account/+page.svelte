@@ -7,6 +7,7 @@
 <DashboardRecentTemplatePage
 	afterRecentHtml={data.afterRecentHtml}
 	beforeRecentHtml={data.beforeRecentHtml}
+	dashboard={data.dashboard}
+	dashboardContentHtml={data.dashboardContentHtml}
 	pageDocument={data.pageDocument}
-	recent={data.recent}
 />

@@ -1,4 +1,5 @@
 import type { Agent } from '$lib/data/agents';
+import { bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles } from '$lib/data/vehicles';
 import { inventoryCardsFromVehicles, type AuxeroInventoryVehicleCard } from './inventory';
 
@@ -8,8 +9,25 @@ export type AuxeroAgentDetailContent = {
 	inventoryCards: AuxeroInventoryVehicleCard[];
 	inventoryHeading: string;
 	name: string;
+	sidebar: AuxeroAgentDetailSidebar;
 	summary: string;
 	verifiedLabel: string;
+};
+
+export type AuxeroAgentDetailSidebar = {
+	address: string;
+	callHref: string;
+	callLabel: string;
+	consentLabel: string;
+	formTitle: string;
+	mapSrc: string;
+	messagePlaceholder: string;
+	phone: string;
+	subjectOptions: string[];
+	submitLabel: string;
+	termsLabel: string;
+	viberHref: string;
+	viberLabel: string;
 };
 
 const agentDetailSummary =
@@ -27,6 +45,26 @@ export const agentDetailFromAgent = (agent: Agent): AuxeroAgentDetailContent => 
 		inventoryCards: inventoryCardsFromVehicles(inventoryVehicles),
 		inventoryHeading: `Bohemcars Inventory (${inventoryCount})`,
 		name: agent.name,
+		sidebar: {
+			address: bohemcarsContact.addressLabel,
+			callHref: bohemcarsContact.primaryPhoneHref,
+			callLabel: 'Обади се на Bohemcars',
+			consentLabel:
+				'Yes, I would like to receive price alerts on this vehicle and helpful shopping information.',
+			formTitle: `Изпрати запитване to ${agent.name}`,
+			mapSrc: bohemcarsContact.mapEmbedUrl,
+			messagePlaceholder: 'Comment',
+			phone: bohemcarsContact.primaryPhoneLabel,
+			subjectOptions: [
+				'Наличност на автомобила',
+				'Наличност на автомобила 2',
+				'Наличност на автомобила 3'
+			],
+			submitLabel: 'Изпрати запитване',
+			termsLabel: 'Visitor Agreement.',
+			viberHref: bohemcarsContact.viberHref,
+			viberLabel: 'Пиши във Viber'
+		},
 		summary: agentDetailSummary,
 		verifiedLabel: 'Verified Bohemcars Consultant'
 	};

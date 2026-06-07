@@ -7,6 +7,8 @@
 <CalculatorTemplatePage
 	afterCalculatorHtml={data.afterCalculatorHtml}
 	beforeCalculatorHtml={data.beforeCalculatorHtml}
+	budgetLinks={data.budgetLinks}
 	calculator={data.calculator}
+	faqs={data.faqs}
 	pageDocument={data.pageDocument}
 />

@@ -1,25 +1,36 @@
 <script lang="ts">
 	import type { AuxeroAccountListingsData } from '$lib/auxero/account-listings';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
 	import AccountListingsTable from './AccountListingsTable.svelte';
 
 	let {
 		afterListingsHtml,
 		beforeListingsHtml,
 		listings,
+		listingsHtml,
 		pageDocument
 	}: {
 		afterListingsHtml: string;
 		beforeListingsHtml: string;
 		listings: AuxeroAccountListingsData;
+		listingsHtml?: string;
 		pageDocument: AuxeroPageDocument;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeListingsHtml} afterHtml={afterListingsHtml}>
-	<AccountListingsTable {listings} />
-</AuxeroPageShell>
+<AuxeroDashboardSlotShell
+	{pageDocument}
+	beforeHtml={beforeListingsHtml}
+	afterHtml={afterListingsHtml}
+>
+	{#if listingsHtml}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html listingsHtml}
+	{:else}
+		<AccountListingsTable {listings} />
+	{/if}
+</AuxeroDashboardSlotShell>
 
 <style>
 	@media (max-width: 767.98px) {

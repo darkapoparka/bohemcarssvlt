@@ -8,5 +8,6 @@
 	afterFormHtml={data.afterFormHtml}
 	beforeFormHtml={data.beforeFormHtml}
 	form={data.form}
+	formHtml={data.formHtml}
 	pageDocument={data.pageDocument}
 />

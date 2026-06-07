@@ -1,30 +1,28 @@
 import type { PageServerLoad } from './$types';
 import { agentCardsFromAgents } from '$lib/auxero/agents';
 import { listAgentDetails } from '$lib/server/agent-detail-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const agentList = listAgentDetails();
+	const locale = resolveLocale(url.searchParams.get('lang'));
 	const renderOptions = {
 		request,
 		routePath: 'agents',
 		searchParams: url.searchParams
 	};
-	const { pageDocument, slot: agentsSlot } = renderAuxeroPageSlot(
+	const pageDocument = renderAuxeroPageDocument(
 		'sale-agents.html',
 		renderOptions,
-		{
-			marker: 'data-bohemcars-agent-management="false"',
-			templateError: 'Agents template could not be rendered',
-			slotError: 'Agents grid slot could not be located'
-		}
+		'Agents template could not be rendered'
 	);
 
 	return {
-		afterAgentsHtml: agentsSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeAgentsHtml: agentsSlot.beforeHtml,
 		cards: agentCardsFromAgents(agentList),
-		pageDocument
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/agents')
 	};
 };

@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { auxeroTermsSections } from '$lib/auxero/terms';
+import { auxeroTermsPageTitle, auxeroTermsSections } from '$lib/auxero/terms';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -11,9 +11,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'data-bohemcars-terms',
+			marker: 'data-bohemcars-terms-page',
+			tagName: 'section',
 			templateError: 'Terms template could not be rendered',
-			slotError: 'Terms content slot could not be located'
+			slotError: 'Terms page slot could not be located'
 		}
 	);
 
@@ -22,6 +23,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeTermsHtml: termsSlot.beforeHtml,
 		pageDocument,
-		sections: auxeroTermsSections
+		sections: auxeroTermsSections,
+		title: auxeroTermsPageTitle
 	};
 };

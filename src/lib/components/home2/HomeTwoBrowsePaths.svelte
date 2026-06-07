@@ -1,420 +1,451 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveVehiclePill } from '$lib/auxero/home-five';
-	import { ArrowRight } from '@lucide/svelte';
+	import type { HomeTwoBudgetTile } from '$lib/auxero/home-two';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import {
+		ArrowRight,
+		BadgeEuro,
+		Car,
+		CheckCircle2,
+		Euro,
+		HeartHandshake,
+		ShieldCheck,
+		Sparkles,
+		Truck,
+		Zap
+	} from '@lucide/svelte';
 
-	let { pills }: { pills: HomeFiveVehiclePill[] } = $props();
+	let {
+		budgetTiles,
+		copy,
+		pills
+	}: {
+		budgetTiles: HomeTwoBudgetTile[];
+		copy: HomePageCopy;
+		pills: HomeFiveVehiclePill[];
+	} = $props();
 
 	const primaryPills = $derived(pills.slice(0, 9));
+	const pillIcons = [
+		Car,
+		HeartHandshake,
+		BadgeEuro,
+		ShieldCheck,
+		Truck,
+		Sparkles,
+		Zap,
+		Euro,
+		CheckCircle2
+	];
 
-	const actionCards = [
+	const actionCards = $derived([
 		{
-			body: 'Налични автомобили с ясен произход и оглед преди сделка.',
-			href: '/inventory',
-			image: '/assets/bohemcars/home2/home2-action-buy.webp',
-			kicker: 'Купи автомобил',
-			label: 'Виж наличните',
-			tone: 'buy'
-		},
-		{
-			body: 'Подбор, проверка, документи и доставка от Канада.',
-			href: '/services',
+			body: copy.actionBand.importBody,
+			cta: copy.actionBand.importCta,
+			href: '/services' as const,
 			image: '/assets/bohemcars/home2/home2-action-import.webp',
-			kicker: 'Внос от Канада',
-			label: 'Виж процеса',
+			title: copy.actionBand.importTitle,
 			tone: 'import'
+		},
+		{
+			body: copy.actionBand.buyBody,
+			cta: copy.actionBand.buyCta,
+			href: '/contact' as const,
+			image: '/assets/bohemcars/home2/home2-action-consultant.webp',
+			title: copy.actionBand.buyTitle,
+			tone: 'consultation'
 		}
-	] as const;
-
-	const budgetCards = [
-		{
-			href: '/inventory?maxPrice=30000',
-			image: '/assets/bohemcars/home2/home2-budget-entry.webp',
-			label: 'до 30 000 €',
-			meta: 'Градски и практични',
-			tone: 'entry'
-		},
-		{
-			href: '/inventory?minPrice=30000&maxPrice=50000',
-			image: '/assets/bohemcars/home2/home2-budget-mid.webp',
-			label: '30 000 - 50 000 €',
-			meta: 'Семейни SUV и седани',
-			tone: 'mid'
-		},
-		{
-			href: '/inventory?minPrice=50000&maxPrice=80000',
-			image: '/assets/bohemcars/home2/home2-budget-premium.webp',
-			label: '50 000 - 80 000 €',
-			meta: 'Премиум избор',
-			tone: 'premium'
-		},
-		{
-			href: '/inventory?minPrice=80000',
-			image: '/assets/bohemcars/home2/home2-budget-luxury.webp',
-			label: '80 000+ €',
-			meta: 'Луксозни модели',
-			tone: 'luxury'
-		}
-	] as const;
+	]);
 </script>
 
-<section class="home2-browse bg-white">
-	<div class="container">
-		<nav class="home2-chip-row" aria-label="Популярни търсения">
-			{#each primaryPills as pill (pill.href)}
-				<a href={resolve(pill.href)} class="home2-chip car-box">
-					{#if pill.image}
-						<img src={pill.image} alt="" />
-					{/if}
+<section class="home2-market">
+	<div class="home2-market__inner">
+		<nav class="home2-shortcuts" aria-label="Популярни търсения">
+			{#each primaryPills as pill, index (pill.href)}
+				{@const ShortcutIcon = pillIcons[index] ?? Car}
+				<a href={resolve(pill.href)} class="home2-shortcut">
+					<ShortcutIcon size={19} strokeWidth={2.8} />
 					<span>{pill.label}</span>
 				</a>
 			{/each}
 		</nav>
 
-		<div class="home2-action-grid" aria-label="Основни услуги">
+		<div class="home2-action-grid" aria-label={copy.actionBand.importTitle}>
 			{#each actionCards as card (card.href)}
 				<a class={`home2-action-card home2-action-card--${card.tone}`} href={resolve(card.href)}>
 					<span class="home2-action-card__copy">
-						<strong>{card.kicker}</strong>
+						<strong>{card.title}</strong>
 						<span>{card.body}</span>
 						<em>
-							{card.label}
-							<ArrowRight size={17} strokeWidth={2.4} />
+							{card.cta}
+							<ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
 						</em>
 					</span>
-					<img src={card.image} alt="" loading="lazy" />
+					<img src={card.image} alt="" loading="lazy" aria-hidden="true" />
 				</a>
 			{/each}
 		</div>
 
-		<div class="home2-budget" id="home2-budget">
-			<div class="home2-section-heading">
-				<h3>Разгледай по бюджет</h3>
-			</div>
-			<div class="home2-budget-grid">
-				{#each budgetCards as card (card.href)}
-					<a class={`home2-budget-card home2-budget-card--${card.tone}`} href={resolve(card.href)}>
-						<span class="home2-budget-card__copy">
-							<span class="home2-budget-card__label">{card.label}</span>
-							<span class="home2-budget-card__meta">{card.meta}</span>
-						</span>
-						<img src={card.image} alt="" loading="lazy" />
+		<section class="home2-budget" aria-labelledby="home2-budget-title">
+			<h2 id="home2-budget-title">Разгледай по бюджет</h2>
+			<div class="home2-budget__grid">
+				{#each budgetTiles as tile (tile.href)}
+					<a class={`home2-budget-tile home2-budget-tile--${tile.tone}`} href={resolve(tile.href)}>
+						<img src={tile.image} alt="" loading="lazy" aria-hidden="true" />
+						<span>{tile.label}</span>
+						<small>{tile.count}</small>
+						<em>{tile.meta}</em>
 					</a>
 				{/each}
 			</div>
-		</div>
+		</section>
 	</div>
 </section>
 
 <style>
-	.home2-browse {
-		padding: 22px 0 34px;
+	.home2-market {
+		background: #f3f4f6;
+		padding: 32px 39px 58px;
 	}
 
-	.home2-chip-row {
+	.home2-market__inner {
+		margin: 0 auto;
+		max-width: 1320px;
+	}
+
+	.home2-shortcuts {
 		display: flex;
-		gap: 12px;
+		flex-wrap: wrap;
+		gap: 15px;
 		justify-content: center;
-		margin: 0 auto 24px;
-		max-width: 100%;
-		overflow-x: auto;
-		padding: 0 4px 4px;
+		margin-bottom: 18px;
+		scrollbar-width: none;
 	}
 
-	.home2-chip {
+	.home2-shortcuts::-webkit-scrollbar {
+		display: none;
+	}
+
+	.home2-shortcut {
 		align-items: center;
-		background: #edf2ef;
+		background: #ffffff;
 		border-radius: 8px;
-		color: #101514;
-		display: flex;
-		flex: 0 0 auto;
+		box-shadow:
+			0 12px 28px rgb(15 23 42 / 0.06),
+			inset 0 -1px 0 rgb(0 0 0 / 0.04);
+		color: #121214;
+		display: inline-flex;
+		font-size: 16px;
+		font-weight: 850;
 		gap: 8px;
-		min-height: 44px;
-		padding: 10px 16px;
+		min-height: 45px;
+		padding: 0 17px;
 	}
 
-	.home2-chip:hover {
-		background: #dfe9e3;
-		color: #101514;
+	.home2-shortcut:hover {
+		background: #e7ece4;
+		color: #121214;
 		transform: none;
 	}
 
-	.home2-chip img {
-		height: 20px;
-		object-fit: contain;
-		width: 30px;
+	.home2-shortcut :global(svg) {
+		color: #101514;
+		stroke: currentColor !important;
 	}
 
-	.home2-chip span {
-		color: inherit !important;
-		font-size: 15px;
-		font-weight: 700;
-		line-height: 20px;
-		white-space: nowrap;
+	.home2-budget h2 {
+		color: #121214;
+		font-family: 'Arial Black', Impact, Inter, ui-sans-serif, system-ui, sans-serif;
+		font-weight: 1000;
+		letter-spacing: 0;
+		margin: 0;
+		text-transform: uppercase;
 	}
 
 	.home2-action-grid {
 		display: grid;
-		gap: 14px;
+		gap: 18px;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		margin-bottom: 42px;
+		margin: 0 auto;
 	}
 
 	.home2-action-card {
 		align-items: stretch;
 		border-radius: 8px;
-		color: #ffffff;
+		color: #121214;
 		display: grid;
 		isolation: isolate;
-		min-height: 146px;
+		min-height: 198px;
 		overflow: hidden;
-		padding: 18px;
+		padding: 29px 32px;
 		position: relative;
 	}
 
 	.home2-action-card:hover {
-		color: #ffffff;
+		box-shadow: none;
 		transform: none;
 	}
 
-	.home2-action-card--buy {
-		background: #151a18;
-	}
-
-	.home2-action-card--sell {
-		background: #f0f3ee;
-		color: #121715;
-	}
-
-	.home2-action-card--sell:hover {
-		color: #121715;
-	}
-
 	.home2-action-card--import {
-		background: #55d8cf;
-		color: #121715;
+		background: #98bc2a;
+		color: #1a2a16 !important;
 	}
 
 	.home2-action-card--import:hover {
-		background: #49cbc2;
-		color: #121715;
+		background: #8fb321;
+		color: #1a2a16 !important;
+	}
+
+	.home2-action-card--consultation {
+		background: #1a2a16;
+		color: #ffffff !important;
+	}
+
+	.home2-action-card--consultation:hover {
+		background: #14210f;
+		color: #ffffff !important;
 	}
 
 	.home2-action-card__copy {
-		color: inherit;
+		color: inherit !important;
 		display: grid;
-		gap: 6px;
+		gap: 10px;
+		max-width: 56%;
 		position: relative;
 		z-index: 2;
 	}
 
+	.home2-action-card--consultation .home2-action-card__copy {
+		max-width: 64%;
+	}
+
 	.home2-action-card__copy strong {
-		color: inherit;
-		font-size: clamp(19px, 1.55vw, 24px);
-		line-height: 1.1;
-		max-width: 260px;
+		color: inherit !important;
+		font-size: clamp(24px, 2vw, 32px);
+		font-weight: 950;
+		line-height: 1.08;
 	}
 
 	.home2-action-card__copy > span {
-		color: inherit;
-		font-size: 14px;
-		font-weight: 600;
-		line-height: 19px;
-		max-width: 290px;
-		opacity: 0.78;
+		color: inherit !important;
+		font-size: 15px;
+		font-weight: 650;
+		line-height: 1.42;
+		opacity: 0.82;
 	}
 
 	.home2-action-card__copy em {
 		align-items: center;
-		color: inherit;
-		display: flex;
-		font-size: 15px;
+		border-radius: 999px;
+		display: inline-flex;
+		font-size: 14px;
 		font-style: normal;
-		font-weight: 800;
-		gap: 7px;
-		line-height: 20px;
-		margin-top: 0;
+		font-weight: 850;
+		gap: 8px;
+		height: 40px;
+		justify-content: center;
+		line-height: 1;
+		margin-top: 10px;
+		padding: 0 18px;
+		width: fit-content;
+	}
+
+	.home2-action-card--import .home2-action-card__copy em {
+		background: #14210f;
+		color: #ffffff;
+	}
+
+	.home2-action-card--consultation .home2-action-card__copy em {
+		background: #d9f275;
+		color: #14210f;
+	}
+
+	.home2-action-card__copy em :global(svg),
+	.home2-action-card__copy em :global(svg *) {
+		stroke: currentColor !important;
 	}
 
 	.home2-action-card img {
-		bottom: -26px;
+		bottom: -45px;
 		height: auto;
 		max-width: none;
 		position: absolute;
-		right: -44px;
-		width: 282px;
+		right: -76px;
+		transform: none !important;
+		width: 525px;
 		z-index: 1;
 	}
 
-	.home2-action-card--sell img {
-		bottom: -22px;
-		right: -114px;
-		width: 300px;
-	}
-
-	.home2-action-card--import img {
-		bottom: -28px;
-		right: -74px;
-		width: 334px;
+	.home2-action-card--consultation img {
+		bottom: auto;
+		right: -8px;
+		top: -4px;
+		width: 188px;
 	}
 
 	.home2-budget {
-		margin-bottom: 0;
+		margin: 35px auto 0;
 	}
 
-	.home2-section-heading {
+	.home2-budget h2 {
+		font-size: clamp(40px, 4vw, 60px);
+		line-height: 1;
 		text-align: center;
 	}
 
-	.home2-section-heading h3 {
-		font-size: clamp(26px, 2.3vw, 34px);
-		line-height: 1.08;
-		margin-bottom: 24px;
-	}
-
-	.home2-budget-grid {
+	.home2-budget__grid {
 		display: grid;
 		gap: 16px;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		margin-top: 24px;
 	}
 
-	.home2-budget-card {
-		align-items: flex-start;
-		background: #edf2ed;
+	.home2-budget-tile {
+		background: #e5e7eb;
 		border-radius: 8px;
-		color: #1c1c1c;
-		display: flex;
-		isolation: isolate;
-		min-height: 164px;
+		color: #121214;
+		display: grid;
+		grid-template-rows: 1fr auto auto auto;
+		min-height: 256px;
 		overflow: hidden;
-		padding: 20px;
+		padding: 0 12px 22px;
 		position: relative;
+		text-align: center;
 	}
 
-	.home2-budget-card:hover {
-		color: #1c1c1c;
+	.home2-budget-tile:hover {
+		background: #dfe5ea;
+		color: #121214;
 		transform: none;
 	}
 
-	.home2-budget-card--entry {
-		background: #eef4ef;
+	.home2-budget-tile--entry {
+		background: #edf1ea;
 	}
 
-	.home2-budget-card--mid {
-		background: #edf3f6;
+	.home2-budget-tile--mid {
+		background: #e6ecef;
 	}
 
-	.home2-budget-card--premium {
-		background: #f4f0e8;
+	.home2-budget-tile--premium {
+		background: #ece8dc;
 	}
 
-	.home2-budget-card--luxury {
-		background: #ebeef1;
+	.home2-budget-tile--luxury {
+		background: #e2e5e8;
 	}
 
-	.home2-budget-card:hover.home2-budget-card--entry {
-		background: #e2efe3;
+	.home2-budget-tile--suv {
+		background: #e8eee2;
 	}
 
-	.home2-budget-card:hover.home2-budget-card--mid {
-		background: #e1eef3;
+	.home2-budget-tile--open {
+		background: #e9ecdf;
 	}
 
-	.home2-budget-card:hover.home2-budget-card--premium {
-		background: #eee8dc;
-	}
-
-	.home2-budget-card:hover.home2-budget-card--luxury {
-		background: #dfe5ea;
-	}
-
-	.home2-budget-card__copy {
-		display: grid;
-		gap: 6px;
-		position: relative;
-		z-index: 2;
-	}
-
-	.home2-budget-card__label {
-		font-size: 19px;
-		font-weight: 800;
-		line-height: 25px;
-		max-width: 180px;
-	}
-
-	.home2-budget-card__meta {
-		color: #66706a;
-		font-size: 14px;
-		font-weight: 700;
-		line-height: 19px;
-		max-width: 145px;
-	}
-
-	.home2-budget-card img {
-		bottom: -4px;
-		height: auto;
+	.home2-budget-tile img {
+		align-self: end;
+		height: 151px;
+		margin-left: -25%;
 		max-width: none;
-		position: absolute;
-		right: -54px;
-		width: 226px;
-		z-index: 1;
+		object-fit: contain;
+		object-position: center bottom;
+		transform: none !important;
+		width: 150%;
 	}
 
-	@media (max-width: 1199px) {
+	.home2-budget-tile span {
+		color: inherit;
+		font-size: 16px;
+		font-weight: 950;
+		line-height: 1.1;
+	}
+
+	.home2-budget-tile small {
+		color: #5d5b61;
+		font-size: 13px;
+		font-weight: 800;
+		margin-top: 6px;
+	}
+
+	.home2-budget-tile em {
+		color: #55585d;
+		font-size: 12px;
+		font-style: normal;
+		font-weight: 750;
+		line-height: 1.2;
+		margin-top: 6px;
+	}
+
+	@media (max-width: 1100px) {
 		.home2-action-grid {
 			grid-template-columns: 1fr;
 		}
 
-		.home2-action-card {
-			min-height: 160px;
+		.home2-action-card__copy,
+		.home2-action-card--consultation .home2-action-card__copy {
+			max-width: 62%;
 		}
 
-		.home2-action-card img {
-			right: -44px;
-		}
-	}
-
-	@media (max-width: 991px) {
-		.home2-budget-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+		.home2-budget__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 
-	@media (max-width: 575px) {
-		.home2-browse {
-			padding: 22px 0 28px;
+	@media (max-width: 760px) {
+		.home2-market {
+			padding-inline: 16px;
 		}
 
-		.home2-chip-row {
+		.home2-shortcuts {
+			flex-wrap: nowrap;
 			justify-content: flex-start;
-			margin-left: -15px;
-			margin-right: -15px;
-			padding-left: 15px;
-			padding-right: 15px;
+			overflow-x: auto;
+			padding-bottom: 5px;
+		}
+
+		.home2-shortcut {
+			white-space: nowrap;
+		}
+
+		.home2-action-grid {
+			gap: 14px;
 		}
 
 		.home2-action-card {
-			min-height: 156px;
-			padding: 20px;
+			min-height: 184px;
+			padding: 20px 22px;
+		}
+
+		.home2-action-card__copy,
+		.home2-action-card--consultation .home2-action-card__copy {
+			max-width: 100%;
+		}
+
+		.home2-action-card__copy > span {
+			max-width: 52%;
+			font-size: 13.5px;
 		}
 
 		.home2-action-card img {
-			opacity: 0.44;
-			right: -104px;
-			width: 290px;
+			bottom: -24px;
+			right: -90px;
+			width: 340px;
 		}
 
-		.home2-budget-grid {
+		.home2-action-card--consultation img {
+			right: -16px;
+			top: 15px;
+			width: 172px;
+		}
+
+		.home2-budget h2 {
+			font-size: 39px;
+		}
+
+		.home2-budget__grid {
 			grid-template-columns: 1fr;
-		}
-
-		.home2-budget-card {
-			min-height: 148px;
-		}
-
-		.home2-budget-card img {
-			right: -48px;
-			width: 224px;
 		}
 	}
 </style>

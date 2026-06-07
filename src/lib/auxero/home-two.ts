@@ -1,3 +1,6 @@
+import type { Vehicle } from '$lib/types/vehicle';
+import type { Locale } from '$lib/i18n/messages';
+
 type HomeTwoDealRoute =
 	| {
 			kind: 'vehicle';
@@ -21,6 +24,134 @@ export type HomeTwoDealCard = HomeTwoDealRoute & {
 	stock: string;
 	title: string;
 };
+
+export type HomeTwoBudgetTile = {
+	count: string;
+	href: `/inventory${string}`;
+	image: string;
+	label: string;
+	meta: string;
+	tone: 'entry' | 'mid' | 'premium' | 'luxury' | 'suv' | 'open';
+};
+
+export type HomeTwoReview = {
+	author: string;
+	body: string;
+	title: string;
+};
+
+const homeTwoBrandLogoOverrides: Record<string, string> = {
+	Audi: '/assets/bohemcars/brands/audi.webp',
+	BMW: '/assets/bohemcars/brands/bmw.webp',
+	Ford: '/assets/bohemcars/brands/ford.webp',
+	Kia: '/assets/bohemcars/brands/kia-transparent.webp',
+	Mazda: '/assets/bohemcars/brands/mazda.webp',
+	Mercedes: '/assets/bohemcars/brands/mercedes-benz.webp',
+	'Mercedes-Benz': '/assets/bohemcars/brands/mercedes-benz.webp',
+	Porsche: '/assets/bohemcars/brands/porsche.webp',
+	Toyota: '/assets/bohemcars/brands/toyota.webp',
+	Volkswagen: '/assets/bohemcars/brands/volkswagen.webp'
+};
+
+export const homeTwoBrandLogoForName = (name: string, fallbackImage: string) =>
+	homeTwoBrandLogoOverrides[name] ?? fallbackImage;
+
+export const homeTwoReviews: HomeTwoReview[] = [
+	{
+		author: 'Александър, клиент на Bohemcars',
+		body: 'Преди огледа получих история, разходи и следващи стъпки. Нямаше дребен шрифт, само конкретна информация.',
+		title: 'Пълна картина преди сделка'
+	},
+	{
+		author: 'Красимир, внос от Канада',
+		body: 'Показаха ми снимки, документи, пробег и крайни разходи преди да взема решение. Това ми спести много чудене.',
+		title: 'Внос без изненади'
+	},
+	{
+		author: 'Илиян, продажба на автомобил',
+		body: 'Изпратих данните за автомобила и получих честна обратна връзка за цена, документи и как да го представим.',
+		title: 'Честна обратна връзка'
+	},
+	{
+		author: 'Мария, оглед в Пловдив',
+		body: 'Колата беше подготвена, проверката беше ясна, а финансирането беше обяснено спокойно, без натиск.',
+		title: 'Оглед без натиск'
+	}
+];
+
+const countLabel = (locale: Locale, count: number) =>
+	locale === 'bg' ? `${count} автомобила` : `${count} cars`;
+
+const budgetTile = (
+	locale: Locale,
+	vehicles: Vehicle[],
+	tile: Omit<HomeTwoBudgetTile, 'count'> & { matches: (vehicle: Vehicle) => boolean }
+): HomeTwoBudgetTile => {
+	const count = vehicles.filter(tile.matches).length;
+
+	return {
+		count: countLabel(locale, count),
+		href: tile.href,
+		image: tile.image,
+		label: tile.label,
+		meta: tile.meta,
+		tone: tile.tone
+	};
+};
+
+export const homeTwoBudgetTilesFromVehicles = (
+	vehicles: Vehicle[],
+	locale: Locale
+): HomeTwoBudgetTile[] => [
+	budgetTile(locale, vehicles, {
+		href: '/inventory?maxPrice=30000',
+		image: '/assets/bohemcars/home2/home2-budget-entry.webp',
+		label: locale === 'bg' ? 'до 30 000 EUR' : 'Under EUR 30k',
+		matches: (vehicle) => vehicle.price <= 30000,
+		meta: locale === 'bg' ? 'Практичен старт' : 'Practical start',
+		tone: 'entry'
+	}),
+	budgetTile(locale, vehicles, {
+		href: '/inventory?minPrice=30000&maxPrice=50000',
+		image: '/assets/bohemcars/home2/home2-budget-mid.webp',
+		label: locale === 'bg' ? '30 000 - 50 000 EUR' : 'EUR 30k - 50k',
+		matches: (vehicle) => vehicle.price >= 30000 && vehicle.price <= 50000,
+		meta: locale === 'bg' ? 'Семейни SUV и седани' : 'Family SUVs and sedans',
+		tone: 'mid'
+	}),
+	budgetTile(locale, vehicles, {
+		href: '/inventory?minPrice=50000&maxPrice=80000',
+		image: '/assets/bohemcars/home2/home2-budget-premium.webp',
+		label: locale === 'bg' ? '50 000 - 80 000 EUR' : 'EUR 50k - 80k',
+		matches: (vehicle) => vehicle.price >= 50000 && vehicle.price <= 80000,
+		meta: locale === 'bg' ? 'Премиум избор' : 'Premium choice',
+		tone: 'premium'
+	}),
+	budgetTile(locale, vehicles, {
+		href: '/inventory?minPrice=80000',
+		image: '/assets/bohemcars/home2/home2-budget-luxury.webp',
+		label: locale === 'bg' ? '80 000+ EUR' : 'EUR 80k+',
+		matches: (vehicle) => vehicle.price >= 80000,
+		meta: locale === 'bg' ? 'Луксозни модели' : 'Luxury models',
+		tone: 'luxury'
+	}),
+	budgetTile(locale, vehicles, {
+		href: '/inventory?bodyType=SUV',
+		image: '/assets/bohemcars/home2/home2-action-buy.webp',
+		label: locale === 'bg' ? 'SUV избор' : 'SUV picks',
+		matches: (vehicle) => /suv/i.test(vehicle.bodyType),
+		meta: locale === 'bg' ? 'Висока позиция' : 'High driving position',
+		tone: 'suv'
+	}),
+	{
+		count: countLabel(locale, vehicles.length),
+		href: '/inventory',
+		image: '/assets/bohemcars/home2/home2-action-import.webp',
+		label: locale === 'bg' ? 'Отворен бюджет' : 'Open budget',
+		meta: locale === 'bg' ? 'Всички налични' : 'All available',
+		tone: 'open'
+	}
+];
 
 export const homeTwoDealCards: HomeTwoDealCard[] = [
 	{

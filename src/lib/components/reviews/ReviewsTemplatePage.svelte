@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import type { AuxeroReviewCard } from '$lib/auxero/reviews';
+	import type { AuxeroReviewCard, AuxeroReviewsPageData } from '$lib/auxero/reviews';
 	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
 	import AuxeroReviewsGrid from './AuxeroReviewsGrid.svelte';
 
@@ -8,17 +9,42 @@
 		afterReviewsHtml,
 		beforeReviewsHtml,
 		cards,
-		pageDocument
+		pageDocument,
+		reviewsPage
 	}: {
 		afterReviewsHtml: string;
 		beforeReviewsHtml: string;
 		cards: AuxeroReviewCard[];
 		pageDocument: AuxeroPageDocument;
+		reviewsPage: AuxeroReviewsPageData;
 	} = $props();
+
+	const externalHref = (href: string) => ({ href });
 </script>
 
 <AuxeroPageShell {pageDocument} beforeHtml={beforeReviewsHtml} afterHtml={afterReviewsHtml}>
-	<AuxeroReviewsGrid {cards} />
+	<section class="pb-100" data-bohemcars-reviews-page>
+		<div class="container">
+			<h1 class="h2">{reviewsPage.title}</h1>
+			<div class="tf-spacing-style3"></div>
+			<AuxeroReviewsGrid {cards} />
+			<ul class="pagination justify-center">
+				<li>
+					<a href={resolve('/reviews')} class="pagination__link active">{reviewsPage.pageLabel}</a>
+				</li>
+				<li>
+					<a
+						{...externalHref(reviewsPage.facebookHref)}
+						class="pagination__link"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{reviewsPage.facebookLabel}
+					</a>
+				</li>
+			</ul>
+		</div>
+	</section>
 </AuxeroPageShell>
 
 <style>

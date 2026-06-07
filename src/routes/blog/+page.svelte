@@ -7,6 +7,7 @@
 <BlogTemplatePage
 	afterBlogHtml={data.afterBlogHtml}
 	beforeBlogHtml={data.beforeBlogHtml}
+	blogPage={data.blogPage}
 	pageDocument={data.pageDocument}
 	posts={data.posts}
 />

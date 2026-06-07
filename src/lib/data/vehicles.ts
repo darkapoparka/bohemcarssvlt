@@ -22,13 +22,15 @@ const conditionForStatus = (status: string, isClientVehicle: boolean): VehicleCo
 
 const knownBrokenImageFallbacks: Record<string, string> = {
 	'21764342419542174': '/assets/images/card/card-48.jpg',
+	'21778067767337633': '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp',
 	'21778068579001193': '/assets/images/card/card-55.jpg',
 	'21779200396408437': '/assets/images/card/card-38.jpg',
 	'21779117876725419': '/assets/images/card/card-3.jpg',
 	'21750419064369634': '/assets/images/card/card-48.jpg',
 	'11766312659396823': '/assets/images/card/card-6.jpg',
 	'11768743659815066': '/assets/images/card/card-5.jpg',
-	'11775058343987884': '/assets/images/card/card-5.jpg'
+	'11775058343987884': '/assets/images/card/card-5.jpg',
+	'21741178468686255': '/assets/images/card/card-48.jpg'
 };
 const imageForVehicle = (vehicle: { id: string; image: string }) =>
 	knownBrokenImageFallbacks[vehicle.id] ?? vehicle.image;

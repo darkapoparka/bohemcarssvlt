@@ -1,25 +1,102 @@
 <script lang="ts">
-	import type { AuxeroContactFormData } from '$lib/auxero/contact';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
+	import type { AuxeroContactFormData, AuxeroContactPageInfo } from '$lib/auxero/contact';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import ContactFormCard from './ContactFormCard.svelte';
 
 	let {
-		afterContactFormHtml,
-		beforeContactFormHtml,
 		form,
-		pageDocument
+		info,
+		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterContactFormHtml: string;
-		beforeContactFormHtml: string;
 		form: AuxeroContactFormData;
+		info: AuxeroContactPageInfo;
 		pageDocument: AuxeroPageDocument;
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
+
+	const externalHref = (href: string) => ({ href });
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeContactFormHtml} afterHtml={afterContactFormHtml}>
-	<ContactFormCard {form} />
-</AuxeroPageShell>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title="Контакти — Bohemcars"
+>
+	<section class="bg-white pb-84">
+		<div class="contact-page container">
+			<div class="grid grid-cols-2 gap-30">
+				<div class="contact-page-info radius-20 bg-white">
+					<p class="text-highlight font-weight-600 mb-8">{info.eyebrow}</p>
+					<h1 class="h2 mb-12">{info.title}</h1>
+					<p class="h7 line-height-28">{info.description}</p>
+
+					<div class="contact mb-22 flex items-start gap-12">
+						<div class="icon"><img src="/assets/icons/MapPin.svg" alt="office" /></div>
+						<div>
+							<p class="h5 mb-4">{info.officeLabel}</p>
+							<span>{info.workNote}</span>
+						</div>
+					</div>
+					<div class="contact mb-22 flex items-start gap-12">
+						<div class="icon"><img src="/assets/icons/PhoneCall.svg" alt="phone" /></div>
+						<div class="flex flex-col gap-4">
+							<a {...externalHref(info.phoneHref)}>{info.phoneLabel}</a>
+							<a {...externalHref(info.secondaryPhoneHref)}>{info.secondaryPhoneLabel}</a>
+						</div>
+					</div>
+					<div class="contact mb-22 flex items-start gap-12">
+						<div class="icon"><img src="/assets/icons/input-telegram.svg" alt="email" /></div>
+						<a {...externalHref(info.emailHref)}>{info.emailLabel}</a>
+					</div>
+
+					<ul class="contact-page-info-social flex items-center gap-10">
+						{#each info.socials as social (social.label)}
+							<li>
+								<a {...externalHref(social.href)} aria-label={social.label}>
+									<img src={`/assets/icons/${social.icon}`} alt={social.label} />
+								</a>
+							</li>
+						{/each}
+					</ul>
+				</div>
+
+				<ContactFormCard {form} />
+			</div>
+
+			<div class="widget-gg-map bohemcars-contact-map radius-16 mt-30 flex overflow-hidden">
+				<iframe
+					title="Bohemcars appointment area"
+					src={info.mapSrc}
+					height="420"
+					style="border:0;width:100%;"
+					allowfullscreen
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+				></iframe>
+			</div>
+		</div>
+	</section>
+</AuxeroPublicShell>
 
 <style>
 	:global(.bohemcars-contact-map) {
@@ -47,7 +124,6 @@
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84 > .container) {
 		position: relative;
 		z-index: 2;
-		margin-top: -94px !important;
 	}
 
 	:global(body.auxero-template-contact-us-html section.bg-white.pb-84 .row) {

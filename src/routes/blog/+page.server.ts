@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { auxeroBlogListPage } from '$lib/auxero/blog-list';
 import { listBlogPosts } from '$lib/server/blog-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
@@ -12,9 +13,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'data-bohemcars-blog-grid',
+			marker: 'data-bohemcars-blog-page',
+			tagName: 'section',
 			templateError: 'Blog template could not be rendered',
-			slotError: 'Blog grid slot could not be located'
+			slotError: 'Blog page slot could not be located'
 		}
 	);
 
@@ -22,6 +24,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterBlogHtml: blogSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeBlogHtml: blogSlot.beforeHtml,
+		blogPage: auxeroBlogListPage,
 		pageDocument,
 		posts
 	};

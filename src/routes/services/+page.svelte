@@ -5,9 +5,12 @@
 </script>
 
 <ServicesTemplatePage
-	afterServicesHtml={data.afterServicesHtml}
-	beforeServicesHtml={data.beforeServicesHtml}
 	form={data.form}
 	pageDocument={data.pageDocument}
 	services={data.services}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

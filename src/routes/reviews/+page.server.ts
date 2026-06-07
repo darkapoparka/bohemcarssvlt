@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { auxeroReviewCards } from '$lib/auxero/reviews';
+import { auxeroReviewCards, auxeroReviewsPage } from '$lib/auxero/reviews';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -11,9 +11,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'data-bohemcars-reviews-grid',
+			marker: 'data-bohemcars-reviews-page',
+			tagName: 'section',
 			templateError: 'Reviews template could not be rendered',
-			slotError: 'Reviews grid slot could not be located'
+			slotError: 'Reviews page slot could not be located'
 		}
 	);
 
@@ -22,6 +23,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeReviewsHtml: reviewsSlot.beforeHtml,
 		cards: auxeroReviewCards,
+		reviewsPage: auxeroReviewsPage,
 		pageDocument
 	};
 };

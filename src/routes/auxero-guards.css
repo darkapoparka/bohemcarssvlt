@@ -1337,7 +1337,7 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		.bohemcars-card-specs {
 		display: flex !important;
 		flex-wrap: nowrap !important;
-		gap: 7px !important;
+		gap: 5px !important;
 		margin-bottom: 6px !important;
 		overflow: hidden !important;
 	}
@@ -1354,23 +1354,34 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		.bohemcars-inventory-content
 		.bohemcars-card-specs
 		li {
+		display: flex !important;
+		flex: 1 1 0 !important;
 		font-size: 12px !important;
+		justify-content: flex-start !important;
 		line-height: 16px !important;
+		min-width: 0 !important;
+		padding: 5px 6px !important;
+		white-space: nowrap !important;
 	}
 
 	body.auxero-template-listing-grid3-columns-html
 		.bohemcars-inventory-content
 		.bohemcars-card-specs
-		li:nth-child(3),
+		li
+		span,
 	body.auxero-template-listing-grid4-columns-html
 		.bohemcars-inventory-content
 		.bohemcars-card-specs
-		li:nth-child(3),
+		li
+		span,
 	body.auxero-template-listing-gridstyle-halfmap-html
 		.bohemcars-inventory-content
 		.bohemcars-card-specs
-		li:nth-child(3) {
-		display: none !important;
+		li
+		span {
+		min-width: 0 !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
 	}
 
 	body.auxero-template-listing-grid3-columns-html

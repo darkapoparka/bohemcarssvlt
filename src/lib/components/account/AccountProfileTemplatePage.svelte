@@ -1,25 +1,36 @@
 <script lang="ts">
 	import type { AuxeroAccountProfileFormData } from '$lib/auxero/account-forms';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
 	import AccountProfileForm from './AccountProfileForm.svelte';
 
 	let {
 		afterProfileHtml,
 		beforeProfileHtml,
 		pageDocument,
-		profile
+		profile,
+		profileHtml
 	}: {
 		afterProfileHtml: string;
 		beforeProfileHtml: string;
 		pageDocument: AuxeroPageDocument;
 		profile: AuxeroAccountProfileFormData;
+		profileHtml?: string;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeProfileHtml} afterHtml={afterProfileHtml}>
-	<AccountProfileForm {profile} />
-</AuxeroPageShell>
+<AuxeroDashboardSlotShell
+	{pageDocument}
+	beforeHtml={beforeProfileHtml}
+	afterHtml={afterProfileHtml}
+>
+	{#if profileHtml}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html profileHtml}
+	{:else}
+		<AccountProfileForm {profile} />
+	{/if}
+</AuxeroDashboardSlotShell>
 
 <style>
 	@media (max-width: 767.98px) {

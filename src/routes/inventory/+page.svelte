@@ -8,9 +8,13 @@
 <InventoryTemplatePage
 	cards={data.cards}
 	copy={data.copy}
-	desktopHtml={data.desktopHtml}
-	header={data.header}
+	desktop={data.desktop}
 	mobile={data.mobile}
 	pageDocument={data.pageDocument}
 	seoTitle={data.seoTitle}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

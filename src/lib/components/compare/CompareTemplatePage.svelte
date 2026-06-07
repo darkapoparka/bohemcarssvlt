@@ -1,41 +1,88 @@
 <script lang="ts">
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroCompareVehicle } from '$lib/auxero/compare';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import type { Locale } from '$lib/i18n/messages';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy, Locale } from '$lib/i18n/messages';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import AuxeroCompareTable from './AuxeroCompareTable.svelte';
 
 	let {
-		afterCompareHtml,
-		beforeCompareHtml,
+		afterCompareHtml = '',
+		beforeCompareHtml = '',
 		dashboardShell = false,
 		locale,
 		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml = '',
 		vehicles
 	}: {
-		afterCompareHtml: string;
-		beforeCompareHtml: string;
+		afterCompareHtml?: string;
+		beforeCompareHtml?: string;
 		dashboardShell?: boolean;
 		locale: Locale;
 		pageDocument: AuxeroPageDocument;
+		shellCopy?: HomePageCopy;
+		shellFooter?: HomeFiveFooterData;
+		shellHeader?: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml?: string;
 		vehicles: AuxeroCompareVehicle[];
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeCompareHtml} afterHtml={afterCompareHtml}>
-	{#if dashboardShell}
-		<div class="dashboard-content--inner">
-			<p class="h3 mb-30">My Compare</p>
-			<div class="dashboard-box bohemcars-dashboard-compare bg-white">
-				<div class="bohemcars-dashboard-compare-scroll overflow-x-auto">
+{#if dashboardShell}
+	<AuxeroDashboardSlotShell
+		{pageDocument}
+		beforeHtml={beforeCompareHtml}
+		afterHtml={afterCompareHtml}
+		title="My Compare"
+	>
+		<div class="dashboard-box bohemcars-dashboard-compare bg-white">
+			<div class="bohemcars-dashboard-compare-scroll overflow-x-auto">
+				<AuxeroCompareTable {locale} {vehicles} />
+			</div>
+		</div>
+	</AuxeroDashboardSlotShell>
+{:else if shellCopy && shellFooter && shellHeader}
+	<AuxeroPublicShell
+		copy={shellCopy}
+		footer={shellFooter}
+		header={shellHeader}
+		modals={shellModals}
+		{pageDocument}
+		runtimeHtml={shellRuntimeHtml}
+		title={locale === 'bg' ? 'Сравни автомобили — Bohemcars' : 'Compare Vehicles — Bohemcars'}
+	>
+		<section class="bohemcars-compare-page pb-100">
+			<div class="tf-spacing-style3"></div>
+			<div class="container">
+				<div class="title-section mb-40 flex justify-center text-center">
+					<div>
+						<h1 class="h2 mb-12">
+							{locale === 'bg' ? 'Сравни автомобили от Bohemcars' : 'Compare Bohemcars vehicles'}
+						</h1>
+						<p class="text-secondary">
+							{locale === 'bg'
+								? 'Прегледай цена, пробег, история, оборудване и наличност в една Auxero таблица.'
+								: 'Review price, mileage, history, equipment, and availability in one Auxero table.'}
+						</p>
+					</div>
+				</div>
+				<div class="card-details">
 					<AuxeroCompareTable {locale} {vehicles} />
 				</div>
 			</div>
-		</div>
-	{:else}
-		<AuxeroCompareTable {locale} {vehicles} />
-	{/if}
-</AuxeroPageShell>
+		</section>
+	</AuxeroPublicShell>
+{/if}
 
 <style>
 	:global(body.auxero-template-compare-html section.pb-100 h1),

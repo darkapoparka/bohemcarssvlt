@@ -1,28 +1,32 @@
 import type { PageServerLoad } from './$types';
-import { sellCarFormDataWithPrefill } from '$lib/auxero/sell-your-car';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	auxeroSellSteps,
+	sellCarFormDataWithPrefill,
+	sellYourCarHero
+} from '$lib/auxero/sell-your-car';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: sellFormSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const renderOptions = {
+		request,
+		routePath: 'sell-your-car',
+		searchParams: url.searchParams
+	};
+	const pageDocument = renderAuxeroPageDocument(
 		'sell-your-car.html',
-		{
-			request,
-			routePath: 'sell-your-car',
-			searchParams: url.searchParams
-		},
-		{
-			marker: 'bohemcars-sell-form',
-			tagName: 'form',
-			templateError: 'Sell your car template could not be rendered',
-			slotError: 'Sell your car form slot could not be located'
-		}
+		renderOptions,
+		'Sell your car template could not be rendered'
 	);
 
 	return {
-		afterSellFormHtml: sellFormSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeSellFormHtml: sellFormSlot.beforeHtml,
 		form: sellCarFormDataWithPrefill(url.searchParams.get('vin') ?? ''),
-		pageDocument
+		hero: sellYourCarHero,
+		pageDocument,
+		steps: auxeroSellSteps,
+		...auxeroPublicShellData(pageDocument, locale, '/sell-your-car')
 	};
 };

@@ -1,10 +1,73 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { DetailCopy } from '$lib/i18n/messages';
+	import { onMount, tick } from 'svelte';
 
 	let { copy, images, title }: { copy: DetailCopy; images: string[]; title: string } = $props();
 	const contactHref = resolve('/contact');
 	const denseInventoryHref = resolve('/inventory?view=4');
+
+	type SwiperInstance = {
+		destroy?: (deleteInstance?: boolean, cleanStyles?: boolean) => void;
+	};
+
+	type SwiperConstructor = new (
+		element: Element,
+		options: Record<string, unknown>
+	) => SwiperInstance;
+
+	let galleryHydrated = $state(false);
+
+	const initGallerySwiper = () => {
+		const Swiper = (window as typeof window & { Swiper?: SwiperConstructor }).Swiper;
+		const main = document.querySelector('[data-bohemcars-pdp-gallery-main]');
+		const thumbs = document.querySelector('[data-bohemcars-pdp-gallery-thumbs]');
+
+		if (!Swiper || !main || !thumbs) return {};
+
+		const thumbsSwiper = new Swiper(thumbs, {
+			freeMode: false,
+			slidesPerView: 'auto',
+			spaceBetween: 12,
+			watchSlidesProgress: true
+		});
+
+		const mainSwiper = new Swiper(main, {
+			initialSlide: 1,
+			loop: false,
+			navigation: {
+				nextEl: main.querySelector('.navigation-prev'),
+				prevEl: main.querySelector('.navigation-next')
+			},
+			slidesPerView: 1,
+			spaceBetween: 16,
+			speed: 500,
+			thumbs: {
+				swiper: thumbsSwiper
+			}
+		});
+
+		return { mainSwiper, thumbsSwiper };
+	};
+
+	onMount(() => {
+		let cancelled = false;
+		let mainSwiper: SwiperInstance | undefined;
+		let thumbsSwiper: SwiperInstance | undefined;
+
+		galleryHydrated = true;
+
+		tick().then(() => {
+			if (cancelled) return;
+			({ mainSwiper, thumbsSwiper } = initGallerySwiper());
+		});
+
+		return () => {
+			cancelled = true;
+			mainSwiper?.destroy?.(true, true);
+			thumbsSwiper?.destroy?.(true, true);
+		};
+	});
 </script>
 
 {#snippet galleryButtons()}
@@ -38,7 +101,10 @@
 	</svg>
 {/snippet}
 
-<div class="swiper swiper-listing-details-main">
+<div
+	class={['swiper', 'bohemcars-pdp-gallery-main', galleryHydrated && 'swiper-listing-details-main']}
+	data-bohemcars-pdp-gallery-main
+>
 	<div class="swiper-wrapper">
 		{#each images as image, index (index)}
 			<div class="swiper-slide">
@@ -57,7 +123,15 @@
 	</p>
 </div>
 
-<div class="swiper swiper-listing-details-thumbs overflow-hidden pb-60">
+<div
+	class={[
+		'swiper',
+		'bohemcars-pdp-gallery-thumbs',
+		galleryHydrated && 'swiper-listing-details-thumbs',
+		'overflow-hidden pb-60'
+	]}
+	data-bohemcars-pdp-gallery-thumbs
+>
 	<div class="swiper-wrapper">
 		{#each images as image, index (index)}
 			<div class="swiper-slide">

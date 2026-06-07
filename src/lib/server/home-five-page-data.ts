@@ -12,10 +12,19 @@ import {
 	homeFiveVehiclePillsForLocale,
 	resolveHomeFiveHeroActionMode
 } from '$lib/auxero/home-five';
+import { homeTwoBudgetTilesFromVehicles } from '$lib/auxero/home-two';
+import { parseAuxeroHeadAssets } from '$lib/auxero/page-document';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
-import { renderAuxeroPageDocument, splitAuxeroBodySection } from '$lib/server/auxero-page';
+import {
+	extractAuxeroBodyScriptsHtml,
+	extractAuxeroRuntimeHtml,
+	renderAuxeroPageDocument
+} from '$lib/server/auxero-page';
+
+const escapeHeadAttribute = (value: string) =>
+	value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export const buildHomeFivePageData = ({ request, url }: { request: Request; url: URL }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
@@ -30,61 +39,12 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 		},
 		'Home 05 template could not be rendered'
 	);
-	const headerSlot = splitAuxeroBodySection(
-		pageDocument.bodyHtml,
-		'<!-- Header -->',
-		'<!-- Header -->'
-	);
-	const heroSlot = splitAuxeroBodySection(
-		headerSlot?.afterHtml ?? pageDocument.bodyHtml,
-		'<!-- page-title -->',
-		'<!-- page-title -->'
-	);
-	const featuredVehiclesSlot = splitAuxeroBodySection(
-		heroSlot?.afterHtml ?? pageDocument.bodyHtml,
-		'<!-- New Vehicles -->',
-		'<!-- /New Vehicles -->'
-	);
-	const brandStripSlot = splitAuxeroBodySection(
-		featuredVehiclesSlot?.afterHtml ?? pageDocument.bodyHtml,
-		'<!-- Explore Our Brands -->',
-		'<!-- /Explore Our Brands -->'
-	);
-	const typeGallerySlot = splitAuxeroBodySection(
-		brandStripSlot?.afterHtml ?? '',
-		'<!-- Browse By Type -->',
-		'<!-- /Browse By Type -->'
-	);
-	const compareSectionSlot = splitAuxeroBodySection(
-		typeGallerySlot?.afterHtml ?? '',
-		'<!-- Compare Top Rated Vehicles -->',
-		'<!-- /Compare Top Rated Vehicles -->'
-	);
-	const budgetSectionSlot = splitAuxeroBodySection(
-		compareSectionSlot?.afterHtml ?? '',
-		'<!-- Used Cars by Budget -->',
-		'<!-- /Used Cars by Budget -->'
-	);
-	const reviewsSectionSlot = splitAuxeroBodySection(
-		budgetSectionSlot?.afterHtml ?? '',
-		'<!-- /Client Reviews -->',
-		'<!-- /Client Reviews -->'
-	);
-	const newsSectionSlot = splitAuxeroBodySection(
-		reviewsSectionSlot?.afterHtml ?? '',
-		'<!-- News & Reviews -->',
-		'<!-- /News & Reviews -->'
-	);
-	const footerSlot = splitAuxeroBodySection(
-		newsSectionSlot?.afterHtml ?? '',
-		'<!-- Footer -->',
-		'<!-- Footer -->'
-	);
-	const modalSlot = splitAuxeroBodySection(
-		footerSlot?.afterHtml ?? '',
-		'<!-- Modal -->',
-		'<!-- /CompareModal -->'
-	);
+	const runtimeHtml = [
+		extractAuxeroBodyScriptsHtml(pageDocument.bodyHtml),
+		extractAuxeroRuntimeHtml(pageDocument.bodyHtml)
+	]
+		.filter(Boolean)
+		.join('\n');
 
 	// Feature only cars that carry a genuine remote listing photo so the homepage
 	// card grid reads as one consistent set of real photos. Cars whose source photo
@@ -92,62 +52,31 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 	// shot (e.g. the X5's remote photo is a 7-series sedan); those are kept out of the
 	// grid here rather than mixing cutouts and stock images among the real listings.
 	const vehiclesWithListingPhoto = vehicles.filter((vehicle) => /^https?:\/\//.test(vehicle.image));
+	const homeHeadHtml = `${pageDocument.headHtml.replace(/<title>[\s\S]*?<\/title>/i, '')}
+<meta name="description" content="${escapeHeadAttribute(messages.home.seo.description)}">
+<link rel="preload" as="image" fetchpriority="high" href="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp" type="image/webp">
+<link rel="preload" as="image" fetchpriority="high" href="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp" type="image/webp">`;
 
 	return {
-		afterBrandStripHtml: typeGallerySlot
-			? typeGallerySlot.beforeHtml
-			: (brandStripSlot?.afterHtml ?? ''),
-		afterBudgetSectionHtml: reviewsSectionSlot
-			? reviewsSectionSlot.beforeHtml
-			: (budgetSectionSlot?.afterHtml ?? ''),
-		afterCompareSectionHtml: budgetSectionSlot
-			? budgetSectionSlot.beforeHtml
-			: (compareSectionSlot?.afterHtml ?? ''),
-		afterFeaturedVehiclesHtml: brandStripSlot
-			? brandStripSlot.beforeHtml
-			: (featuredVehiclesSlot?.afterHtml ?? ''),
-		afterHeroHtml: heroSlot
-			? featuredVehiclesSlot
-				? featuredVehiclesSlot.beforeHtml
-				: heroSlot.afterHtml
-			: '',
-		afterFooterHtml: modalSlot ? modalSlot.beforeHtml : (footerSlot?.afterHtml ?? ''),
-		afterHeaderHtml: headerSlot ? (heroSlot?.beforeHtml ?? '') : '',
-		afterNewsSectionHtml: footerSlot ? footerSlot.beforeHtml : (newsSectionSlot?.afterHtml ?? ''),
-		afterReviewsSectionHtml: newsSectionSlot
-			? newsSectionSlot.beforeHtml
-			: (reviewsSectionSlot?.afterHtml ?? ''),
-		afterTypeGalleryHtml: compareSectionSlot
-			? compareSectionSlot.beforeHtml
-			: (typeGallerySlot?.afterHtml ?? ''),
-		afterModalsHtml: modalSlot?.afterHtml ?? '',
 		auxeroFullPage: true,
 		brandCards: homeFiveBrandCardsForLocale(locale),
-		budgetVehicles: homeFiveVehicleCardsFromVehicles(
-			[...vehicles].sort((a, b) => a.monthly - b.monthly),
-			8,
-			locale
-		),
 		comparePairs: homeFiveComparePairsFromVehicles(vehicles),
 		copy: messages.home,
-		featuredVehicles: featuredVehiclesSlot
-			? homeFiveVehicleCardsFromVehicles(vehiclesWithListingPhoto, 8, locale)
-			: [],
-		footer: footerSlot ? homeFiveFooterDataForLocale(locale) : undefined,
-		header: headerSlot ? homeFiveHeaderDataForLocale(locale) : undefined,
-		hero: heroSlot ? homeFiveHeroDataFromVehicles(vehicles, locale, activeHeroMode) : undefined,
-		modals: modalSlot ? homeFiveModalsDataFromVehicles(vehicles, locale) : undefined,
-		newsPosts: newsSectionSlot ? homeFiveNewsPostsFromPosts(posts) : [],
+		featuredVehicles: homeFiveVehicleCardsFromVehicles(vehiclesWithListingPhoto, 8, locale),
+		footer: homeFiveFooterDataForLocale(locale),
+		header: homeFiveHeaderDataForLocale(locale),
+		hero: homeFiveHeroDataFromVehicles(vehicles, locale, activeHeroMode),
+		homeTwoBudgetTiles: homeTwoBudgetTilesFromVehicles(vehicles, locale),
+		modals: homeFiveModalsDataFromVehicles(vehicles, locale),
+		newsPosts: homeFiveNewsPostsFromPosts(posts),
 		pageDocument: {
 			...pageDocument,
-			headHtml: pageDocument.headHtml.replace(/<title>[\s\S]*?<\/title>/i, ''),
-			bodyHtml:
-				headerSlot?.beforeHtml ??
-				heroSlot?.beforeHtml ??
-				featuredVehiclesSlot?.beforeHtml ??
-				pageDocument.bodyHtml
+			headAssets: parseAuxeroHeadAssets(homeHeadHtml),
+			headHtml: homeHeadHtml,
+			bodyHtml: ''
 		},
-		reviews: reviewsSectionSlot ? homeFiveReviewItems : [],
+		reviews: homeFiveReviewItems,
+		runtimeHtml,
 		typeCards: homeFiveTypeCardsForLocale(locale),
 		vehiclePills: homeFiveVehiclePillsForLocale(locale)
 	};

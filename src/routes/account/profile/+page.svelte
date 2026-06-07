@@ -9,4 +9,5 @@
 	beforeProfileHtml={data.beforeProfileHtml}
 	pageDocument={data.pageDocument}
 	profile={data.profile}
+	profileHtml={data.profileHtml}
 />

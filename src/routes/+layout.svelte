@@ -1,6 +1,6 @@
 <script lang="ts">
 	import './auxero-guards.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
@@ -13,9 +13,20 @@
 	setGarageContext(garage);
 	let isAuxeroFullPage = $derived(Boolean(page.data.auxeroFullPage));
 	let isInventoryDetailPage = $derived(/^\/inventory\/[^/]+\/?$/.test(page.url.pathname));
+	let isDashboardArea = $derived(/^\/(?:account|admin)(?:\/|$)/.test(page.url.pathname));
+
+	afterNavigate(() => {
+		document.documentElement.classList.remove('bohemcars-route-nav-click');
+	});
+
+	$effect(() => {
+		if (!isAuxeroFullPage) {
+			document.body.className = '';
+		}
+	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head><link rel="icon" href="/assets/images/favicon.png" /></svelte:head>
 {#if isAuxeroFullPage}
 	{@render children()}
 {:else}
@@ -24,6 +35,6 @@
 	<SiteFooter />
 	<ScrollTop />
 {/if}
-{#if !isInventoryDetailPage}
+{#if !isInventoryDetailPage && !isDashboardArea}
 	<MobileBottomNav pathname={page.url.pathname} />
 {/if}

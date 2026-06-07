@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { favoriteCardsFromVehicles } from '$lib/auxero/favorites';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 import { getBohemcarsFavoriteVehicles } from '$lib/server/garage';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
@@ -29,6 +30,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeFavoritesHtml: favoritesSlot.beforeHtml,
 		cards: favoriteCardsFromVehicles(getBohemcarsFavoriteVehicles(session)),
+		dashboard: getAccountDashboardPageData('my-favorites.html', renderOptions, {
+			subtitle: 'Saved Bohemcars vehicles stay in one quick review list.',
+			title: 'My Favorites'
+		}),
 		pageDocument
 	};
 };

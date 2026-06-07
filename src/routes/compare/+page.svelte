@@ -6,9 +6,12 @@
 </script>
 
 <CompareTemplatePage
-	afterCompareHtml={data.afterCompareHtml}
-	beforeCompareHtml={data.beforeCompareHtml}
 	locale={data.locale}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 	vehicles={data.vehicles}
 />

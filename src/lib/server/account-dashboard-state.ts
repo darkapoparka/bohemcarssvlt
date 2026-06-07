@@ -1,4 +1,5 @@
-import type { AuxeroDashboardRecentData } from '$lib/auxero/dashboard';
+import type { AuxeroDashboardRecentData, AuxeroDashboardStat } from '$lib/auxero/dashboard';
+import type { AuxeroDashboardPageData } from '$lib/auxero/dashboard';
 import { agents } from '$lib/data/agents';
 import { vehicles } from '$lib/data/vehicles';
 import {
@@ -21,13 +22,7 @@ export type AccountContext = {
 	session: BohemcarsSession;
 };
 
-export type DashboardStat = {
-	href: string;
-	icon: string;
-	id: string;
-	label: string;
-	value: string;
-};
+export type DashboardStat = AuxeroDashboardStat;
 
 type RecentDashboardItem = {
 	avatarRole: BohemcarsRole;
@@ -107,6 +102,16 @@ const submissionStatusLabel = (status: string) => {
 	return labels[status] ?? status;
 };
 
+const dashboardAgentLabel = (slug?: string) => {
+	const labels: Record<string, string> = {
+		'bohemcars-import': 'Import team',
+		'bohemcars-inspection': 'Inspection team',
+		'bohemcars-sales': 'Sales team'
+	};
+
+	return (slug && labels[slug]) || 'Bohemcars team';
+};
+
 export const activeRouteForAccountTemplate = (templateFile: string, routePath = '') => {
 	const normalized = routePath.replace(/^\/+|\/+$/g, '');
 
@@ -117,7 +122,13 @@ export const activeRouteForAccountTemplate = (templateFile: string, routePath = 
 	if (normalized.endsWith('profile')) return 'profile';
 	if (normalized.endsWith('password')) return 'password';
 	if (normalized.includes('inventory/edit/')) return 'add';
-	if (normalized.endsWith('inventory/new') || templateFile === 'add-listings-2.html') return 'add';
+	if (normalized.includes('listings/edit/')) return 'add';
+	if (
+		normalized.endsWith('inventory/new') ||
+		normalized.endsWith('listings/new') ||
+		templateFile === 'add-listings-2.html'
+	)
+		return 'add';
 	if (normalized.endsWith('inventory') || normalized.endsWith('listings')) return 'listings';
 	if (normalized.endsWith('agents')) return 'agents';
 	if (normalized.endsWith('users')) return 'users';
@@ -262,9 +273,7 @@ export const accountDashboardRecentData = (context: AccountContext): AuxeroDashb
 			heading: 'Admin Focus',
 			intro: 'Triage leads, messages, and inventory without leaving the Auxero dashboard flow.',
 			items: items.map((inquiry, index) => {
-				const agentName =
-					agents.find((agent) => agent.slug === inquiry.assignedAgentSlug)?.name ??
-					'Bohemcars team';
+				const agentName = dashboardAgentLabel(inquiry.assignedAgentSlug);
 
 				return {
 					actionLabel: 'Open lead',
@@ -404,3 +413,26 @@ export const getAccountDashboardStatsData = (
 	templateFile: string,
 	options: AuxeroRenderOptions = {}
 ) => accountDashboardStatsData(accountContext(templateFile, options));
+
+export const getAccountDashboardPageData = (
+	templateFile: string,
+	options: AuxeroRenderOptions = {},
+	page: Pick<AuxeroDashboardPageData, 'subtitle' | 'title'>
+): AuxeroDashboardPageData => {
+	const context = accountContext(templateFile, options);
+
+	return {
+		isAdmin: context.isAdmin,
+		recent: accountDashboardRecentData(context),
+		roleLabel: context.isAdmin
+			? context.session.role === 'agent'
+				? 'Agent'
+				: 'Admin'
+			: 'Customer',
+		sessionEmail: context.session.email,
+		sessionName: context.session.name,
+		stats: accountDashboardStatsData(context),
+		subtitle: page.subtitle,
+		title: page.title
+	};
+};

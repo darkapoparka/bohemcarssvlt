@@ -9,10 +9,15 @@
 
 	let {
 		header,
-		hideMobileLogo = false
-	}: { header?: HomeFiveHeaderData; hideMobileLogo?: boolean } = $props();
+		hideMobileLogo = false,
+		showAddListing = false
+	}: { header?: HomeFiveHeaderData; hideMobileLogo?: boolean; showAddListing?: boolean } = $props();
 
 	const addListingHref = '/admin/inventory/new';
+	const logoIntrinsicWidth = 1285;
+	const logoIntrinsicHeight = 235;
+	const routeNavMegaSuppressionClass = 'bohemcars-route-nav-click';
+	let megaMenuSuppressionReadyToClear = false;
 
 	const navItemClass = (item: HomeFiveHeaderNavigationItem) =>
 		[
@@ -27,6 +32,35 @@
 	const hrefAttributes = (href: string) => ({
 		href: href.startsWith('/') ? resolve(href as '/') : href
 	});
+	const clearMegaMenuSuppression = () => {
+		if (!megaMenuSuppressionReadyToClear) return;
+		document.documentElement.classList.remove(routeNavMegaSuppressionClass);
+		megaMenuSuppressionReadyToClear = false;
+	};
+	const armMegaMenuSuppressionClear = () => {
+		if (!document.documentElement.classList.contains(routeNavMegaSuppressionClass)) return;
+		megaMenuSuppressionReadyToClear = true;
+	};
+	const suppressMegaMenuDuringNavigation = (event: MouseEvent) => {
+		if (event.defaultPrevented || event.button !== 0) return;
+		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+
+		const link = event.currentTarget;
+		if (!(link instanceof HTMLAnchorElement)) return;
+		if (link.target && link.target !== '_self') return;
+
+		const nextUrl = new URL(link.href, window.location.href);
+		if (nextUrl.origin !== window.location.origin) return;
+		if (
+			nextUrl.pathname === window.location.pathname &&
+			nextUrl.search === window.location.search
+		) {
+			return;
+		}
+
+		document.documentElement.classList.add(routeNavMegaSuppressionClass);
+		megaMenuSuppressionReadyToClear = false;
+	};
 </script>
 
 {#if header}
@@ -114,7 +148,12 @@
 				<div class="header-inner" id="site-header-inner">
 					<div class="logo">
 						<a href={resolve(header.logo.href as '/')}>
-							<img src={header.logo.src} alt={header.logo.alt} />
+							<img
+								src={header.logo.src}
+								alt={header.logo.alt}
+								width={logoIntrinsicWidth}
+								height={logoIntrinsicHeight}
+							/>
 						</a>
 					</div>
 					<div
@@ -124,19 +163,30 @@
 						style={hideMobileLogo ? 'display: none !important; visibility: hidden !important;' : ''}
 					>
 						<a href={resolve(header.logo.href as '/')}>
-							<img src={header.logo.mobileSrc} alt={header.logo.alt} />
+							<img
+								src={header.logo.mobileSrc}
+								alt={header.logo.alt}
+								width={logoIntrinsicWidth}
+								height={logoIntrinsicHeight}
+							/>
 						</a>
 					</div>
 
 					<div class="header-right header-right-style-2 main-nav-wrapper gap-20">
 						<!-- Menu -->
-						<nav id="main-nav" class="main-nav margin-right-auto">
+						<nav
+							id="main-nav"
+							class="main-nav margin-right-auto"
+							onpointerenter={clearMegaMenuSuppression}
+							onpointerleave={armMegaMenuSuppressionClear}
+						>
 							<ul id="menu-primary-menu" class="menu menu">
 								{#each header.navigation as item (item.href)}
 									<li class={navItemClass(item)}>
 										<a
 											href={resolve(item.href as '/')}
 											aria-haspopup={item.megaMenu ? 'true' : undefined}
+											onclick={suppressMegaMenuDuringNavigation}
 										>
 											{item.label}
 											{#if item.megaMenu}
@@ -153,7 +203,11 @@
 														<div class="bohemcars-mega__vehicle-panel">
 															<div class="sub-menu--listing-nav bohemcars-mega__vehicles">
 																{#each item.megaMenu.vehicles as vehicle (vehicle.href)}
-																	<a class="bohemcars-mega-car" href={resolve(vehicle.href as '/')}>
+																	<a
+																		class="bohemcars-mega-car"
+																		href={resolve(vehicle.href as '/')}
+																		onclick={suppressMegaMenuDuringNavigation}
+																	>
 																		<span class="bohemcars-mega-car__image-wrap">
 																			<img
 																				class="bohemcars-mega-car__image"
@@ -176,6 +230,7 @@
 																<a
 																	href={resolve(item.megaMenu.footer.ctaHref as '/')}
 																	class="btn btn-primary btn-medium font-weight-600 bohemcars-mega__footer-button"
+																	onclick={suppressMegaMenuDuringNavigation}
 																>
 																	{item.megaMenu.footer.ctaLabel}
 																</a>
@@ -196,7 +251,12 @@
 																	<ul class="sub-menu-item-inner flex flex-col gap-16">
 																		{#each section.links as link (link.href)}
 																			<li>
-																				<a href={resolve(link.href as '/')}>{link.label}</a>
+																				<a
+																					href={resolve(link.href as '/')}
+																					onclick={suppressMegaMenuDuringNavigation}
+																				>
+																					{link.label}
+																				</a>
 																			</li>
 																		{/each}
 																	</ul>
@@ -209,7 +269,12 @@
 												<ul class="sub-menu sub-menu--container">
 													<li>
 														{#each item.megaMenu.links as link (link.href)}
-															<a href={resolve(link.href as '/')}>{link.label}</a>
+															<a
+																href={resolve(link.href as '/')}
+																onclick={suppressMegaMenuDuringNavigation}
+															>
+																{link.label}
+															</a>
 														{/each}
 													</li>
 												</ul>
@@ -233,15 +298,17 @@
 							</a>
 							<!-- Sign In Button -->
 
-							<!-- Add Listing Button -->
-							<a
-								href={resolve(addListingHref as '/')}
-								class="btn btn-primary btn-large font-weight-600"
-							>
-								{@render plusCircleIcon('#fff')}
-								{header.ui.addListing}
-							</a>
-							<!-- Add Listing Button -->
+							{#if showAddListing}
+								<!-- Add Listing Button -->
+								<a
+									href={resolve(addListingHref as '/')}
+									class="btn btn-primary btn-large font-weight-600"
+								>
+									{@render plusCircleIcon('#fff')}
+									{header.ui.addListing}
+								</a>
+								<!-- Add Listing Button -->
+							{/if}
 						</div>
 
 						<div class="header-actions ml-20">
@@ -323,15 +390,17 @@
 					</a>
 					<!-- Sign In Button -->
 
-					<!-- Add Listing Button -->
-					<a
-						href={resolve(addListingHref as '/')}
-						class="btn btn-primary btn-large font-weight-600"
-					>
-						{@render plusCircleIcon('#fff')}
-						{header.ui.addListing}
-					</a>
-					<!-- Add Listing Button -->
+					{#if showAddListing}
+						<!-- Add Listing Button -->
+						<a
+							href={resolve(addListingHref as '/')}
+							class="btn btn-primary btn-large font-weight-600"
+						>
+							{@render plusCircleIcon('#fff')}
+							{header.ui.addListing}
+						</a>
+						<!-- Add Listing Button -->
+					{/if}
 				</div>
 			</div>
 		</header>
@@ -640,6 +709,18 @@
 		display: none;
 	}
 
+	:global(#language-select:not(.active) #coreDropdownMenu) {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		transform: translateY(-10px) !important;
+		transition: none !important;
+		visibility: hidden !important;
+	}
+
+	:global(#language-select.active #coreDropdownMenu) {
+		pointer-events: auto !important;
+	}
+
 	:global(.header-wrapper-style-4 .header .header-action-btn.header-action-icon::after) {
 		top: -6px;
 		right: -9px;
@@ -689,6 +770,20 @@
 			.sub-menu.bohemcars-mega--vehicles
 	) {
 		transform: translate(-50%, 0) !important;
+	}
+
+	:global(
+		html.bohemcars-route-nav-click
+			.header-wrapper-style-4
+			#main-nav
+			.menu
+			> li.menu-item--static
+			.sub-menu.bohemcars-mega--vehicles
+	) {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		transition: none !important;
+		visibility: hidden !important;
 	}
 
 	:global(

@@ -2,7 +2,8 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { vehicleDetailFromVehicle } from '$lib/auxero/detail';
 import { resolveLocale } from '$lib/i18n/messages';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 import { getVehicleDetailBySlug } from '$lib/server/vehicle-detail-state';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
@@ -13,7 +14,7 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		error(404, 'Vehicle not found');
 	}
 
-	const { pageDocument, slot: detailSlot } = renderAuxeroPageSlot(
+	const pageDocument = renderAuxeroPageDocument(
 		'listing-details-3.html',
 		{
 			request,
@@ -21,19 +22,13 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 			searchParams: url.searchParams,
 			slug: vehicle.slug
 		},
-		{
-			marker: 'data-bohemcars-detail="true"',
-			templateError: 'Vehicle detail template could not be rendered',
-			slotError: 'Vehicle detail slot could not be located'
-		}
+		'Vehicle detail template could not be rendered'
 	);
 
 	return {
-		afterDetailHtml: detailSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeDetailHtml: detailSlot.beforeHtml,
 		detail: vehicleDetailFromVehicle(vehicle, locale),
-		detailHtml: detailSlot.sectionHtml,
-		pageDocument
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/inventory')
 	};
 };

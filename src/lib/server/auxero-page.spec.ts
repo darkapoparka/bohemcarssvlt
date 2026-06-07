@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { renderAuxeroTemplate } from './auxero-template';
 import {
+	extractAuxeroBodyScriptsHtml,
+	extractAuxeroRuntimeHtml,
 	renderAuxeroPageDocument,
 	renderAuxeroPageSlot,
 	splitAuxeroBodySection,
@@ -19,6 +21,21 @@ describe('splitAuxeroDocument', () => {
 		expect(document.bodyHtml).toContain('Browse, Compare, Drive');
 		expect(document.bodyHtml).toContain('search-cars__search');
 		expect(document.bodyHtml).not.toContain('<body');
+	});
+
+	it('extracts the inline Auxero runtime without swallowing external scripts', () => {
+		const html = renderAuxeroTemplate('home-05.html');
+		const document = splitAuxeroDocument(html!);
+		const bodyScriptsHtml = extractAuxeroBodyScriptsHtml(document.bodyHtml);
+		const runtimeHtml = extractAuxeroRuntimeHtml(document.bodyHtml);
+
+		expect(bodyScriptsHtml).toContain('/assets/js/jquery.min.js');
+		expect(bodyScriptsHtml).not.toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(runtimeHtml).toContain("window.addEventListener('bohemcars:svelte-mounted'");
+		expect(runtimeHtml).toContain("window.addEventListener('load'");
+		expect(runtimeHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(runtimeHtml).not.toContain('/assets/js/jquery.min.js');
+		expect(runtimeHtml).not.toContain('<script src=');
 	});
 
 	it('renders a template document and extracts a marked page slot through the shared helper', () => {
@@ -563,7 +580,7 @@ describe('splitAuxeroDocument', () => {
 			'form'
 		);
 
-		expect(split?.beforeHtml).toContain('Add Bohemcars Listing');
+		expect(split?.beforeHtml).toContain('Add Listing');
 		expect(split?.beforeHtml).toContain('bohemcars-local-form-action');
 		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
 		expect(split?.sectionHtml).toContain('bohemcars-add-listing-form');
@@ -591,7 +608,7 @@ describe('splitAuxeroDocument', () => {
 			'form'
 		);
 
-		expect(split?.beforeHtml).toContain('Edit Bohemcars Listing');
+		expect(split?.beforeHtml).toContain('Edit Listing');
 		expect(split?.beforeHtml).toContain('Save Draft');
 		expect(split?.sectionHtml).toContain('data-bohemcars-admin-listing-mode="clone-static"');
 		expect(split?.sectionHtml).toContain('name="sourceId" value="21779200396408437"');
@@ -616,21 +633,21 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
-	it('can split the agent detail main content without dropping sidebar or footer chrome', () => {
+	it('can split the agent detail container without dropping footer chrome', () => {
 		const html = renderAuxeroTemplate('sale-agents-details.html', {
 			routePath: 'agents/bohemcars-import'
 		});
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroDivBlockByMarker(
 			document.bodyHtml,
-			'class="innerpage__content md-mb-30"'
+			'class="container innerpage-container"'
 		);
 
 		expect(split?.beforeHtml).toContain('Bohemcars Consultants');
 		expect(split?.sectionHtml).toContain('Внос от Канада');
 		expect(split?.sectionHtml).toContain('Verified Bohemcars Consultant');
 		expect(split?.sectionHtml).toContain('bohemcars-agent-inventory');
-		expect(split?.afterHtml).toContain('send-inquiry');
+		expect(split?.sectionHtml).toContain('send-inquiry');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
@@ -693,30 +710,35 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
-	it('can split the calculator estimator without dropping budget or FAQ sections', () => {
+	it('can split the calculator page body without dropping the page shell', () => {
 		const html = renderAuxeroTemplate('calculator.html', { routePath: 'calculator' });
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(
 			document.bodyHtml,
-			'data-bohemcars-calculator',
+			'data-bohemcars-calculator-page',
 			'div'
 		);
 
-		expect(split?.beforeHtml).toContain('Калкулатор за внос');
+		expect(split?.beforeHtml).toContain('Calculator');
 		expect(split?.sectionHtml).toContain('Изчисли ориентировъчна крайна цена');
 		expect(split?.sectionHtml).toContain('data-bohemcars-calc-output="total"');
-		expect(split?.afterHtml).toContain('Разгледай по бюджет');
-		expect(split?.afterHtml).toContain('Въпроси за калкулатора');
+		expect(split?.sectionHtml).toContain('Разгледай по бюджет');
+		expect(split?.sectionHtml).toContain('Въпроси за калкулатора');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
-	it('can split the terms content without dropping the page shell', () => {
+	it('can split the terms page body without dropping the page shell', () => {
 		const html = renderAuxeroTemplate('terms.html', { routePath: 'terms' });
 		const document = splitAuxeroDocument(html!);
-		const split = splitAuxeroElementBlockByMarker(document.bodyHtml, 'data-bohemcars-terms', 'div');
+		const split = splitAuxeroElementBlockByMarker(
+			document.bodyHtml,
+			'data-bohemcars-terms-page',
+			'section'
+		);
 
-		expect(split?.beforeHtml).toContain('Условия за използване на Bohemcars');
+		expect(split?.beforeHtml).toContain('Terms of use');
+		expect(split?.sectionHtml).toContain('Условия за използване на Bohemcars');
 		expect(split?.sectionHtml).toContain('term-page--nav');
 		expect(split?.sectionHtml).toContain('1. Vehicle Information');
 		expect(split?.sectionHtml).toContain('6. Contact And Data');
@@ -754,40 +776,38 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
-	it('can split the blog listing grid without dropping pagination or footer chrome', () => {
+	it('can split the blog listing page body without dropping footer chrome', () => {
 		const html = renderAuxeroTemplate('blog-grid-style-1.html', { routePath: 'blog' });
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroElementBlockByMarker(
 			document.bodyHtml,
-			'data-bohemcars-blog-grid',
-			'div'
+			'data-bohemcars-blog-page',
+			'section'
 		);
 
-		expect(split?.beforeHtml).toContain('Съвети от Bohemcars');
+		expect(split?.beforeHtml).toContain('News');
+		expect(split?.sectionHtml).toContain('Съвети от Bohemcars');
 		expect(split?.sectionHtml).toContain('post-style-6');
 		expect(split?.sectionHtml).toContain(
 			'Какво проверява Bohemcars преди внос на автомобил от Канада'
 		);
-		expect(split?.afterHtml).toContain('pagination__link active');
+		expect(split?.sectionHtml).toContain('pagination__link active');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});
 
-	it('can split the blog detail article column without dropping sidebar or related posts', () => {
+	it('can split the blog detail page body without dropping footer chrome', () => {
 		const html = renderAuxeroTemplate('blog-details-1.html', {
 			routePath: 'blog/vnos-ot-kanada-proverka'
 		});
 		const document = splitAuxeroDocument(html!);
-		const split = splitAuxeroDivBlockByMarker(
-			document.bodyHtml,
-			'class="innerpage__content md-mb-30"'
-		);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-blog-detail-page');
 
-		expect(split?.beforeHtml).toContain('blog-details-banner');
+		expect(split?.sectionHtml).toContain('blog-details-banner');
 		expect(split?.sectionHtml).toContain('bohemcars-blog-comment-form');
 		expect(split?.sectionHtml).toContain('Следваща стъпка');
-		expect(split?.afterHtml).toContain('innerpage__sidebar');
-		expect(split?.afterHtml).toContain('Свързани публикации');
+		expect(split?.sectionHtml).toContain('innerpage__sidebar');
+		expect(split?.sectionHtml).toContain('Свързани публикации');
 		expect(split?.afterHtml).toContain('footer');
 	});
 });

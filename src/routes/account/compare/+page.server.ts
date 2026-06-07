@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
 import { resolveLocale } from '$lib/i18n/messages';
+import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getCompareVehicles } from '$lib/server/compare-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
@@ -31,6 +32,10 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeCompareHtml: compareSlot.beforeHtml,
 		dashboardShell: true,
+		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
+			subtitle: 'Compare saved vehicles side by side before contacting Bohemcars.',
+			title: 'My Compare'
+		}),
 		locale,
 		pageDocument,
 		vehicles: compareVehiclesFromVehicles(getCompareVehicles(renderOptions), locale)

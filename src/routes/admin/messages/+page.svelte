@@ -7,6 +7,7 @@
 <MessageTemplatePage
 	afterMessageHtml={data.afterMessageHtml}
 	beforeMessageHtml={data.beforeMessageHtml}
+	messageHtml={data.messageHtml}
 	pageDocument={data.pageDocument}
 	thread={data.thread}
 />

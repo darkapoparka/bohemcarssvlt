@@ -22,7 +22,13 @@
 
 	<div class="bohemcars-dashboard-overview__summary" aria-label="Dashboard summary">
 		{#each recent.summary as item (item.id)}
-			<div class={['bohemcars-dashboard-summary-item', item.tone && `is-${item.tone}`]}>
+			<div
+				class={[
+					'bohemcars-dashboard-summary-item',
+					item.tone && `is-${item.tone}`,
+					item.value.length > 3 && 'is-label-value'
+				]}
+			>
 				<p class="bohemcars-dashboard-summary-item__value">{item.value}</p>
 				<p class="bohemcars-dashboard-summary-item__label">{item.label}</p>
 			</div>
@@ -31,7 +37,11 @@
 
 	<div class="bohemcars-dashboard-actions" aria-label="Quick dashboard actions">
 		{#each recent.actions as action (action.id)}
-			<a href={resolve(action.href)} class="bohemcars-dashboard-action">
+			<a
+				href={resolve(action.href)}
+				class="bohemcars-dashboard-action"
+				data-bohemcars-dashboard-action={action.id}
+			>
 				<span class="bohemcars-dashboard-action__icon">
 					<img src={action.icon} alt="" aria-hidden="true" />
 				</span>
@@ -45,35 +55,42 @@
 
 	<div class="bohemcars-dashboard-recent">
 		<div class="bohemcars-dashboard-recent__header">
-			<p class="h5 mb-0">Recent activity</p>
+			<p class="h5 mb-0">Priority queue</p>
 			<p class="text-secondary mb-0 text-sm">{recent.items.length} latest</p>
 		</div>
 
-		<div class="comments bohemcars-dashboard-recent__list">
+		<div class="bohemcars-dashboard-recent__list">
 			{#each recent.items as item (item.id)}
-				<div class="comment-box bohemcars-dashboard-recent-card">
-					<div class="comment-box__header mb-16 gap-12">
-						<div class="comment-box__avatar">
-							<img src={item.avatar} alt={item.name} />
-						</div>
-						<div class="bohemcars-dashboard-recent-card__person">
-							<div class="text-secondary gap-4 pt-4">
-								<p class="h5 mb-4">{item.name}</p>
+				<article class="comment-box bohemcars-dashboard-recent-card">
+					<div class="bohemcars-dashboard-recent-card__content">
+						<div class="comment-box__header gap-12">
+							<div class="comment-box__avatar">
+								<img src={item.avatar} alt={item.name} />
+							</div>
+							<div class="bohemcars-dashboard-recent-card__person">
+								<p class="bohemcars-dashboard-recent-card__name mb-4">{item.name}</p>
 								<p class="text-secondary mb-0 text-sm">{item.dateLabel}</p>
 							</div>
 						</div>
-						<span class="bohemcars-dashboard-status">{item.statusLabel}</span>
+						<p class="bohemcars-dashboard-recent-card__title mb-6">{item.title}</p>
+						<p class="bohemcars-dashboard-meta text-secondary mb-8">{item.metaLabel}</p>
+						<p class="bohemcars-dashboard-recent-card__body mb-0">{item.body}</p>
 					</div>
-					<p class="h5 mb-8">{item.title}</p>
-					<p class="bohemcars-dashboard-meta text-secondary mb-10">{item.metaLabel}</p>
-					<p class="h7 line-height-28 mb-16">{item.body}</p>
-					<a href={resolve(item.href)} class="view-details bohemcars-dashboard-recent-card__link">
-						{item.actionLabel}
-						<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt="" aria-hidden="true" />
-					</a>
-				</div>
+					<div class="bohemcars-dashboard-recent-card__aside">
+						<span class="bohemcars-dashboard-status">{item.statusLabel}</span>
+						<a href={resolve(item.href)} class="view-details bohemcars-dashboard-recent-card__link">
+							{item.actionLabel}
+							<img
+								class="ml-4"
+								src="/assets/icons/CaretCircleRight.svg"
+								alt=""
+								aria-hidden="true"
+							/>
+						</a>
+					</div>
+				</article>
 			{:else}
-				<div class="comment-box bohemcars-dashboard-recent-card">
+				<div class="comment-box bohemcars-dashboard-recent-card is-empty">
 					<p class="h5 mb-8">Nothing needs attention right now</p>
 					<p class="h7 line-height-28 mb-0">
 						New leads, messages, and listing updates will appear here as soon as they arrive.
@@ -87,12 +104,17 @@
 <style>
 	.bohemcars-dashboard-overview {
 		display: grid;
-		gap: 22px;
+		gap: 18px;
+		border-color: var(--bc-border) !important;
+		border-radius: 14px !important;
+		background: #ffffff !important;
+		box-shadow: none !important;
+		padding: 24px !important;
 	}
 
 	.bohemcars-dashboard-overview__header {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: space-between;
 		gap: 18px;
 	}
@@ -103,6 +125,9 @@
 
 	.bohemcars-dashboard-overview__primary {
 		min-height: 44px;
+		border-radius: 10px;
+		padding-right: 20px;
+		padding-left: 20px;
 		white-space: nowrap;
 	}
 
@@ -115,25 +140,23 @@
 	.bohemcars-dashboard-overview__summary {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1px;
-		overflow: hidden;
-		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-border);
+		gap: 10px;
 	}
 
 	.bohemcars-dashboard-summary-item {
 		min-width: 0;
-		background: #ffffff;
-		padding: 16px 18px;
+		border: 1px solid var(--bc-border);
+		border-radius: 10px;
+		background: #f8faf4;
+		padding: 14px 16px;
 	}
 
 	.bohemcars-dashboard-summary-item__value {
-		margin: 0 0 5px;
+		margin: 0 0 4px;
 		color: #1c1c1c;
-		font-size: 28px;
-		font-weight: 700;
-		line-height: 34px;
+		font-size: 27px;
+		font-weight: 600;
+		line-height: 32px;
 	}
 
 	.bohemcars-dashboard-summary-item__label {
@@ -152,22 +175,27 @@
 		color: #44513f;
 	}
 
+	.bohemcars-dashboard-summary-item.is-label-value .bohemcars-dashboard-summary-item__value {
+		font-size: 21px;
+		line-height: 27px;
+	}
+
 	.bohemcars-dashboard-actions {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 		gap: 10px;
 	}
 
 	.bohemcars-dashboard-action {
 		display: flex;
 		min-width: 0;
-		min-height: 62px;
+		min-height: 58px;
 		align-items: center;
 		gap: 12px;
 		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-control);
-		padding: 10px 12px;
+		border-radius: 10px;
+		background: #f3f6ef;
+		padding: 10px 13px;
 		transition:
 			background-color 0.2s ease,
 			border-color 0.2s ease;
@@ -176,17 +204,18 @@
 	.bohemcars-dashboard-action:hover,
 	.bohemcars-dashboard-action:focus-visible {
 		border-color: #cfdac8;
-		background: var(--bc-control-hover);
+		background: #e9efe4;
 	}
 
 	.bohemcars-dashboard-action__icon {
 		display: inline-flex;
-		width: 38px;
-		min-width: 38px;
-		height: 38px;
+		width: 36px;
+		min-width: 36px;
+		height: 36px;
 		align-items: center;
 		justify-content: center;
-		border-radius: 8px;
+		border: 1px solid #e3eadc;
+		border-radius: 9px;
 		background: #ffffff;
 	}
 
@@ -226,7 +255,7 @@
 
 	.bohemcars-dashboard-recent {
 		display: grid;
-		gap: 14px;
+		gap: 10px;
 	}
 
 	.bohemcars-dashboard-recent__header {
@@ -238,11 +267,28 @@
 
 	.bohemcars-dashboard-recent__list {
 		display: grid;
-		gap: 12px;
+		overflow: hidden;
+		border: 1px solid var(--bc-border);
+		border-radius: 12px;
+		background: #ffffff;
+		padding: 0 18px;
 	}
 
 	.bohemcars-dashboard-recent-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 18px;
 		margin: 0 !important;
+		border-bottom: 1px solid var(--bc-border) !important;
+		padding: 18px 0 !important;
+	}
+
+	.bohemcars-dashboard-recent-card:last-child {
+		border-bottom: 0 !important;
+	}
+
+	.bohemcars-dashboard-recent-card.is-empty {
+		display: block;
 	}
 
 	.bohemcars-dashboard-recent-card__person {
@@ -250,14 +296,63 @@
 		flex: 1;
 	}
 
+	.bohemcars-dashboard-recent-card__content {
+		display: grid;
+		min-width: 0;
+		gap: 10px;
+	}
+
+	.bohemcars-dashboard-recent-card__name,
+	.bohemcars-dashboard-recent-card__title {
+		color: #1c1c1c;
+		font-size: 17px;
+		font-weight: 700;
+		line-height: 22px;
+	}
+
+	.bohemcars-dashboard-recent-card__body {
+		max-width: 760px;
+		color: #31362d;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 23px;
+	}
+
+	.bohemcars-dashboard-recent-card :global(.comment-box__header) {
+		align-items: center;
+		margin-bottom: 0 !important;
+	}
+
+	.bohemcars-dashboard-recent-card :global(.comment-box__avatar) {
+		width: 46px;
+		min-width: 46px;
+		height: 46px;
+		background: #edf2e8;
+	}
+
+	.bohemcars-dashboard-recent-card :global(.comment-box__avatar img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.bohemcars-dashboard-recent-card__aside {
+		display: flex;
+		min-width: 126px;
+		align-items: flex-end;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
 	.bohemcars-dashboard-status {
 		display: inline-flex;
-		min-height: 30px;
+		min-height: 28px;
 		align-items: center;
 		border-radius: 999px;
 		background: #f3f7ea;
 		color: #6f9818;
-		padding: 0 12px;
+		padding: 0 11px;
 		font-size: 12px;
 		font-weight: 800;
 		line-height: 15px;
@@ -266,10 +361,12 @@
 
 	.bohemcars-dashboard-recent-card__link {
 		display: inline-flex;
-		min-height: 38px;
+		min-height: 28px;
 		align-items: center;
 		color: #1c1c1c;
-		font-weight: 700;
+		font-size: 14px;
+		font-weight: 800;
+		line-height: 18px;
 	}
 
 	@media (max-width: 1199px) {
@@ -281,6 +378,7 @@
 	@media (max-width: 767.98px) {
 		.bohemcars-dashboard-overview {
 			gap: 16px;
+			padding: 18px !important;
 		}
 
 		.bohemcars-dashboard-overview__header,
@@ -317,12 +415,24 @@
 			text-align: right;
 		}
 
-		.bohemcars-dashboard-recent-card :global(.comment-box__header) {
-			align-items: flex-start;
+		.bohemcars-dashboard-recent__list {
+			padding: 0 14px;
+		}
+
+		.bohemcars-dashboard-recent-card {
+			grid-template-columns: 1fr;
+			gap: 14px;
+			padding: 16px 0 !important;
+		}
+
+		.bohemcars-dashboard-recent-card__aside {
+			min-width: 0;
+			align-items: center;
+			flex-direction: row;
 		}
 
 		.bohemcars-dashboard-status {
-			margin-left: auto;
+			margin-left: 0;
 		}
 	}
 </style>

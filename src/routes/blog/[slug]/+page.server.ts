@@ -21,9 +21,9 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 			searchParams: url.searchParams
 		},
 		{
-			marker: 'class="innerpage__content md-mb-30"',
+			marker: 'data-bohemcars-blog-detail-page',
 			templateError: 'Blog detail template could not be rendered',
-			slotError: 'Blog detail content slot could not be located'
+			slotError: 'Blog detail page slot could not be located'
 		}
 	);
 

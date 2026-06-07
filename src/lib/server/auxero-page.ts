@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { AuxeroPageDocument } from '$lib/auxero/page-document';
+import { parseAuxeroHeadAssets, type AuxeroPageDocument } from '$lib/auxero/page-document';
 import { localizeAuxeroPageDocument, resolveLocale } from '$lib/i18n/messages';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
 import { renderAuxeroTemplate } from './auxero-template';
@@ -36,10 +36,126 @@ const attributeValue = (attributes: string, name: string) => {
 	return match?.[2] ?? '';
 };
 
-const injectedBodyClass = (bodyHtml: string) => {
-	const match = bodyHtml.match(/document\.body\.classList\.add\((["'])(.*?)\1\)/);
+const injectedBodyClass = (bodyHtml: string) =>
+	Array.from(
+		bodyHtml.matchAll(/document\.body\.classList\.add\((["'])(.*?)\1\)/g),
+		(match) => match[2] ?? ''
+	)
+		.filter(Boolean)
+		.join(' ');
 
-	return match?.[2] ?? '';
+const bodyScriptTags = (bodyHtml: string) =>
+	Array.from(bodyHtml.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi), (match) => ({
+		attributes: match[1] ?? '',
+		content: match[2] ?? '',
+		html: match[0] ?? ''
+	}));
+
+const serializedScriptPayload = (scripts: { attributes: string; content: string }[]) =>
+	JSON.stringify(scripts).replace(/</g, '\\u003c');
+
+export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
+	const scripts = bodyScriptTags(bodyHtml)
+		.filter(
+			(script) =>
+				!script.content.includes('__BOHEMCARS_RUNTIME__') &&
+				!script.content.includes('document.body.classList.add')
+		)
+		.map(({ attributes, content }) => ({ attributes, content }));
+
+	if (!scripts.length) return '';
+
+	return `<script>{
+	const bohemcarsBodyScripts = ${serializedScriptPayload(scripts)};
+	let bohemcarsBodyScriptsStarted = false;
+
+	const loadBohemcarsBodyScript = (definition) =>
+		new Promise((resolve, reject) => {
+			const script = document.createElement('script');
+			const template = document.createElement('template');
+			template.innerHTML = '<script' + definition.attributes + '></' + 'script>';
+			const source = template.content.firstElementChild;
+
+			if (source) {
+				Array.from(source.attributes).forEach((attribute) => {
+					script.setAttribute(attribute.name, attribute.value);
+				});
+			}
+
+			if (definition.content) {
+				script.textContent = definition.content;
+			}
+
+			script.addEventListener('load', resolve, { once: true });
+			script.addEventListener(
+				'error',
+				() => reject(new Error('Failed to load Auxero script: ' + (script.src || 'inline'))),
+				{ once: true }
+			);
+
+			document.body.appendChild(script);
+
+			if (!script.src) {
+				resolve();
+			}
+		});
+
+	const startBohemcarsBodyScripts = async () => {
+		if (bohemcarsBodyScriptsStarted) return;
+		bohemcarsBodyScriptsStarted = true;
+
+		for (const definition of bohemcarsBodyScripts) {
+			await loadBohemcarsBodyScript(definition);
+		}
+
+		window.__BOHEMCARS_BODY_SCRIPTS_LOADED__ = true;
+		window.dispatchEvent(new Event('bohemcars:scripts-loaded'));
+	};
+
+	const startBohemcarsBodyScriptsAfterLoad = () => {
+		requestAnimationFrame(() => requestAnimationFrame(startBohemcarsBodyScripts));
+	};
+	window.addEventListener('bohemcars:svelte-mounted', startBohemcarsBodyScripts, { once: true });
+	if (document.readyState === 'complete') {
+		startBohemcarsBodyScriptsAfterLoad();
+	} else {
+		window.addEventListener('load', startBohemcarsBodyScriptsAfterLoad, { once: true });
+	}
+}</script>`;
+};
+
+export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
+	const runtimeScript = bodyScriptTags(bodyHtml)
+		.filter(
+			(script) =>
+				!/\bsrc\s*=/i.test(script.attributes) && script.content.includes('__BOHEMCARS_RUNTIME__')
+		)
+		.at(-1);
+
+	if (!runtimeScript) return '';
+
+	return `<script${runtimeScript.attributes}>{
+	let bohemcarsRuntimeStarted = false;
+	const startBohemcarsRuntime = () => {
+		if (bohemcarsRuntimeStarted) return;
+		bohemcarsRuntimeStarted = true;
+${runtimeScript.content}
+	};
+	const startBohemcarsRuntimeWhenScriptsLoad = () => {
+		if (window.__BOHEMCARS_BODY_SCRIPTS_LOADED__) {
+			startBohemcarsRuntime();
+			return;
+		}
+
+		window.addEventListener('bohemcars:scripts-loaded', startBohemcarsRuntime, { once: true });
+	};
+	window.addEventListener('bohemcars:svelte-mounted', startBohemcarsRuntimeWhenScriptsLoad, { once: true });
+	if (document.readyState === 'complete') {
+		startBohemcarsRuntimeWhenScriptsLoad();
+	} else {
+		window.addEventListener('load', startBohemcarsRuntimeWhenScriptsLoad, { once: true });
+	}
+}</script>`;
 };
 
 export function splitAuxeroDocument(html: string): AuxeroPageDocument {
@@ -52,6 +168,7 @@ export function splitAuxeroDocument(html: string): AuxeroPageDocument {
 	return {
 		bodyClass: bodyClasses,
 		bodyHtml: body.content,
+		headAssets: parseAuxeroHeadAssets(head.content),
 		headHtml: head.content
 	};
 }
@@ -98,7 +215,7 @@ export function removeAuxeroBreadcrumb(html: string) {
 }
 
 const findClosingTagIndex = (html: string, openTagIndex: number, tagName: string) => {
-	const pattern = new RegExp(`<\\/?${tagName}\\b[^>]*>`, 'gi');
+	const pattern = new RegExp(`</?${tagName}\\b[^>]*>`, 'gi');
 	pattern.lastIndex = openTagIndex;
 	let depth = 0;
 	let match: RegExpExecArray | null;

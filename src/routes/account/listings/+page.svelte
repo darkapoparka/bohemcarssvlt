@@ -8,5 +8,6 @@
 	afterListingsHtml={data.afterListingsHtml}
 	beforeListingsHtml={data.beforeListingsHtml}
 	listings={data.listings}
+	listingsHtml={data.listingsHtml}
 	pageDocument={data.pageDocument}
 />

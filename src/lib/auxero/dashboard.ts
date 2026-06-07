@@ -1,11 +1,22 @@
 export type AuxeroDashboardHref =
+	| '/account/compare'
 	| '/account/favorites'
 	| '/account/listings'
+	| '/account/listings/new'
 	| '/account/messages'
 	| '/admin/agents'
 	| '/admin/inquiries'
+	| '/admin/inventory'
 	| '/admin/inventory/new'
 	| '/admin/messages';
+
+export type AuxeroDashboardStat = {
+	href: AuxeroDashboardHref;
+	icon: string;
+	id: string;
+	label: string;
+	value: string;
+};
 
 export type AuxeroDashboardRecentItem = {
 	actionLabel: string;
@@ -42,4 +53,15 @@ export type AuxeroDashboardRecentData = {
 	items: AuxeroDashboardRecentItem[];
 	primaryAction: AuxeroDashboardAction;
 	summary: AuxeroDashboardSummaryItem[];
+};
+
+export type AuxeroDashboardPageData = {
+	isAdmin: boolean;
+	recent: AuxeroDashboardRecentData;
+	roleLabel: string;
+	sessionEmail: string;
+	sessionName: string;
+	stats: AuxeroDashboardStat[];
+	subtitle: string;
+	title: string;
 };

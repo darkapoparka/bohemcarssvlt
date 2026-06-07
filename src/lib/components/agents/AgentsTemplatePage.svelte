@@ -1,38 +1,88 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroAgentCard } from '$lib/auxero/agents';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroDashboardSlotShell from '$lib/components/layout/AuxeroDashboardSlotShell.svelte';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import AuxeroAgentsGrid from './AuxeroAgentsGrid.svelte';
 
 	let {
-		afterAgentsHtml,
-		beforeAgentsHtml,
+		afterAgentsHtml = '',
+		beforeAgentsHtml = '',
 		cards,
 		dashboardShell = false,
 		management = false,
-		pageDocument
+		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml = ''
 	}: {
-		afterAgentsHtml: string;
-		beforeAgentsHtml: string;
+		afterAgentsHtml?: string;
+		beforeAgentsHtml?: string;
 		cards: AuxeroAgentCard[];
 		dashboardShell?: boolean;
 		management?: boolean;
 		pageDocument: AuxeroPageDocument;
+		shellCopy?: HomePageCopy;
+		shellFooter?: HomeFiveFooterData;
+		shellHeader?: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml?: string;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeAgentsHtml} afterHtml={afterAgentsHtml}>
-	{#if dashboardShell}
-		<div class="dashboard-content--inner">
-			<p class="h3 mb-30">Agents</p>
-			<div class="dashboard-box bohemcars-dashboard-agents bg-white">
+{#if dashboardShell}
+	<AuxeroDashboardSlotShell
+		{pageDocument}
+		beforeHtml={beforeAgentsHtml}
+		afterHtml={afterAgentsHtml}
+		title="Agents"
+	>
+		<div class="dashboard-box bohemcars-dashboard-agents bg-white">
+			<AuxeroAgentsGrid {cards} {management} />
+		</div>
+	</AuxeroDashboardSlotShell>
+{:else if shellCopy && shellFooter && shellHeader}
+	<AuxeroPublicShell
+		copy={shellCopy}
+		footer={shellFooter}
+		header={shellHeader}
+		modals={shellModals}
+		{pageDocument}
+		runtimeHtml={shellRuntimeHtml}
+		title="Консултанти — Bohemcars"
+	>
+		<section class="bohemcars-agents-hero background-light py-80">
+			<div class="container">
+				<div class="title-section mb-0 flex justify-between gap-30">
+					<div>
+						<p class="text-highlight font-weight-600 mb-8">Bohemcars екип</p>
+						<h1 class="h2 mb-12">Консултанти на Bohemcars</h1>
+						<p class="text-secondary h7">
+							Продажби и огледи, внос от Канада, документи и предаване с ясен следващ ход.
+						</p>
+					</div>
+					<a href={resolve('/contact')} class="btn btn-primary btn-large font-weight-600 max-w-min">
+						Запази консултация
+					</a>
+				</div>
+			</div>
+		</section>
+		<section class="bohemcars-agents-page pt-64 pb-100">
+			<div class="container">
 				<AuxeroAgentsGrid {cards} {management} />
 			</div>
-		</div>
-	{:else}
-		<AuxeroAgentsGrid {cards} {management} />
-	{/if}
-</AuxeroPageShell>
+		</section>
+	</AuxeroPublicShell>
+{/if}
 
 <style>
 	:global(body.auxero-template-sale-agents-html section.pb-100 h1),

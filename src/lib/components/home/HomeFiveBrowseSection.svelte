@@ -5,12 +5,10 @@
 	import HomeSectionCta from './HomeSectionCta.svelte';
 
 	let {
-		afterBrandStripHtml = '',
 		brandCards,
 		copy,
 		typeCards
 	}: {
-		afterBrandStripHtml?: string;
 		brandCards: HomeFiveBrandCard[];
 		copy: HomePageCopy;
 		typeCards: HomeFiveTypeCard[];
@@ -59,11 +57,6 @@
 					></div>
 				</div>
 			</div>
-
-			{#if afterBrandStripHtml.trim()}
-				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-				{@html afterBrandStripHtml}
-			{/if}
 
 			<div class="bohemcars-type-gallery">
 				<div

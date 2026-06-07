@@ -8,6 +8,7 @@ import {
 } from '$lib/data/vehicles';
 
 export type InventoryView = '3' | '4' | 'map';
+export type InventoryLayout = 'classic' | 'dashboard';
 
 export type InventoryStateOptions = {
 	searchParams?: URLSearchParams;
@@ -16,6 +17,7 @@ export type InventoryStateOptions = {
 
 export type InventoryState = {
 	filters: InventoryFilters;
+	layout: InventoryLayout;
 	searchParams: URLSearchParams;
 	selected: Vehicle[];
 	sort: SortKey;
@@ -85,6 +87,18 @@ export const resolveInventoryView = (value?: string | InventoryView | null): Inv
 	return '4';
 };
 
+export const resolveInventoryLayout = (searchParams: URLSearchParams): InventoryLayout => {
+	const layout = searchParams.get('layout')?.trim().toLowerCase();
+	const mode = searchParams.get('mode')?.trim().toLowerCase();
+
+	if (layout === 'classic' || layout === 'grid' || mode === 'classic') return 'classic';
+
+	return 'dashboard';
+};
+
+export const defaultInventoryViewForLayout = (layout: InventoryLayout): InventoryView =>
+	layout === 'dashboard' ? '3' : '4';
+
 export const inventoryTemplateForView = (view: InventoryView) => {
 	if (view === '4') return 'listing-grid4-columns.html';
 	if (view === 'map') return 'listing-gridstyle-halfmap.html';
@@ -134,13 +148,19 @@ export const getInventoryState = (
 	};
 	const normalizedFilters = normalizeFilters(filters);
 	const filtered = filterVehicles(vehicles, normalizedFilters);
+	const layout = resolveInventoryLayout(searchParams);
+	const hasExplicitView = Boolean(options.view || searchParams.get('view'));
+	const view = hasExplicitView
+		? viewForInventoryTemplate(templateFile, options)
+		: defaultInventoryViewForLayout(layout);
 
 	return {
 		filters: normalizedFilters,
+		layout,
 		searchParams,
 		selected: sortVehicles(filtered, sort),
 		sort,
 		sortParam,
-		view: viewForInventoryTemplate(templateFile, options)
+		view
 	};
 };

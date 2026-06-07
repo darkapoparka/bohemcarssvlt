@@ -70,7 +70,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['account/password', 'Change Password', 'customer'],
 			['admin', 'Admin Dashboard', 'admin'],
 			['admin/inventory', 'Inventory Management', 'admin'],
-			['admin/inventory/new', 'Add Bohemcars Listing', 'admin'],
+			['admin/inventory/new', 'Add Listing', 'admin'],
 			['admin/inquiries', 'Inquiries & Messages', 'agent'],
 			['admin/messages', 'Inquiries & Messages', 'admin'],
 			['admin/agents', 'Управление на консултанти', 'admin'],
@@ -582,7 +582,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('Admin dashboard');
 		expect(html).toContain('User Management');
 		expect(html).toContain('href="/inventory"');
-		expect(html).toContain('Bohemcars Автомобили');
+		expect(html).toContain('Bohemcars Inventory');
 		expect(html).toContain('href="/admin"');
 		expect(html).not.toContain('sub-menu--main');
 		expect(html).not.toContain('>Pages<');
@@ -719,7 +719,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(addListing).toContain('data-bohemcars-listing-status="published"');
 		expect(addListing).toContain('name="actorRole" value="admin"');
 		expect(addListing).toContain("'/api/inventory/listings'");
-		expect(addListing).toContain('Add Bohemcars Listing');
+		expect(addListing).toContain('Add Listing');
 		expect(addListing).toContain(vehicles[0].title);
 		expect(addListing).toContain('Vehicle description and inspection notes');
 		expect(addListing).not.toContain('6205 Peachtree Dunwoody Rd');
@@ -738,7 +738,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			routePath: `admin/inventory/edit/${listing.id}`
 		});
 
-		expect(html).toContain('Edit Bohemcars Listing');
+		expect(html).toContain('Edit Listing');
 		expect(html).toContain('data-bohemcars-admin-listing-mode="edit"');
 		expect(html).toContain('data-bohemcars-add-listing-form');
 		expect(html).toContain(`name="listingId" value="${listing.id}"`);

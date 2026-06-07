@@ -1108,7 +1108,7 @@ if (document.querySelector(".swiper-btn.navigation-next") && document.querySelec
 }
 
 var swiperSingle = new Swiper(".sw-single", {
-    loop: true,
+    loop: false,
     effect: "fade",
     speed: 1000,
     fadeEffect: {
@@ -1118,10 +1118,7 @@ var swiperSingle = new Swiper(".sw-single", {
         el: '.pagination-page-title--slider-1',
         clickable: true,
     },
-    autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-    },
+    autoplay: false,
     parallax: false,
     navigation: navConfig,
     on: {
@@ -1155,7 +1152,7 @@ var swiperSingle = new Swiper(".sw-single", {
   // Only initialize thumb slider if element exists
 if (document.querySelector(".sw-single-thumb")) {
     swiperThumb = new Swiper(".sw-single-thumb", {
-        loop: true,
+        loop: false,
         effect: "fade",
         fadeEffect: {
             crossFade: true

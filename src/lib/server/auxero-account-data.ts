@@ -73,9 +73,9 @@ const km = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g
 const hiddenInput = (name: string, value: string) =>
 	`<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(value)}">`;
 
-const setInputValueByName = (html: string, name: string, value: string) =>
+const setInputValueById = (html: string, id: string, value: string) =>
 	html.replace(
-		new RegExp(`(<input\\b(?=[^>]*\\bname="${name}")[^>]*\\bvalue=")[^"]*(")`, 'i'),
+		new RegExp(`(<input\\b(?=[^>]*\\bid="${id}")[^>]*\\bvalue=")[^"]*(")`, 'i'),
 		(_match, before: string, after: string) => `${before}${escapeHtml(value)}${after}`
 	);
 
@@ -159,13 +159,17 @@ const menuItem = (
 	icon: string,
 	label: string,
 	badge?: number
-) => `<li>
-	<a href="${href}" class="dashboard-menu-item ${context.active === id ? 'active' : ''}" data-bohemcars-menu-item="${escapeHtml(id)}">
+) => {
+	const isActive = context.active === id;
+
+	return `<li>
+	<a href="${href}" class="dashboard-menu-item ${isActive ? 'active' : ''}" data-bohemcars-menu-item="${escapeHtml(id)}"${isActive ? ' aria-current="page"' : ''}>
 		<img src="${icon}" alt="${escapeHtml(label)}">
 		${escapeHtml(label)}
 		${badge ? `<span class="number" data-bohemcars-menu-badge="${escapeHtml(id)}">${badge}</span>` : ''}
 	</a>
 </li>`;
+};
 
 const dashboardMenu = (context: AccountContext) => {
 	const inquiryCount = listInquiriesForRole(
@@ -255,7 +259,12 @@ const dashboardMenu = (context: AccountContext) => {
 							id: 'listings',
 							label: 'My Listings'
 						},
-						{ href: '/sell-your-car', icon: addListingIcon, id: 'add', label: 'Submit Vehicle' },
+						{
+							href: '/account/listings/new',
+							icon: addListingIcon,
+							id: 'add',
+							label: 'Submit Vehicle'
+						},
 						{
 							href: '/account/favorites',
 							icon: favoritesIcon,
@@ -372,10 +381,16 @@ const replaceAccountDropdown = (html: string, context: AccountContext) =>
 		accountDropdown(context)
 	);
 
+const markDashboardPrimaryAction = (html: string) =>
+	html.replace(
+		/(<div class="header-button mobile-hidden-header-button[^"]*"[\s\S]*?<a\b)(?![^>]*data-dashboard-primary-action)(?=[^>]*\bhref="(?:\/account\/listings\/new|\/admin\/inventory\/new|\/admin\/inquiries\?role=agent)")/,
+		'$1 data-dashboard-primary-action'
+	);
+
 const applyRoleScopedAccountChrome = (html: string, context: AccountContext) => {
 	if (!context.isAdmin) {
 		return html
-			.replaceAll('href="/admin/inventory/new"', 'href="/sell-your-car"')
+			.replaceAll('href="/admin/inventory/new"', 'href="/account/listings/new"')
 			.replaceAll('Add Listing', 'Submit Vehicle');
 	}
 
@@ -408,10 +423,9 @@ const applyAccountShell = (
 		.replaceAll('<p class="h4 mb-20">Inventory</p>', `<p class="h4 mb-20">${listingHeading}</p>`)
 		.replace('</head>', `<meta name="bohemcars-role" content="${context.session.role}">\n</head>`);
 
-	return applyRoleScopedAccountChrome(replaceAccountDropdown(next, context), context).replace(
-		/<ul class="dashboard-menu">[\s\S]*?<\/ul>/,
-		dashboardMenu(context)
-	);
+	return markDashboardPrimaryAction(
+		applyRoleScopedAccountChrome(replaceAccountDropdown(next, context), context)
+	).replace(/<ul class="dashboard-menu">[\s\S]*?<\/ul>/, dashboardMenu(context));
 };
 
 const statCards = (context: AccountContext) => {
@@ -540,7 +554,7 @@ const submissionCartItem = (row: AuxeroAccountListingRow) => {
 
 const submissionCartWrapper = (
 	data: AuxeroAccountListingsData
-) => `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings data-bohemcars-submissions-table>
+) => `<div class="cart-wrapper bohemcars-account-listings" data-bohemcars-account-listings data-bohemcars-submissions-table="true">
 	<div class="cart-header">
 		${data.headers.map((header) => `<div class="font-weight-600">${escapeHtml(header)}</div>`).join('\n')}
 	</div>
@@ -1009,11 +1023,11 @@ const applyProfileData = (
 			`placeholder="${escapeHtml(profile.address)}" value="${escapeHtml(profile.address)}" required`
 		);
 
-	next = setInputValueByName(next, 'Phone', profile.phone);
-	next = setInputValueByName(next, 'SalesPhone', profile.marketplacePhone);
-	next = setInputValueByName(next, 'EmailAddress', profile.email);
-	next = setInputValueByName(next, 'Company', profile.company);
-	next = setInputValueByName(next, 'youtube', profile.socialLinks[5]?.value ?? '');
+	next = setInputValueById(next, 'Phone', profile.phone);
+	next = setInputValueById(next, 'SalesPhone', profile.marketplacePhone);
+	next = setInputValueById(next, 'EmailAddress', profile.email);
+	next = setInputValueById(next, 'Company', profile.company);
+	next = setInputValueById(next, 'youtube', profile.socialLinks[5]?.value ?? '');
 	next = addClassToFirstFormAfter(
 		next,
 		'My profile',
@@ -1085,7 +1099,7 @@ const applyAddListingData = (
 	const mileage = listingFormFieldValue(form, 'mileage');
 	const engine = listingFormFieldValue(form, 'Enterengine');
 	const color = listingFormFieldValue(form, 'Color');
-	const adminHeading = form.mode === 'create' ? 'Add Bohemcars Listing' : 'Edit Bohemcars Listing';
+	const adminHeading = form.mode === 'create' ? 'Add Listing' : 'Edit Listing';
 	const pageHeading = context.isAdmin ? adminHeading : 'Submit Your Vehicle';
 	const hiddenFields = form.hiddenFields
 		.map((field) => hiddenInput(field.name, field.value))
@@ -1129,14 +1143,15 @@ const applyAddListingData = (
 			'placeholder="Vehicle description and inspection notes"'
 		);
 
-	next = setInputValueByName(next, 'title', title);
-	next = setInputValueByName(next, 'Enternumber', form.priceLabel);
-	next = setInputValueByName(next, 'EnterVIN', vin);
-	next = setInputValueByName(next, 'mileage', mileage);
-	next = setInputValueByName(next, 'Enterengine', engine || 'Engine on request');
-	next = setInputValueByName(next, 'Color', color);
-	next = setInputValueByName(next, 'PriceListing', form.priceLabel);
-	next = setInputValueByName(next, 'Yoururl', form.sourceUrl);
+	next = setInputValueById(next, 'title', title);
+	next = setInputValueById(next, 'Enternumber', form.priceLabel);
+	next = setInputValueById(next, 'EnterVIN', vin);
+	next = setInputValueById(next, 'mileage', mileage);
+	next = setInputValueById(next, 'Enterengine', engine || 'Engine on request');
+	next = setInputValueById(next, 'Color', color);
+	next = setInputValueById(next, 'PriceListing2', form.priceLabel);
+	next = setInputValueById(next, 'PriceListing', form.address);
+	next = setInputValueById(next, 'Yoururl', form.sourceUrl);
 
 	next = addClassToFirstFormAfter(
 		next,

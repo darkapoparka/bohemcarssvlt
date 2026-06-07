@@ -1,27 +1,27 @@
 import type { PageServerLoad } from './$types';
-import { contactFormData } from '$lib/auxero/contact';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { contactFormData, contactPageInfo } from '$lib/auxero/contact';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: contactFormSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const renderOptions = {
+		request,
+		routePath: 'contact',
+		searchParams: url.searchParams
+	};
+	const pageDocument = renderAuxeroPageDocument(
 		'contact-us.html',
-		{
-			request,
-			routePath: 'contact',
-			searchParams: url.searchParams
-		},
-		{
-			marker: 'contact-page-form',
-			templateError: 'Contact template could not be rendered',
-			slotError: 'Contact form slot could not be located'
-		}
+		renderOptions,
+		'Contact template could not be rendered'
 	);
 
 	return {
-		afterContactFormHtml: contactFormSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeContactFormHtml: contactFormSlot.beforeHtml,
 		form: contactFormData,
-		pageDocument
+		info: contactPageInfo,
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/contact')
 	};
 };

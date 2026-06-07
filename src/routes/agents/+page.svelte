@@ -5,8 +5,11 @@
 </script>
 
 <AgentsTemplatePage
-	afterAgentsHtml={data.afterAgentsHtml}
-	beforeAgentsHtml={data.beforeAgentsHtml}
 	cards={data.cards}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

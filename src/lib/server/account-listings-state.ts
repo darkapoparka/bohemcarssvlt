@@ -46,7 +46,7 @@ export const accountSubmissionListingRows = (context: AccountContext): AuxeroAcc
 		actions: [
 			{
 				ariaLabel: `Edit ${submission.title}`,
-				href: '/sell-your-car',
+				href: `/account/listings/edit/${encodeURIComponent(submission.id)}`,
 				icon: '/assets/icons/dashboard-edit.svg',
 				kind: 'edit-submission',
 				label: 'Edit Submission'

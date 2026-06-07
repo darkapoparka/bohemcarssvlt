@@ -3,6 +3,7 @@
 	import type { AuxeroCompareRow, AuxeroCompareVehicle } from '$lib/auxero/compare';
 	import { compareRowsFromVehicles } from '$lib/auxero/compare';
 	import type { Locale } from '$lib/i18n/messages';
+	import AuxeroCompareVehicleImage from './AuxeroCompareVehicleImage.svelte';
 
 	let { locale, vehicles }: { locale: Locale; vehicles: AuxeroCompareVehicle[] } = $props();
 
@@ -22,16 +23,19 @@
 								class="compare-item-remove-table"
 								type="button"
 								data-bohemcars-compare-remove={vehicle.slug}
+								aria-label={`${removeLabel} ${vehicle.title}`}
+								title={`${removeLabel} ${vehicle.title}`}
 								style="position: absolute; top: 0; right: 0; background: transparent; border: none; cursor: pointer; padding: 8px; z-index: 10;"
 							>
 								<img
 									src="/assets/icons/close-modal.svg"
-									alt={removeLabel}
+									alt=""
+									aria-hidden="true"
 									style="width: 24px; height: 24px;"
 								/>
 							</button>
 							<a href={resolve('/inventory/[slug]', { slug: vehicle.slug })}>
-								<img class="radius-16 image mb-10" src={vehicle.image} alt={vehicle.title} />
+								<AuxeroCompareVehicleImage src={vehicle.image} title={vehicle.title} />
 							</a>
 							<p class="h4 text-center">
 								<a href={resolve('/inventory/[slug]', { slug: vehicle.slug })}>{vehicle.title}</a>

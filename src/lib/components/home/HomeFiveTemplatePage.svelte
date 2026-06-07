@@ -1,15 +1,7 @@
 <script lang="ts">
-	import HomeFiveActionBand from './HomeFiveActionBand.svelte';
-	import HomeFiveBrowseSection from './HomeFiveBrowseSection.svelte';
-	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
-	import HomeFiveFooter from './HomeFiveFooter.svelte';
-	import HomeFiveHeader from './HomeFiveHeader.svelte';
-	import HomeFiveHero from './HomeFiveHero.svelte';
-	import HomeFiveModals from './HomeFiveModals.svelte';
-	import HomeFiveNewsSection from './HomeFiveNewsSection.svelte';
-	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
 	import type {
 		HomeFiveBrandCard,
+		HomeFiveComparePair,
 		HomeFiveFooterData,
 		HomeFiveHeaderData,
 		HomeFiveHeroData,
@@ -22,19 +14,18 @@
 	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
+	import HomeFiveActionBand from './HomeFiveActionBand.svelte';
+	import HomeFiveBrowseSection from './HomeFiveBrowseSection.svelte';
+	import HomeFiveCompareSection from './HomeFiveCompareSection.svelte';
+	import HomeFiveFeaturedVehicles from './HomeFiveFeaturedVehicles.svelte';
+	import HomeFiveHero from './HomeFiveHero.svelte';
+	import HomeFiveNewsSection from './HomeFiveNewsSection.svelte';
+	import HomeFiveReviewsSection from './HomeFiveReviewsSection.svelte';
 
 	let {
-		afterBrandStripHtml,
-		afterBudgetSectionHtml,
-		afterCompareSectionHtml,
-		afterFeaturedVehiclesHtml,
-		afterHeaderHtml,
-		afterHeroHtml,
-		afterModalsHtml,
-		afterNewsSectionHtml,
-		afterReviewsSectionHtml,
-		afterTypeGalleryHtml,
 		brandCards,
+		comparePairs,
 		copy,
 		featuredVehicles,
 		footer,
@@ -44,20 +35,13 @@
 		newsPosts,
 		pageDocument,
 		reviews,
+		runtimeHtml,
+		seoTitle,
 		typeCards,
 		vehiclePills
 	}: {
-		afterBrandStripHtml: string;
-		afterBudgetSectionHtml: string;
-		afterCompareSectionHtml: string;
-		afterFeaturedVehiclesHtml: string;
-		afterHeaderHtml: string;
-		afterHeroHtml: string;
-		afterModalsHtml: string;
-		afterNewsSectionHtml: string;
-		afterReviewsSectionHtml: string;
-		afterTypeGalleryHtml: string;
 		brandCards: HomeFiveBrandCard[];
+		comparePairs: HomeFiveComparePair[];
 		copy: HomePageCopy;
 		featuredVehicles: HomeFiveVehicleCardData[];
 		footer?: HomeFiveFooterData;
@@ -67,59 +51,32 @@
 		newsPosts: HomeFiveNewsPost[];
 		pageDocument: AuxeroPageDocument;
 		reviews: HomeFiveReview[];
+		runtimeHtml?: string;
+		seoTitle?: string;
 		typeCards: HomeFiveTypeCard[];
 		vehiclePills: HomeFiveVehiclePill[];
 	} = $props();
-	let bodyClassScript = $derived(
-		`<script>document.body.className = ${JSON.stringify(pageDocument.bodyClass)};</` + 'script>'
-	);
-
-	$effect(() => {
-		document.body.className = pageDocument.bodyClass;
-	});
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-<svelte:head>{@html pageDocument.headHtml}</svelte:head>
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html bodyClassScript}
-
-<div class="preload preload-container">
-	<img class="preload--icon" src="/assets/icons/preload.svg" alt="preload" />
-</div>
-
-<div id="wrapper">
-	<HomeFiveHeader {header} hideMobileLogo />
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html afterHeaderHtml}
-	<main id="main-content">
-		<HomeFiveHero {hero} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterHeroHtml}
-		<HomeFiveActionBand {copy} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterCompareSectionHtml}
-		<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} {copy} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterFeaturedVehiclesHtml}
-		<HomeFiveBrowseSection {brandCards} {typeCards} {copy} {afterBrandStripHtml} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterTypeGalleryHtml}
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterBudgetSectionHtml}
-		<HomeFiveReviewsSection {reviews} {copy} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterReviewsSectionHtml}
-		<HomeFiveNewsSection posts={newsPosts} {copy} />
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html afterNewsSectionHtml}
-	</main>
-	<HomeFiveFooter {footer} />
-</div>
-
-<HomeFiveModals {modals} {copy} {header} />
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html afterModalsHtml}
+<AuxeroPublicShell
+	{copy}
+	{footer}
+	{header}
+	hideMobileLogo
+	mainId="main-content"
+	{modals}
+	{pageDocument}
+	{runtimeHtml}
+	title={seoTitle}
+>
+	<HomeFiveHero {hero} />
+	<HomeFiveActionBand {copy} />
+	<HomeFiveFeaturedVehicles vehicles={featuredVehicles} pills={vehiclePills} {copy} />
+	<HomeFiveBrowseSection {brandCards} {typeCards} {copy} />
+	<HomeFiveCompareSection pairs={comparePairs} {copy} />
+	<HomeFiveReviewsSection {reviews} {copy} />
+	<HomeFiveNewsSection posts={newsPosts} {copy} />
+</AuxeroPublicShell>
 
 <style>
 	:global(#main-content) {
