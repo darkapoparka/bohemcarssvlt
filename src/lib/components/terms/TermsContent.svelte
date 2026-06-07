@@ -5,10 +5,10 @@
 	let { sections, title }: { sections: AuxeroTermsSection[]; title: string } = $props();
 </script>
 
-<section class="bg-white pb-100" data-bohemcars-terms-page>
-	<div class="container">
-		<h1 class="h2 capitalize">{title}</h1>
-		<div class="tf-spacing-style3"></div>
+<section class="bohemcars-terms" data-bohemcars-terms-page>
+	<div class="bc-container">
+		<h1 class="bohemcars-terms__title">{title}</h1>
+		<div class="bohemcars-terms__spacer" aria-hidden="true"></div>
 		<div class="term-page" id="scrollContainer" data-bohemcars-terms>
 			<div class="term-page--nav-container">
 				<ul class="term-page--nav" id="sidebarSticky">
@@ -20,9 +20,9 @@
 			<div class="content">
 				{#each sections as section (section.id)}
 					<div class="section" id={section.id}>
-						<p class="h4 mb-12 capitalize">{section.title}</p>
+						<p class="h4 bohemcars-terms__section-title">{section.title}</p>
 						{#each section.body as paragraph (paragraph)}
-							<p class="text-body-style-2 mb-12">{paragraph}</p>
+							<p class="bohemcars-terms__paragraph">{paragraph}</p>
 						{/each}
 					</div>
 				{/each}
@@ -32,11 +32,140 @@
 </section>
 
 <style>
+	.bohemcars-terms {
+		background: var(--bc-white);
+		padding-bottom: 100px;
+	}
+
+	.bohemcars-terms__title {
+		margin: 0;
+		color: var(--bc-ink);
+		font-family: var(--bc-font-body);
+		font-size: var(--bc-text-h2);
+		font-weight: 600;
+		letter-spacing: 0;
+		line-height: var(--bc-leading-h2);
+		text-transform: none;
+	}
+
+	.bohemcars-terms__spacer {
+		height: 80px;
+	}
+
+	.bohemcars-terms :global(.term-page) {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.bohemcars-terms :global(.term-page--nav-container) {
+		position: relative;
+		width: 360px;
+	}
+
+	.bohemcars-terms :global(.term-page--nav) {
+		position: relative;
+		display: flex;
+		height: fit-content;
+		flex-direction: column;
+		gap: 36px;
+		border-left: 1px solid #e7e7e7;
+		padding-top: 11px;
+	}
+
+	.bohemcars-terms :global(.term-page--nav.menuFixed) {
+		position: fixed !important;
+		z-index: 10;
+		top: 94px;
+	}
+
+	.bohemcars-terms :global(.term-page--nav.menuSticky) {
+		position: absolute !important;
+		top: auto;
+		bottom: 0;
+	}
+
+	.bohemcars-terms :global(.term-page--nav li a) {
+		position: relative;
+		border-left: 3px solid transparent;
+		padding-left: 12px;
+		color: var(--bc-ink);
+		font-size: 20px;
+		font-weight: 600;
+		line-height: 28px;
+		text-decoration: none;
+		transition:
+			border-color var(--bc-motion-standard),
+			color var(--bc-motion-standard);
+	}
+
+	.bohemcars-terms :global(.term-page--nav li a.active) {
+		border-color: var(--bc-accent);
+	}
+
+	.bohemcars-terms :global(.content) {
+		width: calc(100% - 490px);
+	}
+
+	.bohemcars-terms :global(.section:not(:first-child)) {
+		margin-top: -60px;
+		padding-top: 100px;
+	}
+
+	.bohemcars-terms__section-title {
+		margin: 0 0 12px;
+		color: var(--bc-ink);
+		font-size: var(--bc-text-h4);
+		font-weight: 600;
+		line-height: var(--bc-leading-h4);
+		text-transform: none;
+	}
+
+	.bohemcars-terms__paragraph {
+		margin: 0 0 12px;
+		color: var(--bc-copy);
+		font-size: var(--bc-text-body-lg);
+		font-weight: 400;
+		line-height: var(--bc-leading-body-lg);
+	}
+
 	@media (max-width: 767.98px) {
-		.term-page--nav a {
+		.bohemcars-terms {
+			padding-bottom: 70px;
+		}
+
+		.bohemcars-terms__title {
+			font-size: 28px;
+			line-height: 1.1;
+		}
+
+		.bohemcars-terms__spacer {
+			height: 40px;
+		}
+
+		.bohemcars-terms :global(.term-page) {
+			flex-direction: column;
+			gap: 40px;
+		}
+
+		.bohemcars-terms :global(.content),
+		.bohemcars-terms :global(.term-page--nav) {
+			width: 100%;
+		}
+
+		.bohemcars-terms :global(.term-page--nav a) {
 			display: flex;
 			min-height: 44px;
 			align-items: center;
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 1199.98px) {
+		.bohemcars-terms :global(.term-page--nav) {
+			width: 300px;
+		}
+
+		.bohemcars-terms :global(.content) {
+			width: calc(100% - 340px);
 		}
 	}
 </style>

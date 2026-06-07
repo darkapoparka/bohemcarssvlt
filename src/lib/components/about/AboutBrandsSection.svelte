@@ -1,21 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroAboutBrandCard } from '$lib/auxero/about';
+	import AboutSectionHeader from './AboutSectionHeader.svelte';
 
 	let { brands }: { brands: AuxeroAboutBrandCard[] } = $props();
 </script>
 
 <section class="bohemcars-about-brands">
 	<div class="container">
-		<div class="title-section wow fadeInDown mb-34" data-wow-delay="0.1s">
-			<div>
-				<p class="bohemcars-about-brands__eyebrow">Марки</p>
-				<h2>Марки, с които работим</h2>
-				<p class="bohemcars-about-brands__copy">
-					Налични автомобили и търсене по заявка от Канада според бюджет, модел и срок.
-				</p>
-			</div>
-		</div>
+		<AboutSectionHeader
+			heading="Марки, с които работим"
+			description="Налични автомобили и търсене по заявка от Канада според бюджет, модел и срок."
+		/>
 
 		<div class="bohemcars-about-brands__grid">
 			{#each brands as brand, index (brand.name)}
@@ -39,35 +35,6 @@
 	.bohemcars-about-brands {
 		background: var(--bc-bg);
 		padding: 42px 0 54px;
-	}
-
-	.bohemcars-about-brands :global(.title-section) {
-		align-items: flex-end;
-	}
-
-	.bohemcars-about-brands__eyebrow {
-		margin-bottom: 8px;
-		color: #84a928;
-		font-size: 13px;
-		font-weight: 800;
-		letter-spacing: 0;
-		line-height: 18px;
-		text-transform: uppercase;
-	}
-
-	.bohemcars-about-brands h2 {
-		margin-bottom: 8px;
-		font-size: clamp(28px, 2vw, 34px);
-		font-weight: 500;
-		line-height: 1.12;
-	}
-
-	.bohemcars-about-brands__copy {
-		max-width: 720px;
-		margin: 0;
-		color: #696665;
-		font-size: 16px;
-		line-height: 1.55;
 	}
 
 	.bohemcars-about-brands__grid {

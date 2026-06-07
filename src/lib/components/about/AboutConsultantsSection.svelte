@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroAgentCard as AuxeroAgentCardData } from '$lib/auxero/agents';
+	import AboutSectionHeader from './AboutSectionHeader.svelte';
 
 	let { consultants }: { consultants: AuxeroAgentCardData[] } = $props();
 
@@ -9,34 +10,26 @@
 
 <section class="bohemcars-consultants">
 	<div class="container">
-		<div class="bohemcars-consultants__head wow fadeInDown" data-wow-delay="0.1s">
-			<p class="bohemcars-consultants__eyebrow">Екип</p>
-			<h2>Екипът зад процеса</h2>
-			<p class="bohemcars-consultants__copy">
-				Трите роли покриват най-честия път: наличен автомобил, внос от Канада, проверка, документи и
-				предаване.
-			</p>
-		</div>
+		<AboutSectionHeader
+			heading="Екипът зад процеса"
+			description="Трите роли покриват най-честия път: наличен автомобил, внос от Канада, проверка, документи и предаване."
+		/>
 
 		<div class="bohemcars-consultants__grid">
 			{#each consultants as consultant, index (consultant.slug)}
-				<article class="bc-team-card wow fadeInUp" data-wow-delay={`0.${(index % 3) + 1}s`}>
-					<a
-						class="bc-team-card__media"
-						href={resolve('/agents/[slug]', { slug: consultant.slug })}
-						aria-label={consultant.name}
-					>
-						<img src={consultant.image} alt={consultant.name} loading="lazy" />
-					</a>
-					<div class="bc-team-card__body">
+				<article
+					class={['bc-team-card sale-agent-box wow fadeInUp', index === 0 && 'active']}
+					data-wow-delay={`0.${(index % 3) + 1}s`}
+				>
+					<div class="bc-team-card__media">
 						<a
-							class="bc-team-card__name"
+							class="bc-team-card__image-link"
 							href={resolve('/agents/[slug]', { slug: consultant.slug })}
+							aria-label={consultant.name}
 						>
-							{consultant.name}
+							<img src={consultant.image} alt={consultant.name} loading="lazy" />
 						</a>
-						<p class="bc-team-card__role">{consultant.title}</p>
-						<div class="bc-team-card__actions">
+						<div class="bc-team-card__actions sale-agent-social">
 							<a
 								class="bc-team-card__chip"
 								{...externalHref(consultant.phoneHref)}
@@ -64,6 +57,15 @@
 							{/each}
 						</div>
 					</div>
+					<div class="bc-team-card__body">
+						<a
+							class="bc-team-card__name sale-agent-title"
+							href={resolve('/agents/[slug]', { slug: consultant.slug })}
+						>
+							{consultant.name}
+						</a>
+						<p class="bc-team-card__role">{consultant.title}</p>
+					</div>
 				</article>
 			{/each}
 		</div>
@@ -74,36 +76,6 @@
 	.bohemcars-consultants {
 		background: var(--bc-bg);
 		padding: 54px 0 62px;
-	}
-
-	.bohemcars-consultants__head {
-		max-width: 760px;
-		margin-bottom: 30px;
-	}
-
-	.bohemcars-consultants__eyebrow {
-		margin-bottom: 8px;
-		color: #84a928;
-		font-size: 13px;
-		font-weight: 800;
-		letter-spacing: 0;
-		line-height: 18px;
-		text-transform: uppercase;
-	}
-
-	.bohemcars-consultants h2 {
-		margin-bottom: 8px;
-		font-size: clamp(28px, 2vw, 34px);
-		font-weight: 500;
-		line-height: 1.12;
-	}
-
-	.bohemcars-consultants__copy {
-		max-width: 720px;
-		margin-top: 10px;
-		color: #696665;
-		font-size: 16px;
-		line-height: 1.55;
 	}
 
 	.bohemcars-consultants__grid {
@@ -118,8 +90,8 @@
 		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 16px;
-		background: var(--bc-surface-soft);
+		border-radius: 8px;
+		background: var(--bc-surface);
 		transition:
 			border-color 0.2s ease,
 			background-color 0.2s ease;
@@ -136,6 +108,29 @@
 		overflow: hidden;
 		aspect-ratio: 1 / 1;
 		background: var(--bc-surface);
+	}
+
+	.bc-team-card__media::after {
+		position: absolute;
+		inset: auto 0 0;
+		z-index: 1;
+		height: 42%;
+		background: linear-gradient(180deg, rgb(13 20 10 / 0), rgb(13 20 10 / 0.72));
+		content: '';
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.16s ease;
+	}
+
+	.bc-team-card:hover .bc-team-card__media::after,
+	.bc-team-card:focus-within .bc-team-card__media::after {
+		opacity: 1;
+	}
+
+	.bc-team-card__image-link {
+		display: block;
+		width: 100%;
+		height: 100%;
 	}
 
 	.bc-team-card__media img {
@@ -158,11 +153,14 @@
 		font-size: 18px;
 		font-weight: 700;
 		line-height: 1.25;
+		text-decoration: none !important;
 		transition: color 0.2s ease;
 	}
 
-	.bc-team-card__name:hover {
+	.bc-team-card__name:hover,
+	.bc-team-card__name:focus-visible {
 		color: #5f7d18;
+		text-decoration: none !important;
 	}
 
 	.bc-team-card__role {
@@ -173,10 +171,28 @@
 	}
 
 	.bc-team-card__actions {
+		position: absolute;
+		z-index: 2;
+		right: 16px;
+		bottom: 16px;
+		left: 16px;
 		display: flex;
-		margin-top: 16px;
 		gap: 8px;
 		flex-wrap: wrap;
+		justify-content: center;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(8px);
+		transition:
+			opacity 0.16s ease,
+			transform 0.16s ease;
+	}
+
+	.bc-team-card:hover .bc-team-card__actions,
+	.bc-team-card:focus-within .bc-team-card__actions {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0);
 	}
 
 	.bc-team-card__chip {
@@ -229,6 +245,20 @@
 			gap: 18px;
 			grid-template-columns: 1fr;
 			max-width: 460px;
+		}
+
+		.bc-team-card__actions {
+			right: 14px;
+			bottom: 14px;
+			left: 14px;
+			justify-content: center;
+			opacity: 1;
+			pointer-events: auto;
+			transform: none;
+		}
+
+		.bc-team-card__media::after {
+			opacity: 1;
 		}
 	}
 </style>

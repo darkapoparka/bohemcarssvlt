@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '../layout.css';
 	import { resolve } from '$app/paths';
 	import {
 		ArrowRight,
@@ -138,7 +137,7 @@
 	<link rel="preload" as="image" href={heroImage} />
 </svelte:head>
 
-<main class="offer-page">
+<main class="offer-page" data-bohemcars-offer>
 	<header class="offer-header" aria-label="Bohemcars offer header">
 		<a class="offer-header__logo" href={resolve('/')} aria-label="Bohemcars home">
 			<img src={logo} alt="Bohemcars" />
@@ -311,19 +310,39 @@
 
 <style>
 	.offer-page {
-		--offer-bg: #f5f6f2;
-		--offer-panel: #ffffff;
-		--offer-ink: #171915;
-		--offer-muted: #697067;
-		--offer-line: #dfe5dc;
-		--offer-lime: #b9ee39;
-		--offer-lime-dark: #8bab20;
-		--offer-dark: #11140f;
+		--offer-bg: var(--bc-showcase-bg);
+		--offer-panel: var(--bc-white);
+		--offer-ink: var(--bc-showcase-ink);
+		--offer-muted: var(--bc-showcase-muted);
+		--offer-line: var(--bc-showcase-line);
+		--offer-lime: var(--bc-accent-bright);
+		--offer-lime-dark: var(--bc-accent-olive);
+		--offer-dark: var(--bc-showcase-dark);
+		--offer-dark-soft: var(--bc-showcase-dark-soft);
+		--offer-dark-panel: var(--bc-showcase-dark-panel);
+		--offer-icon-bg: var(--bc-showcase-icon-bg);
+		--offer-card-hover: var(--bc-showcase-card-hover);
 
 		min-height: 100vh;
 		background: var(--offer-bg);
 		color: var(--offer-ink);
+		font-family: var(--bc-font-dashboard);
 		overflow: hidden;
+	}
+
+	.offer-page,
+	.offer-page * {
+		box-sizing: border-box;
+	}
+
+	.offer-page a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.offer-page img {
+		display: block;
+		max-width: 100%;
 	}
 
 	.offer-wrap {
@@ -344,7 +363,7 @@
 		width: min(calc(100% - 40px), 1180px);
 		min-height: 88px;
 		margin-inline: auto;
-		color: #ffffff;
+		color: var(--bc-white);
 	}
 
 	.offer-header__logo {
@@ -381,14 +400,14 @@
 
 	.offer-header__meta a:hover,
 	.offer-header__meta a:focus-visible {
-		background: #ffffff;
+		background: var(--bc-white);
 		color: var(--offer-ink);
 	}
 
 	.offer-hero {
 		position: relative;
 		background: var(--offer-dark);
-		color: #ffffff;
+		color: var(--bc-white);
 		padding: 128px 0 78px;
 	}
 
@@ -481,18 +500,18 @@
 
 	.offer-action--primary:hover,
 	.offer-action--primary:focus-visible {
-		background: #ffffff;
+		background: var(--bc-white);
 		color: var(--offer-ink);
 	}
 
 	.offer-action--secondary {
 		background: rgba(255, 255, 255, 0.12);
-		color: #ffffff;
+		color: var(--bc-white);
 	}
 
 	.offer-action--secondary:hover,
 	.offer-action--secondary:focus-visible {
-		background: #ffffff;
+		background: var(--bc-white);
 		color: var(--offer-ink);
 	}
 
@@ -501,7 +520,7 @@
 		margin: 0;
 		border: 1px solid rgba(255, 255, 255, 0.16);
 		border-radius: 8px;
-		background: #1f221d;
+		background: var(--offer-dark-soft);
 	}
 
 	.offer-hero__visual img {
@@ -525,7 +544,7 @@
 	}
 
 	.offer-hero__visual strong {
-		color: #ffffff;
+		color: var(--bc-white);
 		font-size: 17px;
 		line-height: 23px;
 	}
@@ -571,12 +590,12 @@
 
 	.offer-section--proof,
 	.offer-section--closing {
-		background: #ffffff;
+		background: var(--bc-white);
 	}
 
 	.offer-section--stack {
 		background: var(--offer-dark);
-		color: #ffffff;
+		color: var(--bc-white);
 	}
 
 	.offer-section__head {
@@ -681,7 +700,7 @@
 		justify-content: center;
 		margin-bottom: 18px;
 		border-radius: 8px;
-		background: #edf2e8;
+		background: var(--offer-icon-bg);
 		color: var(--offer-lime-dark);
 	}
 
@@ -696,7 +715,7 @@
 	.offer-feature-card:focus-within,
 	.offer-roadmap__item:hover,
 	.offer-proof-card:hover {
-		background: #f7f8f5;
+		background: var(--offer-card-hover);
 	}
 
 	.offer-stack {
@@ -724,7 +743,7 @@
 		grid-template-columns: 150px minmax(0, 1fr);
 		gap: 18px;
 		padding: 22px;
-		background: #171a14;
+		background: var(--offer-dark-panel);
 	}
 
 	.offer-stack__item span {
@@ -796,7 +815,7 @@
 	.offer-closing__icons :global(svg) {
 		box-sizing: content-box;
 		border-radius: 8px;
-		background: #edf2e8;
+		background: var(--offer-icon-bg);
 		padding: 11px;
 		color: var(--offer-lime-dark);
 	}
@@ -805,10 +824,23 @@
 		margin-top: 10px;
 	}
 
+	:global(body) {
+		margin: 0;
+		min-width: 320px;
+		background: var(--bc-showcase-bg);
+		color: var(--bc-showcase-ink);
+	}
+
 	:global(.mobile-bottom-nav),
 	:global(.mobile-menu-sheet),
 	:global(.mobile-menu-toggle) {
 		display: none !important;
+	}
+
+	@media (max-width: 767.98px) {
+		:global(body) {
+			padding-bottom: 0 !important;
+		}
 	}
 
 	@media (max-width: 1180px) {
@@ -880,10 +912,6 @@
 	}
 
 	@media (max-width: 540px) {
-		:global(body) {
-			padding-bottom: 0 !important;
-		}
-
 		.offer-wrap,
 		.offer-header {
 			width: min(calc(100% - 28px), 1180px);

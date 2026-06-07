@@ -57,6 +57,7 @@ export type AuxeroAboutContent = {
 		statement: string;
 		steps: {
 			description: string;
+			href: string;
 			image: string;
 			title: string;
 		}[];
@@ -126,7 +127,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		description:
 			'Автомобили от Канада, проверка по конкретен VIN, документи и оглед с ясен следващ ход.',
 		eyebrow: 'За Bohemcars',
-		image: '/assets/bohemcars/hero/about-import-banner-generated.webp',
+		image: '/assets/bohemcars/hero/about-bohemcars-process-banner.webp',
 		title: 'Bohemcars: автомобили от Канада'
 	},
 	intro: {
@@ -175,23 +176,27 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 		steps: [
 			{
 				title: 'Внос от Канада',
+				href: '/services',
 				image: '/assets/bohemcars/services/import-canada-service.webp',
 				description:
 					'Работа по конкретен модел, бюджет, срок и реалистична крайна цена до България.'
 			},
 			{
 				title: 'Налични автомобили',
+				href: '/inventory',
 				image: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
 				description: 'Огледи с уговорка, контекст за произход, състояние, пробег и следващи стъпки.'
 			},
 			{
 				title: 'Проверка и документи',
+				href: '/services',
 				image: '/assets/bohemcars/services/evaluate-link-service.webp',
 				description:
 					'Преглед на VIN, история, снимки, сервизни следи, документи и готовност за регистрация.'
 			},
 			{
 				title: 'Продажба и предаване',
+				href: '/sell-your-car',
 				image: '/assets/bohemcars/services/sell-car-service.webp',
 				description:
 					'Съдействие при клиентски автомобили, подготвяне на оглед, документи и спокойно предаване.'

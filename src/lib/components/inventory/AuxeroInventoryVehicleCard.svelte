@@ -310,15 +310,27 @@
 
 <style>
 	.card-box-style-1 {
+		background: #ffffff !important;
 		display: flex;
 		flex-direction: column;
 		height: 100%;
 	}
 
 	.card-box-style-1 .content {
+		background: #eef1ed !important;
 		display: flex;
 		flex: 1;
 		flex-direction: column;
+	}
+
+	:global(body.bohemcars-inventory-template) .card-box-style-1:hover,
+	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within {
+		background: #ffffff !important;
+	}
+
+	:global(body.bohemcars-inventory-template) .card-box-style-1:hover .content,
+	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within .content {
+		background: #e4eadf !important;
 	}
 
 	.card-box-style-1 .card-box__title {
@@ -332,6 +344,7 @@
 
 	.card-box-style-1 .image {
 		aspect-ratio: 4 / 3;
+		background: #ffffff !important;
 		overflow: hidden;
 	}
 

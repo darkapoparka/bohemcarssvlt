@@ -10,6 +10,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
 
 	let { data } = $props();
 	const statuses = ['draft', 'submitted', 'reviewing', 'published'];
@@ -86,27 +88,59 @@
 					</div>
 					<form method="POST" class="grid gap-3">
 						<input type="hidden" name="id" value={submission.id} />
-						<div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_9rem]">
-							<Input name="title" value={submission.title} />
-							<select
-								name="status"
-								class="border-input bg-background focus-visible:ring-ring h-10 rounded-lg border px-3 text-sm capitalize outline-none focus-visible:ring-3"
-							>
-								{#each statuses as statusName (statusName)}
-									<option value={statusName} selected={submission.status === statusName}>
-										{formatStatus(statusName)}
-									</option>
-								{/each}
-							</select>
+						<div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_10rem]">
+							<div class="grid gap-2">
+								<Label for={`import-title-${submission.id}`}>Review title</Label>
+								<Input id={`import-title-${submission.id}`} name="title" value={submission.title} />
+							</div>
+							<div class="grid gap-2">
+								<Label for={`import-status-${submission.id}`}>Status</Label>
+								<select
+									id={`import-status-${submission.id}`}
+									name="status"
+									class="border-input bg-background focus-visible:ring-ring h-10 rounded-lg border px-3 text-sm capitalize outline-none focus-visible:ring-3"
+								>
+									{#each statuses as statusName (statusName)}
+										<option value={statusName} selected={submission.status === statusName}>
+											{formatStatus(statusName)}
+										</option>
+									{/each}
+								</select>
+							</div>
 						</div>
 						<div class="grid gap-3 md:grid-cols-3">
-							<Input name="vin" value={submission.vin} />
-							<Input name="mileage" value={submission.mileage} />
-							<Input name="expectedPrice" value={submission.expectedPrice} />
+							<div class="grid gap-2">
+								<Label for={`import-vin-${submission.id}`}>VIN</Label>
+								<Input id={`import-vin-${submission.id}`} name="vin" value={submission.vin} />
+							</div>
+							<div class="grid gap-2">
+								<Label for={`import-mileage-${submission.id}`}>Mileage</Label>
+								<Input
+									id={`import-mileage-${submission.id}`}
+									name="mileage"
+									value={submission.mileage}
+								/>
+							</div>
+							<div class="grid gap-2">
+								<Label for={`import-price-${submission.id}`}>Expected price</Label>
+								<Input
+									id={`import-price-${submission.id}`}
+									name="expectedPrice"
+									value={submission.expectedPrice}
+								/>
+							</div>
 						</div>
-						<Input name="message" value={submission.message} />
-						<div>
-							<Button type="submit" variant="outline" size="sm">Save review</Button>
+						<div class="grid gap-2">
+							<Label for={`import-message-${submission.id}`}>Review note</Label>
+							<Textarea
+								id={`import-message-${submission.id}`}
+								name="message"
+								value={submission.message}
+								class="min-h-20 resize-none"
+							/>
+						</div>
+						<div class="pt-1">
+							<Button type="submit" class="min-w-32">Save review</Button>
 						</div>
 					</form>
 				</Card.Content>

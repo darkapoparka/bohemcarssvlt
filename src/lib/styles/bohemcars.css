@@ -1,0 +1,171 @@
+:root {
+	color-scheme: light;
+
+	--bc-font-body:
+		'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--bc-font-heading: 'Albert Sans', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+	--bc-font-dashboard:
+		Inter, 'Geist Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+		'Segoe UI', sans-serif;
+
+	--bc-text-h1: 68px;
+	--bc-leading-h1: 76px;
+	--bc-text-h2: 40px;
+	--bc-leading-h2: 48px;
+	--bc-text-h3: 32px;
+	--bc-leading-h3: 1.25;
+	--bc-text-h4: 24px;
+	--bc-leading-h4: 1.333;
+	--bc-text-h5: 20px;
+	--bc-leading-h5: 1.4;
+	--bc-text-h6: 20px;
+	--bc-leading-h6: 1.6;
+	--bc-text-h7: 18px;
+	--bc-leading-h7: 1.44;
+	--bc-text-body: 16px;
+	--bc-leading-body: 26px;
+	--bc-text-body-lg: 18px;
+	--bc-leading-body-lg: 28px;
+
+	--bc-bg: #fbfcfa;
+	--bc-bg-strong: #f2f5ef;
+	--bc-ink: #1c1c1c;
+	--bc-ink-soft: #2d3429;
+	--bc-copy: #4b4b4b;
+	--bc-muted: #696665;
+	--bc-muted-light: #9fa1a4;
+	--bc-subtle: #6f7c59;
+	--bc-white: #ffffff;
+
+	--bc-surface: #eef1ed;
+	--bc-surface-soft: #f6f7f3;
+	--bc-surface-hover: #e4eadf;
+	--bc-surface-raised: #ffffff;
+	--bc-border: #dde5d8;
+	--bc-border-strong: #c8d3bd;
+
+	--bc-control: #eef1ed;
+	--bc-control-hover: #e4eadf;
+	--bc-control-active: #f0f7dd;
+
+	--bc-accent: #98bc2a;
+	--bc-accent-hover: #8caf24;
+	--bc-accent-soft: #f0f7dd;
+	--bc-accent-contrast: #14210f;
+	--bc-accent-alt: #84a928;
+	--bc-accent-bright: #b9ee39;
+	--bc-accent-bright-soft: #d9f275;
+	--bc-accent-olive: #8bab20;
+
+	--bc-success: #0f9f7a;
+	--bc-warning: #f4bd0e;
+	--bc-danger: #e85347;
+
+	--bc-card-bg: #eef1ed;
+	--bc-card-hover: #e4eadf;
+	--bc-card-ink: #171a15;
+	--bc-card-muted: #666f63;
+	--bc-card-media: #f4f5f2;
+	--bc-card-chip: #ffffff;
+	--bc-card-chip-border: #dfe7dc;
+	--bc-card-pill: rgb(28 28 28 / 0.78);
+	--bc-card-pill-hover: rgb(28 28 28 / 0.88);
+
+	--bc-dashboard-bg: #f7f8f3;
+	--bc-dashboard-surface: #ffffff;
+	--bc-dashboard-sidebar: #ffffff;
+	--bc-dashboard-border: #e0e7d8;
+	--bc-dashboard-border-strong: #c8d3bd;
+	--bc-dashboard-text: #44513f;
+	--bc-dashboard-heading: #1c1c1c;
+	--bc-dashboard-muted: #6f7c59;
+
+	--bc-showcase-bg: #f5f6f2;
+	--bc-showcase-dark: #11140f;
+	--bc-showcase-dark-soft: #1f221d;
+	--bc-showcase-dark-panel: #171a14;
+	--bc-showcase-ink: #171915;
+	--bc-showcase-muted: #697067;
+	--bc-showcase-line: #dfe5dc;
+	--bc-showcase-icon-bg: #edf2e8;
+	--bc-showcase-card-hover: #f7f8f5;
+
+	--bc-container-narrow: 760px;
+	--bc-container-page: 1440px;
+	--bc-container-wide: 1920px;
+	--bc-page-x: 15px;
+	--bc-page-y: 32px;
+	--bc-section-sm: clamp(32px, 4vw, 54px);
+	--bc-section-md: clamp(48px, 6vw, 76px);
+	--bc-section-lg: clamp(64px, 8vw, 104px);
+	--bc-card-padding: 20px;
+	--bc-control-x: 16px;
+	--bc-control-y: 11px;
+
+	--bc-radius-xs: 4px;
+	--bc-radius-sm: 6px;
+	--bc-radius-md: 8px;
+	--bc-radius-lg: 12px;
+	--bc-radius-card: 16px;
+	--bc-radius-panel: 24px;
+	--bc-radius-section: 28px;
+	--bc-radius-modal: 40px;
+	--bc-radius-pill: 999px;
+
+	--bc-shadow-subtle: 0 1px 3px rgb(28 28 28 / 0.08);
+	--bc-shadow-card: 0 4px 12px rgb(28 28 28 / 0.08);
+	--bc-shadow-panel: 0 12px 34px rgb(28 28 28 / 0.12);
+	--bc-shadow-modal: 0 24px 80px rgb(28 28 28 / 0.16);
+
+	--bc-motion-fast: 150ms ease;
+	--bc-motion-standard: 220ms ease;
+	--bc-motion-drawer: 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bc-container {
+	width: min(100% - (var(--bc-page-x) * 2), var(--bc-container-page));
+	margin-inline: auto;
+}
+
+.bc-container--narrow {
+	width: min(100% - (var(--bc-page-x) * 2), var(--bc-container-narrow));
+}
+
+.bc-container--wide {
+	width: min(100% - (var(--bc-page-x) * 2), var(--bc-container-wide));
+}
+
+.bc-card {
+	border: 1px solid var(--bc-border);
+	border-radius: var(--bc-radius-md);
+	background: var(--bc-surface-raised);
+	box-shadow: none;
+	color: var(--bc-ink);
+}
+
+.bc-card--soft {
+	background: var(--bc-surface);
+}
+
+.bc-calm-hover {
+	transition:
+		background-color var(--bc-motion-standard),
+		border-color var(--bc-motion-standard),
+		color var(--bc-motion-standard);
+}
+
+.bc-calm-hover:hover,
+.bc-calm-hover:focus-visible {
+	border-color: var(--bc-border-strong);
+	background: var(--bc-surface-hover);
+}
+
+.bc-focus-ring {
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+.bc-focus-ring:focus-visible {
+	outline-color: rgb(152 188 42 / 0.5);
+	box-shadow: 0 0 0 4px rgb(152 188 42 / 0.16);
+}

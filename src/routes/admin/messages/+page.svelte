@@ -26,8 +26,8 @@
 </svelte:head>
 
 <AdminShell title="Messages" activePath="/admin/messages">
-	<section class="grid gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]">
-		<Card.Root class="overflow-hidden">
+	<section class="grid max-w-[96rem] gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]">
+		<Card.Root class="overflow-hidden xl:h-[36rem]">
 			<Card.Header class="border-b">
 				<div>
 					<Card.Title>Inbox</Card.Title>
@@ -35,7 +35,7 @@
 				</div>
 			</Card.Header>
 			<Card.Content class="p-0">
-				<ScrollArea.Root class="h-[calc(100svh-12rem)] min-h-[42rem]">
+				<ScrollArea.Root class="h-80 xl:h-[30rem]">
 					<div class="grid gap-1 p-2">
 						{#each data.threads as thread (thread.id)}
 							<a
@@ -73,7 +73,7 @@
 		</Card.Root>
 
 		{#if activeThread}
-			<Card.Root class="min-h-[calc(100svh-12rem)] overflow-hidden">
+			<Card.Root class="overflow-hidden xl:h-[36rem]">
 				<Card.Header class="border-b">
 					<div class="flex min-w-0 items-center gap-3">
 						<Avatar.Root class="size-11">
@@ -100,8 +100,8 @@
 				</Card.Header>
 
 				<Card.Content class="bg-muted/30 p-0">
-					<ScrollArea.Root class="h-[calc(100svh-29rem)] min-h-[30rem]">
-						<div class="flex flex-col gap-4 p-4">
+					<ScrollArea.Root class="h-80 xl:h-[20rem]">
+						<div class="flex min-h-80 flex-col justify-end gap-4 p-4 xl:min-h-[20rem] xl:p-5">
 							{#each activeThread.messages as message (message.id)}
 								<div class={cn('flex gap-3', message.direction === 'outbound' && 'justify-end')}>
 									{#if message.direction === 'inbound'}
@@ -136,7 +136,7 @@
 					</ScrollArea.Root>
 				</Card.Content>
 
-				<Card.Footer class="bg-background/95 border-t">
+				<Card.Footer class="bg-background/95 border-t p-4">
 					<form method="POST" class="grid w-full gap-4">
 						<input type="hidden" name="id" value={firstMessage?.id ?? activeThread.id} />
 						<input type="hidden" name="threadId" value={activeThread.id} />
@@ -150,8 +150,8 @@
 							</Alert>
 						{/if}
 
-						<div class="flex flex-col gap-3 lg:flex-row lg:items-end">
-							<div class="grid gap-2 lg:w-52">
+						<div class="grid gap-3 xl:grid-cols-[13rem_minmax(0,1fr)] xl:items-end">
+							<div class="grid gap-2">
 								<Label for="message-status">Thread status</Label>
 								<select
 									id="message-status"
@@ -171,7 +171,7 @@
 									<Textarea
 										id="reply"
 										name="reply"
-										class="min-h-20 flex-1 resize-none"
+										class="min-h-20 flex-1 resize-none xl:min-h-16"
 										placeholder="Write a concise update for the customer..."
 									/>
 									<Button type="submit" size="lg" class="sm:w-auto">
@@ -185,8 +185,8 @@
 				</Card.Footer>
 			</Card.Root>
 		{:else}
-			<Card.Root class="min-h-[32rem]">
-				<Card.Content class="grid min-h-[32rem] place-items-center p-6 text-center">
+			<Card.Root class="xl:h-[36rem]">
+				<Card.Content class="grid min-h-[32rem] place-items-center p-6 text-center xl:min-h-full">
 					<div class="grid gap-2">
 						<Card.Title>No active thread</Card.Title>
 						<Card.Description>New customer messages will appear here.</Card.Description>

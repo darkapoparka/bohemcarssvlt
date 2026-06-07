@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { AuxeroAboutOffice } from '$lib/auxero/about';
+	import AboutSectionHeader from './AboutSectionHeader.svelte';
 
 	let { office }: { office: AuxeroAboutOffice } = $props();
 
@@ -11,12 +12,9 @@
 
 <section class="bohemcars-about-location">
 	<div class="container">
+		<AboutSectionHeader heading={office.heading} description={office.description} />
 		<div class="bohemcars-about-location__shell">
 			<div class="bohemcars-about-location__content wow fadeInLeft" data-wow-delay="0.1s">
-				<p class="bohemcars-about-location__eyebrow">Офис и огледи</p>
-				<h2>{office.heading}</h2>
-				<p class="bohemcars-about-location__copy">{office.description}</p>
-
 				<div class="bohemcars-about-location__cards">
 					<article class="bohemcars-about-location-card">
 						<span><img src="/assets/icons/MapPin.svg" alt="" /></span>
@@ -104,8 +102,8 @@
 
 	.bohemcars-about-location__shell {
 		display: grid;
-		gap: 28px;
-		grid-template-columns: minmax(400px, 0.85fr) minmax(0, 1.15fr);
+		gap: 24px;
+		grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr);
 		align-items: stretch;
 	}
 
@@ -113,67 +111,50 @@
 		display: flex;
 		min-width: 0;
 		flex-direction: column;
-	}
-
-	.bohemcars-about-location__eyebrow {
-		margin-bottom: 8px;
-		color: #84a928;
-		font-size: 13px;
-		font-weight: 800;
-		letter-spacing: 0;
-		line-height: 18px;
-		text-transform: uppercase;
-	}
-
-	.bohemcars-about-location__copy {
-		max-width: 560px;
-		margin-top: 8px;
-		color: #696665;
-		font-size: 16px;
-		line-height: 1.55;
-	}
-
-	.bohemcars-about-location h2 {
-		max-width: 620px;
-		margin-bottom: 8px;
-		font-size: clamp(28px, 2vw, 34px);
-		font-weight: 500;
-		line-height: 1.12;
+		grid-column: 2;
 	}
 
 	.bohemcars-about-location__cards {
 		display: grid;
-		margin-top: 24px;
-		gap: 12px;
+		min-height: 430px;
+		overflow: hidden;
+		border: 1px solid var(--bc-border);
+		border-radius: 8px;
+		background: #ffffff;
+		box-shadow: 0 12px 30px rgb(22 36 14 / 0.08);
 		grid-template-columns: 1fr;
+		grid-template-rows: repeat(3, minmax(0, 1fr));
 	}
 
 	.bohemcars-about-location-card {
 		display: flex;
 		min-height: 0;
-		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-surface);
-		padding: 15px 16px;
-		gap: 14px;
+		border-bottom: 1px solid #e4e8df;
+		background: #ffffff;
+		padding: 24px 22px;
+		gap: 15px;
 		align-items: flex-start;
 		transition:
 			background-color 0.18s ease,
-			border-color 0.18s ease;
+			color 0.18s ease;
+	}
+
+	.bohemcars-about-location-card:last-child {
+		border-bottom: 0;
 	}
 
 	.bohemcars-about-location-card:hover {
-		border-color: #cbd8c1;
-		background: var(--bc-surface-hover);
+		background: #f8faf5;
 	}
 
 	.bohemcars-about-location-card span {
 		flex: 0 0 auto;
 		display: inline-flex;
-		width: 42px;
-		height: 42px;
-		border-radius: 50%;
-		background: #e8eee2;
+		width: 40px;
+		height: 40px;
+		border: 1px solid #dfe9d8;
+		border-radius: 8px;
+		background: #eef4e9;
 		align-items: center;
 		justify-content: center;
 	}
@@ -185,10 +166,15 @@
 		filter: brightness(0) saturate(100%);
 	}
 
+	.bohemcars-about-location-card div {
+		min-width: 0;
+	}
+
 	.bohemcars-about-location-card h3 {
-		margin-bottom: 5px;
-		font-size: 18px;
-		font-weight: 600;
+		margin-bottom: 6px;
+		color: #111111;
+		font-size: 15px;
+		font-weight: 800;
 		line-height: 1.2;
 	}
 
@@ -197,8 +183,8 @@
 		display: block;
 		margin: 0 0 4px;
 		color: #696665;
-		font-size: 15px;
-		line-height: 1.42;
+		font-size: 14px;
+		line-height: 1.45;
 	}
 
 	.bohemcars-about-location-card a:hover {
@@ -207,11 +193,13 @@
 
 	.bohemcars-about-location__map {
 		position: relative;
-		min-height: 400px;
+		min-height: 430px;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
 		border-radius: 8px;
 		background: #eef2ec;
+		grid-column: 1;
+		grid-row: 1;
 		isolation: isolate;
 	}
 
@@ -304,8 +292,15 @@
 			grid-template-columns: 1fr;
 		}
 
-		.bohemcars-about-location__copy {
-			max-width: 720px;
+		.bohemcars-about-location__content,
+		.bohemcars-about-location__map {
+			grid-column: auto;
+			grid-row: auto;
+		}
+
+		.bohemcars-about-location__cards {
+			min-height: 0;
+			grid-template-rows: auto;
 		}
 
 		.bohemcars-about-location__map {
@@ -324,10 +319,6 @@
 
 		.bohemcars-about-location__map {
 			min-height: 300px;
-		}
-
-		.bohemcars-about-location h2 {
-			font-size: 28px;
 		}
 
 		.bohemcars-about-location__map-info {

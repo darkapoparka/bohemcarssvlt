@@ -65,33 +65,33 @@
 <style>
 	.sfg {
 		min-width: 0;
-		border: 1px solid #e2e7da;
+		border: 1px solid #d9e4ee;
 		border-radius: 8px;
 		background: #ffffff;
-		padding: 13px 13px 9px;
+		padding: 13px 13px 10px;
 		box-shadow: none;
 	}
 
 	.sfg__legend {
-		margin: 0 4px 7px;
-		color: #6b7463;
-		font-size: 12px;
+		margin: 0 4px 8px;
+		color: #5b6773;
+		font-size: 12.5px;
 		font-weight: 600;
 		line-height: 1.1;
 	}
 
 	.sfg__options {
 		display: grid;
-		gap: 2px;
+		gap: 3px;
 	}
 
 	.sfg__option {
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: 11px;
-		min-height: 40px;
-		padding: 5px 9px;
+		gap: 12px;
+		min-height: 44px;
+		padding: 7px 10px;
 		border-radius: 9px;
 		cursor: pointer;
 		transition:
@@ -100,11 +100,11 @@
 	}
 
 	.sfg__option:hover {
-		background: #f2f6ea;
+		background: #f4f7fa;
 	}
 
 	.sfg__option.is-selected {
-		background: #eaf6cf;
+		background: #eaf5d2;
 	}
 
 	.sfg__input {
@@ -117,12 +117,12 @@
 
 	.sfg__control {
 		display: inline-grid;
-		width: 20px;
-		height: 20px;
+		width: 22px;
+		height: 22px;
 		flex-shrink: 0;
 		place-items: center;
-		border: 1.5px solid #ccd5be;
-		border-radius: 6px;
+		border: 1.5px solid #c9d6e1;
+		border-radius: 7px;
 		background: #ffffff;
 		color: #ffffff;
 		transition:
@@ -155,15 +155,15 @@
 
 	.sfg__media {
 		display: inline-grid;
-		width: 28px;
-		height: 20px;
+		width: 32px;
+		height: 23px;
 		flex-shrink: 0;
 		place-items: center;
 	}
 
 	.sfg__media img {
-		max-width: 28px;
-		max-height: 19px;
+		max-width: 32px;
+		max-height: 22px;
 		object-fit: contain;
 	}
 
@@ -172,17 +172,22 @@
 		min-width: 0;
 		overflow: hidden;
 		color: #26331a;
-		font-size: 14px;
-		font-weight: 600;
+		font-size: 15px;
+		font-weight: 500;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.sfg__option.is-selected .sfg__label {
+		color: #17210f;
+		font-weight: 600;
 	}
 
 	.sfg__count {
 		flex-shrink: 0;
 		color: #8a9180;
-		font-size: 12px;
-		font-weight: 700;
+		font-size: 13px;
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 	}
 

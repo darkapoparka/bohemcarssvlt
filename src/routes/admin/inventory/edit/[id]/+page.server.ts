@@ -1,4 +1,4 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getAdminCmsOverview, getAdminInventoryRow } from '$lib/server/admin-cms';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
@@ -31,14 +31,11 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
 	const listing = getAdminInventoryRow(params.id);
 
-	if (!listing) {
-		error(404, 'Bohemcars inventory listing not found');
-	}
-
 	return {
 		auxeroFullPage: true,
 		cms: getAdminCmsOverview(),
 		listing,
+		missingListingId: listing ? '' : params.id,
 		notice: readNotice(url),
 		session
 	};

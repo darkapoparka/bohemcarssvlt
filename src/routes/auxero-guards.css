@@ -1,22 +1,3 @@
-:root {
-	--bc-bg: #fbfcfa;
-	--bc-surface: #eef1ed;
-	--bc-surface-soft: #f6f7f3;
-	--bc-surface-hover: #e4eadf;
-	--bc-border: #dde5d8;
-	--bc-control: #eef1ed;
-	--bc-control-hover: #e4eadf;
-	--bc-card-bg: #eef1ed;
-	--bc-card-hover: #e4eadf;
-	--bc-card-ink: #171a15;
-	--bc-card-muted: #666f63;
-	--bc-card-media: #f4f5f2;
-	--bc-card-chip: #ffffff;
-	--bc-card-chip-border: #dfe7dc;
-	--bc-card-pill: rgba(28, 28, 28, 0.78);
-	--bc-card-pill-hover: rgba(28, 28, 28, 0.88);
-}
-
 body {
 	background: var(--bc-bg);
 	background-color: var(--bc-bg);
@@ -1230,6 +1211,54 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		border: 0 !important;
 		background: var(--bc-surface) !important;
 		padding: 10px 10px 9px !important;
+	}
+
+	body.auxero-template-listing-grid3-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1,
+	body.auxero-template-listing-grid4-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1,
+	body.auxero-template-listing-gridstyle-halfmap-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1,
+	body.auxero-template-listing-grid3-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.image,
+	body.auxero-template-listing-grid4-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.image,
+	body.auxero-template-listing-gridstyle-halfmap-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.image {
+		background: #ffffff !important;
+	}
+
+	body.auxero-template-listing-grid3-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.content,
+	body.auxero-template-listing-grid4-columns-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.content,
+	body.auxero-template-listing-gridstyle-halfmap-html
+		.bohemcars-inventory-desktop-route
+		.bohemcars-inventory-content
+		.card-box-style-1
+		.content {
+		background: #eef1ed !important;
 	}
 
 	body.auxero-template-listing-grid3-columns-html

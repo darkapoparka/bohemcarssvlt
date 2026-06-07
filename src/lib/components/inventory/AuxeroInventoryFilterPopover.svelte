@@ -322,7 +322,7 @@
 		overflow: hidden;
 		color: #6c7563;
 		font-size: 11px;
-		font-weight: 700;
+		font-weight: 600;
 		line-height: 1.1;
 		letter-spacing: 0.03em;
 		text-transform: uppercase;
@@ -334,7 +334,7 @@
 		overflow: hidden;
 		color: #1c1c1c;
 		font-size: 15px;
-		font-weight: 700;
+		font-weight: 650;
 		line-height: 1.2;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -342,7 +342,7 @@
 
 	.ifp__value--placeholder {
 		color: #7c7c7c;
-		font-weight: 600;
+		font-weight: 550;
 	}
 
 	.ifp__chev {
@@ -379,11 +379,11 @@
 		box-sizing: border-box;
 		width: min(520px, calc(100vw - 40px));
 		max-width: calc(100vw - 40px);
-		border: 1px solid #ececec;
-		border-radius: 14px;
+		border: 1px solid #dfe6d4;
+		border-radius: 12px;
 		background: #ffffff;
 		padding: 13px;
-		box-shadow: 0 22px 46px rgba(12, 18, 11, 0.2);
+		box-shadow: 0 18px 38px rgba(12, 18, 11, 0.16);
 	}
 
 	.ifp__panel--modal {
@@ -427,7 +427,7 @@
 		margin: 0;
 		color: #111111;
 		font-size: 18px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 24px;
 	}
 
@@ -479,7 +479,7 @@
 		color: #1c1c1c;
 		font: inherit;
 		font-size: 14.5px;
-		font-weight: 600;
+		font-weight: 500;
 		outline: 0;
 		appearance: none;
 		-webkit-appearance: none;
@@ -538,7 +538,7 @@
 		padding: 6px;
 		color: #26331a;
 		font-size: 12.5px;
-		font-weight: 700;
+		font-weight: 600;
 		text-align: center;
 		cursor: pointer;
 		transition:
@@ -614,7 +614,7 @@
 		padding: 10px 13px;
 		color: #26331a;
 		font-size: 14.5px;
-		font-weight: 700;
+		font-weight: 600;
 		text-align: left;
 		cursor: pointer;
 		transition:
@@ -628,7 +628,7 @@
 		padding: 8px 8px;
 		color: #151515;
 		font-size: 15px;
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	.ifp__row:hover {
@@ -737,7 +737,7 @@
 		border-radius: 9px;
 		padding: 10px 18px;
 		font: inherit;
-		font-weight: 800;
+		font-weight: 700;
 		cursor: pointer;
 	}
 

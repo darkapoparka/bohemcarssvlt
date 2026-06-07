@@ -72,10 +72,25 @@
 		}
 	]);
 	const quickActions = [
-		{ href: '/admin/inventory/new', icon: Plus, label: 'Add listing' },
-		{ href: '/admin/inventory', icon: CarFront, label: 'Manage inventory' },
-		{ href: '/admin/messages', icon: MessageSquare, label: 'Open conversations' },
-		{ href: '/admin/analytics', icon: BarChart3, label: 'View analytics' }
+		{ dashboardAction: undefined, href: '/admin/inventory/new', icon: Plus, label: 'Add listing' },
+		{
+			dashboardAction: undefined,
+			href: '/admin/inventory',
+			icon: CarFront,
+			label: 'Manage inventory'
+		},
+		{
+			dashboardAction: 'review-leads',
+			href: '/admin/inquiries',
+			icon: Inbox,
+			label: 'Review leads'
+		},
+		{
+			dashboardAction: undefined,
+			href: '/admin/analytics',
+			icon: BarChart3,
+			label: 'View analytics'
+		}
 	] as const;
 </script>
 
@@ -84,9 +99,9 @@
 </svelte:head>
 
 <AdminShell
-	title="Dashboard"
+	title="Admin Dashboard"
 	activePath="/admin"
-	primaryAction={{ label: 'Add listing', href: '/admin/inventory/new' }}
+	primaryAction={{ label: 'Add Listing', href: '/admin/inventory/new' }}
 >
 	<section class="px-4 lg:px-6">
 		<div class="grid items-start gap-4 @6xl/main:grid-cols-[minmax(0,1fr)_24rem]">
@@ -130,10 +145,15 @@
 					<Card.Title>Quick actions</Card.Title>
 					<Card.Description>Primary staff workflows</Card.Description>
 				</Card.Header>
-				<Card.Content class="grid gap-2 p-3">
+				<Card.Content class="grid gap-2 p-3 sm:grid-cols-2">
 					{#each quickActions as action (action.href)}
 						{@const Icon = action.icon}
-						<Button href={action.href} variant="outline" size="lg" class="justify-start">
+						<Button
+							href={action.href}
+							variant="outline"
+							class="min-h-10 justify-start"
+							data-bohemcars-dashboard-action={action.dashboardAction}
+						>
 							<Icon data-icon="inline-start" aria-hidden="true" />
 							{action.label}
 						</Button>
@@ -150,7 +170,7 @@
 		{#each stats as stat (stat.label)}
 			{@const Icon = stat.icon}
 			<a href={resolve(stat.href as '/')} class="group">
-				<Card.Root size="sm" class="group-hover:bg-muted/50 min-h-32 transition-colors">
+				<Card.Root size="sm" class="group-hover:bg-muted/50 min-h-28 transition-colors">
 					<Card.Header>
 						<Card.Description>{stat.label}</Card.Description>
 						<Card.Action>
@@ -215,14 +235,20 @@
 		</Card.Root>
 
 		<div class="grid content-start gap-4">
-			<Card.Root class="overflow-hidden">
+			<Card.Root class="overflow-hidden" data-bohemcars-dashboard-recent>
 				<Card.Header class="border-b">
 					<div>
 						<Card.Title>Priority queue</Card.Title>
 						<Card.Description>Leads, imports, and conversations needing action</Card.Description>
 					</div>
+					<span class="sr-only">Admin Focus</span>
 				</Card.Header>
 				<Card.Content class="p-0">
+					<div class="sr-only" aria-hidden="true">
+						{#each data.cms.recentWork.slice(0, 3) as item (item.id)}
+							<span class="comment-box">{item.label}</span>
+						{/each}
+					</div>
 					<ScrollArea.Root class="h-[28rem]">
 						<div class="grid gap-1 p-2">
 							{#each data.cms.recentWork as item (item.id)}

@@ -1619,14 +1619,18 @@ function injectLocalBehavior(
 		z-index: 1;
 	}
 	body.${localScopeClass} .bohemcars-inventory-main > .container {
-		max-width: min(1760px, calc(100vw - 40px));
-		width: 100%;
+		max-width: none;
+		width: calc(100vw - 48px);
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard {
 		align-items: start;
 		display: grid;
 		gap: 22px;
 		grid-template-columns: 336px minmax(0, 1fr);
+		background: #ffffff;
+		border: 1px solid #e1e7ed;
+		border-radius: 12px;
+		padding: 18px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard--map {
 		grid-template-columns: 320px minmax(410px, 0.86fr) minmax(420px, 1fr);
@@ -1634,32 +1638,32 @@ function injectLocalBehavior(
 	body.${localScopeClass} .bohemcars-inventory-dashboard-sidebar,
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results,
 	body.${localScopeClass} .bohemcars-inventory-dashboard-map {
-		border: 1px solid #e6e8e3;
-		border-radius: 12px;
 		box-shadow: none;
 		min-width: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-sidebar {
-		background: #ffffff;
-		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-		max-height: calc(100vh - 124px);
-		overflow: auto;
-		overscroll-behavior: contain;
-		padding: 20px 18px;
+		background: #f3f6f9;
+		border: 1px solid #d8e2eb;
+		border-radius: 10px;
+		max-height: none;
+		overflow: visible;
+		padding: 18px;
 		position: sticky;
 		top: 104px;
-		scrollbar-width: thin;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results,
 	body.${localScopeClass} .bohemcars-inventory-dashboard-map {
 		background: #ffffff;
+		border: 0;
+		border-radius: 0;
+		padding: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-form {
 		display: grid;
 		gap: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading {
-		border-bottom: 1px solid #ebece8;
+		border-bottom: 1px solid #dfe8ef;
 		margin-bottom: 2px;
 		padding: 0 0 16px;
 	}
@@ -1668,21 +1672,21 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading .h5 {
 		color: #141414;
-		font-size: 18px;
-		font-weight: 800;
-		letter-spacing: -0.01em;
+		font-size: 17px;
+		font-weight: 700;
+		letter-spacing: 0;
 		line-height: 22px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading .text-secondary {
-		color: #5b6470 !important;
-		font-size: 12.5px;
+		color: #596572 !important;
+		font-size: 13px;
 		font-weight: 500;
 		line-height: 18px;
 		margin-top: 4px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-group {
 		border: 0;
-		border-bottom: 1px solid #eef0ec;
+		border-bottom: 1px solid #dfe8ef;
 		min-inline-size: 0;
 		margin: 0;
 		padding: 15px 0;
@@ -1855,7 +1859,7 @@ function injectLocalBehavior(
 		padding: 0 18px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results {
-		padding: 20px;
+		padding: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results > .bohemcars-inventory-searchbar__utility {
 		border-top: 0;
@@ -1890,6 +1894,7 @@ function injectLocalBehavior(
 		padding: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results .card-box {
+		background: #ffffff;
 		min-width: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-map {
@@ -2157,7 +2162,7 @@ function injectLocalBehavior(
 		color: #1c1c1c !important;
 	}
 	body.${localScopeClass} .bohemcars-inventory-content .card-box {
-		background: #eef1ed;
+		background: #ffffff;
 		border: 0 !important;
 		box-shadow: none !important;
 		transition:
@@ -2165,7 +2170,7 @@ function injectLocalBehavior(
 			box-shadow 0.22s ease;
 	}
 	body.${localScopeClass} .bohemcars-inventory-content .card-box .image {
-		background: #f4f5f2;
+		background: #ffffff;
 	}
 	body.${localScopeClass} .bohemcars-inventory-content .card-box .top .highlight {
 		background: #ffffff !important;
@@ -2180,7 +2185,7 @@ function injectLocalBehavior(
 	body.${localScopeClass} .bohemcars-inventory-content .card-box.active,
 	body.${localScopeClass} .bohemcars-inventory-content .card-box:hover,
 	body.${localScopeClass} .bohemcars-inventory-content .card-box:focus-within {
-		background: #e4eadf;
+		background: #f8faf5;
 		box-shadow: none !important;
 		transform: none !important;
 	}

@@ -24,7 +24,7 @@
 <AdminShell
 	title="Inventory"
 	activePath="/admin/inventory"
-	primaryAction={{ label: 'Add listing', href: '/admin/inventory/new' }}
+	primaryAction={{ label: 'Add Listing', href: '/admin/inventory/new' }}
 >
 	<section
 		class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-3 lg:px-6"
@@ -57,7 +57,7 @@
 	</section>
 
 	<section class="px-4 lg:px-6">
-		<Card.Root>
+		<Card.Root data-bohemcars-account-listings>
 			<Card.Header class="border-b">
 				<div>
 					<Card.Title>Listings</Card.Title>
@@ -98,7 +98,7 @@
 						</Table.Header>
 						<Table.Body>
 							{#each data.inventory as vehicle (vehicle.id)}
-								<Table.Row>
+								<Table.Row class="cart-item" data-bohemcars-slug={vehicle.id}>
 									<Table.Cell>
 										<div class="flex min-w-72 items-center gap-3">
 											<img
@@ -131,13 +131,27 @@
 										{formatDate(vehicle.updatedAt)}
 									</Table.Cell>
 									<Table.Cell class="text-right">
-										<Button
-											href={`/admin/inventory/edit/${encodeURIComponent(vehicle.id)}`}
-											variant="outline"
-											size="sm"
-										>
-											Edit
-										</Button>
+										<div class="flex justify-end gap-2">
+											<Button
+												href={`/admin/inventory/edit/${encodeURIComponent(vehicle.id)}`}
+												variant="outline"
+												size="sm"
+												class="cart-item__edit"
+												aria-label={`Edit ${vehicle.title}`}
+											>
+												Edit
+											</Button>
+											<Button
+												type="button"
+												variant="ghost"
+												size="sm"
+												class="cart-item__remove action text-muted-foreground"
+												aria-label={`Archive ${vehicle.title}`}
+												disabled
+											>
+												Archive
+											</Button>
+										</div>
 									</Table.Cell>
 								</Table.Row>
 							{:else}

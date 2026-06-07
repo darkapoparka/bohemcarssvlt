@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/styles/bohemcars.css';
 	import './auxero-guards.css';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';

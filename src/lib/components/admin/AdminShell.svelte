@@ -81,10 +81,10 @@
 	] as const;
 </script>
 
-<main class="admin-cms bg-sidebar text-foreground min-h-svh">
+<main class="admin-cms bg-background text-foreground min-h-svh">
 	<Sidebar.Provider
-		style="--sidebar-width: 18rem; --header-height: 4.5rem;"
-		class="bg-sidebar min-h-svh"
+		style="--sidebar-width: 18rem; --header-height: 4rem;"
+		class="bg-background min-h-svh"
 	>
 		<Sidebar.Root collapsible="offcanvas" variant={sidebarVariant}>
 			<Sidebar.Header>
@@ -154,23 +154,16 @@
 
 		<Sidebar.Inset>
 			<header
-				class="bg-sidebar text-sidebar-foreground border-sidebar-border flex h-[var(--header-height)] shrink-0 items-center gap-3 border-b px-5 lg:px-8"
+				class="bg-card text-foreground border-border flex h-[var(--header-height)] shrink-0 items-center gap-3 border-b px-5 lg:px-8"
 			>
-				<Sidebar.Trigger
-					class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground -ms-1"
-				/>
-				<Separator
-					orientation="vertical"
-					class="bg-sidebar-border me-2 data-[orientation=vertical]:h-5"
-				/>
+				<Sidebar.Trigger class="text-muted-foreground hover:bg-muted hover:text-foreground -ms-1" />
+				<Separator orientation="vertical" class="bg-border me-2 data-[orientation=vertical]:h-5" />
 				<div class="min-w-0 flex-1">
-					<p class="text-sidebar-foreground/65 truncate text-xs font-medium">{eyebrow}</p>
-					<h1 class="text-sidebar-foreground truncate text-lg font-semibold tracking-tight">
-						{title}
-					</h1>
+					<p class="text-muted-foreground truncate text-xs font-medium">{eyebrow}</p>
+					<h1 class="text-foreground truncate text-lg font-semibold tracking-tight">{title}</h1>
 				</div>
 				{#if primaryAction}
-					<Button href={primaryAction.href} variant="secondary">
+					<Button href={primaryAction.href} variant="secondary" data-dashboard-primary-action>
 						<Plus data-icon="inline-start" aria-hidden="true" />
 						{primaryAction.label}
 					</Button>
@@ -179,7 +172,7 @@
 
 			<div
 				class={cn(
-					'@container/main flex flex-1 flex-col gap-5 py-5 md:gap-7 md:py-7 [&>section]:px-5 [&>section]:lg:px-8 [&>section]:2xl:px-10',
+					'@container/main flex flex-1 flex-col gap-4 py-4 md:gap-5 md:py-5 [&>section]:px-5 [&>section]:lg:px-8 [&>section]:2xl:px-10',
 					contentClass
 				)}
 			>

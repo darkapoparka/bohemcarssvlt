@@ -57,7 +57,13 @@
 		min-height: 218px;
 		align-items: center;
 		background-image:
-			linear-gradient(90deg, rgb(9 10 10 / 0.78), rgb(9 10 10 / 0.42)), var(--page-banner-image);
+			linear-gradient(
+				90deg,
+				rgb(9 10 10 / 0.7) 0%,
+				rgb(9 10 10 / 0.36) 44%,
+				rgb(9 10 10 / 0.06) 78%
+			),
+			var(--page-banner-image);
 		background-position: center right;
 		background-size: cover;
 	}
@@ -99,6 +105,27 @@
 		margin-top: 22px;
 		gap: 12px;
 		flex-wrap: wrap;
+	}
+
+	.bohemcars-page-banner__actions :global(.btn) {
+		transition:
+			background-color 0.14s ease,
+			border-color 0.14s ease,
+			color 0.14s ease !important;
+	}
+
+	.bohemcars-page-banner__actions :global(.btn::before),
+	.bohemcars-page-banner__actions :global(.btn::after) {
+		display: none !important;
+		content: none !important;
+		transform: none !important;
+		transition: none !important;
+	}
+
+	.bohemcars-page-banner__actions :global(.btn.btn-primary:hover) {
+		border-color: #98bc2a !important;
+		background: #98bc2a !important;
+		color: #1c1c1c !important;
 	}
 
 	.bohemcars-page-banner__secondary {
