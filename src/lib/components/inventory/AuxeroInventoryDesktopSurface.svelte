@@ -708,10 +708,10 @@
 		height: auto !important;
 		max-height: none !important;
 		overflow: visible !important;
-		border: 0 !important;
-		border-radius: 0;
-		background: transparent !important;
-		padding: 0;
+		border: 1px solid #e2e7da !important;
+		border-radius: 8px;
+		background: #eef1ed !important;
+		padding: 14px;
 		box-shadow: none;
 	}
 
@@ -755,12 +755,12 @@
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field) {
 		box-sizing: border-box;
-		min-height: 64px;
-		border: 1px solid #e4e8dc;
-		border-radius: 12px;
+		min-height: 62px;
+		border: 1px solid #e2e7da;
+		border-radius: 8px;
 		background: #ffffff;
 		padding: 10px 42px 10px 15px;
-		box-shadow: 0 1px 2px rgba(24, 31, 18, 0.03);
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__field:hover) {
@@ -769,9 +769,9 @@
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp--open .ifp__field) {
-		border-color: #9bc12d;
+		border-color: #98bc2a;
 		background: #ffffff;
-		box-shadow: 0 0 0 3px rgba(155, 193, 45, 0.14);
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__label) {
@@ -804,11 +804,11 @@
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 100%;
-		margin-top: 6px;
-		border-color: #dfe6d9;
-		border-radius: 12px;
+		margin-top: 8px;
+		border-color: #e2e7da;
+		border-radius: 8px;
 		padding: 8px;
-		box-shadow: 0 10px 24px rgba(18, 24, 14, 0.1);
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-fields :global(.ifp__grid) {

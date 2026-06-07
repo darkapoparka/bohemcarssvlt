@@ -31,8 +31,6 @@
 				>
 					<div class="bohemcars-about-service__media">
 						<img src={step.image} alt={step.title} loading="lazy" />
-						<span class="bohemcars-about-service__number">{String(index + 1).padStart(2, '0')}</span
-						>
 					</div>
 					<div class="bohemcars-about-service__body">
 						<h3>{step.title}</h3>
@@ -152,25 +150,6 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-	}
-
-	.bohemcars-about-service__number {
-		position: absolute;
-		z-index: 2;
-		top: 11px;
-		left: 11px;
-		display: inline-flex;
-		height: 22px;
-		padding: 0 9px;
-		border-radius: 999px;
-		background: #98bc2a;
-		color: #1a2a16;
-		font-size: 11px;
-		font-weight: 800;
-		letter-spacing: 0.03em;
-		line-height: 1;
-		align-items: center;
-		justify-content: center;
 	}
 
 	.bohemcars-about-service__body {

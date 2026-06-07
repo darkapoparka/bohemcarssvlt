@@ -27,7 +27,6 @@
 						aria-label={consultant.name}
 					>
 						<img src={consultant.image} alt={consultant.name} loading="lazy" />
-						<span class="bc-team-card__index">{String(index + 1).padStart(2, '0')}</span>
 					</a>
 					<div class="bc-team-card__body">
 						<a
@@ -119,46 +118,31 @@
 		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: #ffffff;
-		transition: border-color 0.18s ease;
+		border-radius: 16px;
+		background: var(--bc-surface-soft);
+		transition:
+			border-color 0.2s ease,
+			background-color 0.2s ease;
 	}
 
 	.bc-team-card:hover {
 		border-color: #cbd8c1;
+		background: #ffffff;
 	}
 
 	.bc-team-card__media {
 		position: relative;
 		display: block;
 		overflow: hidden;
-		aspect-ratio: 5 / 4;
-		background: var(--bc-surface-soft);
+		aspect-ratio: 1 / 1;
+		background: var(--bc-surface);
 	}
 
 	.bc-team-card__media img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		object-position: 50% 20%;
-	}
-
-	.bc-team-card__index {
-		position: absolute;
-		top: 12px;
-		left: 12px;
-		z-index: 1;
-		display: inline-flex;
-		height: 22px;
-		padding: 0 9px;
-		border-radius: 999px;
-		background: #98bc2a;
-		color: #1a2a16;
-		font-size: 11px;
-		font-weight: 800;
-		letter-spacing: 0.03em;
-		align-items: center;
-		justify-content: center;
+		object-position: 50% 18%;
 	}
 
 	.bc-team-card__body {

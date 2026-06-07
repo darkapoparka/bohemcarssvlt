@@ -65,11 +65,11 @@
 <style>
 	.sfg {
 		min-width: 0;
-		border: 1px solid #e2e6dc;
-		border-radius: 12px;
+		border: 1px solid #e2e7da;
+		border-radius: 8px;
 		background: #ffffff;
 		padding: 13px 13px 9px;
-		box-shadow: 0 1px 2px rgba(23, 31, 18, 0.03);
+		box-shadow: none;
 	}
 
 	.sfg__legend {
