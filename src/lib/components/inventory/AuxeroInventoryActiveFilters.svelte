@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { AuxeroInventoryDesktopData } from '$lib/auxero/inventory-desktop';
+	import { X } from '@lucide/svelte';
 
 	let {
 		activeFilters,
@@ -25,7 +26,7 @@
 				aria-label={`Remove ${chip.label} filter`}
 			>
 				{chip.label}
-				<span aria-hidden="true">x</span>
+				<X size={13} strokeWidth={2.5} aria-hidden="true" />
 			</a>
 		{/each}
 		<a
@@ -33,7 +34,7 @@
 			{...linkHref(activeFilters.clearHref)}
 		>
 			{activeFilters.clearLabel}
-			<span aria-hidden="true">x</span>
+			<X size={13} strokeWidth={2.5} aria-hidden="true" />
 		</a>
 	</div>
 </div>

@@ -11,8 +11,14 @@
 	import AuxeroInventoryActiveFilters from './AuxeroInventoryActiveFilters.svelte';
 	import AuxeroInventoryContent from './AuxeroInventoryContent.svelte';
 	import AuxeroInventoryFilterPopover from './AuxeroInventoryFilterPopover.svelte';
-	import AuxeroInventoryMapFallback from './AuxeroInventoryMapFallback.svelte';
 	import AuxeroInventorySidebarFilterGroup from './AuxeroInventorySidebarFilterGroup.svelte';
+	import AuxeroInventoryMapFallback from './AuxeroInventoryMapFallback.svelte';
+	import { X } from '@lucide/svelte';
+
+	// In the Sidebar (dashboard) layout, short categorical filters render as
+	// always-expanded inline lists (a real filter rail); long/ordinal filters
+	// (model, price, mileage) stay as compact dropdown cards.
+	const inlineSidebarFilters = new Set(['brand', 'fuel', 'transmission', 'bodyType', 'feature']);
 
 	let {
 		cards,
@@ -173,23 +179,25 @@
 	};
 </script>
 
-{#snippet utilityToolbar()}
-	<div class="bohemcars-inventory-toolbar-row bohemcars-inventory-searchbar__utility">
+{#snippet utilityToolbar(showFilterButton = true)}
+	<div class="bohemcars-inventory-toolbar-row">
 		<div class="bohemcars-inventory-result-count">
-			<button
-				class="btn-filter bohemcars-inventory-searchbar__filter"
-				id="filterSidebarToggle"
-				type="button"
-				aria-label={desktop.filterButtonLabel}
-				aria-controls="filterSidebar"
-				aria-expanded={sidebarOpen}
-				onclick={() => {
-					sidebarOpen = true;
-				}}
-			>
-				<img src="/assets/icons/filter.svg" alt="" />
-				<span>{desktop.filterButtonLabel}</span>
-			</button>
+			{#if showFilterButton}
+				<button
+					class="btn-filter bohemcars-inventory-searchbar__filter"
+					id="filterSidebarToggle"
+					type="button"
+					aria-label={desktop.filterButtonLabel}
+					aria-controls="filterSidebar"
+					aria-expanded={sidebarOpen}
+					onclick={() => {
+						sidebarOpen = true;
+					}}
+				>
+					<img src="/assets/icons/filter.svg" alt="" />
+					<span>{desktop.filterButtonLabel}</span>
+				</button>
+			{/if}
 			<p class="md-hidden">{desktop.showingText}</p>
 		</div>
 		<div class="bohemcars-inventory-sort">
@@ -220,6 +228,106 @@
 	</div>
 {/snippet}
 
+{#snippet viewControls()}
+	<div class="bohemcars-inventory-view-controls" aria-label={desktop.controlsLabel}>
+		<div class="bohemcars-inventory-view-controls__group">
+			<span class="bohemcars-inventory-view-controls__label">{desktop.viewLabel}</span>
+			<div class="listing-tabs menu-tab bohemcars-view-toggle" aria-label={desktop.viewLabel}>
+				{#each desktop.viewOptions as option (option.view)}
+					<a
+						class={['item-menu', option.active && 'active']}
+						{...linkHref(option.href)}
+						data-bohemcars-view-toggle
+						aria-label={option.ariaLabel}
+						title={option.title}
+					>
+						{@render viewIcon(option.view)}
+					</a>
+				{/each}
+			</div>
+		</div>
+
+		<div class="bohemcars-inventory-view-controls__group">
+			<span class="bohemcars-inventory-view-controls__label">{desktop.layoutLabel}</span>
+			<div class="bohemcars-inventory-layout-switch" role="group" aria-label={desktop.layoutLabel}>
+				{#each desktop.layoutOptions as option (option.layout)}
+					<a
+						class={['bohemcars-inventory-layout-toggle', option.active && 'active']}
+						{...linkHref(option.href)}
+						data-bohemcars-layout-toggle
+						aria-label={option.ariaLabel}
+						title={option.title}
+						aria-current={option.active ? 'true' : undefined}
+					>
+						<span>{option.label}</span>
+					</a>
+				{/each}
+			</div>
+		</div>
+
+		{#if desktop.layout !== 'dashboard'}
+			<div class="bohemcars-inventory-view-controls__group">
+				<span class="bohemcars-inventory-view-controls__label"
+					>{desktop.filterPresentationLabel}</span
+				>
+				<div
+					class="bohemcars-inventory-filter-mode-toggle"
+					role="group"
+					aria-label={desktop.filterPresentationLabel}
+				>
+					{#each desktop.filterPresentationOptions as option (option.presentation)}
+						<a
+							class={['bohemcars-inventory-filter-mode-toggle__item', option.active && 'active']}
+							{...linkHref(option.href)}
+							aria-label={option.ariaLabel}
+							title={option.title}
+							aria-current={option.active ? 'true' : undefined}
+						>
+							{option.label}
+						</a>
+					{/each}
+				</div>
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet resultsControls(showFilterGrid = false)}
+	<form
+		class={[
+			'bohemcars-filter-form bohemcars-inventory-results-controls',
+			showFilterGrid && 'bohemcars-inventory-results-controls--grid'
+		]}
+		action={inventoryAction}
+		method="get"
+		onsubmit={handleSearchSubmit}
+		onchange={handleFilterChange}
+	>
+		{#each desktop.hiddenInputs as input (`results:${input.name}:${input.value}`)}
+			<input type="hidden" name={input.name} value={input.value} />
+		{/each}
+		{#if desktop.searchValue}
+			<input type="hidden" name="q" value={desktop.searchValue} />
+		{/if}
+		<div class="bohemcars-inventory-results-controls__top">
+			{@render utilityToolbar(false)}
+			{@render viewControls()}
+		</div>
+		{#if showFilterGrid}
+			<div class="bohemcars-inventory-filter-grid" aria-label={desktop.filterPresentationLabel}>
+				{#each desktop.filters as filter (filter.name)}
+					<AuxeroInventoryFilterPopover
+						{filter}
+						allSelectedValue={filter.allLabel}
+						optionLayout={filter.name === 'model' ? 'grid' : 'auto'}
+						presentation={desktop.filterPresentation}
+					/>
+				{/each}
+			</div>
+		{/if}
+	</form>
+{/snippet}
+
 {#snippet sidebarFilterForm()}
 	<form
 		class="bohemcars-filter-form bohemcars-inventory-sidebar-form"
@@ -238,9 +346,20 @@
 			<p class="h5 mb-4">{desktop.sidebar.title}</p>
 			<p class="text-secondary">{desktop.sidebar.countLabel}</p>
 		</div>
-		{#each desktop.sidebar.filters as filter (filter.name)}
-			<AuxeroInventorySidebarFilterGroup {filter} />
-		{/each}
+		<div class="bohemcars-inventory-sidebar-fields">
+			{#each desktop.sidebar.filters as filter (filter.name)}
+				{#if inlineSidebarFilters.has(filter.name)}
+					<AuxeroInventorySidebarFilterGroup {filter} />
+				{:else}
+					<AuxeroInventoryFilterPopover
+						{filter}
+						allSelectedValue={filter.allLabel}
+						optionLayout="list"
+						presentation="popover"
+					/>
+				{/if}
+			{/each}
+		</div>
 		<div class="bohemcars-inventory-sidebar-actions">
 			<a
 				{...linkHref(desktop.sidebar.actions.clearHref)}
@@ -254,7 +373,13 @@
 	</form>
 {/snippet}
 
-<section class="bohemcars-inventory-banner" aria-label={desktop.ariaLabel}>
+<section
+	class={[
+		'bohemcars-inventory-banner',
+		desktop.layout === 'dashboard' && 'bohemcars-inventory-banner--compact'
+	]}
+	aria-label={desktop.ariaLabel}
+>
 	<div class="container">
 		<div class="bohemcars-inventory-banner__copy">
 			<h1 id="bohemcars-inventory-title" class="bohemcars-sr-only">Bohemcars Inventory</h1>
@@ -306,59 +431,8 @@
 						</button>
 					</div>
 				</div>
-
-				<div class="bohemcars-inventory-hero-switches" aria-label={desktop.controlsLabel}>
-					<div class="listing-tabs menu-tab bohemcars-view-toggle" aria-label={desktop.viewLabel}>
-						{#each desktop.viewOptions as option (option.view)}
-							<a
-								class={['item-menu', option.active && 'active']}
-								{...linkHref(option.href)}
-								data-bohemcars-view-toggle
-								aria-label={option.ariaLabel}
-								title={option.title}
-							>
-								{@render viewIcon(option.view)}
-							</a>
-						{/each}
-						<a
-							class={['bohemcars-inventory-layout-toggle', desktop.layoutToggle.active && 'active']}
-							{...linkHref(desktop.layoutToggle.href)}
-							data-bohemcars-layout-toggle
-							aria-label={desktop.layoutToggle.ariaLabel}
-							title={desktop.layoutToggle.title}
-						>
-							<span>{desktop.layoutToggle.label}</span>
-						</a>
-					</div>
-					<div
-						class="bohemcars-inventory-filter-mode-toggle"
-						role="group"
-						aria-label={desktop.filterPresentationLabel}
-					>
-						{#each desktop.filterPresentationOptions as option (option.presentation)}
-							<a
-								class={['bohemcars-inventory-filter-mode-toggle__item', option.active && 'active']}
-								{...linkHref(option.href)}
-								aria-label={option.ariaLabel}
-								title={option.title}
-								aria-current={option.active ? 'true' : undefined}
-							>
-								{option.label}
-							</a>
-						{/each}
-					</div>
-				</div>
-
-				<div class="bohemcars-inventory-filter-grid">
-					{#each desktop.filters as filter (filter.name)}
-						<AuxeroInventoryFilterPopover {filter} presentation={desktop.filterPresentation} />
-					{/each}
-				</div>
-
-				{#if desktop.layout !== 'dashboard'}
-					{@render utilityToolbar()}
-				{/if}
 			</form>
+			{@render resultsControls(desktop.layout !== 'dashboard')}
 		</div>
 	</div>
 </section>
@@ -371,7 +445,6 @@
 					{@render sidebarFilterForm()}
 				</aside>
 				<div class="bohemcars-inventory-dashboard-results">
-					{@render utilityToolbar()}
 					{#if desktop.activeFilters}
 						<AuxeroInventoryActiveFilters
 							activeFilters={desktop.activeFilters}
@@ -426,7 +499,7 @@
 				sidebarOpen = false;
 			}}
 		>
-			x
+			<X size={18} strokeWidth={2.4} aria-hidden="true" />
 		</button>
 		{@render sidebarFilterForm()}
 	</div>
@@ -464,6 +537,386 @@
 {/snippet}
 
 <style>
+	.bohemcars-inventory-results-controls {
+		position: relative;
+		z-index: 5;
+		display: grid;
+		gap: 16px;
+		margin: 0 0 22px;
+		border: 1px solid #e8ecdf;
+		border-radius: 12px;
+		background: #ffffff;
+		padding: 16px;
+		box-shadow: 0 10px 30px rgba(23, 31, 18, 0.06);
+	}
+
+	.bohemcars-inventory-results-controls--grid {
+		margin-top: 0;
+	}
+
+	.bohemcars-inventory-results-controls__top {
+		display: grid;
+		grid-template-columns: minmax(310px, 1fr) auto;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.bohemcars-inventory-toolbar-row {
+		display: grid;
+		min-width: 0;
+		align-items: center;
+		gap: 14px;
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.bohemcars-inventory-result-count {
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.bohemcars-inventory-result-count p {
+		margin: 0;
+		color: #1c1c1c;
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 22px;
+		white-space: nowrap;
+	}
+
+	.bohemcars-inventory-sort {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		justify-self: end;
+	}
+
+	.bohemcars-inventory-sort__label {
+		color: #5f6659;
+		font-size: 14px;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.bohemcars-inventory-sort :global(.core-dropdown) {
+		min-width: 178px;
+	}
+
+	.bohemcars-inventory-sort :global(.core-dropdown__button) {
+		min-height: 46px;
+		border-color: #e4e9da;
+		border-radius: 9px;
+		background: #f8faf3;
+	}
+
+	.bohemcars-inventory-view-controls {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 10px;
+	}
+
+	.bohemcars-inventory-view-controls__group {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.bohemcars-inventory-view-controls__label {
+		color: #687260;
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.bohemcars-view-toggle,
+	.bohemcars-inventory-layout-switch,
+	.bohemcars-inventory-filter-mode-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		border: 1px solid #e2e8d8;
+		border-radius: 999px;
+		background: #f5f8ef;
+		padding: 4px;
+	}
+
+	.bohemcars-view-toggle :global(.item-menu),
+	.bohemcars-inventory-layout-toggle,
+	.bohemcars-inventory-filter-mode-toggle__item {
+		display: inline-flex;
+		min-width: 38px;
+		min-height: 34px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		color: #1c1c1c;
+		font-size: 13px;
+		font-weight: 800;
+		line-height: 1;
+		text-decoration: none;
+		transition:
+			background-color 0.16s ease,
+			color 0.16s ease;
+	}
+
+	.bohemcars-view-toggle :global(.item-menu:hover),
+	.bohemcars-inventory-layout-toggle:hover,
+	.bohemcars-inventory-filter-mode-toggle__item:hover {
+		background: #e9f0dc;
+		color: #1c1c1c;
+	}
+
+	.bohemcars-view-toggle :global(.item-menu.active),
+	.bohemcars-inventory-layout-toggle.active,
+	.bohemcars-inventory-filter-mode-toggle__item.active {
+		background: #d9fb5a;
+		color: #14210f;
+	}
+
+	.bohemcars-inventory-layout-toggle {
+		padding: 0 15px;
+	}
+
+	.bohemcars-inventory-filter-mode-toggle__item {
+		padding: 0 13px;
+	}
+
+	.bohemcars-view-toggle :global(.item-menu.active svg circle),
+	.bohemcars-view-toggle :global(.item-menu.active svg rect) {
+		stroke: #14210f;
+	}
+
+	.bohemcars-inventory-filter-grid {
+		display: grid;
+		gap: 10px;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.bohemcars-inventory-filter-grid :global(.ifp:nth-child(4n + 3) .ifp__panel),
+	.bohemcars-inventory-filter-grid :global(.ifp:nth-child(4n) .ifp__panel) {
+		right: 0;
+		left: auto;
+	}
+
+	.bohemcars-inventory-dashboard-sidebar {
+		position: relative;
+		z-index: 15;
+		overflow: hidden !important;
+		border: 1px solid #e6ebdd !important;
+		border-radius: 16px;
+		background: #ffffff !important;
+		padding: 0;
+		box-shadow: 0 18px 44px rgba(24, 31, 18, 0.06);
+	}
+
+	.bohemcars-inventory-sidebar-heading {
+		display: grid;
+		gap: 3px;
+		margin-bottom: 0;
+		border-bottom: 1px solid #edf0e7;
+		padding: 18px 18px 15px;
+	}
+
+	.bohemcars-inventory-sidebar-heading :global(.h5) {
+		margin: 0 !important;
+		color: #101010;
+		font-size: 18px;
+		font-weight: 800;
+		line-height: 24px;
+	}
+
+	.bohemcars-inventory-sidebar-heading :global(.text-secondary) {
+		margin: 0;
+		color: #5f6659 !important;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.bohemcars-inventory-sidebar-fields {
+		display: grid;
+		gap: 0;
+		min-width: 0;
+	}
+
+	/* Flatten the inline filter groups into borderless panel sections. */
+	.bohemcars-inventory-sidebar-fields :global(.sfg) {
+		border: 0;
+		border-bottom: 1px solid #edf0e7;
+		border-radius: 0;
+		background: transparent;
+		padding: 13px 9px 12px;
+		box-shadow: none;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.sfg__legend) {
+		margin-left: 9px;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp) {
+		position: relative;
+		min-width: 0;
+		border-bottom: 1px solid #edf0e7;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp--open) {
+		z-index: auto;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__field) {
+		box-sizing: border-box;
+		min-height: 68px;
+		border-color: #dfe6d9;
+		border-radius: 10px;
+		background: #ffffff;
+		padding: 10px 42px 10px 15px;
+		box-shadow: 0 1px 0 rgba(24, 31, 18, 0.03);
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__field:hover) {
+		border-color: #cfd9c5;
+		background: #fbfcf8;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp--open .ifp__field) {
+		border-color: #9bc12d;
+		background: #ffffff;
+		box-shadow: 0 0 0 3px rgba(155, 193, 45, 0.14);
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__label) {
+		color: #6b7463;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0;
+		text-transform: none;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__value) {
+		color: #101010;
+		font-size: 16px;
+		font-weight: 800;
+		line-height: 20px;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__value--placeholder) {
+		color: #101010;
+		font-weight: 800;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__chev) {
+		right: 15px;
+		color: #1c1c1c;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__panel) {
+		position: static;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 100%;
+		margin-top: 6px;
+		border-color: #dfe6d9;
+		border-radius: 12px;
+		padding: 8px;
+		box-shadow: 0 10px 24px rgba(18, 24, 14, 0.1);
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__grid) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__list),
+	.bohemcars-inventory-sidebar-fields :global(.ifp__grid) {
+		max-height: min(60vh, 384px);
+		min-width: 0;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__row) {
+		box-sizing: border-box;
+		min-height: 43px;
+		background: #f8faf4;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__chip) {
+		min-height: 68px;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__foot) {
+		position: sticky;
+		bottom: 0;
+		margin: 0 -8px -8px;
+		border-top: 1px solid #e5eadf;
+		background: #ffffff;
+		padding: 10px 8px 8px;
+	}
+
+	.bohemcars-inventory-sidebar-fields :global(.ifp__done) {
+		min-width: 96px;
+	}
+
+	.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-fields :global(.ifp--open) {
+		z-index: 90;
+	}
+
+	.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-fields :global(.ifp__panel) {
+		position: absolute;
+		top: calc(100% + 6px);
+		left: 0;
+		z-index: 30;
+		width: 100%;
+		margin-top: 0;
+		box-shadow: 0 18px 38px rgba(18, 24, 14, 0.16);
+	}
+
+	.bohemcars-inventory-sidebar-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: 16px;
+		border-top: 1px solid #dfe7d8;
+		padding-top: 14px;
+	}
+
+	.bohemcars-inventory-banner__buybox .bohemcars-inventory-searchbar {
+		padding-bottom: 14px;
+	}
+
+	.bohemcars-inventory-banner__buybox .bohemcars-inventory-results-controls {
+		margin-bottom: 0;
+		box-shadow: none;
+	}
+
+	.bohemcars-inventory-banner__buybox
+		.bohemcars-inventory-results-controls:not(.bohemcars-inventory-results-controls--grid) {
+		gap: 0;
+	}
+
+	@media (max-width: 1199px) {
+		.bohemcars-inventory-results-controls__top {
+			grid-template-columns: 1fr;
+		}
+
+		.bohemcars-inventory-view-controls {
+			justify-content: flex-start;
+			flex-wrap: wrap;
+		}
+
+		.bohemcars-inventory-filter-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.bohemcars-inventory-results-controls {
+			display: none;
+		}
+	}
+
 	:global(.bohemcars-inventory-desktop-route #filterSidebar[aria-hidden='false']) {
 		opacity: 1 !important;
 		pointer-events: auto !important;

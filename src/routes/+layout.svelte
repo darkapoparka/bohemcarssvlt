@@ -29,6 +29,7 @@
 	);
 	let isInventoryDetailPage = $derived(/^\/inventory\/[^/]+\/?$/.test(page.url.pathname));
 	let isDashboardArea = $derived(/^\/(?:account|admin)(?:\/|$)/.test(page.url.pathname));
+	let allowsBottomNavInDashboard = $derived(page.url.pathname === '/account/favorites');
 
 	const resetAuxeroTransientUi = () => {
 		for (const element of document.querySelectorAll<HTMLElement>(
@@ -78,6 +79,6 @@
 	<SiteFooter />
 	<ScrollTop />
 {/if}
-{#if !isInventoryDetailPage && !isDashboardArea}
+{#if !isInventoryDetailPage && (!isDashboardArea || allowsBottomNavInDashboard)}
 	<MobileBottomNav pathname={page.url.pathname} />
 {/if}

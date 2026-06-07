@@ -1,7 +1,9 @@
 import type { PageServerLoad } from './$types';
 import {
+	auxeroSellMobileSteps,
 	auxeroSellSteps,
 	sellCarFormDataWithPrefill,
+	sellCarMobileCopy,
 	sellYourCarHero
 } from '$lib/auxero/sell-your-car';
 import { resolveLocale } from '$lib/i18n/messages';
@@ -25,6 +27,8 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		form: sellCarFormDataWithPrefill(url.searchParams.get('vin') ?? ''),
 		hero: sellYourCarHero,
+		mobileCopy: sellCarMobileCopy,
+		mobileSteps: auxeroSellMobileSteps,
 		pageDocument,
 		steps: auxeroSellSteps,
 		...auxeroPublicShellData(pageDocument, locale, '/sell-your-car')

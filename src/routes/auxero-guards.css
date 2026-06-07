@@ -1526,8 +1526,8 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 
 /* ── Near-static motion ────────────────────────────────────────────────
    Resale buyers expect a fast, calm page, so the template's scroll-reveal
-   and load-in animations are switched off. Only subtle hover transitions
-   (card lift/whiten, button colour swap) remain. */
+   and load-in animations are switched off. Template button fills remain
+   owned by Auxero's original classes. */
 .wow {
 	visibility: visible !important;
 	opacity: 1 !important;
@@ -1540,41 +1540,6 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 	opacity: 1 !important;
 	transform: none !important;
 	animation: none !important;
-}
-
-/* ── Calmer buttons ────────────────────────────────────────────────────
-   Replace the template's sliding-fill pseudo-element with a clean colour
-   swap on hover: lime → dark with white text. */
-.btn::before,
-.btn::after,
-.search-cars__search::before,
-.search-cars__search::after {
-	display: none !important;
-}
-
-.btn,
-.search-cars__search,
-.view-details,
-.compare-details {
-	transition:
-		background-color 0.2s ease,
-		border-color 0.2s ease,
-		color 0.2s ease !important;
-}
-
-.btn.btn-primary-3:hover,
-.btn.effect-line-primary:hover,
-.search-cars__slide-cta:hover,
-.search-cars__search:hover,
-.btn.btn-line:hover,
-.compare-details:hover {
-	background-color: #1c1c1c !important;
-	border-color: #1c1c1c !important;
-	color: #ffffff !important;
-}
-
-.compare-details:hover svg path {
-	stroke: #ffffff !important;
 }
 
 .btn.btn-primary-3.bohemcars-section-cta,

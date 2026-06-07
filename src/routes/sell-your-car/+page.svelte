@@ -7,6 +7,8 @@
 <SellYourCarTemplatePage
 	form={data.form}
 	hero={data.hero}
+	mobileCopy={data.mobileCopy}
+	mobileSteps={data.mobileSteps}
 	pageDocument={data.pageDocument}
 	shellCopy={data.shellCopy}
 	shellFooter={data.shellFooter}

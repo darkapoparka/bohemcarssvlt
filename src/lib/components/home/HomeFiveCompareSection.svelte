@@ -194,8 +194,10 @@
 		}
 
 		.bohemcars-home-compare :global(.title-section h2) {
-			font-size: 22px;
-			line-height: 28px;
+			font-size: 24px;
+			font-weight: 800;
+			letter-spacing: 0;
+			line-height: 30px;
 		}
 
 		/* Match the featured-cars carousel: full-bleed horizontal scroll with a peek. */

@@ -1,35 +1,41 @@
-import type { PageServerLoad } from './$types';
-import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
-import { getAccountMessageThreadData } from '$lib/server/account-message-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { getAdminCmsOverview } from '$lib/server/admin-cms';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
+import { normalizeInquiryStatus, updateInquiry } from '$lib/server/inquiries';
+
+const value = (formData: FormData, key: string) => String(formData.get(key) ?? '').trim();
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const routePath = 'admin/inquiries';
-	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
-
-	const renderOptions = {
-		request,
-		routePath,
-		searchParams: url.searchParams,
-		session
-	};
-	const { pageDocument, slot: messageSlot } = renderAuxeroPageSlot('message.html', renderOptions, {
-		marker: 'data-bohemcars-message-container',
-		templateError: 'Admin inquiries template could not be rendered',
-		slotError: 'Admin inquiries slot could not be located'
-	});
+	const session = requireBohemcarsPageSession(request, 'admin/inquiries', url.searchParams);
 
 	return {
-		afterMessageHtml: messageSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeMessageHtml: messageSlot.beforeHtml,
-		dashboard: getAccountDashboardPageData('message.html', renderOptions, {
-			subtitle: 'Triage leads, assignments, and buyer requests.',
-			title: 'Inquiries'
-		}),
-		messageHtml: messageSlot.sectionHtml,
-		pageDocument,
-		thread: getAccountMessageThreadData('message.html', renderOptions)
+		cms: getAdminCmsOverview(),
+		session
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const formData = await request.formData();
+		const id = value(formData, 'id');
+
+		if (!id) {
+			return fail(400, { error: 'Inquiry id is required.' });
+		}
+
+		const inquiry = updateInquiry({
+			assignedAgentSlug: value(formData, 'assignedAgentSlug'),
+			id,
+			message: value(formData, 'message'),
+			status: normalizeInquiryStatus(value(formData, 'status'))
+		});
+
+		if (!inquiry) {
+			return fail(404, { error: 'Inquiry not found.' });
+		}
+
+		redirect(303, '/admin/inquiries');
+	}
 };

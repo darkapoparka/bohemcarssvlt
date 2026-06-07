@@ -1,36 +1,25 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { ArrowRight, MessageCircle, PhoneCall } from '@lucide/svelte';
-	import type { AuxeroSellCarFormData, AuxeroSellCarInputField } from '$lib/auxero/sell-your-car';
+	import type {
+		AuxeroSellCarFormData,
+		AuxeroSellCarMobileCopy,
+		AuxeroSellCarMobileStep
+	} from '$lib/auxero/sell-your-car';
 	import { bohemcarsContact } from '$lib/data/bohemcars';
 
-	let { form }: { form: AuxeroSellCarFormData } = $props();
+	let {
+		copy,
+		form,
+		steps
+	}: {
+		copy: AuxeroSellCarMobileCopy;
+		form: AuxeroSellCarFormData;
+		steps: AuxeroSellCarMobileStep[];
+	} = $props();
 
 	let submitted = $state(false);
 
-	const fieldCopy: Record<string, { label: string; placeholder: string }> = {
-		vin: { label: 'VIN номер', placeholder: 'Например WBA...' },
-		mileage: { label: 'Пробег', placeholder: 'Пробег в км' },
-		price: { label: 'Очаквана цена', placeholder: 'Цена в EUR' },
-		phone: { label: 'Телефон', placeholder: 'Телефон за контакт' }
-	};
-
-	const steps = [
-		{ title: 'Данни', text: 'VIN, пробег, цена и телефон.' },
-		{ title: 'Преглед', text: 'Проверяваме историята и състоянието.' },
-		{ title: 'Следващ ход', text: 'Оферта, съдействие или публикуване.' }
-	] as const;
-
-	const labelFor = (field: AuxeroSellCarInputField) => fieldCopy[field.name]?.label ?? field.label;
-	const placeholderFor = (field: AuxeroSellCarInputField) =>
-		fieldCopy[field.name]?.placeholder ?? field.placeholder ?? '';
-	const autocompleteFor = (field: AuxeroSellCarInputField) =>
-		field.name === 'phone' ? 'tel' : 'off';
-	const inputModeFor = (field: AuxeroSellCarInputField): 'tel' | 'numeric' | undefined => {
-		if (field.name === 'phone') return 'tel';
-		if (field.name === 'mileage' || field.name === 'price') return 'numeric';
-		return undefined;
-	};
 	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 		submitted = true;
@@ -41,30 +30,35 @@
 	<main class="bohemcars-sell-mobile__main">
 		<section class="bohemcars-sell-mobile__intro" aria-labelledby="sell-mobile-title">
 			<div class="bohemcars-sell-mobile__intro-copy">
-				<span>Bohemcars оценка</span>
-				<h1 id="sell-mobile-title">Продай автомобила си</h1>
-				<p>Изпрати данните. Връщаме ясен следващ ход.</p>
+				<img
+					class="bohemcars-sell-mobile__logo"
+					src={copy.logoSrc}
+					alt={copy.logoAlt}
+					width="180"
+					height="33"
+				/>
+				<h1 id="sell-mobile-title">{copy.title}</h1>
 			</div>
 		</section>
 
 		<form class="bohemcars-sell-mobile__form" onsubmit={handleSubmit}>
 			<header>
-				<p>Бърза заявка</p>
-				<strong>Попълни за минута</strong>
+				<p>{copy.formEyebrow}</p>
+				<strong>{copy.formTitle}</strong>
 			</header>
 
 			<div class="bohemcars-sell-mobile__fields">
 				{#each form.fields as field (field.id)}
 					<label for={`mobile-${field.id}`}>
-						<span>{labelFor(field)}</span>
+						<span>{field.mobileLabel}</span>
 						<input
 							id={`mobile-${field.id}`}
 							name={field.name}
 							type={field.type}
-							placeholder={placeholderFor(field)}
+							placeholder={field.mobilePlaceholder}
 							required={field.required}
-							autocomplete={autocompleteFor(field)}
-							inputmode={inputModeFor(field)}
+							autocomplete={field.autocomplete}
+							inputmode={field.inputMode}
 							value={field.value ?? ''}
 						/>
 					</label>
@@ -72,30 +66,30 @@
 			</div>
 
 			<button type="submit">
-				Заяви оценка
+				{copy.submitLabel}
 				<ArrowRight size={19} strokeWidth={2.25} aria-hidden="true" />
 			</button>
 
 			{#if submitted}
 				<p class="bohemcars-sell-mobile__status">
-					Заявката е подготвена. Обади се или пиши, за да я финализираме веднага.
+					{copy.statusMessage}
 				</p>
 			{/if}
 		</form>
 
-		<nav class="bohemcars-sell-mobile__contact" aria-label="Контакт">
+		<nav class="bohemcars-sell-mobile__contact" aria-label={copy.contactLabel}>
 			<a href={resolve('/contact')}>
 				<PhoneCall size={19} strokeWidth={2.25} aria-hidden="true" />
 				{bohemcarsContact.primaryPhoneLabel}
 			</a>
 			<a href={resolve('/contact')}>
 				<MessageCircle size={19} strokeWidth={2.25} aria-hidden="true" />
-				Пиши ни
+				{copy.messageLabel}
 			</a>
 		</nav>
 
-		<section class="bohemcars-sell-mobile__steps" aria-label="Стъпки">
-			<p class="bohemcars-sell-mobile__steps-title">Как работи</p>
+		<section class="bohemcars-sell-mobile__steps" aria-label={copy.stepsTitle}>
+			<p class="bohemcars-sell-mobile__steps-title">{copy.stepsTitle}</p>
 			{#each steps as step, index (step.title)}
 				<article>
 					<span class="bohemcars-sell-mobile__step-num" aria-hidden="true">{index + 1}</span>
@@ -118,14 +112,14 @@
 
 	.bohemcars-sell-mobile__main {
 		display: grid;
-		gap: 10px;
+		gap: 9px;
 		padding: 0 14px 92px;
 	}
 
 	.bohemcars-sell-mobile__intro {
 		position: relative;
 		display: flex;
-		min-height: 120px;
+		min-height: 92px;
 		align-items: center;
 		overflow: hidden;
 		margin: 0 -14px;
@@ -154,53 +148,48 @@
 		position: relative;
 		z-index: 2;
 		display: grid;
-		gap: 5px;
+		gap: 4px;
 		min-width: 0;
 		max-width: 330px;
 	}
 
-	.bohemcars-sell-mobile__intro span,
 	.bohemcars-sell-mobile__form header p {
 		margin: 0;
 		color: #d9f275;
-		font-size: 10.5px;
+		font-size: 10px;
 		font-weight: 900;
 		letter-spacing: 0;
 		line-height: 14px;
 		text-transform: uppercase;
 	}
 
+	.bohemcars-sell-mobile__logo {
+		display: block;
+		width: 132px;
+		height: auto;
+		object-fit: contain;
+		object-position: left center;
+	}
+
 	.bohemcars-sell-mobile__intro h1 {
 		margin: 0;
 		color: #ffffff;
-		font-size: 23px;
+		font-size: 22px;
 		font-weight: 900;
 		letter-spacing: 0;
-		line-height: 27px;
+		line-height: 26px;
 		white-space: nowrap;
 	}
 
-	.bohemcars-sell-mobile__intro p {
-		margin: 0;
-		max-width: 256px;
-		color: rgba(255, 255, 255, 0.86);
-		font-size: 13px;
-		font-weight: 800;
-		line-height: 18px;
-	}
-
 	.bohemcars-sell-mobile__form {
+		position: relative;
+		z-index: 2;
+		display: grid;
+		gap: 12px;
+		margin-top: -2px;
 		border: 1px solid var(--bc-border);
 		border-radius: 8px;
 		background: var(--bc-surface);
-		position: relative;
-		z-index: 2;
-		margin-top: -2px;
-	}
-
-	.bohemcars-sell-mobile__form {
-		display: grid;
-		gap: 13px;
 		padding: 14px;
 	}
 
@@ -215,10 +204,10 @@
 
 	.bohemcars-sell-mobile__form header strong {
 		color: #111111;
-		font-size: 21px;
+		font-size: 20px;
 		font-weight: 900;
 		letter-spacing: 0;
-		line-height: 26px;
+		line-height: 25px;
 	}
 
 	.bohemcars-sell-mobile__fields {
@@ -291,7 +280,7 @@
 	.bohemcars-sell-mobile__contact {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr);
-		gap: 9px;
+		gap: 8px;
 	}
 
 	.bohemcars-sell-mobile__contact a {
@@ -304,9 +293,9 @@
 		overflow: hidden;
 		border-radius: 8px;
 		background: var(--bc-surface);
-		padding: 0 10px;
+		padding: 0 9px;
 		color: #111111;
-		font-size: 14px;
+		font-size: 13.5px;
 		font-weight: 900;
 		line-height: 18px;
 		text-overflow: ellipsis;
@@ -319,11 +308,11 @@
 
 	.bohemcars-sell-mobile__steps {
 		display: grid;
-		gap: 8px;
+		gap: 7px;
 	}
 
 	.bohemcars-sell-mobile__steps-title {
-		margin: 4px 0 2px;
+		margin: 3px 0 1px;
 		color: #111111;
 		font-size: 12px;
 		font-weight: 900;
@@ -334,21 +323,21 @@
 
 	.bohemcars-sell-mobile__steps article {
 		display: grid;
-		grid-template-columns: 34px minmax(0, 1fr);
-		gap: 12px;
+		grid-template-columns: 32px minmax(0, 1fr);
+		gap: 11px;
 		align-items: center;
-		min-height: 62px;
+		min-height: 60px;
 		border: 0;
-		border-radius: 10px;
+		border-radius: 8px;
 		background: var(--bc-surface);
-		padding: 11px 14px;
+		padding: 10px 14px;
 		color: #111111;
 	}
 
 	.bohemcars-sell-mobile__step-num {
 		display: flex;
-		width: 34px;
-		height: 34px;
+		width: 32px;
+		height: 32px;
 		align-items: center;
 		justify-content: center;
 		border-radius: 999px;
@@ -382,7 +371,7 @@
 
 	@media (max-width: 374px) {
 		.bohemcars-sell-mobile__intro {
-			min-height: 118px;
+			min-height: 92px;
 		}
 
 		.bohemcars-sell-mobile__intro-copy {
@@ -394,11 +383,6 @@
 		.bohemcars-sell-mobile__intro h1 {
 			font-size: 21.5px;
 			line-height: 25px;
-		}
-
-		.bohemcars-sell-mobile__intro p {
-			font-size: 12.5px;
-			line-height: 17px;
 		}
 	}
 </style>

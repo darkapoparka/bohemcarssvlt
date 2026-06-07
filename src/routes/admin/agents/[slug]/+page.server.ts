@@ -1,8 +1,14 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
-import { listManagedAgents } from '$lib/server/agents';
+import { error, fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { getAdminCmsOverview } from '$lib/server/admin-cms';
+import {
+	listManagedAgents,
+	normalizeManagedAgentStatus,
+	updateManagedAgent
+} from '$lib/server/agents';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
+
+const value = (formData: FormData, key: string) => String(formData.get(key) ?? '').trim();
 
 export const load: PageServerLoad = ({ params, request, url }) => {
 	const routePath = `admin/agents/${params.slug}`;
@@ -13,18 +19,27 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		error(404, 'Dashboard agent not found');
 	}
 
-	const renderOptions = {
-		request,
-		routePath,
-		searchParams: url.searchParams,
-		session
-	};
-
 	return {
 		agent,
-		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
-			subtitle: 'Review agent workload, contact shortcuts, and lead ownership.',
-			title: agent.name
-		})
+		auxeroFullPage: true,
+		cms: getAdminCmsOverview(),
+		session
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ params, request }) => {
+		const formData = await request.formData();
+		const agent = updateManagedAgent({
+			note: value(formData, 'note'),
+			slug: params.slug,
+			status: normalizeManagedAgentStatus(value(formData, 'status'))
+		});
+
+		if (!agent) {
+			return fail(404, { error: 'Agent not found.' });
+		}
+
+		redirect(303, `/admin/agents/${params.slug}`);
+	}
 };

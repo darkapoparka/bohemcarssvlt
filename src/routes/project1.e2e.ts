@@ -127,14 +127,18 @@ const expectDesktopInventorySurface = async (page: Page) => {
 
 		return {
 			banner: rect('.bohemcars-inventory-banner'),
+			heroControls: document.querySelectorAll(
+				'.bohemcars-inventory-banner .bohemcars-view-toggle, .bohemcars-inventory-banner .bohemcars-inventory-filter-grid, .bohemcars-inventory-banner .bohemcars-inventory-toolbar-row'
+			).length,
 			searchbar: rect('.bohemcars-inventory-banner .bohemcars-inventory-searchbar')
 		};
 	});
 
-	expect(metrics.banner?.height ?? 0).toBeGreaterThan(250);
-	expect(metrics.searchbar?.height ?? 0).toBeGreaterThan(140);
+	expect(metrics.banner?.height ?? 0).toBeGreaterThanOrEqual(250);
+	expect(metrics.searchbar?.height ?? 0).toBeGreaterThanOrEqual(80);
 	expect(metrics.searchbar?.top ?? -1).toBeGreaterThanOrEqual(metrics.banner?.top ?? 0);
 	expect(metrics.searchbar?.bottom ?? 0).toBeLessThanOrEqual((metrics.banner?.bottom ?? 0) + 1);
+	expect(metrics.heroControls).toBeGreaterThanOrEqual(2);
 };
 
 test('homepage preserves Home 05 and routes hero search to inventory', async ({ page }) => {
@@ -877,7 +881,7 @@ test('mobile primary routes do not expose desktop shells or fallback chrome', as
 	await bottomNav.getByRole('link', { name: 'Любими' }).click();
 	await expect(page).toHaveURL(/\/account\/favorites$/);
 	await expect(page.locator('.bohemcars-favorites-mobile')).toBeVisible();
-	await expect(bottomNav).toHaveCount(0);
+	await expect(bottomNav).toBeVisible();
 	await expectNoChromeLeaks();
 
 	await page.goto('/');
@@ -1183,30 +1187,45 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	);
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toBeVisible();
 	await expect(page.locator('.bohemcars-inventory-dashboard-sidebar')).toBeVisible();
-	await expect(page.locator('[data-bohemcars-layout-toggle]')).toContainText('Classic');
+	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Sidebar');
 	await expect(page.locator('.bohemcars-inventory-hero-switches__label')).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-filter-grid')
-	).toBeVisible();
+	).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-banner [data-inventory-filter-field]')
+	).toHaveCount(0);
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-results .bohemcars-inventory-filter-grid')
+	).toHaveCount(0);
+	await expect(
+		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-toolbar-row')
+	).toHaveCount(1);
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-results .bohemcars-inventory-toolbar-row')
+	).toHaveCount(0);
+	await expect(
+		page.locator('.bohemcars-inventory-dashboard-sidebar [data-inventory-filter-field]')
 	).toHaveCount(8);
+
+	await page.goto('/inventory?layout=classic');
+	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
 		'Popover'
 	);
 	const dashboardBrandFilter = page.locator(
-		'.bohemcars-inventory-banner [data-name="brand"] .ifp__field'
+		'.bohemcars-inventory-results-controls [data-name="brand"] .ifp__field'
 	);
 	await dashboardBrandFilter.click();
-	await expect(page.locator('.bohemcars-inventory-banner [data-name="brand"]')).toHaveClass(
-		/ifp--open/
-	);
 	await expect(
-		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
+		page.locator('.bohemcars-inventory-results-controls [data-name="brand"]')
+	).toHaveClass(/ifp--open/);
+	await expect(
+		page.locator('.bohemcars-inventory-results-controls [data-name="brand"] .ifp__panel')
 	).not.toHaveAttribute('aria-modal', 'true');
 	const popoverLayer = await page.evaluate(() => {
 		const panel = document.querySelector(
-			'.bohemcars-inventory-banner [data-name="brand"] .ifp__panel'
+			'.bohemcars-inventory-results-controls [data-name="brand"] .ifp__panel'
 		);
 		const main = document.querySelector('.bohemcars-inventory-main');
 		if (!panel || !main) return null;
@@ -1228,21 +1247,21 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	expect(popoverLayer?.topInsidePanel).toBe(true);
 	await page.keyboard.press('Escape');
 
-	await page.goto('/inventory?filters=modal');
+	await page.goto('/inventory?layout=classic&filters=modal');
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
 		'Modal'
 	);
 	const modalBrandFilter = page.locator(
-		'.bohemcars-inventory-banner [data-name="brand"] .ifp__field'
+		'.bohemcars-inventory-results-controls [data-name="brand"] .ifp__field'
 	);
 	await modalBrandFilter.click();
 	await expect(
-		page.locator('.bohemcars-inventory-banner [data-name="brand"] .ifp__panel')
+		page.locator('.bohemcars-inventory-results-controls [data-name="brand"] .ifp__panel')
 	).toHaveAttribute('aria-modal', 'true');
-	await expect(page.locator('.bohemcars-inventory-banner .ifp__backdrop')).toHaveCount(1);
+	await expect(page.locator('.bohemcars-inventory-results-controls .ifp__backdrop')).toHaveCount(1);
 	const modalLayer = await page.evaluate(() => {
 		const panel = document.querySelector(
-			'.bohemcars-inventory-banner [data-name="brand"] .ifp__panel'
+			'.bohemcars-inventory-results-controls [data-name="brand"] .ifp__panel'
 		);
 		if (!panel) return null;
 
@@ -1287,8 +1306,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-quick-pills')).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-quick-pills--results')).toHaveCount(0);
-	await expect(page.locator('#filterSidebarToggle')).toHaveCount(1);
-	await expect(page.locator('.bohemcars-inventory-searchbar #filterSidebarToggle')).toBeVisible();
+	await expect(page.locator('#filterSidebarToggle')).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-toolbar-row')
 	).toHaveCount(1);
@@ -1347,10 +1365,10 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('.bohemcars-inventory-toolbar-row')).toBeVisible();
 	await expect(
 		page.locator('.bohemcars-inventory-banner .bohemcars-inventory-toolbar-row')
-	).toHaveCount(0);
+	).toHaveCount(1);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-results .bohemcars-inventory-toolbar-row')
-	).toHaveCount(1);
+	).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-toolbar-row')).toHaveCSS(
 		'background-color',
 		'rgba(0, 0, 0, 0)'
@@ -1509,11 +1527,11 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		page.locator('.bohemcars-inventory-content .card-box-style-1').first()
 	).toBeVisible();
 	await expectDesktopInventorySurface(page);
-	await expect(page.locator('[data-bohemcars-layout-toggle]')).toContainText('Sidebar');
+	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
 
 	expect(
 		await visiblePreloadSamplesDuring(page, () =>
-			page.locator('[data-bohemcars-layout-toggle]').click()
+			page.locator('.bohemcars-inventory-layout-toggle:not(.active)').click()
 		)
 	).toEqual([]);
 	await expect(page).toHaveURL(/\/inventory$/);
@@ -1524,43 +1542,68 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(sidebarRail).toHaveCSS('background-color', 'rgb(245, 247, 241)');
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-results #filterSidebarToggle')
-	).toBeHidden();
+	).toHaveCount(0);
 	await expect(page.locator('.bohemcars-inventory-dashboard')).toHaveCSS(
 		'grid-template-columns',
 		/336px/
 	);
 	await expect(
-		page.locator('.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-group')
+		page.locator('.bohemcars-inventory-dashboard-sidebar [data-inventory-filter-field]')
 	).toHaveCount(8);
-	const sidebarBrandGroup = sidebarRail.locator(
-		'.bohemcars-inventory-sidebar-group[data-filter-name="brand"]'
+	const sidebarBrandField = sidebarRail.locator('[data-name="brand"]');
+	await expect(sidebarBrandField.locator('.ifp__label')).toHaveText('Марка');
+	await expect(sidebarBrandField.locator('.ifp__value')).toHaveText('Всички марки');
+	await expect(sidebarBrandField.locator('.ifp__field')).toHaveCSS('min-height', '68px');
+	await expect(sidebarBrandField.locator('.ifp__panel')).toHaveCSS('display', 'none');
+	await sidebarBrandField.locator('.ifp__field').click();
+	await expect(sidebarBrandField).toHaveClass(/ifp--open/);
+	await expect(sidebarBrandField.locator('.ifp__panel')).toBeVisible();
+	await expect(sidebarBrandField.locator('.ifp__panel')).toHaveCSS('position', 'absolute');
+	const sidebarBrandOverflow = await sidebarRail.evaluate((rail) => ({
+		clientWidth: rail.clientWidth,
+		scrollWidth: rail.scrollWidth
+	}));
+	expect(sidebarBrandOverflow.scrollWidth).toBeLessThanOrEqual(
+		sidebarBrandOverflow.clientWidth + 1
 	);
-	await expect(sidebarBrandGroup.locator('legend span')).toHaveText('Марка');
-	await expect(
-		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option:has(input[value=""])')
-	).toHaveCSS('background-color', 'rgb(234, 246, 207)');
-	await expect(
-		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option__media img').first()
-	).toBeVisible();
-	await expect(
-		sidebarBrandGroup.locator('.bohemcars-inventory-sidebar-option__control').first()
-	).toHaveCSS('width', '17px');
+	const sidebarBrandPanelBounds = await sidebarBrandField
+		.locator('.ifp__panel')
+		.evaluate((panel) => {
+			const rail = panel.closest('.bohemcars-inventory-dashboard-sidebar');
+			const railRect = rail?.getBoundingClientRect();
+			const panelRect = panel.getBoundingClientRect();
+
+			return {
+				panelLeft: Math.round(panelRect.left),
+				panelRight: Math.round(panelRect.right),
+				railLeft: Math.round(railRect?.left ?? 0),
+				railRight: Math.round(railRect?.right ?? 0)
+			};
+		});
+	expect(sidebarBrandPanelBounds.panelLeft).toBeGreaterThanOrEqual(
+		sidebarBrandPanelBounds.railLeft
+	);
+	expect(sidebarBrandPanelBounds.panelRight).toBeLessThanOrEqual(sidebarBrandPanelBounds.railRight);
+	await expect(sidebarBrandField.locator('.ifp__search')).toHaveCount(0);
+	await expect(sidebarBrandField.locator('.ifp__row').first()).toBeVisible();
+	await expect(sidebarBrandField.locator('.ifp__row').first()).toContainText('Всички марки');
+	await expect(sidebarBrandField.locator('.ifp__chip')).toHaveCount(0);
 	await expect(
 		page.locator('.bohemcars-inventory-dashboard-results .bohemcars-inventory-content')
 	).toBeVisible();
 	await expect(page.locator('.compare-details.btn.btn-small.open-modal')).toHaveCount(42);
 	await expect(page.locator('.view-details')).toHaveCount(42);
-	await expect(page.locator('[data-bohemcars-layout-toggle]')).toContainText('Classic');
+	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Sidebar');
 
 	expect(
 		await visiblePreloadSamplesDuring(page, () =>
-			page.locator('[data-bohemcars-layout-toggle]').click()
+			page.locator('.bohemcars-inventory-layout-toggle:not(.active)').click()
 		)
 	).toEqual([]);
 	await expect(page).toHaveURL(/\/inventory\?layout=classic$/);
 	await expect(page.locator('.preload')).toBeHidden();
 	await expect(page.locator('.bohemcars-inventory-dashboard-sidebar')).toHaveCount(0);
-	await expect(page.locator('[data-bohemcars-layout-toggle]')).toContainText('Sidebar');
+	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
 
 	expect(
 		await visiblePreloadSamplesDuring(page, () =>
@@ -1610,20 +1653,23 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 	await expect(page.locator('.listing-details[data-bohemcars-detail="true"]')).toBeVisible();
 	await expect(page.locator('.listing-details--content')).toBeVisible();
 	await expect(page.locator('.listing-details--sidebar')).toBeVisible();
-	await expect(page.locator('.title-section .btn-line[data-bohemcars-compare]')).toContainText(
-		'Сравни'
-	);
+	await expect(
+		page.locator('.title-section .bohemcars-pdp-compare[data-bohemcars-compare]')
+	).toBeVisible();
 	await expect(page.locator('.title-section .bohemcars-favorite')).toBeVisible();
 	await expect(page.locator('.swiper-listing-details-main .listing-details-item')).toHaveCount(7);
 	await expect(page.locator('.swiper-listing-details-thumbs .listing-details-thumb')).toHaveCount(
 		7
 	);
-	await expect(page.locator('.listing-details--content .menu-tab-style4 li')).toHaveCount(6);
+	await expect(page.locator('.listing-details--content .menu-tab-style4 li')).toHaveCount(7);
+	await expect(page.locator('.listing-details--content .menu-tab-style4 li').first()).toContainText(
+		'Описание'
+	);
 	await expect(page.locator('.listing-details--sidebar .menu-tab-style5 li')).toHaveCount(2);
 	await expect(page.locator('.car-overview-list-style2 > li')).toHaveCount(10);
 	await expect(page.locator('form.send-inquiry')).toBeVisible();
 	await expect(page.locator('.listing-details')).toContainText(firstTitle);
-	expect(await cssValue(detailTitle, 'color')).toBe('rgb(28, 28, 28)');
+	expect(await cssValue(detailTitle, 'color')).toBe('rgb(255, 255, 255)');
 	expect(await cssValue(detailTitle, 'font-size')).toBe('40px');
 	await expect(page.locator('.listing-details--sidebar-box .h4').first()).toHaveCSS(
 		'color',

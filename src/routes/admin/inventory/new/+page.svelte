@@ -1,13 +1,14 @@
 <script lang="ts">
-	import AccountListingFormTemplatePage from '$lib/components/account/AccountListingFormTemplatePage.svelte';
+	import AdminShell from '$lib/components/admin/AdminShell.svelte';
+	import AdminListingEditor from '$lib/components/admin/AdminListingEditor.svelte';
 
-	let { data } = $props();
+	let { form } = $props();
 </script>
 
-<AccountListingFormTemplatePage
-	afterFormHtml={data.afterFormHtml}
-	beforeFormHtml={data.beforeFormHtml}
-	form={data.form}
-	formHtml={data.formHtml}
-	pageDocument={data.pageDocument}
-/>
+<svelte:head>
+	<title>Bohemcars Admin - Add Listing</title>
+</svelte:head>
+
+<AdminShell title="Add listing" activePath="/admin/inventory/new">
+	<AdminListingEditor {form} mode="create" />
+</AdminShell>

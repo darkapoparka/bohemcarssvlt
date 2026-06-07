@@ -6,6 +6,7 @@
 	let { copy, images, title }: { copy: DetailCopy; images: string[]; title: string } = $props();
 	const contactHref = resolve('/contact');
 	const denseInventoryHref = resolve('/inventory?view=4');
+	const initialSlide = $derived(images.length > 1 ? 1 : 0);
 
 	type SwiperInstance = {
 		destroy?: (deleteInstance?: boolean, cleanStyles?: boolean) => void;
@@ -33,7 +34,7 @@
 		});
 
 		const mainSwiper = new Swiper(main, {
-			initialSlide: 1,
+			initialSlide,
 			loop: false,
 			navigation: {
 				nextEl: main.querySelector('.navigation-prev'),
@@ -142,3 +143,30 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	.bohemcars-pdp-gallery-main {
+		overflow: hidden;
+	}
+
+	.bohemcars-pdp-gallery-main:not(.swiper-listing-details-main) .swiper-wrapper {
+		display: block;
+		transform: none !important;
+	}
+
+	.bohemcars-pdp-gallery-main:not(.swiper-listing-details-main) .swiper-slide {
+		display: none;
+	}
+
+	.bohemcars-pdp-gallery-main:not(.swiper-listing-details-main) .swiper-slide:nth-child(2) {
+		display: block;
+	}
+
+	.bohemcars-pdp-gallery-main:not(.swiper-listing-details-main) .swiper-slide:only-child {
+		display: block;
+	}
+
+	.bohemcars-pdp-gallery-main:not(.swiper-listing-details-main) .listing-details-item {
+		width: 100%;
+	}
+</style>

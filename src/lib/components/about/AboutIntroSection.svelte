@@ -29,9 +29,16 @@
 					class="bohemcars-about-service wow fadeInUp"
 					data-wow-delay={`0.${(index % 4) + 1}s`}
 				>
-					<span class="bohemcars-about-service__number">{String(index + 1).padStart(2, '0')}</span>
-					<h3>{step.title}</h3>
-					<p>{step.description}</p>
+					<div class="bohemcars-about-service__media">
+						<img src={step.image} alt={step.title} loading="lazy" />
+						<span class="bohemcars-about-service__number"
+							>{String(index + 1).padStart(2, '0')}</span
+						>
+					</div>
+					<div class="bohemcars-about-service__body">
+						<h3>{step.title}</h3>
+						<p>{step.description}</p>
+					</div>
 				</article>
 			{/each}
 		</div>
@@ -71,7 +78,7 @@
 		line-height: 1.12;
 	}
 
-	.bohemcars-about-story__copy p {
+	.bohemcars-about-story__copy p:not(.bohemcars-about-eyebrow) {
 		max-width: 820px;
 		margin-bottom: 8px;
 		color: #696665;
@@ -90,8 +97,9 @@
 	.bohemcars-about-highlight {
 		display: flex;
 		min-height: 44px;
-		border-radius: 8px;
-		background: var(--bc-surface);
+		border: 1px solid var(--bc-border);
+		border-radius: 10px;
+		background: #ffffff;
 		padding: 10px 16px;
 		gap: 10px;
 		align-items: center;
@@ -113,51 +121,85 @@
 
 	.bohemcars-about-services__grid {
 		display: grid;
-		gap: 16px;
+		gap: 20px;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
 	.bohemcars-about-service {
-		position: relative;
-		min-height: 150px;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-surface);
-		padding: 20px 20px 18px;
+		border-radius: 16px;
+		background: #ffffff;
+		box-shadow: 0 1px 2px rgb(20 33 15 / 0.04);
 		color: #1c1c1c;
 		transition:
-			background-color 0.2s ease,
-			border-color 0.2s ease;
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
 	}
 
 	.bohemcars-about-service:hover {
 		border-color: #cbd8c1;
-		background: var(--bc-surface-hover);
+		box-shadow: 0 10px 26px rgb(20 33 15 / 0.07);
+	}
+
+	.bohemcars-about-service__media {
+		position: relative;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+		background: var(--bc-surface);
+	}
+
+	.bohemcars-about-service__media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
 	.bohemcars-about-service__number {
+		position: absolute;
+		z-index: 2;
+		top: 12px;
+		left: 12px;
 		display: inline-flex;
-		margin-bottom: 12px;
-		color: #84a928;
-		font-size: 13px;
+		min-width: 32px;
+		height: 26px;
+		padding: 0 10px;
+		border-radius: 999px;
+		background: rgb(20 33 15 / 0.74);
+		color: #d9f275;
+		font-size: 12px;
 		font-weight: 800;
+		letter-spacing: 0.04em;
 		line-height: 1;
+		align-items: center;
+		justify-content: center;
+		backdrop-filter: blur(6px);
+	}
+
+	.bohemcars-about-service__body {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		padding: 16px 18px 18px;
 	}
 
 	.bohemcars-about-service h3 {
-		margin-bottom: 8px;
-		font-size: 19px;
+		margin-bottom: 7px;
+		color: #1c1c1c;
+		font-size: 18px;
 		font-weight: 700;
-		line-height: 1.22;
+		line-height: 1.25;
 	}
 
 	.bohemcars-about-service p {
 		margin: 0;
 		color: #696665;
 		font-size: 14px;
-		font-weight: 600;
-		line-height: 1.48;
+		font-weight: 500;
+		line-height: 1.5;
 	}
 
 	@media (max-width: 1199px) {

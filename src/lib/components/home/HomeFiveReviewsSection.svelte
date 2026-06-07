@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveReview } from '$lib/auxero/home-five';
+	import { bohemcarsAssets } from '$lib/data/bohemcars';
 	import type { HomePageCopy } from '$lib/i18n/messages';
+	import { ArrowRight } from '@lucide/svelte';
 	import HomeSectionCta from './HomeSectionCta.svelte';
 
 	let { copy, reviews }: { copy: HomePageCopy; reviews: HomeFiveReview[] } = $props();
@@ -56,6 +58,14 @@
 						{/each}
 						<div class="swiper-slide bohemcars-review-more-slide">
 							<a href={reviewsHref} class="bohemcars-review-more-card">
+								<span class="bohemcars-review-more-card__topline">
+									<img
+										class="bohemcars-review-more-card__brand"
+										src={bohemcarsAssets.logoLight}
+										alt="Bohemcars"
+										loading="lazy"
+									/>
+								</span>
 								<span class="bohemcars-review-more-card__eyebrow">{copy.reviewsTitle}</span>
 								<span class="bohemcars-review-more-card__proof" aria-hidden="true">
 									<span class="bohemcars-review-more-card__avatars">
@@ -70,18 +80,7 @@
 								<span class="bohemcars-review-more-card__cta">
 									<span>{copy.commonCta}</span>
 									<span class="bohemcars-review-more-card__icon" aria-hidden="true">
-										<svg
-											width="20"
-											height="20"
-											viewBox="0 0 17 17"
-											fill="none"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												d="M8.125 0C6.51803 0 4.94714 0.476523 3.611 1.36931C2.27485 2.2621 1.23344 3.53105 0.618482 5.0157C0.00352044 6.50035 -0.157382 8.13401 0.156123 9.71011C0.469628 11.2862 1.24346 12.7339 2.37976 13.8702C3.51606 15.0065 4.9638 15.7804 6.5399 16.0939C8.11599 16.4074 9.74966 16.2465 11.2343 15.6315C12.719 15.0166 13.9879 13.9752 14.8807 12.639C15.7735 11.3029 16.25 9.73197 16.25 8.125C16.2477 5.97081 15.391 3.90551 13.8677 2.38227C12.3445 0.85903 10.2792 0.00227486 8.125 0ZM11.6922 8.56719L9.19219 11.0672C9.07492 11.1845 8.91586 11.2503 8.75 11.2503C8.58415 11.2503 8.42509 11.1845 8.30782 11.0672C8.19054 10.9499 8.12466 10.7909 8.12466 10.625C8.12466 10.4591 8.19054 10.3001 8.30782 10.1828L9.74141 8.75H5C4.83424 8.75 4.67527 8.68415 4.55806 8.56694C4.44085 8.44973 4.375 8.29076 4.375 8.125C4.375 7.95924 4.44085 7.80027 4.55806 7.68306C4.67527 7.56585 4.83424 7.5 5 7.5H9.74141L8.30782 6.06719C8.19054 5.94991 8.12466 5.79085 8.12466 5.625C8.12466 5.45915 8.19054 5.30009 8.30782 5.18281C8.42509 5.06554 8.58415 4.99965 8.75 4.99965C8.91586 4.99965 9.07492 5.06554 9.19219 5.18281L11.6922 7.68281C11.7503 7.74086 11.7964 7.80979 11.8279 7.88566C11.8593 7.96154 11.8755 8.04287 11.8755 8.125C11.8755 8.20713 11.8593 8.28846 11.8279 8.36434C11.7964 8.44021 11.7503 8.50914 11.6922 8.56719Z"
-												fill="currentColor"
-											/>
-										</svg>
+										<ArrowRight size={16} strokeWidth={2.7} />
 									</span>
 								</span>
 							</a>
@@ -179,9 +178,25 @@
 		flex-direction: column;
 		justify-content: space-between;
 		border-radius: 8px;
-		background: #1c1c1c;
+		background:
+			linear-gradient(135deg, rgba(152, 188, 42, 0.16), transparent 34%),
+			linear-gradient(135deg, #14210f 0%, #1a2a16 66%, #0d160a 100%);
 		color: #ffffff;
+		isolation: isolate;
+		overflow: hidden;
 		padding: 22px;
+		position: relative;
+	}
+
+	.bohemcars-review-more-card::after {
+		position: absolute;
+		inset: 0;
+		background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+		background-size: 18px 18px;
+		content: '';
+		opacity: 0.24;
+		pointer-events: none;
+		z-index: -1;
 	}
 
 	.bohemcars-review-more-card,
@@ -198,6 +213,27 @@
 		letter-spacing: 0;
 		line-height: 16px;
 		text-transform: uppercase;
+	}
+
+	.bohemcars-review-more-card__topline {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.bohemcars-review-more-card__brand {
+		display: block;
+		width: min(148px, 48%);
+		height: auto;
+		box-sizing: border-box;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.92);
+		padding: 6px 9px;
+	}
+
+	.bohemcars-review-more-card__cta span {
+		color: inherit;
 	}
 
 	.bohemcars-review-more-card__title {
@@ -231,9 +267,11 @@
 		}
 
 		.bohemcars-home-reviews :global(.title-section) {
-			align-items: center;
+			align-items: flex-start;
+			justify-content: flex-start;
 			margin-bottom: 16px !important;
 			padding-right: 16px;
+			text-align: left;
 		}
 
 		.bohemcars-reviews-banner {
@@ -248,8 +286,10 @@
 		.bohemcars-home-reviews :global(.title-section h2) {
 			color: #1c1c1c;
 			font-size: 24px;
-			font-weight: 700;
+			font-weight: 800;
+			letter-spacing: 0;
 			line-height: 30px;
+			text-align: left;
 		}
 
 		.bohemcars-home-reviews :global(.title-section .bohemcars-section-cta) {
@@ -332,23 +372,40 @@
 
 		.bohemcars-review-more-card {
 			height: 100%;
-			min-height: 224px;
+			min-height: 232px;
 			border: 0;
-			background: var(--bc-surface);
-			color: #14210f;
-			padding: 20px;
+			background:
+				linear-gradient(135deg, rgba(152, 188, 42, 0.2), transparent 38%),
+				linear-gradient(135deg, #14210f 0%, #1a2a16 70%, #0d160a 100%);
+			color: #ffffff;
+			padding: 18px 20px;
 		}
 
 		.bohemcars-review-more-card,
 		.bohemcars-review-more-card:hover,
 		.bohemcars-review-more-card:focus-visible {
-			color: #14210f;
+			color: #ffffff;
 		}
 
 		.bohemcars-review-more-card__eyebrow {
-			color: #98bc2a;
+			display: block;
+			margin-top: 12px;
+			color: #d9f275;
 			font-size: 12px;
-			line-height: 16px;
+			font-weight: 800;
+			line-height: 15px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-review-more-card__topline {
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		.bohemcars-review-more-card__brand {
+			width: 132px;
+			max-width: 56%;
+			padding: 5px 9px;
 		}
 
 		.bohemcars-review-more-card__proof {
@@ -356,7 +413,7 @@
 			align-items: center;
 			justify-content: space-between;
 			gap: 12px;
-			margin-top: 16px;
+			margin-top: 11px;
 		}
 
 		.bohemcars-review-more-card__avatars {
@@ -366,8 +423,8 @@
 
 		.bohemcars-review-more-card__avatars img {
 			display: block;
-			width: 34px;
-			height: 34px;
+			width: 32px;
+			height: 32px;
 			border: 2px solid #ffffff;
 			border-radius: 50%;
 			object-fit: cover;
@@ -386,45 +443,57 @@
 		}
 
 		.bohemcars-review-more-card__title {
-			margin-top: 18px;
-			color: #14210f;
-			font-size: 22px;
-			line-height: 27px;
+			margin-top: 12px;
+			color: #ffffff;
+			font-size: 21px;
+			line-height: 26px;
 		}
 
 		.bohemcars-review-more-card__meta {
-			color: #536052;
-			font-size: 14px;
-			line-height: 19px;
+			color: rgb(255 255 255 / 0.72);
+			font-size: 13px;
+			line-height: 18px;
 		}
 
 		.bohemcars-review-more-card__cta {
 			display: inline-flex;
-			width: 100%;
+			width: fit-content;
 			align-items: center;
-			justify-content: flex-end;
-			gap: 10px;
+			justify-content: center;
+			gap: 9px;
+			margin-left: auto;
+			border-radius: 999px;
+			background: #d9f275;
 			color: #14210f;
-			font-size: 19px;
+			font-size: 14px;
 			font-weight: 800;
-			line-height: 26px;
+			line-height: 20px;
+			padding: 7px 8px 7px 14px;
 		}
 
 		.bohemcars-review-more-card__icon {
 			display: inline-flex;
-			width: 28px;
-			height: 28px;
+			width: 22px;
+			height: 22px;
 			align-items: center;
 			justify-content: center;
 			border-radius: 50%;
-			background: #98bc2a;
+			background: #14210f;
 			color: #ffffff;
 		}
 
-		.bohemcars-review-more-card__icon svg {
+		.bohemcars-review-more-card__icon :global(svg) {
 			display: block;
-			width: 28px;
-			height: 28px;
+			width: 14px;
+			height: 14px;
+		}
+
+		.bohemcars-review-more-card__icon :global(svg),
+		.bohemcars-review-more-card__icon :global(path),
+		.bohemcars-review-more-card__icon :global(line),
+		.bohemcars-review-more-card__icon :global(polyline) {
+			color: #ffffff !important;
+			stroke: #ffffff !important;
 		}
 
 		.bohemcars-home-reviews :global(.pagination-swiper-testimonior) {

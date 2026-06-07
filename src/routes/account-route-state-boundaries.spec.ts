@@ -5,25 +5,30 @@ const routeSource = (routeFile: string) =>
 	readFileSync(new URL(routeFile, import.meta.url), 'utf-8');
 
 describe('account route state boundaries', () => {
-	it('loads dashboard recent data from the server state module, not the raw adapter', () => {
+	it('loads dashboard recent data from route-specific server state modules, not the raw adapter', () => {
 		const accountDashboard = routeSource('./account/+page.server.ts');
 		const adminDashboard = routeSource('./admin/+page.server.ts');
 
 		expect([accountDashboard, adminDashboard].join('\n')).not.toContain('auxero-account-data');
 		expect(accountDashboard).toContain('getAccountDashboardPageData');
-		expect(adminDashboard).toContain('getAccountDashboardPageData');
+		expect(adminDashboard).toContain('getAdminCmsOverview');
 	});
 
-	it('loads message thread data from the server state module, not the raw adapter', () => {
-		const routes = [
-			routeSource('./account/messages/+page.server.ts'),
+	it('loads account message data from the server state module, not the raw adapter', () => {
+		const accountMessages = routeSource('./account/messages/+page.server.ts');
+
+		expect(accountMessages).not.toContain('auxero-account-data');
+		expect(accountMessages).toContain('getAccountMessageThreadData');
+	});
+
+	it('loads admin message and inquiry data from the CMS state module', () => {
+		const adminRoutes = [
 			routeSource('./admin/messages/+page.server.ts'),
 			routeSource('./admin/inquiries/+page.server.ts')
-		];
-		const joinedRoutes = routes.join('\n');
+		].join('\n');
 
-		expect(joinedRoutes).not.toContain('auxero-account-data');
-		expect(joinedRoutes).toContain('getAccountMessageThreadData');
+		expect(adminRoutes).not.toContain('auxero-account-data');
+		expect(adminRoutes).toContain('getAdminCmsOverview');
 	});
 
 	it('keeps account raw adapter exports scoped to compatibility rendering', () => {

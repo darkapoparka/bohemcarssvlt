@@ -6,10 +6,14 @@
 	import { Check, ChevronDown, Search, X } from '@lucide/svelte';
 
 	let {
+		allSelectedValue,
 		filter,
+		optionLayout = 'auto',
 		presentation = 'popover'
 	}: {
+		allSelectedValue?: string;
 		filter: AuxeroInventoryFilter;
+		optionLayout?: 'auto' | 'grid' | 'list';
 		presentation?: AuxeroInventoryDesktopData['filterPresentation'];
 	} = $props();
 
@@ -18,6 +22,10 @@
 	const hasImages = $derived(filter.options.some((option) => option.image));
 	const searchable = $derived(filter.options.length > 8);
 	const usesModal = $derived(presentation === 'modal');
+	const usesGridOptions = $derived(
+		!usesModal && (optionLayout === 'grid' || (optionLayout === 'auto' && hasImages))
+	);
+	const usesRowOptions = $derived(!usesGridOptions);
 
 	let open = $state(false);
 	let query = $state('');
@@ -38,8 +46,13 @@
 		return !needle || label.toLowerCase().includes(needle);
 	};
 
-	const fieldValue = $derived(allSelected ? filter.placeholder : filter.selectedSummary);
-	const listClass = $derived(usesModal ? 'ifp__modal-list' : hasImages ? 'ifp__grid' : 'ifp__list');
+	const fieldValue = $derived(
+		allSelected ? (allSelectedValue ?? filter.placeholder) : filter.selectedSummary
+	);
+	const allOptionLabel = $derived(allSelectedValue ?? filter.placeholder);
+	const listClass = $derived(
+		usesModal ? 'ifp__modal-list' : usesGridOptions ? 'ifp__grid' : 'ifp__list'
+	);
 	const showDone = $derived(usesModal || filter.mode === 'multiple');
 
 	function close(focusTrigger = true) {
@@ -123,7 +136,7 @@
 <div
 	class="ifp"
 	class:ifp--open={open}
-	class:ifp--grid={hasImages && !usesModal}
+	class:ifp--grid={usesGridOptions}
 	class:ifp--modal={usesModal}
 	bind:this={root}
 	data-name={filter.name}
@@ -181,7 +194,7 @@
 
 		<div class={listClass}>
 			<label
-				class={usesModal || !hasImages ? 'ifp__row' : 'ifp__chip ifp__chip--all'}
+				class={usesRowOptions ? 'ifp__row' : 'ifp__chip ifp__chip--all'}
 				hidden={Boolean(query)}
 			>
 				<input
@@ -193,14 +206,18 @@
 					data-inventory-filter-input
 					onchange={onPick}
 				/>
-				<span class="ifp__control" aria-hidden="true"></span>
-				<span class="ifp__rowlabel">{filter.placeholder}</span>
-				<span class="ifp__tick"><Check size={16} strokeWidth={2.6} aria-hidden="true" /></span>
+				{#if usesRowOptions}
+					<span class="ifp__control" aria-hidden="true"></span>
+					<span class="ifp__rowlabel">{allOptionLabel}</span>
+					<span class="ifp__tick"><Check size={16} strokeWidth={2.6} aria-hidden="true" /></span>
+				{:else}
+					<span class="ifp__chiplabel">{allOptionLabel}</span>
+				{/if}
 			</label>
 
 			{#each filter.options as option (option.value)}
 				<label
-					class={usesModal || !hasImages ? 'ifp__row' : 'ifp__chip'}
+					class={usesRowOptions ? 'ifp__row' : 'ifp__chip'}
 					hidden={searchable && !matches(option.label)}
 				>
 					<input
@@ -212,9 +229,9 @@
 						data-inventory-filter-input
 						onchange={onPick}
 					/>
-					{#if usesModal || !hasImages}
+					{#if usesRowOptions}
 						<span class="ifp__control" aria-hidden="true"></span>
-						{#if usesModal && option.image}
+						{#if option.image}
 							<img
 								class="ifp__rowimage"
 								src={option.image}
@@ -230,10 +247,11 @@
 					{:else}
 						{#if option.image}
 							<img src={option.image} alt="" aria-hidden="true" loading="lazy" decoding="async" />
-						{:else}
-							<span class="ifp__mono">{option.label.charAt(0)}</span>
 						{/if}
 						<span class="ifp__chiplabel">{option.label}</span>
+						{#if typeof option.count === 'number'}
+							<small class="ifp__chipcount">{option.count}</small>
+						{/if}
 					{/if}
 				</label>
 			{/each}
@@ -358,7 +376,9 @@
 		left: 0;
 		z-index: 1001;
 		display: none;
-		width: min(320px, 86vw);
+		box-sizing: border-box;
+		width: min(520px, calc(100vw - 40px));
+		max-width: calc(100vw - 40px);
 		border: 1px solid #ececec;
 		border-radius: 14px;
 		background: #ffffff;
@@ -384,7 +404,7 @@
 	}
 
 	.ifp--grid .ifp__panel {
-		width: min(420px, 90vw);
+		width: min(544px, calc(100vw - 40px));
 	}
 
 	.ifp--open .ifp__panel {
@@ -473,9 +493,10 @@
 
 	.ifp__grid {
 		display: grid;
-		max-height: 290px;
+		max-height: min(640px, calc(100vh - 180px));
 		gap: 8px;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		overflow-x: hidden;
 		overflow-y: auto;
 		scrollbar-width: thin;
 	}
@@ -483,8 +504,9 @@
 	.ifp__list,
 	.ifp__modal-list {
 		display: grid;
-		max-height: 300px;
+		max-height: min(640px, calc(100vh - 180px));
 		gap: 4px;
+		overflow-x: hidden;
 		overflow-y: auto;
 		scrollbar-width: thin;
 	}
@@ -505,7 +527,7 @@
 
 	.ifp__chip {
 		display: flex;
-		min-height: 76px;
+		min-height: 62px;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
@@ -559,9 +581,30 @@
 		white-space: nowrap;
 	}
 
+	.ifp__chipcount {
+		color: #5f6b50;
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: 0.01em;
+	}
+
+	.ifp__chip:has(.ifp__input:checked) .ifp__chipcount {
+		color: #3f5a14;
+	}
+
+	.ifp__chip--all {
+		min-height: 46px;
+		flex-direction: row;
+		grid-column: 1 / -1;
+		gap: 8px;
+	}
+
 	.ifp__row {
 		display: flex;
+		box-sizing: border-box;
 		width: 100%;
+		min-width: 0;
 		min-height: 42px;
 		align-items: center;
 		gap: 10px;
@@ -607,10 +650,6 @@
 	}
 
 	.ifp__control {
-		display: none;
-	}
-
-	.ifp__panel--modal .ifp__control {
 		display: inline-grid;
 		width: 18px;
 		height: 18px;
@@ -621,11 +660,17 @@
 		background: #ffffff;
 	}
 
+	.ifp__panel--modal .ifp__control {
+		display: inline-grid;
+	}
+
+	.ifp__row:has(.ifp__input:checked) .ifp__control,
 	.ifp__panel--modal .ifp__row:has(.ifp__input:checked) .ifp__control {
 		border-color: #8fbf2e;
 		background: #8fbf2e;
 	}
 
+	.ifp__row:has(.ifp__input:checked) .ifp__control::after,
 	.ifp__panel--modal .ifp__row:has(.ifp__input:checked) .ifp__control::after {
 		width: 9px;
 		height: 6px;
@@ -650,6 +695,7 @@
 	}
 
 	.ifp__row small {
+		flex: 0 0 auto;
 		color: #7a8a63;
 		font-size: 12px;
 		font-weight: 700;

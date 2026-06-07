@@ -66,14 +66,14 @@
 			<div class="flex items-center justify-end gap-12">
 				<a
 					href={compareHref}
-					class="btn btn-medium btn-line open-modal padding-button-medium font-weight-600 gap-5"
+					class="btn-icon-circle hover-stroke-white open-modal bohemcars-pdp-compare"
 					data-modal-id="#CompareModal"
 					data-bohemcars-compare={detail.slug}
 					role="button"
 					aria-label={`${detail.copy.compare} ${detail.title}`}
+					title={detail.copy.compare}
 				>
 					{@render compareIcon()}
-					{detail.copy.compare}
 				</a>
 
 				<a
@@ -101,13 +101,12 @@
 			copy={detail.copy}
 		/>
 
-		<p class="h4 mb-16">{detail.copy.description}</p>
-		<p class="text-secondary mb-40">{detail.description}</p>
-
-		<div class="divider mb-40 w-full"></div>
-
 		<p class="h4 mb-16">{detail.copy.getToKnow}</p>
-		<AuxeroVehicleDetailFeatureTabs tabs={detail.featureTabs} />
+		<AuxeroVehicleDetailFeatureTabs
+			description={detail.description}
+			descriptionLabel={detail.copy.description}
+			tabs={detail.featureTabs}
+		/>
 
 		<AuxeroVehicleDetailStaticContent {detail} />
 	</div>

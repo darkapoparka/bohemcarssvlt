@@ -181,7 +181,7 @@ export const auxeroAboutContent: AuxeroAboutContent = {
 			},
 			{
 				title: 'Налични автомобили',
-				image: '/assets/bohemcars/home2/home2-action-buy.webp',
+				image: '/assets/bohemcars/hero/home-05-showroom-exterior.webp',
 				description: 'Огледи с уговорка, контекст за произход, състояние, пробег и следващи стъпки.'
 			},
 			{

@@ -428,11 +428,13 @@ export const updateBohemcarsInventoryListingRecord = (
 	const title = patch.title?.trim();
 	const priceLabel = patch.priceLabel?.trim();
 	const mileage = patch.mileage?.trim();
+	const routePath = patch.routePath?.trim();
 	const vin = patch.vin?.trim();
 
 	if (title) listing.title = title;
 	if (priceLabel) listing.priceLabel = priceLabel;
 	if (mileage) listing.mileage = mileage;
+	if (routePath) listing.routePath = routePath;
 	if (vin) listing.vin = vin;
 	if (patch.status) listing.status = patch.status;
 	listing.updatedAt = stamp();

@@ -6,7 +6,12 @@
 	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { AuxeroPageBanner } from '$lib/auxero/page-banner';
-	import type { AuxeroSellCarFormData, AuxeroSellCarStep } from '$lib/auxero/sell-your-car';
+	import type {
+		AuxeroSellCarFormData,
+		AuxeroSellCarMobileCopy,
+		AuxeroSellCarMobileStep,
+		AuxeroSellCarStep
+	} from '$lib/auxero/sell-your-car';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 	import PageBanner from '$lib/components/common/PageBanner.svelte';
 	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
@@ -16,6 +21,8 @@
 	let {
 		form,
 		hero,
+		mobileCopy,
+		mobileSteps,
 		pageDocument,
 		shellCopy,
 		shellFooter,
@@ -26,6 +33,8 @@
 	}: {
 		form: AuxeroSellCarFormData;
 		hero: AuxeroPageBanner;
+		mobileCopy: AuxeroSellCarMobileCopy;
+		mobileSteps: AuxeroSellCarMobileStep[];
 		pageDocument: AuxeroPageDocument;
 		shellCopy: HomePageCopy;
 		shellFooter: HomeFiveFooterData;
@@ -84,7 +93,7 @@
 </div>
 
 <div class="bohemcars-sell-mobile-route">
-	<SellYourCarMobilePage {form} />
+	<SellYourCarMobilePage copy={mobileCopy} {form} steps={mobileSteps} />
 </div>
 
 <style>

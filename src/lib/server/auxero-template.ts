@@ -27,6 +27,7 @@ import {
 	getAuxeroListingRuntimeData,
 	type AuxeroRenderOptions
 } from './auxero-listing-data';
+import { resolveLocale } from '$lib/i18n/messages';
 import { applyHome05TemplateData, applyHomeTemplateData } from './auxero-home-data';
 import { applySupportTemplateData, isSupportTemplate } from './auxero-support-data';
 import { inventoryTemplateForView, resolveInventoryView } from './inventory-state';
@@ -635,7 +636,8 @@ function injectLocalBehavior(
 	const pageClass = `auxero-template-${templateFile.replace(/[^a-z0-9]/gi, '-')}`;
 	const runtimeData = {
 		...getAuxeroListingRuntimeData(),
-		account: getAuxeroAccountRuntimeData(options)
+		account: getAuxeroAccountRuntimeData(options),
+		locale: resolveLocale(options.searchParams?.get('lang'))
 	};
 	const currentView = resolveInventoryView(options.view ?? options.searchParams?.get('view'));
 	const isInventoryTemplate =
@@ -1066,6 +1068,20 @@ function injectLocalBehavior(
 		opacity: 0.98;
 		transform: translate(18%, 20px) scaleX(-1);
 		z-index: 3;
+	}
+	body.${localScopeClass} .bohemcars-inventory-banner--compact {
+		min-height: 250px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-banner--compact > .container {
+		padding-bottom: 20px;
+		padding-top: 22px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-banner--compact .bohemcars-inventory-banner__car {
+		max-height: 152px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-banner--compact .bohemcars-inventory-banner__car--x5,
+	body.${localScopeClass} .bohemcars-inventory-banner--compact .bohemcars-inventory-banner__car--sq5 {
+		max-width: 348px;
 	}
 	body.${localScopeClass} .bohemcars-sr-only {
 		border: 0;
@@ -1586,18 +1602,18 @@ function injectLocalBehavior(
 	body.${localScopeClass} .bohemcars-inventory-dashboard-sidebar,
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results,
 	body.${localScopeClass} .bohemcars-inventory-dashboard-map {
-		border: 1px solid #dde5d8;
-		border-radius: 8px;
+		border: 1px solid #e6e8e3;
+		border-radius: 12px;
 		box-shadow: none;
 		min-width: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-sidebar {
-		background:
-			linear-gradient(180deg, rgba(217, 242, 117, 0.22), rgba(217, 242, 117, 0) 156px),
-			#f5f7f1;
+		background: #ffffff;
+		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 		max-height: calc(100vh - 124px);
 		overflow: auto;
-		padding: 18px;
+		overscroll-behavior: contain;
+		padding: 20px 18px;
 		position: sticky;
 		top: 104px;
 		scrollbar-width: thin;
@@ -1611,74 +1627,77 @@ function injectLocalBehavior(
 		gap: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading {
-		border-bottom: 1px solid #dde7d2;
-		padding: 0 2px 14px;
+		border-bottom: 1px solid #ebece8;
+		margin-bottom: 2px;
+		padding: 0 0 16px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading p {
 		margin: 0;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading .h5 {
-		color: #1c1c1c;
-		font-size: 20px;
-		line-height: 24px;
+		color: #141414;
+		font-size: 18px;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+		line-height: 22px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-heading .text-secondary {
-		color: #60714c !important;
-		font-size: 13px;
-		font-weight: 700;
+		color: #5b6470 !important;
+		font-size: 12.5px;
+		font-weight: 500;
 		line-height: 18px;
+		margin-top: 4px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-group {
 		border: 0;
-		border-bottom: 1px solid #dde7d2;
+		border-bottom: 1px solid #eef0ec;
 		min-inline-size: 0;
 		margin: 0;
-		padding: 16px 0;
+		padding: 15px 0;
+	}
+	body.${localScopeClass} .bohemcars-inventory-sidebar-group:last-of-type {
+		border-bottom: 0;
+		padding-bottom: 6px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-group legend {
-		color: #1c1c1c;
+		color: #141414;
 		display: block;
-		font-size: 12px;
-		font-weight: 800;
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: -0.005em;
 		line-height: 16px;
 		margin-bottom: 9px;
 		padding: 0;
-		text-transform: uppercase;
 		width: 100%;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-group legend span {
-		color: #1c1c1c;
+		color: #141414;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-options {
 		display: grid;
-		gap: 7px;
+		gap: 2px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option {
 		align-items: center;
-		background: #ffffff;
-		border: 1px solid transparent;
+		background: transparent;
+		border: 0;
 		border-radius: 8px;
-		color: #26331a;
+		color: #1c1c1c;
 		cursor: pointer;
 		display: grid;
-		gap: 9px;
+		gap: 11px;
 		grid-template-columns: auto auto minmax(0, 1fr) auto;
-		min-height: 44px;
-		padding: 8px 10px;
-		transition:
-			background-color 0.14s ease,
-			border-color 0.14s ease,
-			color 0.14s ease;
+		min-height: 38px;
+		padding: 6px 9px;
+		transition: background-color 0.12s ease;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:hover {
-		background: #eef4df;
-		border-color: #d9e8bd;
+		background: #f5f6f3;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:has(input:checked),
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option.is-selected {
-		background: #eaf6cf;
-		border-color: #b9dd5b;
-		color: #1c1c1c;
+		background: #eef3e1;
+		color: #161616;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option input {
 		height: 1px;
@@ -1690,31 +1709,38 @@ function injectLocalBehavior(
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option__control {
 		background: #ffffff;
-		border: 1px solid #cfd7c5;
-		border-radius: 5px;
+		border: 1.5px solid #8b9199;
+		border-radius: 4px;
 		box-sizing: border-box;
 		display: inline-grid;
-		height: 17px;
+		height: 18px;
 		place-items: center;
 		position: relative;
-		width: 17px;
+		transition:
+			background-color 0.12s ease,
+			border-color 0.12s ease;
+		width: 18px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option--single .bohemcars-inventory-sidebar-option__control {
 		border-radius: 999px;
 	}
+	body.${localScopeClass} .bohemcars-inventory-sidebar-option:hover .bohemcars-inventory-sidebar-option__control {
+		border-color: #6b7280;
+	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option input:focus-visible + .bohemcars-inventory-sidebar-option__control {
-		outline: 2px solid #5f8a14;
+		outline: 2px solid #4f7012;
 		outline-offset: 2px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:has(input:checked) .bohemcars-inventory-sidebar-option__control {
-		background: #8fbf2e;
-		border-color: #8fbf2e;
+		background: #4f7012;
+		border-color: #4f7012;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:has(input:checked) .bohemcars-inventory-sidebar-option__control::after {
 		border-bottom: 2px solid #ffffff;
 		border-left: 2px solid #ffffff;
 		content: "";
-		height: 6px;
+		height: 5px;
+		margin-top: -1px;
 		transform: rotate(-45deg);
 		width: 9px;
 	}
@@ -1723,69 +1749,78 @@ function injectLocalBehavior(
 		border: 0;
 		border-radius: 999px;
 		height: 7px;
+		margin-top: 0;
 		transform: none;
 		width: 7px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option__media {
 		align-items: center;
+		background: #ffffff;
+		border: 1px solid #ecefe8;
+		border-radius: 7px;
 		display: inline-flex;
-		height: 22px;
+		height: 28px;
 		justify-content: center;
-		width: 26px;
+		width: 32px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option__media img {
 		display: block;
-		height: 18px;
-		max-width: 24px;
+		height: 17px;
+		max-width: 22px;
 		object-fit: contain;
 		width: auto;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option__label {
-		font-size: 15px;
-		line-height: 19px;
-		font-weight: 700;
+		font-size: 14px;
+		line-height: 18px;
+		font-weight: 500;
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+	body.${localScopeClass} .bohemcars-inventory-sidebar-option:has(input:checked) .bohemcars-inventory-sidebar-option__label,
+	body.${localScopeClass} .bohemcars-inventory-sidebar-option.is-selected .bohemcars-inventory-sidebar-option__label {
+		color: #161616;
+		font-weight: 700;
+	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:not(.bohemcars-inventory-sidebar-option--with-media) .bohemcars-inventory-sidebar-option__label {
 		grid-column: 2 / 4;
 	}
-	body.${localScopeClass} .bohemcars-inventory-sidebar-option__count {
-		background: rgba(255, 255, 255, 0.72);
-		border: 1px solid rgba(151, 169, 126, 0.24);
-		border-radius: 999px;
-		color: #60714c;
-		font-size: 11px;
-		font-weight: 900;
+	body.${localScopeClass} .bohemcars-inventory-sidebar-option .bohemcars-inventory-sidebar-option__count {
+		background: none;
+		border: 0;
+		color: #5b6470;
+		font-size: 12px;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
 		line-height: 18px;
-		min-width: 26px;
-		padding: 0 7px;
-		text-align: center;
+		min-width: 0;
+		padding: 0 2px 0 0;
+		text-align: right;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-option:has(input:checked) .bohemcars-inventory-sidebar-option__count {
-		background: #ffffff;
 		color: #4f7012;
+		font-weight: 700;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-actions {
 		align-items: center;
-		background: linear-gradient(180deg, rgba(245, 247, 241, 0), #f5f7f1 24%);
-		bottom: -18px;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0), #ffffff 22%);
+		bottom: -20px;
 		display: grid;
-		gap: 8px;
+		gap: 10px;
 		grid-template-columns: minmax(0, 1fr) auto;
-		margin-top: 2px;
-		padding: 16px 0 0;
+		margin-top: 4px;
+		padding: 14px 0 4px;
 		position: sticky;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .bohemcars-active-filter {
 		justify-content: center;
-		min-height: 38px;
+		min-height: 40px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-sidebar-actions .btn {
-		min-height: 38px;
-		padding: 0 16px;
+		min-height: 40px;
+		padding: 0 18px;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard-results {
 		padding: 20px;
@@ -1841,10 +1876,25 @@ function injectLocalBehavior(
 		max-width: 100%;
 	}
 	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9 {
-		min-height: 188px;
+		min-height: 200px;
 	}
-	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9 .content {
-		padding: 18px;
+	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9.card-box .image {
+		max-width: 170px;
+		min-height: 200px;
+		border-radius: 12px 0 0 12px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9.card-box .image .card--img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9.card-box .top,
+	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9.card-box .bottom {
+		width: 170px;
+	}
+	body.${localScopeClass} .bohemcars-inventory-dashboard--map .card-box-style-9.card-box .content {
+		width: calc(100% - 170px);
+		padding: 16px 16px 16px;
 	}
 	body.${localScopeClass} .flat-tabs[data-custom='true'] .btn-filter {
 		border-color: rgba(217, 242, 117, 0.72);
@@ -2506,18 +2556,47 @@ function injectLocalBehavior(
 		"'": '&#39;'
 	})[char]);
 	const formatKm = (value) => Number(value || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' km';
+	const compareLabels = runtimeData.locale === 'bg'
+		? {
+			mileage: 'Пробег',
+			year: 'Година',
+			fuel: 'Гориво',
+			color: 'Цвят',
+			location: 'Локация',
+			interior: 'Интериор',
+			engine: 'Двигател',
+			transmission: 'Скорости',
+			sourceId: 'ID от източника',
+			stockNumber: 'Номер в наличност',
+			price: 'Цена',
+			onRequest: 'По запитване'
+		}
+		: {
+			mileage: 'Mileage',
+			year: 'Years',
+			fuel: 'Fuel',
+			color: 'Color',
+			location: 'Location',
+			interior: 'Interior',
+			engine: 'Engine',
+			transmission: 'Transmission',
+			sourceId: 'Source ID',
+			stockNumber: 'Stock Number',
+			price: 'Price',
+			onRequest: 'On request'
+		};
 	const compareRows = [
-		['mileage.svg', 'Mileage', (vehicle) => formatKm(vehicle.mileage)],
-		['years.svg', 'Years', (vehicle) => vehicle.year],
-		['gaspump.svg', 'Fuel', (vehicle) => vehicle.fuel],
-		['color.svg', 'Color', (vehicle) => vehicle.exterior || 'On request'],
-		['location.svg', 'Location', (vehicle) => vehicle.location],
-		['interior.svg', 'Interior', (vehicle) => vehicle.interior || 'On request'],
-		['engine.svg', 'Engine', (vehicle) => vehicle.engine || 'On request'],
-		['transmission.svg', 'Transmission', (vehicle) => vehicle.transmission],
-		['VIN.svg', 'Source ID', (vehicle) => vehicle.vin],
-		['QrCode.svg', 'Stock Number', (vehicle) => vehicle.stockNumber],
-		['Payment.png', 'Price', (vehicle) => vehicle.priceLabel]
+		['mileage.svg', compareLabels.mileage, (vehicle) => formatKm(vehicle.mileage)],
+		['years.svg', compareLabels.year, (vehicle) => vehicle.year],
+		['gaspump.svg', compareLabels.fuel, (vehicle) => vehicle.fuel],
+		['color.svg', compareLabels.color, (vehicle) => vehicle.exterior || compareLabels.onRequest],
+		['location.svg', compareLabels.location, (vehicle) => vehicle.location],
+		['interior.svg', compareLabels.interior, (vehicle) => vehicle.interior || compareLabels.onRequest],
+		['engine.svg', compareLabels.engine, (vehicle) => vehicle.engine || compareLabels.onRequest],
+		['transmission.svg', compareLabels.transmission, (vehicle) => vehicle.transmission],
+		['VIN.svg', compareLabels.sourceId, (vehicle) => vehicle.vin],
+		['QrCode.svg', compareLabels.stockNumber, (vehicle) => vehicle.stockNumber],
+		['Payment.png', compareLabels.price, (vehicle) => vehicle.priceLabel]
 	];
 	const compareTopCell = (vehicle) => '<td data-bohemcars-compare-column="' + escapeText(vehicle.slug) + '">' +
 		'<div class="relative top">' +

@@ -12,6 +12,7 @@ export type BohemcarsMessageInput = {
 	message?: string;
 	name?: string;
 	routePath?: string;
+	status?: BohemcarsMessageStatus;
 	threadId?: string;
 	vehicleSlug?: string;
 };
@@ -34,6 +35,7 @@ export const createMessage = (input: BohemcarsMessageInput) =>
 		authorName: input.name,
 		message: input.message,
 		routePath: input.routePath,
+		status: input.status,
 		threadId: input.threadId,
 		vehicleSlug: input.vehicleSlug
 	});

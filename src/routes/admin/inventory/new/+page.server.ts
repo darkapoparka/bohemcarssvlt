@@ -1,40 +1,45 @@
-import type { PageServerLoad } from './$types';
-import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
-import { getAccountListingFormData } from '$lib/server/account-listing-form-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { getAdminCmsOverview } from '$lib/server/admin-cms';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
+import { createInventoryListing, type InventoryListingInput } from '$lib/server/inventory';
+
+const value = (formData: FormData, key: string) => String(formData.get(key) ?? '').trim();
+const statusValue = (status: string): InventoryListingInput['status'] =>
+	status === 'published' || status === 'archived' || status === 'draft' ? status : 'draft';
+const readListingValues = (formData: FormData) => ({
+	mileage: value(formData, 'mileage'),
+	priceLabel: value(formData, 'priceLabel'),
+	routePath: value(formData, 'routePath'),
+	status: statusValue(value(formData, 'status')),
+	title: value(formData, 'title'),
+	vin: value(formData, 'vin')
+});
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const routePath = 'admin/inventory/new';
-	const session = requireBohemcarsPageSession(request, routePath, url.searchParams);
-
-	const renderOptions = {
-		request,
-		routePath,
-		searchParams: url.searchParams,
-		session
-	};
-	const { pageDocument, slot: formSlot } = renderAuxeroPageSlot(
-		'add-listings-2.html',
-		renderOptions,
-		{
-			marker: 'data-bohemcars-add-listing-form',
-			tagName: 'form',
-			templateError: 'Admin listing form template could not be rendered',
-			slotError: 'Admin listing form slot could not be located'
-		}
-	);
+	const session = requireBohemcarsPageSession(request, 'admin/inventory/new', url.searchParams);
 
 	return {
-		afterFormHtml: formSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeFormHtml: formSlot.beforeHtml,
-		dashboard: getAccountDashboardPageData('add-listings-2.html', renderOptions, {
-			subtitle: 'Create a Bohemcars inventory draft with media, specs, and features.',
-			title: 'Add Listing'
-		}),
-		form: getAccountListingFormData('add-listings-2.html', renderOptions),
-		formHtml: formSlot.sectionHtml,
-		pageDocument
+		cms: getAdminCmsOverview(),
+		session
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const formData = await request.formData();
+		const values = readListingValues(formData);
+
+		if (!values.title) {
+			return fail(400, {
+				error: 'Listing title is required.',
+				values
+			});
+		}
+
+		const listing = createInventoryListing(values);
+
+		redirect(303, `/admin/listings/${listing.id}?created=1`);
+	}
 };

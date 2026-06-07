@@ -1,9 +1,14 @@
 import type { AuxeroPageBanner } from './page-banner';
+import { bohemcarsBrand } from '$lib/data/bohemcars';
 
 export type AuxeroSellCarInputField = {
 	active: boolean;
+	autocomplete: 'off' | 'tel';
 	id: string;
+	inputMode?: 'numeric' | 'tel';
 	label: string;
+	mobileLabel: string;
+	mobilePlaceholder: string;
 	name: string;
 	placeholder?: string;
 	required?: boolean;
@@ -17,6 +22,24 @@ export type AuxeroSellCarFormData = {
 };
 
 export type AuxeroSellCarStep = {
+	text: string;
+	title: string;
+};
+
+export type AuxeroSellCarMobileCopy = {
+	contactLabel: string;
+	formEyebrow: string;
+	formTitle: string;
+	logoAlt: string;
+	logoSrc: string;
+	messageLabel: string;
+	statusMessage: string;
+	stepsTitle: string;
+	submitLabel: string;
+	title: string;
+};
+
+export type AuxeroSellCarMobileStep = {
 	text: string;
 	title: string;
 };
@@ -48,12 +71,34 @@ export const auxeroSellSteps: AuxeroSellCarStep[] = [
 	}
 ];
 
+export const sellCarMobileCopy: AuxeroSellCarMobileCopy = {
+	contactLabel: 'Контакт',
+	formEyebrow: 'Бърза заявка',
+	formTitle: 'Попълни за минута',
+	logoAlt: bohemcarsBrand.name,
+	logoSrc: '/assets/bohemcars/brand/bohemcars-logo-concept-dark-green.webp',
+	messageLabel: 'Пиши ни',
+	statusMessage: 'Заявката е подготвена. Обади се или пиши, за да я финализираме веднага.',
+	stepsTitle: 'Как работи',
+	submitLabel: 'Заяви оценка',
+	title: 'Продай автомобила си'
+};
+
+export const auxeroSellMobileSteps: AuxeroSellCarMobileStep[] = [
+	{ title: 'Данни', text: 'VIN, пробег, цена и телефон.' },
+	{ title: 'Преглед', text: 'Проверяваме историята и състоянието.' },
+	{ title: 'Следващ ход', text: 'Оферта, съдействие или публикуване.' }
+];
+
 export const sellCarFormData: AuxeroSellCarFormData = {
 	fields: [
 		{
 			active: true,
+			autocomplete: 'off',
 			id: 'sellVIN',
 			label: 'VIN номер',
+			mobileLabel: 'VIN номер',
+			mobilePlaceholder: 'Например WBA...',
 			name: 'vin',
 			placeholder: 'Въведете VIN',
 			required: true,
@@ -61,8 +106,12 @@ export const sellCarFormData: AuxeroSellCarFormData = {
 		},
 		{
 			active: false,
+			autocomplete: 'off',
 			id: 'sellMileage',
+			inputMode: 'numeric',
 			label: 'Пробег',
+			mobileLabel: 'Пробег',
+			mobilePlaceholder: 'Пробег в км',
 			name: 'mileage',
 			placeholder: 'Пробег в км',
 			required: true,
@@ -70,16 +119,24 @@ export const sellCarFormData: AuxeroSellCarFormData = {
 		},
 		{
 			active: false,
+			autocomplete: 'off',
 			id: 'sellPrice',
+			inputMode: 'numeric',
 			label: 'Очаквана цена',
+			mobileLabel: 'Очаквана цена',
+			mobilePlaceholder: 'Цена в EUR',
 			name: 'price',
 			placeholder: 'Очаквана цена в EUR',
 			type: 'text'
 		},
 		{
 			active: false,
+			autocomplete: 'tel',
 			id: 'sellPhone',
+			inputMode: 'tel',
 			label: 'Телефон за контакт',
+			mobileLabel: 'Телефон',
+			mobilePlaceholder: 'Телефон за контакт',
 			name: 'phone',
 			placeholder: 'Вашият телефон',
 			required: true,

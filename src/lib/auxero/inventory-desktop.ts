@@ -50,6 +50,15 @@ export type AuxeroInventoryLayoutToggle = {
 	title: string;
 };
 
+export type AuxeroInventoryLayoutOption = {
+	active: boolean;
+	ariaLabel: string;
+	href: string;
+	label: string;
+	layout: 'classic' | 'dashboard';
+	title: string;
+};
+
 export type AuxeroInventoryFilterPresentationOption = {
 	active: boolean;
 	ariaLabel: string;
@@ -86,6 +95,8 @@ export type AuxeroInventoryDesktopData = {
 	filters: AuxeroInventoryFilter[];
 	hiddenInputs: AuxeroInventoryHiddenInput[];
 	layout: 'classic' | 'dashboard';
+	layoutLabel: string;
+	layoutOptions: AuxeroInventoryLayoutOption[];
 	layoutToggle: AuxeroInventoryLayoutToggle;
 	map: {
 		address: string;
@@ -183,6 +194,11 @@ const text = (locale: Locale) =>
 					modal: 'Отваря филтрите като централен modal',
 					popover: 'Отваря филтрите като компактни popover менюта'
 				},
+				layout: 'Режим',
+				layoutTitles: {
+					classic: 'Grid изглед с филтър бутони над резултатите',
+					dashboard: 'Sidebar изглед с постоянни филтри'
+				},
 				filterLabels: {
 					bodyType: 'Купе',
 					brand: 'Марка',
@@ -231,7 +247,7 @@ const text = (locale: Locale) =>
 				},
 				title: 'Филтри',
 				vehiclesShown: (count: number) =>
-					`${count} ${count === 1 ? 'автомобил' : 'автомобила'} shown`,
+					count === 1 ? '1 наличен автомобил' : `${count} налични автомобила`,
 				view: 'Изглед'
 			}
 		: {
@@ -256,6 +272,11 @@ const text = (locale: Locale) =>
 				filterPresentationTitles: {
 					modal: 'Open filters as a centered modal',
 					popover: 'Open filters as compact popover menus'
+				},
+				layout: 'Layout',
+				layoutTitles: {
+					classic: 'Grid view with filter buttons above results',
+					dashboard: 'Sidebar view with persistent filters'
 				},
 				filterLabels: {
 					bodyType: 'Body',
@@ -736,7 +757,24 @@ const buildFilters = (state: InventoryState, locale: Locale) => {
 		})
 	];
 
-	return { filters, options };
+	const sidebarAllLabels: Record<string, string> = {
+		bodyType: labels.allBodyTypes,
+		brand: labels.allBrands,
+		feature: labels.allExtras,
+		fuel: labels.allFuel,
+		mileageTo: labels.allMileage,
+		model: labels.allModels,
+		priceTo: labels.allPrices,
+		transmission: labels.allGearboxes
+	};
+
+	return {
+		filters: filters.map((filter) => ({
+			...filter,
+			allLabel: sidebarAllLabels[filter.name] ?? filter.allLabel
+		})),
+		options
+	};
 };
 
 const sortOptions = (state: InventoryState, locale: Locale) => {
@@ -780,6 +818,22 @@ const layoutToggle = (state: InventoryState): AuxeroInventoryLayoutToggle => {
 		label: active ? 'Classic' : 'Sidebar',
 		title: active ? 'Use classic inventory view' : 'Use sidebar dashboard view'
 	};
+};
+
+const layoutOptions = (state: InventoryState, locale: Locale): AuxeroInventoryLayoutOption[] => {
+	const labels = text(locale).layoutTitles;
+
+	return (['dashboard', 'classic'] as const).map((layout) => ({
+		active: state.layout === layout,
+		ariaLabel: labels[layout],
+		href: inventoryUrl(state, {
+			layout: layout === 'classic' ? 'classic' : undefined,
+			mode: undefined
+		}),
+		label: layout === 'dashboard' ? 'Sidebar' : 'Grid',
+		layout,
+		title: labels[layout]
+	}));
 };
 
 const filterPresentationOptions = (
@@ -915,6 +969,8 @@ export const inventoryDesktopDataFromState = (
 		filters,
 		hiddenInputs: hiddenInputs(state),
 		layout: state.layout,
+		layoutLabel: labels.layout,
+		layoutOptions: layoutOptions(state, locale),
 		layoutToggle: layoutToggle(state),
 		map: mapData(state, locale),
 		searchLabel: labels.searchAria,

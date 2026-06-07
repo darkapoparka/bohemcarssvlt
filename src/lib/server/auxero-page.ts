@@ -148,6 +148,36 @@ export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
 	if (!runtimeScript) return '';
 
 	return `<script${runtimeScript.attributes}>{
+	const setBohemcarsEarlyFormStatus = (form, message) => {
+		let status = form.querySelector('.auxero-form-status');
+		if (!status) {
+			status = document.createElement('p');
+			status.className = 'auxero-form-status text-highlight font-weight-600 mt-12';
+			status.setAttribute('aria-live', 'polite');
+			form.appendChild(status);
+		}
+		status.textContent = message;
+	};
+	document.addEventListener('submit', (event) => {
+		const form = event.target;
+		if (!(form instanceof HTMLFormElement) || !form.matches('.bohemcars-contact-form')) return;
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		try {
+			const payload = Object.fromEntries([...new FormData(form).entries()].map(([key, value]) => [
+				key,
+				typeof value === 'string' ? value : value.name
+			]));
+			fetch('/api/inquiries', {
+				body: JSON.stringify(payload),
+				credentials: 'same-origin',
+				headers: { 'content-type': 'application/json' },
+				method: 'POST'
+			}).catch(() => undefined);
+		} catch (_error) {}
+		setBohemcarsEarlyFormStatus(form, 'Съобщението е подготвено локално за Bohemcars');
+	}, true);
 	let bohemcarsRuntimeStarted = false;
 	const startBohemcarsRuntime = () => {
 		if (bohemcarsRuntimeStarted) return;

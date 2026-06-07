@@ -17,6 +17,13 @@ describe('vehicle data helpers', () => {
 		expect(getVehicleBySlug('21778068579001193')?.image).toBe('/assets/images/card/card-55.jpg');
 	});
 
+	it('keeps model facets focused on series names instead of trim text', () => {
+		expect(getVehicleBySlug('21764342419542174')?.model).toBe('X5');
+		expect(getVehicleBySlug('11778678187411931')?.title).toBe('BMW 740 Завиващ заден мост');
+		expect(getVehicleBySlug('11778678187411931')?.model).toBe('740');
+		expect(getVehicleBySlug('11763643904637405')?.model).toBe('A7');
+	});
+
 	it('filters by search, source id, location, status, gearbox, price, year, mileage, and facets', () => {
 		const vehicle = getVehicleBySlug('21764342419542174');
 		expect(vehicle).toBeDefined();

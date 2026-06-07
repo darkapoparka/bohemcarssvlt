@@ -35,11 +35,22 @@ const knownBrokenImageFallbacks: Record<string, string> = {
 const imageForVehicle = (vehicle: { id: string; image: string }) =>
 	knownBrokenImageFallbacks[vehicle.id] ?? vehicle.image;
 
+const modelSeriesFromTitle = (title: string, brand: string) => {
+	const normalizedTitle = title.trim();
+	const normalizedBrand = brand.trim();
+	const withoutBrand = normalizedTitle.toLowerCase().startsWith(`${normalizedBrand.toLowerCase()} `)
+		? normalizedTitle.slice(normalizedBrand.length).trim()
+		: normalizedTitle;
+	const [series] = withoutBrand.split(/\s+/);
+
+	return series || withoutBrand || normalizedTitle;
+};
+
 export const vehicles: Vehicle[] = bohemcarsVehicles.map((vehicle, index) => ({
 	slug: vehicle.id,
 	title: vehicle.model,
 	brand: vehicle.make,
-	model: vehicle.model.replace(vehicle.make, '').trim() || vehicle.model,
+	model: modelSeriesFromTitle(vehicle.model, vehicle.make),
 	bodyType: vehicle.body,
 	condition: conditionForStatus(vehicle.status, vehicle.isClientVehicle),
 	price: vehicle.priceEur,

@@ -11,7 +11,7 @@
 	const compareHref = resolve('/compare');
 	const favoritesHref = resolve('/account');
 	const externalHref = (href: string) => ({ href });
-	const drawerRestingSnapPoint = 0.6;
+	const drawerRestingSnapPoint = 0.66;
 	const drawerExpandedSnapPoint = 0.92;
 	const drawerSnapPoints = [drawerRestingSnapPoint, drawerExpandedSnapPoint];
 
@@ -33,9 +33,11 @@
 	const contentTabs = $derived(
 		detail.mobileDrawer.tabs.filter((tab) => ['info', 'specs', 'features'].includes(tab.id))
 	);
-	const drawerSnapOffset = $derived(
-		activeDrawerSnapPoint === drawerExpandedSnapPoint ? '8dvh' : '40dvh'
-	);
+	const drawerSnapOffset = $derived.by(() => {
+		const snap =
+			typeof activeDrawerSnapPoint === 'number' ? activeDrawerSnapPoint : drawerRestingSnapPoint;
+		return `${Math.round((1 - snap) * 100)}dvh`;
+	});
 
 	const useFallbackImage = (event: Event) => {
 		const image = event.currentTarget as HTMLImageElement;
@@ -826,15 +828,15 @@
 			width: 100%;
 			min-width: 0;
 			min-height: 44px;
-			align-items: center;
+			align-items: flex-end;
 			justify-content: center;
 			border: 0;
 			border-radius: 0;
 			background: transparent;
 			color: #1c1c1c;
 			cursor: pointer;
-			padding: 0 4px 12px;
-			font-size: 15px;
+			padding: 0 4px 8px;
+			font-size: 16px;
 			font-weight: 900;
 			line-height: 18px;
 			white-space: nowrap;
@@ -1041,6 +1043,16 @@
 
 		.bohemcars-mobile-pdp__cta:active {
 			transform: translateY(1px);
+		}
+
+		/* app.css sets a global `* { color: #1c1c1c }`, which hits the lucide <svg>
+		   AND every <path> directly. The icons stroke with `currentColor`, resolved
+		   per-element, so each path drew itself dark — invisible on the dark call
+		   button. Re-inherit the button's text color at every level so currentColor
+		   resolves to white (call) / dark-green (primary). */
+		.bohemcars-mobile-pdp__cta :global(svg),
+		.bohemcars-mobile-pdp__cta :global(svg *) {
+			color: inherit;
 		}
 
 		.bohemcars-mobile-pdp__cta--primary {
@@ -1423,7 +1435,7 @@
 		}
 
 		.bohemcars-mobile-pdp__tab {
-			font-size: 13px;
+			font-size: 14px;
 		}
 	}
 </style>

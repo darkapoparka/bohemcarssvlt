@@ -3,7 +3,7 @@
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
 	import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 	import { getMessages, type VehicleCardCopy } from '$lib/i18n/messages';
-	import { onMount } from 'svelte';
+	import { getGarageContext } from '$lib/state/garage.svelte';
 
 	let {
 		card,
@@ -15,7 +15,9 @@
 		variant?: 'grid' | 'list';
 	} = $props();
 
-	let cardImage = $state<HTMLImageElement>();
+	const garage = getGarageContext();
+	const buttonActivationKeys = new Set(['Enter', ' ']);
+	let isSaved = $derived(garage.isFavorite(card.slug));
 
 	const applyCardImageFallback = (image: HTMLImageElement | undefined) => {
 		if (!image || image.src.endsWith(bohemcarsAssets.hero)) {
@@ -25,21 +27,34 @@
 		image.src = bohemcarsAssets.hero;
 	};
 
-	onMount(() => {
-		const image = cardImage;
-		const handleCardImageError = () => {
-			applyCardImageFallback(image);
-		};
+	const handleCardImageError = (event: Event) => {
+		applyCardImageFallback(
+			event.currentTarget instanceof HTMLImageElement ? event.currentTarget : undefined
+		);
+	};
 
-		image?.addEventListener('error', handleCardImageError);
-		if (image?.complete && image.naturalWidth === 0) {
-			applyCardImageFallback(image);
-		}
+	const handleFavoriteActivation = (event: MouseEvent | KeyboardEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		garage.toggleFavorite(card.slug);
+	};
 
-		return () => {
-			image?.removeEventListener('error', handleCardImageError);
-		};
-	});
+	const handleFavoriteKeydown = (event: KeyboardEvent) => {
+		if (!buttonActivationKeys.has(event.key)) return;
+
+		handleFavoriteActivation(event);
+	};
+
+	const handleCompareActivation = () => {
+		garage.addCompare(card.slug);
+	};
+
+	const handleCompareKeydown = (event: KeyboardEvent) => {
+		if (!buttonActivationKeys.has(event.key)) return;
+
+		event.preventDefault();
+		handleCompareActivation();
+	};
 </script>
 
 {#if variant === 'list'}
@@ -48,10 +63,13 @@
 			<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
 			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 			<p
-				class="heart bohemcars-favorite"
+				class={['heart bohemcars-favorite', isSaved && 'is-active']}
 				role="button"
 				tabindex="0"
 				aria-label={`${copy.savePrefix} ${card.title}`}
+				aria-pressed={isSaved}
+				onclick={handleFavoriteActivation}
+				onkeydown={handleFavoriteKeydown}
 			>
 				{@render heartIcon()}
 			</p>
@@ -76,7 +94,7 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img bind:this={cardImage} class="card--img" src={card.image} alt={card.title} />
+				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
 			</a>
 		</div>
 		<div class="content">
@@ -98,6 +116,8 @@
 					data-bohemcars-compare={card.slug}
 					role="button"
 					tabindex="0"
+					onclick={handleCompareActivation}
+					onkeydown={handleCompareKeydown}
 				>
 					{@render compareIcon()}
 					{copy.compare}
@@ -119,17 +139,20 @@
 			<p class={`${card.highlightClass} highlight text-white`}>{card.mileageLabel}</p>
 			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 			<p
-				class="heart bohemcars-favorite"
+				class={['heart bohemcars-favorite', isSaved && 'is-active']}
 				role="button"
 				tabindex="0"
 				aria-label={`${copy.savePrefix} ${card.title}`}
+				aria-pressed={isSaved}
+				onclick={handleFavoriteActivation}
+				onkeydown={handleFavoriteKeydown}
 			>
 				{@render heartIcon()}
 			</p>
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img bind:this={cardImage} class="card--img" src={card.image} alt={card.title} />
+				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
 			</a>
 		</div>
 		<div class="content border-light border-top-none">
@@ -176,6 +199,8 @@
 					data-bohemcars-compare={card.slug}
 					role="button"
 					tabindex="0"
+					onclick={handleCompareActivation}
+					onkeydown={handleCompareKeydown}
 				>
 					{@render compareIcon()}
 					{copy.compare}
@@ -319,6 +344,14 @@
 
 	.card-box-style-1 .image img {
 		object-fit: cover;
+	}
+
+	.view-details {
+		white-space: nowrap;
+	}
+
+	.card-box-style-9 .flex.gap-32 {
+		gap: 18px;
 	}
 
 	.bohemcars-card-specs {

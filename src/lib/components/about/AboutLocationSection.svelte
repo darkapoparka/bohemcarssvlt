@@ -47,7 +47,7 @@
 				</div>
 			</div>
 
-			<div class="widget-gg-map bohemcars-about-location__map radius-16 flex overflow-hidden">
+			<div class="bohemcars-about-location__map wow fadeInRight" data-wow-delay="0.1s">
 				<iframe
 					src={office.mapEmbedUrl}
 					width="100%"
@@ -58,24 +58,39 @@
 					referrerpolicy="no-referrer-when-downgrade"
 					title="Bohemcars Plovdiv map"
 				></iframe>
-				<div class="bohemcars-about-location__map-fallback" aria-hidden="true">
-					<span class="bohemcars-about-location__road road-a"></span>
-					<span class="bohemcars-about-location__road road-b"></span>
-					<span class="bohemcars-about-location__road road-c"></span>
-					<span class="bohemcars-about-location__pin">
+
+				<div class="bohemcars-about-location__map-info">
+					<span class="bohemcars-about-location__map-pin">
 						<img src="/assets/icons/MapPin.svg" alt="" />
 					</span>
-					<div class="bohemcars-about-location__map-label">
+					<div>
 						<strong>Bohemcars</strong>
 						<small>{office.address}</small>
 					</div>
 				</div>
+
 				<a
-					class="btn btn-primary btn-small font-weight-600 bohemcars-about-location__map-link"
+					class="bohemcars-about-location__map-link"
 					{...externalHref(office.mapHref)}
 					target="_blank"
-					rel="noreferrer">Отвори карта</a
+					rel="noreferrer"
 				>
+					Отвори карта
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="#ffffff"
+						stroke-width="2.4"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M7 17L17 7" />
+						<path d="M8 7h9v9" />
+					</svg>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -90,8 +105,8 @@
 	.bohemcars-about-location__shell {
 		display: grid;
 		gap: 28px;
-		grid-template-columns: minmax(420px, 0.8fr) minmax(0, 1.2fr);
-		align-items: start;
+		grid-template-columns: minmax(400px, 0.85fr) minmax(0, 1.15fr);
+		align-items: stretch;
 	}
 
 	.bohemcars-about-location__content {
@@ -129,7 +144,7 @@
 	.bohemcars-about-location__cards {
 		display: grid;
 		margin-top: 24px;
-		gap: 10px;
+		gap: 12px;
 		grid-template-columns: 1fr;
 	}
 
@@ -137,26 +152,28 @@
 		display: flex;
 		min-height: 0;
 		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: #ffffff;
-		padding: 15px 16px;
+		border-radius: 14px;
+		background: var(--bc-surface-soft);
+		padding: 16px 18px;
 		gap: 14px;
 		align-items: flex-start;
 		transition:
 			background-color 0.2s ease,
-			border-color 0.2s ease;
+			border-color 0.2s ease,
+			box-shadow 0.25s ease;
 	}
 
 	.bohemcars-about-location-card:hover {
-		border-color: var(--primary);
-		background: var(--bc-surface);
+		border-color: #cbd8c1;
+		background: #ffffff;
+		box-shadow: 0 14px 32px rgb(20 33 15 / 0.07);
 	}
 
 	.bohemcars-about-location-card span {
 		flex: 0 0 auto;
 		display: inline-flex;
-		width: 40px;
-		height: 40px;
+		width: 42px;
+		height: 42px;
 		border-radius: 50%;
 		background: #e8eee2;
 		align-items: center;
@@ -166,8 +183,8 @@
 	.bohemcars-about-location-card img {
 		width: 19px;
 		height: 19px;
-		filter: brightness(0) saturate(100%);
 		opacity: 0.82;
+		filter: brightness(0) saturate(100%);
 	}
 
 	.bohemcars-about-location-card h3 {
@@ -187,15 +204,17 @@
 	}
 
 	.bohemcars-about-location-card a:hover {
-		color: var(--primary);
+		color: #5f7d18;
 	}
 
 	.bohemcars-about-location__map {
 		position: relative;
-		height: 388px;
-		min-height: 0;
+		min-height: 420px;
+		overflow: hidden;
 		border: 1px solid var(--bc-border);
+		border-radius: 16px;
 		background: #eef2ec;
+		box-shadow: 0 22px 54px rgb(20 33 15 / 0.12);
 		isolation: isolate;
 	}
 
@@ -203,118 +222,87 @@
 		position: absolute;
 		z-index: 0;
 		inset: 0;
-		opacity: 0.26;
-		filter: grayscale(1) contrast(1.05);
+		width: 100%;
+		height: 100%;
+		border: 0;
 	}
 
-	.bohemcars-about-location__map-fallback {
+	.bohemcars-about-location__map-info {
 		position: absolute;
-		z-index: 1;
-		inset: 0;
-		overflow: hidden;
-		background:
-			linear-gradient(115deg, rgb(255 255 255 / 0.34), transparent 42%),
-			repeating-linear-gradient(
-				0deg,
-				rgb(28 28 28 / 0.035) 0,
-				rgb(28 28 28 / 0.035) 1px,
-				transparent 1px,
-				transparent 48px
-			),
-			repeating-linear-gradient(
-				90deg,
-				rgb(28 28 28 / 0.035) 0,
-				rgb(28 28 28 / 0.035) 1px,
-				transparent 1px,
-				transparent 54px
-			);
+		z-index: 2;
+		top: 18px;
+		left: 18px;
+		display: flex;
+		max-width: min(320px, calc(100% - 36px));
+		border: 1px solid rgb(255 255 255 / 0.65);
+		border-radius: 14px;
+		background: rgb(255 255 255 / 0.9);
+		padding: 12px 15px;
+		gap: 12px;
+		align-items: center;
+		box-shadow: 0 12px 30px rgb(20 33 15 / 0.18);
+		backdrop-filter: blur(10px);
 	}
 
-	.bohemcars-about-location__road {
-		position: absolute;
-		height: 12px;
-		border-radius: 999px;
-		background: rgb(255 255 255 / 0.86);
-		box-shadow: inset 0 0 0 1px rgb(28 28 28 / 0.08);
-	}
-
-	.bohemcars-about-location__road.road-a {
-		top: 48%;
-		left: -8%;
-		width: 74%;
-		transform: rotate(-13deg);
-	}
-
-	.bohemcars-about-location__road.road-b {
-		top: 21%;
-		right: -10%;
-		width: 70%;
-		transform: rotate(28deg);
-	}
-
-	.bohemcars-about-location__road.road-c {
-		right: 6%;
-		bottom: 21%;
-		width: 52%;
-		transform: rotate(-33deg);
-	}
-
-	.bohemcars-about-location__pin {
-		position: absolute;
-		top: 46%;
-		left: 48%;
+	.bohemcars-about-location__map-pin {
+		flex: 0 0 auto;
 		display: inline-flex;
-		width: 54px;
-		height: 54px;
-		border: 2px solid #ffffff;
+		width: 40px;
+		height: 40px;
 		border-radius: 50%;
-		background: var(--primary);
-		box-shadow: 0 16px 30px rgb(0 0 0 / 0.18);
+		background: linear-gradient(150deg, #2f4a1c, #16240e);
 		align-items: center;
 		justify-content: center;
-		transform: translate(-50%, -50%);
+		box-shadow: 0 6px 16px rgb(20 33 15 / 0.3);
 	}
 
-	.bohemcars-about-location__pin img {
-		width: 24px;
-		height: 24px;
+	.bohemcars-about-location__map-pin img {
+		width: 20px;
+		height: 20px;
 		filter: brightness(0) invert(1);
 	}
 
-	.bohemcars-about-location__map-label {
-		position: absolute;
-		right: 22px;
-		bottom: 22px;
-		display: flex;
-		max-width: min(320px, calc(100% - 44px));
-		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: rgb(255 255 255 / 0.92);
-		padding: 14px 16px;
-		flex-direction: column;
-		gap: 3px;
-	}
-
-	.bohemcars-about-location__map-label strong {
+	.bohemcars-about-location__map-info strong {
+		display: block;
 		color: #111111;
-		font-size: 17px;
+		font-size: 16px;
 		font-weight: 700;
 		line-height: 1.2;
 	}
 
-	.bohemcars-about-location__map-label small {
-		color: #696665;
-		font-size: 14px;
+	.bohemcars-about-location__map-info small {
+		display: block;
+		margin-top: 2px;
+		color: #5a6356;
+		font-size: 13.5px;
 		line-height: 1.35;
 	}
 
 	.bohemcars-about-location__map-link {
 		position: absolute;
 		z-index: 2;
-		left: 22px;
-		bottom: 22px;
+		right: 18px;
+		bottom: 18px;
+		display: inline-flex;
 		min-height: 44px;
-		border-radius: 8px;
+		align-items: center;
+		gap: 9px;
+		border-radius: 999px;
+		background: linear-gradient(150deg, #24380f, #16240e);
+		padding: 0 20px;
+		color: #ffffff;
+		font-size: 14px;
+		font-weight: 700;
+		box-shadow: 0 12px 28px rgb(20 33 15 / 0.32);
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	.bohemcars-about-location__map-link:hover {
+		color: #ffffff;
+		transform: translateY(-1px);
+		box-shadow: 0 16px 34px rgb(20 33 15 / 0.4);
 	}
 
 	@media (max-width: 991px) {
@@ -324,6 +312,10 @@
 
 		.bohemcars-about-location__copy {
 			max-width: 720px;
+		}
+
+		.bohemcars-about-location__map {
+			min-height: 340px;
 		}
 	}
 
@@ -337,24 +329,21 @@
 		}
 
 		.bohemcars-about-location__map {
-			height: 300px;
-		}
-
-		.bohemcars-about-location-card {
-			padding: 14px;
+			min-height: 300px;
 		}
 
 		.bohemcars-about-location h2 {
 			font-size: 28px;
 		}
 
-		.bohemcars-about-location__map-label {
-			right: 14px;
-			bottom: 14px;
+		.bohemcars-about-location__map-info {
+			top: 14px;
+			left: 14px;
+			padding: 10px 13px;
 		}
 
 		.bohemcars-about-location__map-link {
-			left: 14px;
+			right: 14px;
 			bottom: 14px;
 		}
 	}

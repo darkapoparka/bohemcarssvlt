@@ -1169,10 +1169,10 @@
 		.bohemcars-mobile-hero__search-label span {
 			min-width: 0;
 			overflow: hidden;
-			color: #4f5c48;
-			font-size: 15px;
-			font-weight: 600;
-			line-height: 20px;
+			color: #1c1c1c;
+			font-size: 16px;
+			font-weight: 400;
+			line-height: 22px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}

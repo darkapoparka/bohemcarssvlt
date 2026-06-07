@@ -68,6 +68,313 @@
 </AuxeroPublicShell>
 
 <style>
+	:global(.bohemcars-pdp-desktop) {
+		background: #fbfcfa;
+	}
+
+	:global(.bohemcars-pdp-desktop .tf-spacing-style4) {
+		height: 58px;
+	}
+
+	:global(.bohemcars-pdp-desktop-breadcrumb) {
+		background: #f2f4ef;
+		border-bottom: 1px solid #e8ebe3;
+		margin-bottom: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop-breadcrumb .container) {
+		padding-bottom: 17px;
+		padding-top: 17px;
+	}
+
+	:global(.bohemcars-pdp-desktop-breadcrumb .swiper-listing-details-navigation p) {
+		color: #4b4b4b;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+
+	@media (min-width: 768px) {
+		:global(.bohemcars-pdp-desktop .listing-details) {
+			align-items: start;
+			display: grid;
+			gap: 60px;
+			grid-template-columns: minmax(0, 1fr) 400px;
+		}
+
+		:global(.bohemcars-pdp-desktop .listing-details--content),
+		:global(.bohemcars-pdp-desktop .listing-details--sidebar) {
+			min-width: 0;
+			width: auto;
+		}
+
+		:global(.bohemcars-pdp-desktop .listing-details--sidebar) {
+			position: sticky;
+			top: 104px;
+		}
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section) {
+		align-items: center;
+		background: linear-gradient(135deg, rgba(217, 242, 117, 0.12), rgba(217, 242, 117, 0)), #132414;
+		border: 1px solid rgba(217, 242, 117, 0.18);
+		border-radius: 8px;
+		margin-bottom: 24px;
+		padding: 30px 32px;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section h1) {
+		color: #ffffff;
+		margin-bottom: 0;
+		max-width: 650px;
+		min-width: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section > div) {
+		flex: 0 0 auto;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle) {
+		background: rgba(255, 255, 255, 0.12);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		box-sizing: border-box;
+		color: #ffffff;
+		flex: 0 0 48px;
+		width: 48px;
+		height: 48px;
+		line-height: 1;
+		padding: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle:hover) {
+		background: #d9f275;
+		border-color: #d9f275;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare svg path) {
+		fill: none !important;
+		stroke: #ffffff !important;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover svg path) {
+		stroke: #1c1c1c !important;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite svg path) {
+		fill: none !important;
+		stroke: #ffffff !important;
+	}
+
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite:hover svg path) {
+		stroke: #1c1c1c !important;
+	}
+
+	:global(
+		.bohemcars-pdp-desktop
+			.title-section
+			.btn-icon-circle:not(.bohemcars-favorite):not(.bohemcars-pdp-compare)
+			svg
+			path
+	) {
+		fill: #ffffff !important;
+	}
+
+	:global(
+		.bohemcars-pdp-desktop
+			.title-section
+			.btn-icon-circle:not(.bohemcars-favorite):not(.bohemcars-pdp-compare):hover
+			svg
+			path
+	) {
+		fill: #1c1c1c !important;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-gallery-main) {
+		background: #eef1ed;
+		border-radius: 8px;
+		height: clamp(520px, 44vw, 600px);
+		margin-bottom: 14px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-item) {
+		background: #eef1ed;
+		border-radius: 8px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-item .img-main) {
+		height: 100%;
+		width: 100%;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-thumb) {
+		background: #eef1ed;
+		border-radius: 8px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-thumb img) {
+		border-radius: 8px;
+	}
+
+	:global(.bohemcars-pdp-desktop .swiper-listing-details-thumbs) {
+		padding-bottom: 46px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-item--button) {
+		backdrop-filter: blur(8px);
+		background: rgba(19, 36, 20, 0.62);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 8px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details-item--button:hover) {
+		background: #d9f275;
+		color: #1c1c1c;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--content > .h4),
+	:global(.bohemcars-pdp-desktop .listing-details--content > p.h4),
+	:global(.bohemcars-pdp-desktop .listing-details--content > div + .h4) {
+		color: #1c1c1c;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--content > .divider) {
+		display: none;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box),
+	:global(.bohemcars-pdp-desktop .financing-calculator),
+	:global(.bohemcars-pdp-desktop .rating-box),
+	:global(.bohemcars-pdp-desktop .comment-box) {
+		background: #eef1ed;
+		border: 1px solid #e1e5dc;
+		border-radius: 8px;
+		box-shadow: none;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box) {
+		margin-bottom: 28px;
+		padding: 24px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box:first-child) {
+		background:
+			linear-gradient(180deg, rgba(217, 242, 117, 0.18), rgba(217, 242, 117, 0) 92px), #eef1ed;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .menu-tab-style5) {
+		background: rgba(255, 255, 255, 0.72);
+		border: 1px solid #e1e5dc;
+		border-radius: 999px;
+		padding: 4px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .menu-tab-style5 li) {
+		border-radius: 999px;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .menu-tab-style5 li.active) {
+		background: #1c1c1c;
+		color: #ffffff;
+	}
+
+	:global(.bohemcars-pdp-desktop .car-overview-list-style2 li) {
+		border-color: #dde3d6;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--contact .verify) {
+		background: #edf5cf;
+		border-radius: 999px;
+		padding: 4px 10px;
+		width: max-content;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--contact .btn-primary-3) {
+		background: #98bc2a;
+		border-color: #98bc2a;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--contact .btn-primary-3:hover) {
+		background: #1c1c1c;
+		border-color: #1c1c1c;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4) {
+		background: #eef1ed;
+		border: 1px solid #e1e5dc;
+		border-radius: 8px;
+		display: inline-flex;
+		gap: 4px;
+		padding: 6px;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li) {
+		border-radius: 8px;
+		padding: 9px 14px;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active) {
+		background: #d9f275;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active span) {
+		color: #1c1c1c !important;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-tab-description) {
+		line-height: 1.8;
+		margin: 0;
+		max-width: 920px;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs + .h4),
+	:global(.bohemcars-pdp-desktop .flat-tabs + .divider + .h4) {
+		margin-top: 34px;
+	}
+
+	:global(.bohemcars-pdp-desktop .financing-calculator) {
+		padding: 26px;
+	}
+
+	:global(.bohemcars-pdp-desktop .financing-calculator input),
+	:global(.bohemcars-pdp-desktop .financing-calculator select),
+	:global(.bohemcars-pdp-desktop .send-inquiry input),
+	:global(.bohemcars-pdp-desktop .send-inquiry select),
+	:global(.bohemcars-pdp-desktop .send-inquiry textarea) {
+		background: rgba(255, 255, 255, 0.86);
+		border-color: #dce2d5;
+		border-radius: 8px;
+	}
+
+	:global(.bohemcars-pdp-desktop .widget-gg-map) {
+		border-radius: 8px;
+		height: 420px;
+	}
+
+	:global(.bohemcars-pdp-desktop .widget-gg-map iframe) {
+		height: 420px;
+	}
+
+	:global(.bohemcars-pdp-desktop .rating-box) {
+		padding: 26px;
+	}
+
+	:global(.bohemcars-pdp-desktop .comment-box) {
+		padding: 24px;
+	}
+
+	@media (max-width: 1199.98px) {
+		:global(.bohemcars-pdp-desktop .listing-details) {
+			gap: 34px;
+			grid-template-columns: minmax(0, 1fr) 360px;
+		}
+
+		:global(.bohemcars-pdp-desktop .title-section) {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 18px;
+		}
+	}
+
 	@media (max-width: 767.98px) {
 		:global(.bohemcars-pdp-desktop-breadcrumb),
 		:global(.bohemcars-pdp-desktop) {
