@@ -79,6 +79,8 @@
 			]
 		}
 	] as const;
+
+	const menuItemId = (path: AdminPath) => path.split('/').at(-1) || 'dashboard';
 </script>
 
 <main class="admin-cms bg-background text-foreground min-h-svh">
@@ -123,7 +125,12 @@
 											tooltipContent={item.label}
 										>
 											{#snippet child({ props })}
-												<a href={resolve(item.path)} {...props}>
+												<a
+													href={resolve(item.path)}
+													{...props}
+													aria-current={item.path === activePath ? 'page' : undefined}
+													data-bohemcars-menu-item={menuItemId(item.path)}
+												>
 													<Icon aria-hidden="true" />
 													<span>{item.label}</span>
 												</a>

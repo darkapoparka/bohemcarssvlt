@@ -105,9 +105,9 @@
 	.bohemcars-dashboard-overview {
 		display: grid;
 		gap: 18px;
-		border-color: var(--bc-border) !important;
-		border-radius: 14px !important;
-		background: #ffffff !important;
+		border-color: var(--bc-dashboard-border) !important;
+		border-radius: var(--bc-dashboard-card-radius) !important;
+		background: var(--bc-dashboard-surface) !important;
 		box-shadow: none !important;
 		padding: 24px !important;
 	}
@@ -145,9 +145,9 @@
 
 	.bohemcars-dashboard-summary-item {
 		min-width: 0;
-		border: 1px solid var(--bc-border);
+		border: 1px solid var(--bc-dashboard-border);
 		border-radius: 10px;
-		background: #f8faf4;
+		background: var(--bc-dashboard-card-hover);
 		padding: 14px 16px;
 	}
 
@@ -192,9 +192,9 @@
 		min-height: 58px;
 		align-items: center;
 		gap: 12px;
-		border: 1px solid var(--bc-border);
+		border: 1px solid var(--bc-dashboard-border);
 		border-radius: 10px;
-		background: #f3f6ef;
+		background: var(--bc-dashboard-action-bg);
 		padding: 10px 13px;
 		transition:
 			background-color 0.2s ease,
@@ -203,8 +203,8 @@
 
 	.bohemcars-dashboard-action:hover,
 	.bohemcars-dashboard-action:focus-visible {
-		border-color: #cfdac8;
-		background: #e9efe4;
+		border-color: var(--bc-dashboard-border-strong);
+		background: var(--bc-dashboard-action-hover);
 	}
 
 	.bohemcars-dashboard-action__icon {
@@ -268,9 +268,9 @@
 	.bohemcars-dashboard-recent__list {
 		display: grid;
 		overflow: hidden;
-		border: 1px solid var(--bc-border);
+		border: 1px solid var(--bc-dashboard-border);
 		border-radius: 12px;
-		background: #ffffff;
+		background: var(--bc-dashboard-surface);
 		padding: 0 18px;
 	}
 
@@ -350,8 +350,8 @@
 		min-height: 28px;
 		align-items: center;
 		border-radius: 999px;
-		background: #f3f7ea;
-		color: #6f9818;
+		background: var(--bc-dashboard-status-bg);
+		color: var(--bc-dashboard-status-text);
 		padding: 0 11px;
 		font-size: 12px;
 		font-weight: 800;

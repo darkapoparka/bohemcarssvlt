@@ -19,7 +19,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		session
 	};
 	const { pageDocument, slot: recentSlot } = renderAuxeroPageSlot('dashboard.html', renderOptions, {
-		marker: 'class="dashboard-content"',
+		marker: 'dashboard-content--inner',
 		templateError: 'Account dashboard template could not be rendered',
 		slotError: 'Account dashboard content slot could not be located'
 	});
@@ -28,7 +28,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		afterRecentHtml: recentSlot.afterHtml,
 		auxeroFullPage: true,
 		beforeRecentHtml: recentSlot.beforeHtml,
-		dashboardContentHtml: recentSlot.sectionHtml,
 		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
 			subtitle: 'Saved cars, listing submissions, and open Bohemcars conversations.',
 			title: 'Account Dashboard'

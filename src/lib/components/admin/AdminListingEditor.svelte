@@ -105,6 +105,8 @@
 	<form
 		method="POST"
 		class="grid items-start gap-4 min-[1180px]:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]"
+		data-bohemcars-admin-listing-editor
+		data-bohemcars-admin-listing-mode={mode}
 	>
 		<input type="hidden" name="source" value={sourceValue} />
 

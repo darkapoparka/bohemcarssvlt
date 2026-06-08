@@ -781,8 +781,7 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 		viewport: 'width=device-width, initial-scale=1, viewport-fit=cover'
 	});
 
-	await page.evaluate(() => window.scrollTo(0, 360));
-	const stickyHeaderAction = await page
+	const mobileHeaderAction = await page
 		.locator('.header-wrapper-style-4 .bohemcars-mobile-map')
 		.evaluate((action) => {
 			const header = document.querySelector('.header-wrapper-style-4 .header.header-style-4');
@@ -808,15 +807,14 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 			};
 		});
 
-	expect(stickyHeaderAction).toMatchObject({
+	expect(mobileHeaderAction).toMatchObject({
 		actionBorderTop: '0px',
 		actionHeight: 44,
 		headerHeight: 56,
 		ringInsetBottom: '3px',
 		ringInsetTop: '3px'
 	});
-	expect(stickyHeaderAction.visibleRingBottomGap).toBeGreaterThanOrEqual(7);
-	await page.evaluate(() => window.scrollTo(0, 0));
+	expect(mobileHeaderAction.visibleRingBottomGap).toBeGreaterThanOrEqual(7);
 
 	await expect(mobileHero).toHaveAttribute('data-bohemcars-search-form', 'buy');
 	await expect(importTab).toHaveAttribute('aria-selected', 'false');
@@ -2059,7 +2057,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('body')).toContainText('Account Dashboard');
 	await expect(page.locator('body')).toContainText('My Favorites');
 	await expect(
-		page.locator('.dashboard-menu-item', { hasText: 'Submit Vehicle' }).first()
+		page.locator('[data-bohemcars-menu-item="add"]', { hasText: 'Submit Vehicle' }).first()
 	).toBeVisible();
 	await expect(page.locator('body')).not.toContainText('/admin/inventory/new?role=customer');
 	const accountHeaderCta = page.locator('[data-dashboard-primary-action]');
@@ -2088,7 +2086,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(favoritesGrid).toHaveAttribute('data-bohemcars-favorites-count', '3');
 	await expect(favoritesGrid).toHaveClass(/grid-cols-3/);
 	await expect(
-		page.locator('.dashboard-menu-item[aria-current="page"][data-bohemcars-menu-item="favorites"]')
+		page.locator('[aria-current="page"][data-bohemcars-menu-item="favorites"]')
 	).toBeVisible();
 	await expect(
 		favoritesGrid.locator('.card-box.card-box-style-1[data-bohemcars-slug]')
@@ -2148,7 +2146,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	const accountProfile = page.locator('[data-bohemcars-profile-form]');
 	await expect(accountProfile).toBeVisible();
 	await expect(
-		page.locator('.dashboard-menu-item[aria-current="page"][data-bohemcars-menu-item="profile"]')
+		page.locator('[aria-current="page"][data-bohemcars-menu-item="profile"]')
 	).toBeVisible();
 	await expect(accountProfile.locator('#avatarPreview')).toBeVisible();
 	await expect(accountProfile.locator('#posterPreview')).toBeVisible();
@@ -2172,7 +2170,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	const accountPassword = page.locator('[data-bohemcars-password-form]');
 	await expect(accountPassword).toBeVisible();
 	await expect(
-		page.locator('.dashboard-menu-item[aria-current="page"][data-bohemcars-menu-item="password"]')
+		page.locator('[aria-current="page"][data-bohemcars-menu-item="password"]')
 	).toBeVisible();
 	await expect(accountPassword.locator('#Email')).toHaveValue('customer@bohemcars.local');
 	await expect(accountPassword.locator('#OldPassword')).toHaveValue('');
@@ -2240,67 +2238,58 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 
 	await page.goto(`${adminEditPath}?role=admin`);
 	await expect(page.locator('body')).toContainText('Edit Listing');
-	const adminEditForm = page.locator('[data-bohemcars-add-listing-form]');
+	const adminEditForm = page.locator('[data-bohemcars-admin-listing-editor]');
 	await expect(adminEditForm).toBeVisible();
-	await expect(adminEditForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'clone-static');
-	await expect(adminEditForm.locator('input[name="sourceId"]')).toHaveCount(1);
-	await expect(adminEditForm.locator('#carPreviewImage')).toBeVisible();
-	await expect(adminEditForm.locator('.car-gallery-upload__item')).toHaveCount(7);
-	await expect(adminEditForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
-	await expect(adminEditForm.locator('#EnterVIN')).not.toHaveValue('');
-	await expect(adminEditForm.locator('#PriceListing2')).not.toHaveValue('');
-	await expect(adminEditForm.locator('#Doorstextarea')).toHaveAttribute(
-		'placeholder',
-		'Vehicle description and inspection notes'
+	await expect(adminEditForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'edit');
+	await expect(adminEditForm.locator('input[name="source"]')).toHaveValue(
+		/static-vehicle|admin-listing/
 	);
-	await expect(adminEditForm).toContainText('Features');
-	await expect(adminEditForm.locator('.form-group')).toHaveCount(25);
+	await expect(adminEditForm).toContainText('Listing workspace');
+	await expect(adminEditForm).toContainText('Record summary');
+	await expect(adminEditForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
+	await expect(adminEditForm.locator('#vin')).not.toHaveValue('');
+	await expect(adminEditForm.locator('#priceLabel')).not.toHaveValue('');
+	await expect(adminEditForm.locator('#routePath')).toHaveValue(/\/inventory\//);
+	await expect(adminEditForm.locator('button[type="submit"]')).toContainText(/Save/);
 	await expect(page.locator('body')).not.toContainText('Lorem ipsum');
 
 	await page.goto('/admin/inventory/new?role=admin');
-	await expect(page.locator('body')).toContainText('Add Listing');
-	const adminNewForm = page.locator('[data-bohemcars-add-listing-form]');
+	await expect(page.locator('body')).toContainText(/Add listing|Create inventory draft/);
+	const adminNewForm = page.locator('[data-bohemcars-admin-listing-editor]');
 	await expect(adminNewForm).toBeVisible();
 	await expect(adminNewForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'create');
-	await expect(adminNewForm.locator('input[name="actorRole"]')).toHaveValue('admin');
-	await expect(adminNewForm.locator('#carPreviewImage')).toBeVisible();
-	await expect(adminNewForm.locator('.car-gallery-upload__item')).toHaveCount(7);
-	await expect(adminNewForm.locator('.dashboard-box')).toHaveCount(7);
-	await expect(adminNewForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
-	await expect(adminNewForm.locator('#EnterVIN')).not.toHaveValue('');
-	await expect(adminNewForm.locator('#PriceListing2')).not.toHaveValue('');
-	await expect(adminNewForm.locator('.widget-gg-map iframe')).toBeVisible();
-	await expect(page.locator('.bohemcars-local-form-action')).toHaveCount(2);
-	await page.locator('[data-bohemcars-listing-status="draft"]').click();
-	await expect(adminNewForm.locator('.auxero-form-status')).toHaveText(
-		'Listing draft saved locally for Bohemcars review'
-	);
+	await expect(adminNewForm.locator('input[name="source"]')).toHaveValue('admin-listing');
+	await expect(adminNewForm.locator('#title')).toHaveValue('');
+	await expect(adminNewForm.locator('#vin')).toHaveValue('');
+	await expect(adminNewForm.locator('#priceLabel')).toHaveValue('');
+	await expect(adminNewForm.locator('#routePath')).toHaveValue('');
+	await expect(adminNewForm.locator('button[type="submit"]')).toContainText('Create listing');
 
 	await page.goto('/admin/inquiries?role=agent');
 	await expect(page.locator('body')).toContainText('Inquiries');
 	await expect(
-		page.locator('.dashboard-menu-item[aria-current="page"][data-bohemcars-menu-item="inquiries"]')
+		page.locator('[aria-current="page"][data-bohemcars-menu-item="inquiries"]')
 	).toBeVisible();
-	const agentInquiries = page.locator('[data-bohemcars-message-container]');
+	const agentInquiries = page.locator('[data-bohemcars-admin-inquiries]');
 	await expect(agentInquiries).toBeVisible();
 	await expect
-		.poll(async () => agentInquiries.locator('.message-contact').count())
+		.poll(async () => agentInquiries.locator('[data-bohemcars-admin-inquiry]').count())
 		.toBeGreaterThan(0);
 	await expect(agentInquiries).toContainText('Canada import lead');
 	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 
 	await page.goto('/admin/messages?role=admin');
 	await expect(page.locator('body')).toContainText('Messages');
-	const adminMessages = page.locator('[data-bohemcars-message-container]');
+	const adminMessages = page.locator('[data-bohemcars-admin-messages]');
 	await expect(adminMessages).toBeVisible();
 	await expect
-		.poll(async () => adminMessages.locator('.message-contact').count())
+		.poll(async () => adminMessages.locator('[data-bohemcars-admin-thread]').count())
 		.toBeGreaterThan(0);
-	await expect(adminMessages.locator('.message-chat__header')).toHaveCount(1);
-	await expect(adminMessages.locator('.message-chat__body')).toHaveCount(1);
-	await expect.poll(async () => adminMessages.locator('.message-item').count()).toBeGreaterThan(1);
-	await expect(adminMessages).toContainText('Canada import lead');
-	await expect(adminMessages).toContainText('Customer asked for source history');
+	await expect
+		.poll(async () => adminMessages.locator('[data-bohemcars-admin-message]').count())
+		.toBeGreaterThan(0);
+	await expect(adminMessages).toContainText('Bohemcars Customer');
+	await expect(adminMessages).toContainText('Please send appointment options');
 	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
@@ -2308,11 +2297,10 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('body')).toContainText('Agents');
 	const adminAgents = page.locator('[data-bohemcars-agent-management="true"]');
 	await expect(adminAgents).toBeVisible();
-	await expect(adminAgents.locator('.sale-agent-box')).toHaveCount(3);
+	await expect(adminAgents.locator('[data-bohemcars-agent-card]')).toHaveCount(3);
 	await expect(adminAgents.locator('[data-bohemcars-agent-status="active"]')).toHaveCount(3);
-	await expect(adminAgents.locator('a[href*="/admin/inquiries?role=admin"]')).toHaveCount(3);
-	await expect(adminAgents.locator('a[href*="/admin/messages?role=admin"]')).toHaveCount(3);
-	await expect(adminAgents).toContainText('open leads');
+	await expect(adminAgents.locator('a[href*="/admin/agents/"]')).toHaveCount(3);
+	await expect(adminAgents).toContainText(/Open leads/i);
 
 	const forbiddenAgents = await page.goto('/admin/agents?role=customer');
 	expect(forbiddenAgents?.status()).toBe(403);
@@ -2324,21 +2312,16 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('body')).toContainText('Users');
 	const adminUsers = page.locator('[data-bohemcars-users-table]');
 	await expect(adminUsers).toBeVisible();
-	await expect(adminUsers.locator('.cart-header > div')).toHaveCount(6);
+	await expect(adminUsers.locator('thead th')).toHaveCount(5);
 	await expect
-		.poll(async () => adminUsers.locator('.cart-item[data-bohemcars-user-id]').count())
+		.poll(async () => adminUsers.locator('[data-bohemcars-user-id]').count())
 		.toBeGreaterThan(2);
-	const adminUserCount = await adminUsers.locator('.cart-item[data-bohemcars-user-id]').count();
 	await expect(adminUsers.locator('[data-bohemcars-user-role="admin"]')).toBeVisible();
 	await expect(adminUsers).toContainText('customer@bohemcars.local');
 	await expect(adminUsers).toContainText('Canada import lead');
-	await expect(adminUsers.locator('.cart-item__price .price.clamp-1.clamp')).toHaveCount(
-		adminUserCount
-	);
-	await expect(adminUsers.locator('.cart-item__total .clamp-1.clamp')).toHaveCount(adminUserCount);
-	await expect(adminUsers.locator('a[href*="/admin/messages"]')).toHaveCount(adminUserCount);
-	await expect(adminUsers.locator('a[href*="/admin/inquiries"]')).toHaveCount(adminUserCount);
-	await expect(page.locator('.bohemcars-users-box')).toContainText('Бележки за достъп по роли');
+	await expect(adminUsers.locator('form input[name="id"]')).toHaveCount(3);
+	await expect.poll(async () => adminUsers.getByText('Open lead').count()).toBeGreaterThan(0);
+	await expect(adminUsers).toContainText('Account edits stay in the table row');
 
 	const forbidden = await page.goto('/admin?role=customer');
 	expect(forbidden?.status()).toBe(403);

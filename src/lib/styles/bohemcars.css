@@ -126,6 +126,13 @@
 	--bc-dashboard-text: #44513f;
 	--bc-dashboard-heading: #1c1c1c;
 	--bc-dashboard-muted: #6f7c59;
+	--bc-dashboard-card-hover: #f8faf4;
+	--bc-dashboard-card-radius: 14px;
+	--bc-dashboard-action-bg: #f3f6ef;
+	--bc-dashboard-action-hover: #e9efe4;
+	--bc-dashboard-icon-bg: #edf2e8;
+	--bc-dashboard-status-bg: #f3f7ea;
+	--bc-dashboard-status-text: #6f9818;
 
 	--bc-showcase-bg: #f5f6f2;
 	--bc-showcase-dark: #11140f;

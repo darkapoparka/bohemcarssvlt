@@ -26,7 +26,10 @@
 </svelte:head>
 
 <AdminShell title="Messages" activePath="/admin/messages">
-	<section class="grid max-w-[96rem] gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]">
+	<section
+		class="grid max-w-[96rem] gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]"
+		data-bohemcars-admin-messages
+	>
 		<Card.Root class="overflow-hidden xl:h-[36rem]">
 			<Card.Header class="border-b">
 				<div>
@@ -40,6 +43,7 @@
 						{#each data.threads as thread (thread.id)}
 							<a
 								href={resolve(('/admin/messages?thread=' + encodeURIComponent(thread.id)) as '/')}
+								data-bohemcars-admin-thread={thread.id}
 								class={cn(
 									'hover:bg-muted flex min-h-20 items-start gap-3 rounded-lg px-3 py-3 text-sm transition-colors',
 									activeThread?.id === thread.id && 'bg-muted'
@@ -103,7 +107,10 @@
 					<ScrollArea.Root class="h-80 xl:h-[20rem]">
 						<div class="flex min-h-80 flex-col justify-end gap-4 p-4 xl:min-h-[20rem] xl:p-5">
 							{#each activeThread.messages as message (message.id)}
-								<div class={cn('flex gap-3', message.direction === 'outbound' && 'justify-end')}>
+								<div
+									class={cn('flex gap-3', message.direction === 'outbound' && 'justify-end')}
+									data-bohemcars-admin-message={message.id}
+								>
 									{#if message.direction === 'inbound'}
 										<Avatar.Root class="size-9">
 											<Avatar.Fallback>{message.initials}</Avatar.Fallback>

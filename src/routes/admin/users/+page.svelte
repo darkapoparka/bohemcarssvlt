@@ -44,7 +44,7 @@
 		</Card.Root>
 	</section>
 
-	<section class="px-4 lg:px-6">
+	<section class="px-4 lg:px-6" data-bohemcars-users-table>
 		<Card.Root class="overflow-hidden">
 			<Card.Header class="border-b">
 				<div>
@@ -91,7 +91,7 @@
 						</Table.Header>
 						<Table.Body>
 							{#each data.users as user (user.id)}
-								<Table.Row>
+								<Table.Row data-bohemcars-user-id={user.id} data-bohemcars-user-role={user.role}>
 									<Table.Cell>
 										<div class="min-w-64">
 											<p class="m-0 font-medium">{user.name}</p>

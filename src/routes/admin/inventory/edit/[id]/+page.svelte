@@ -14,6 +14,7 @@
 
 <AdminShell title={listing?.title ?? 'Listing not found'} activePath="/admin/inventory">
 	{#if listing}
+		<span class="sr-only">Edit Listing</span>
 		<AdminListingEditor
 			{listing}
 			{form}

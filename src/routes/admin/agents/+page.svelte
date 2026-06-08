@@ -47,9 +47,12 @@
 		</Card.Root>
 	</section>
 
-	<section class="grid grid-cols-1 gap-4 px-4 lg:grid-cols-3 lg:px-6">
+	<section
+		class="grid grid-cols-1 gap-4 px-4 lg:grid-cols-3 lg:px-6"
+		data-bohemcars-agent-management="true"
+	>
 		{#each data.cms.agents as agent (agent.slug)}
-			<Card.Root>
+			<Card.Root data-bohemcars-agent-card={agent.slug} data-bohemcars-agent-status={agent.status}>
 				<Card.Header class="border-b">
 					<div class="flex items-start gap-3">
 						<img

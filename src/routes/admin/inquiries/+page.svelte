@@ -60,7 +60,10 @@
 </svelte:head>
 
 <AdminShell title="Inquiries" activePath="/admin/inquiries">
-	<section class="grid items-start gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]">
+	<section
+		class="grid items-start gap-4 px-4 lg:px-6 xl:grid-cols-[25rem_minmax(0,1fr)]"
+		data-bohemcars-admin-inquiries
+	>
 		<Card.Root class="overflow-hidden">
 			<Card.Header class="border-b">
 				<div>
@@ -78,6 +81,7 @@
 							<a
 								href={resolve(('/admin/inquiries?lead=' + encodeURIComponent(inquiry.id)) as '/')}
 								aria-current={activeInquiry?.id === inquiry.id ? 'page' : undefined}
+								data-bohemcars-admin-inquiry={inquiry.id}
 								class={cn(
 									'hover:bg-muted flex min-h-24 items-start gap-3 rounded-lg px-3 py-3 text-sm transition-colors',
 									activeInquiry?.id === inquiry.id && 'bg-muted ring-border ring-1'
