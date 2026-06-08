@@ -62,28 +62,15 @@ export type BohemcarsMessageRecord = {
 
 export type BohemcarsVehicleSubmissionStatus = 'draft' | 'submitted' | 'reviewing' | 'published';
 
-export type BohemcarsCmsDocument = {
-	filename: string;
-	id: string;
-	mimeType: string;
-	originalName: string;
-	size: number;
-	uploadedAt: string;
-	url: string;
-};
-
 export type BohemcarsVehicleSubmissionRecord = {
 	contactEmail: string;
 	contactName: string;
 	contactPhone: string;
 	createdAt: string;
-	documents?: BohemcarsCmsDocument[];
 	expectedPrice: string;
-	galleryImages?: string[];
 	id: string;
 	message: string;
 	mileage: string;
-	previewImage?: string;
 	routePath: string;
 	source: 'sell-your-car' | 'admin-listing' | 'customer-listing';
 	status: BohemcarsVehicleSubmissionStatus;
@@ -94,37 +81,18 @@ export type BohemcarsVehicleSubmissionRecord = {
 export type BohemcarsInventoryListingStatus = 'draft' | 'published' | 'archived';
 
 export type BohemcarsInventoryListingRecord = {
-	bodyType: string;
-	brand: string;
-	color: string;
 	createdAt: string;
-	description: string;
-	documents: BohemcarsCmsDocument[];
-	doors: number;
-	engine: string;
-	features: string[];
-	fuel: string;
-	galleryImages: string[];
 	id: string;
-	location: string;
-	mileage: number;
-	model: string;
-	previewImage: string;
-	price: number;
+	mileage: string;
 	priceLabel: string;
 	routePath: string;
-	seats: number;
 	slug: string;
-	source: 'admin-listing' | 'static-vehicle';
-	sourceUrl: string;
+	source: 'admin-listing';
 	status: BohemcarsInventoryListingStatus;
-	stockNumber: string;
 	submissionId?: string;
 	title: string;
-	transmission: string;
 	updatedAt: string;
 	vin: string;
-	year: number;
 };
 
 export type BohemcarsPasswordChangeRecord = {

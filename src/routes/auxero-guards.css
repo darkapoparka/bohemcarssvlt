@@ -166,26 +166,6 @@ body[class*='auxero-template-'] {
 	.card-box[data-bohemcars-slug] .bohemcars-card-price__finance-link {
 		color: var(--bc-card-muted) !important;
 	}
-
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug],
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug] .content {
-		background: #ffffff !important;
-	}
-
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug] {
-		border: 1px solid var(--bc-border) !important;
-	}
-
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug]:hover,
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug]:focus-within,
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug]:hover .content,
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug]:focus-within .content {
-		background: #fbfcf8 !important;
-	}
-
-	.card-box.bohemcars-commerce-card[data-bohemcars-slug] .content .tag li {
-		background: #f8faf8 !important;
-	}
 }
 
 /* Soften heavy Cyrillic section headings (theme default is 600, which reads clunky in Manrope Cyrillic) */
@@ -1167,7 +1147,7 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		overflow: hidden !important;
 		border: 1px solid var(--bc-border) !important;
 		border-radius: 8px !important;
-		background: #ffffff !important;
+		background: var(--bc-surface) !important;
 		box-shadow: none !important;
 	}
 
@@ -1229,7 +1209,7 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		grid-row: 1 !important;
 		min-width: 0 !important;
 		border: 0 !important;
-		background: #ffffff !important;
+		background: var(--bc-surface) !important;
 		padding: 10px 10px 9px !important;
 	}
 
@@ -1278,7 +1258,7 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		.bohemcars-inventory-content
 		.card-box-style-1
 		.content {
-		background: #ffffff !important;
+		background: #eef1ed !important;
 	}
 
 	body.auxero-template-listing-grid3-columns-html

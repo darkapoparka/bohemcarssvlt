@@ -1242,7 +1242,7 @@
 		overflow: hidden;
 		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface);
 	}
 
 	.bohemcars-inventory-mobile-card__image {
@@ -1353,7 +1353,7 @@
 		gap: 5px;
 		overflow: hidden;
 		border-radius: 7px;
-		background: #f8faf8;
+		background: #ffffff;
 		padding: 0 8px;
 		color: #4b5563;
 		font-size: 12px;

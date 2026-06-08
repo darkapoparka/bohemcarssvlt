@@ -1,5 +1,5 @@
 import { posts } from '$lib/data/blog';
-import type { BohemcarsCmsDocument } from '$lib/types/account';
+import { vehicles } from '$lib/data/vehicles';
 import { listManagedAgents } from './agents';
 import { listInquiriesForRole } from './inquiries';
 import { listInventoryForAdmin, listVehicleSubmissions } from './inventory';
@@ -7,35 +7,17 @@ import { listMessagesForRole } from './messages';
 import { listManagedUsers } from './users';
 
 export type AdminInventoryRow = {
-	bodyType: string;
 	brand: string;
-	color: string;
-	createdAt: string;
-	description: string;
-	documents: BohemcarsCmsDocument[];
-	doors: number;
-	engine: string;
-	features: string[];
 	fuel: string;
-	galleryImages: string[];
 	id: string;
 	image: string;
-	location: string;
 	mileage: string;
-	mileageValue: number;
-	model: string;
-	previewImage: string;
-	price: number;
 	priceLabel: string;
 	routePath: string;
-	seats: number;
 	slug: string;
 	source: 'admin-listing' | 'static-vehicle';
-	sourceUrl: string;
 	status: string;
-	stockNumber: string;
 	title: string;
-	transmission: string;
 	updatedAt: string;
 	vin: string;
 	year: number | string;
@@ -55,56 +37,36 @@ export type AdminRecentWorkItem = {
 };
 
 const fallbackImage = '/assets/images/card/card-1.jpg';
-const km = (value: number) =>
-	value > 0 ? `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km` : 'On request';
 
 const statusIsOpen = (status: string) => !['closed', 'archived', 'published'].includes(status);
 
-export function getAdminInventoryRows({
-	includeArchived = false
-}: { includeArchived?: boolean } = {}): AdminInventoryRow[] {
-	return listInventoryForAdmin({ includeArchived }).map((record) => {
+export function getAdminInventoryRows(): AdminInventoryRow[] {
+	return listInventoryForAdmin().map((record) => {
+		const vehicle = vehicles.find(
+			(candidate) => candidate.slug === record.id || candidate.slug === record.slug
+		);
+
 		return {
-			bodyType: record.bodyType,
-			brand: record.brand,
-			color: record.color,
-			createdAt: record.createdAt,
-			description: record.description,
-			documents: record.documents,
-			doors: record.doors,
-			engine: record.engine,
-			features: record.features,
-			fuel: record.fuel,
-			galleryImages: record.galleryImages,
+			brand: vehicle?.brand ?? record.title.split(' ')[0] ?? 'Bohemcars',
+			fuel: vehicle?.fuel ?? 'On request',
 			id: record.id,
-			image: record.previewImage || record.galleryImages[0] || fallbackImage,
-			location: record.location,
-			mileage: km(record.mileage),
-			mileageValue: record.mileage,
-			model: record.model,
-			previewImage: record.previewImage,
-			price: record.price,
+			image: vehicle?.image ?? fallbackImage,
+			mileage: record.mileage,
 			priceLabel: record.priceLabel,
 			routePath: record.routePath,
-			seats: record.seats,
 			slug: record.slug,
-			sourceUrl: record.sourceUrl,
 			source: record.source,
-			stockNumber: record.stockNumber,
 			status: record.status,
 			title: record.title,
-			transmission: record.transmission,
-			updatedAt: record.updatedAt,
+			updatedAt: 'updatedAt' in record ? record.updatedAt : new Date().toISOString(),
 			vin: record.vin,
-			year: record.year || 'Draft'
+			year: vehicle?.year ?? 'Draft'
 		};
 	});
 }
 
 export function getAdminInventoryRow(id: string) {
-	return getAdminInventoryRows({ includeArchived: true }).find(
-		(row) => row.id === id || row.id === decodeURIComponent(id)
-	);
+	return getAdminInventoryRows().find((row) => row.id === id || row.id === decodeURIComponent(id));
 }
 
 export function getAdminCmsOverview() {

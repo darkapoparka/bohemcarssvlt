@@ -1,8 +1,8 @@
 import { posts } from '$lib/data/blog';
 import { bohemcarsBrand, bohemcarsFetchedAt } from '$lib/data/bohemcars';
 import { agents } from '$lib/data/agents';
+import { vehicles } from '$lib/data/vehicles';
 import { publicSitemapRoutes } from '$lib/auxero/sitemap';
-import { listPublicVehicles } from '$lib/server/public-vehicles';
 
 const baseUrl = `https://${bohemcarsBrand.domain}`;
 
@@ -23,7 +23,7 @@ const urlEntry = (loc: string) => `<url>
 
 export function GET() {
 	const dynamicRoutes = [
-		...listPublicVehicles().map((vehicle) => `/inventory/${vehicle.slug}`),
+		...vehicles.map((vehicle) => `/inventory/${vehicle.slug}`),
 		...agents.map((agent) => `/agents/${agent.slug}`),
 		...posts.map((post) => `/blog/${post.slug}`)
 	];

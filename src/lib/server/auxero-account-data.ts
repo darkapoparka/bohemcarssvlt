@@ -1101,7 +1101,6 @@ const applyAddListingData = (
 	const color = listingFormFieldValue(form, 'Color');
 	const adminHeading = form.mode === 'create' ? 'Add Listing' : 'Edit Listing';
 	const pageHeading = context.isAdmin ? adminHeading : 'Submit Your Vehicle';
-	const primaryListingStatus = context.isAdmin ? 'published' : 'submitted';
 	const hiddenFields = form.hiddenFields
 		.map((field) => hiddenInput(field.name, field.value))
 		.join('\n');
@@ -1115,19 +1114,7 @@ const applyAddListingData = (
 		)
 		.replace(
 			'<a href="#" class="btn btn-primary px-24 btn-large font-weight-600">',
-			`<a href="#" class="btn btn-primary px-24 btn-large font-weight-600 bohemcars-local-form-action" data-bohemcars-form-target=".bohemcars-add-listing-form" data-bohemcars-form-status="Listing published locally for Bohemcars" data-bohemcars-submit-form="true" data-bohemcars-listing-status="${primaryListingStatus}">`
-		)
-		.replace(
-			'<input type="file" id="carPreviewInput" accept="image/jpeg,image/png,image/jpg" class="car-preview-upload__input">',
-			'<input type="file" id="carPreviewInput" name="previewImage" accept="image/jpeg,image/png,image/jpg,image/webp" class="car-preview-upload__input">'
-		)
-		.replace(
-			'<input type="file" id="carGalleryInput" accept="image/jpeg,image/png,image/jpg" multiple class="car-gallery-upload__input">',
-			'<input type="file" id="carGalleryInput" name="galleryImages" accept="image/jpeg,image/png,image/jpg,image/webp" multiple class="car-gallery-upload__input">'
-		)
-		.replace(
-			'<input type="file" id="attachmentsInput" accept=".pdf,.doc,.docx" multiple class="car-gallery-upload__input" style="display: none;">',
-			'<input type="file" id="attachmentsInput" name="documents" accept=".pdf,.doc,.docx" multiple class="car-gallery-upload__input" style="display: none;">'
+			'<a href="#" class="btn btn-primary px-24 btn-large font-weight-600 bohemcars-local-form-action" data-bohemcars-form-target=".bohemcars-add-listing-form" data-bohemcars-form-status="Listing published locally for Bohemcars" data-bohemcars-submit-form="true" data-bohemcars-listing-status="published">'
 		)
 		.replaceAll('value="Audi A6 Avant E-Tron"', `value="${escapeHtml(title)}"`)
 		.replaceAll('placeholder="Years"', 'placeholder="Year"')
@@ -1175,7 +1162,7 @@ const applyAddListingData = (
 
 	next = next.replace(
 		`<form action="#" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-add-listing-form>`,
-		`<form action="" method="POST" enctype="multipart/form-data" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-native-submit="true" data-bohemcars-add-listing-form>\n${hiddenFields}`
+		`<form action="#" class="bohemcars-add-listing-form" novalidate data-bohemcars-admin-listing-mode="${form.mode}" data-bohemcars-add-listing-form>\n${hiddenFields}`
 	);
 
 	return replaceDashboardDemoText(next);

@@ -8,6 +8,7 @@
 	let { form }: { form: AuxeroAccountListingFormData } = $props();
 
 	let listingStatus = $state<'draft' | 'published' | 'submitted'>('draft');
+	let status = $state('');
 
 	const isSubmissionForm = $derived(
 		form.hiddenFields.some(
@@ -16,8 +17,26 @@
 	);
 	const primaryListingStatus = $derived(isSubmissionForm ? 'submitted' : 'published');
 	const primaryActionLabel = $derived(isSubmissionForm ? 'Submit for Review' : 'Publish Listing');
-	const saveListingAs = (nextStatus: 'draft' | 'published' | 'submitted') => {
+	const draftStatusMessage = $derived(
+		isSubmissionForm
+			? 'Vehicle submission draft saved locally'
+			: 'Listing draft saved locally for Bohemcars review'
+	);
+	const primaryStatusMessage = $derived(
+		isSubmissionForm
+			? 'Vehicle submission sent locally for Bohemcars review'
+			: 'Listing published locally for Bohemcars'
+	);
+
+	const saveListing = (event: SubmitEvent) => {
+		event.preventDefault();
+		status = listingStatus === 'draft' ? draftStatusMessage : primaryStatusMessage;
+	};
+
+	const saveListingAs = (event: MouseEvent, nextStatus: 'draft' | 'published' | 'submitted') => {
+		event.preventDefault();
 		listingStatus = nextStatus;
+		status = nextStatus === 'draft' ? draftStatusMessage : primaryStatusMessage;
 	};
 
 	const selectedDropdownValue = (field: AuxeroListingFormDropdownField) =>
@@ -25,14 +44,13 @@
 </script>
 
 <form
-	action=""
+	action="#"
 	class="bohemcars-add-listing-form dash-form"
-	method="POST"
-	enctype="multipart/form-data"
 	novalidate
 	data-bohemcars-admin-listing-mode={form.mode}
 	data-bohemcars-listing-context={isSubmissionForm ? 'submission' : 'inventory'}
 	data-bohemcars-add-listing-form
+	onsubmit={saveListing}
 >
 	{#each form.hiddenFields as field (field.name)}
 		<input type="hidden" name={field.name} value={field.value} />
@@ -63,8 +81,7 @@
 				<input
 					type="file"
 					id="carPreviewInput"
-					name="previewImage"
-					accept="image/jpeg,image/png,image/jpg,image/webp"
+					accept="image/jpeg,image/png,image/jpg"
 					class="hidden"
 				/>
 				<span class="text-sm font-bold text-[var(--dash-muted)]">Upload JPG or PNG</span>
@@ -84,8 +101,7 @@
 				<input
 					type="file"
 					id="carGalleryInput"
-					name="galleryImages"
-					accept="image/jpeg,image/png,image/jpg,image/webp"
+					accept="image/jpeg,image/png,image/jpg"
 					multiple
 					class="hidden"
 				/>
@@ -164,13 +180,7 @@
 					<div class="dash-checkbox-grid">
 						{#each group.features as feature (feature.id)}
 							<label class="dash-check" for={feature.id}>
-								<input
-									type="checkbox"
-									id={feature.id}
-									name="features"
-									value={feature.label}
-									checked={feature.checked}
-								/>
+								<input type="checkbox" id={feature.id} checked={feature.checked} />
 								<span>{feature.label}</span>
 							</label>
 						{/each}
@@ -276,31 +286,30 @@
 				<label class="dash-secondary-button cursor-pointer" for="attachmentsInput"
 					>Choose documents</label
 				>
-				<input
-					type="file"
-					id="attachmentsInput"
-					name="documents"
-					accept=".pdf,.doc,.docx"
-					multiple
-					class="hidden"
-				/>
+				<input type="file" id="attachmentsInput" accept=".pdf,.doc,.docx" multiple class="hidden" />
 				<span class="text-sm font-bold text-[var(--dash-muted)]">Upload PDF, DOC, or DOCX</span>
 			</div>
 		</div>
 	</section>
 
 	<div class="flex flex-wrap justify-end gap-3">
-		<button type="submit" class="dash-secondary-button" onclick={() => saveListingAs('draft')}>
+		<button
+			type="button"
+			class="dash-secondary-button"
+			onclick={(event) => saveListingAs(event, 'draft')}
+		>
 			<Save size={17} strokeWidth={2.1} aria-hidden="true" />
 			Save Draft
 		</button>
 		<button
-			type="submit"
+			type="button"
 			class="dash-primary-button"
-			onclick={() => saveListingAs(primaryListingStatus)}
+			onclick={(event) => saveListingAs(event, primaryListingStatus)}
 		>
 			<Send size={17} strokeWidth={2.1} aria-hidden="true" />
 			{primaryActionLabel}
 		</button>
 	</div>
+
+	<p class="m-0 min-h-5 text-sm font-black text-[#0f9f7a]" aria-live="polite">{status}</p>
 </form>

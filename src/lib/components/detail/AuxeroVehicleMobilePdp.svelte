@@ -28,7 +28,7 @@
 	const heroGalleryImages = $derived(Array.from(new Set(detail.galleryImages)));
 	const heroImage = $derived(heroGalleryImages[selectedImageIndex] ?? detail.image);
 	const primaryFacts = $derived(detail.overviewItems.slice(0, 4));
-	const specItems = $derived(detail.overviewItems.slice(4, 10));
+	const specItems = $derived(detail.overviewItems.slice(0, 10));
 	const featureGroups = $derived(detail.featureTabs.filter((tab) => tab.items.length > 0));
 	const contentTabs = $derived(
 		detail.mobileDrawer.tabs.filter((tab) => ['info', 'specs', 'features'].includes(tab.id))
@@ -174,17 +174,6 @@
 	</style>
 </svelte:head>
 
-{#snippet primaryFactsGrid()}
-	<div class="bohemcars-mobile-pdp__facts" aria-label={detail.copy.carOverview}>
-		{#each primaryFacts as item (item.label)}
-			<div>
-				<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
-				<span>{item.value}</span>
-			</div>
-		{/each}
-	</div>
-{/snippet}
-
 <section
 	class="bohemcars-mobile-pdp"
 	data-mobile-pdp-root
@@ -275,22 +264,13 @@
 				<span>{detail.monthlyLabel}</span>
 			</div>
 
-			<div class="bohemcars-mobile-pdp__actions">
-				<button
-					type="button"
-					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--primary"
-					onclick={openInquiry}
-				>
-					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
-					{detail.copy.inquiryCta}
-				</button>
-				<a
-					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
-					{...externalHref(detail.contact.primaryPhoneHref)}
-				>
-					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
-					{detail.copy.callCta}
-				</a>
+			<div class="bohemcars-mobile-pdp__facts" aria-label={detail.copy.carOverview}>
+				{#each primaryFacts as item (item.label)}
+					<div>
+						<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
+						<span>{item.value}</span>
+					</div>
+				{/each}
 			</div>
 
 			<Drawer.Description>
@@ -318,9 +298,6 @@
 				{#if activeTab === 'info'}
 					<div class="bohemcars-mobile-pdp__section">
 						<p class="bohemcars-mobile-pdp__eyebrow">{detail.copy.description}</p>
-
-						{@render primaryFactsGrid()}
-
 						<p class="bohemcars-mobile-pdp__body-copy">{detail.description}</p>
 
 						<div class="bohemcars-mobile-pdp__finance">
@@ -337,21 +314,17 @@
 						</div>
 					</div>
 				{:else if activeTab === 'specs'}
-					<div class="bohemcars-mobile-pdp__section">
-						{@render primaryFactsGrid()}
-
-						<ul class="bohemcars-mobile-pdp__spec-list">
-							{#each specItems as item (item.label)}
-								<li>
-									<span>
-										<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
-										{item.label}
-									</span>
-									<strong>{item.value}</strong>
-								</li>
-							{/each}
-						</ul>
-					</div>
+					<ul class="bohemcars-mobile-pdp__spec-list">
+						{#each specItems as item (item.label)}
+							<li>
+								<span>
+									<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
+									{item.label}
+								</span>
+								<strong>{item.value}</strong>
+							</li>
+						{/each}
+					</ul>
 				{:else if activeTab === 'features'}
 					<div class="bohemcars-mobile-pdp__feature-groups">
 						{#each featureGroups as group (group.label)}
@@ -369,6 +342,24 @@
 						{/each}
 					</div>
 				{/if}
+			</div>
+
+			<div class="bohemcars-mobile-pdp__actions">
+				<button
+					type="button"
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--primary"
+					onclick={openInquiry}
+				>
+					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.inquiryCta}
+				</button>
+				<a
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
+					{...externalHref(detail.contact.primaryPhoneHref)}
+				>
+					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.callCta}
+				</a>
 			</div>
 		</Drawer.Content>
 	</Drawer.Root>
@@ -654,8 +645,9 @@
 		.bohemcars-mobile-pdp__facts {
 			display: grid;
 			grid-template-columns: repeat(4, minmax(0, 1fr));
+			flex: 0 0 auto;
 			gap: 5px;
-			padding: 0;
+			padding: 0 0 8px;
 		}
 
 		.bohemcars-mobile-pdp__facts div {
@@ -1024,10 +1016,9 @@
 		.bohemcars-mobile-pdp__actions {
 			display: grid;
 			grid-template-columns: 1.45fr 1fr;
-			flex: 0 0 auto;
 			gap: 9px;
-			border-bottom: 1px solid var(--bc-border);
-			padding: 0 0 11px;
+			border-top: 1px solid var(--bc-border);
+			padding-top: 10px;
 		}
 
 		.bohemcars-mobile-pdp__cta {
