@@ -10,6 +10,7 @@ describe('productRouteSources', () => {
 		expect(sourceForProductRoute('/inventory')).toBe('listing-grid4-columns.html');
 		expect(sourceForProductRoute('/inventory?view=3')).toBe('listing-grid3-columns.html');
 		expect(sourceForProductRoute('/inventory?view=4')).toBe('listing-grid4-columns.html');
+		expect(sourceForProductRoute('/inventory?view=5')).toBe('listing-grid4-columns.html');
 		expect(sourceForProductRoute('/inventory?view=map')).toBe('listing-gridstyle-halfmap.html');
 		expect(sourceForProductRoute('/inventory/21779200396408437')).toBe('listing-details-3.html');
 	});

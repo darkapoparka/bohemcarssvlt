@@ -266,14 +266,20 @@ describe('Auxero template Bohemcars adapter', () => {
 		const denseResponse = auxeroResponse('inventory', {
 			searchParams: new URLSearchParams('view=4')
 		});
+		const compactResponse = auxeroResponse('inventory', {
+			searchParams: new URLSearchParams('layout=classic&view=5')
+		});
 		const mapResponse = auxeroResponse('inventory', {
 			searchParams: new URLSearchParams('view=map')
 		});
 		const dense = await denseResponse.text();
+		const compact = await compactResponse.text();
 		const map = await mapResponse.text();
 
 		expect(dense).toContain('grid-cols-4');
 		expect(dense).toContain('Dense 4 grid');
+		expect(compact).toContain('grid-cols-5');
+		expect(compact).toContain('Compact 5 grid');
 		expect(map).toContain('card-box-style-9');
 		expect(map).toContain('bohemcars-map-fallback');
 		expect(map).toContain(`data-bohemcars-map-selected="${vehicles.length}"`);

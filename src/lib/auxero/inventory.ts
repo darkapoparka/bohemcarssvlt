@@ -1,7 +1,7 @@
 import type { Vehicle } from '$lib/data/vehicles';
 import { localizeVehicleTermsInText, translateVehicleTerm, type Locale } from '$lib/i18n/messages';
 
-export type AuxeroInventoryView = '3' | '4' | 'map';
+export type AuxeroInventoryView = '3' | '4' | '5' | 'map';
 
 export type AuxeroInventoryVehicleCard = {
 	brand: string;
@@ -31,6 +31,10 @@ export const formatInventoryMonthly = (value: number, locale: Locale = 'en') =>
 export const inventoryCardHighlightClass = () => 'bg-primary-2';
 
 export const inventoryGridClassForView = (view: AuxeroInventoryView) => {
+	if (view === '5') {
+		return 'grid grid-cols-5 lg-grid-cols-3 md-grid-cols-2 sm-grid-cols-1 gap-20';
+	}
+
 	if (view === '4') {
 		return 'grid grid-cols-4 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
 	}

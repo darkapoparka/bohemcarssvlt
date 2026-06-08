@@ -2,8 +2,11 @@ import { bohemcarsContact } from '$lib/data/bohemcars';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
 import {
+	constrainInventoryViewForLayout,
 	defaultInventoryViewForLayout,
+	resolveInventoryView,
 	type InventoryFilterPresentation,
+	type InventoryLayout,
 	type InventoryState
 } from '$lib/server/inventory-state';
 
@@ -43,7 +46,7 @@ export type AuxeroInventoryViewOption = {
 	ariaLabel: string;
 	href: string;
 	title: string;
-	view: '3' | '4' | 'map';
+	view: '3' | '4' | '5' | 'map';
 };
 
 export type AuxeroInventoryLayoutToggle = {
@@ -129,7 +132,7 @@ export type AuxeroInventoryDesktopData = {
 	};
 	sortLabel: string;
 	sortOptions: AuxeroInventorySortOption[];
-	view: '3' | '4' | 'map';
+	view: '3' | '4' | '5' | 'map';
 	viewLabel: string;
 	viewOptions: AuxeroInventoryViewOption[];
 };
@@ -384,7 +387,13 @@ const countBy = (values: string[]) =>
 
 const inventoryUrl = (state: InventoryState, overrides: Record<string, string | undefined>) => {
 	const params = new URLSearchParams(state.searchParams);
-	const defaultView = defaultInventoryViewForLayout(state.layout);
+	const hasLayoutOverride = Object.hasOwn(overrides, 'layout') || Object.hasOwn(overrides, 'mode');
+	const targetLayout: InventoryLayout = hasLayoutOverride
+		? overrides.layout === 'classic'
+			? 'classic'
+			: 'dashboard'
+		: state.layout;
+	const defaultView = defaultInventoryViewForLayout(targetLayout);
 
 	for (const [key, value] of Object.entries(overrides)) {
 		if (
@@ -396,6 +405,13 @@ const inventoryUrl = (state: InventoryState, overrides: Record<string, string | 
 		} else {
 			params.set(key, value);
 		}
+	}
+
+	const requestedView = params.get('view')
+		? resolveInventoryView(params.get('view'))
+		: defaultInventoryViewForLayout(targetLayout);
+	if (constrainInventoryViewForLayout(targetLayout, requestedView) !== requestedView) {
+		params.delete('view');
 	}
 
 	const query = params.toString();
@@ -793,10 +809,14 @@ const sortOptions = (state: InventoryState, locale: Locale) => {
 };
 
 const viewOptions = (state: InventoryState): AuxeroInventoryViewOption[] =>
-	(['3', '4', 'map'] as const).map((view) => {
+	(state.layout === 'dashboard'
+		? (['3', '4', 'map'] as const)
+		: (['3', '4', '5', 'map'] as const)
+	).map((view) => {
 		const labels: Record<AuxeroInventoryViewOption['view'], string> = {
 			'3': 'Comfortable 3 grid',
 			'4': 'Dense 4 grid',
+			'5': 'Compact 5 grid',
 			map: 'Half map'
 		};
 

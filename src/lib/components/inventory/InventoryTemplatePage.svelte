@@ -9,7 +9,10 @@
 	import type { InventoryMobileData } from '$lib/auxero/inventory-mobile';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { HomePageCopy, InventoryCopy } from '$lib/i18n/messages';
-	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
+	import AuxeroHead from '$lib/components/layout/AuxeroHead.svelte';
+	import HomeFiveFooter from '$lib/components/home/HomeFiveFooter.svelte';
+	import HomeFiveHeader from '$lib/components/home/HomeFiveHeader.svelte';
+	import HomeFiveModals from '$lib/components/home/HomeFiveModals.svelte';
 	import { onMount } from 'svelte';
 	import AuxeroInventoryDesktopSurface from './AuxeroInventoryDesktopSurface.svelte';
 	import InventoryMobilePage from './InventoryMobilePage.svelte';
@@ -24,8 +27,7 @@
 		shellCopy,
 		shellFooter,
 		shellHeader,
-		shellModals,
-		shellRuntimeHtml
+		shellModals
 	}: {
 		cards: AuxeroInventoryVehicleCard[];
 		copy: InventoryCopy;
@@ -37,10 +39,22 @@
 		shellFooter?: HomeFiveFooterData;
 		shellHeader?: HomeFiveHeaderData;
 		shellModals?: HomeFiveModalsData;
-		shellRuntimeHtml?: string;
 	} = $props();
 
 	let mobileRouteVisible = $state(true);
+	const resolvedTitle = $derived(
+		seoTitle ?? pageDocument.headHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim()
+	);
+	const bodyClassScript = $derived(
+		`document.body.className = ${JSON.stringify(pageDocument.bodyClass)};`
+	);
+
+	$effect(() => {
+		document.body.className = pageDocument.bodyClass;
+		if (resolvedTitle) {
+			document.title = resolvedTitle;
+		}
+	});
 
 	onMount(() => {
 		const media = window.matchMedia('(max-width: 767.98px)');
@@ -57,18 +71,19 @@
 	});
 </script>
 
+<AuxeroHead assets={pageDocument.headAssets} title={resolvedTitle} />
+<svelte:element this={'script'}>
+	{bodyClassScript}
+</svelte:element>
+
 <div class="bohemcars-inventory-desktop-route">
-	<AuxeroPublicShell
-		{pageDocument}
-		copy={shellCopy}
-		footer={shellFooter}
-		header={shellHeader}
-		modals={shellModals}
-		runtimeHtml={shellRuntimeHtml}
-		title={seoTitle}
-	>
+	<div id="wrapper" class="bohemcars-public-shell">
+		<HomeFiveHeader header={shellHeader} />
 		<AuxeroInventoryDesktopSurface {cards} {copy} {desktop} />
-	</AuxeroPublicShell>
+		<HomeFiveFooter footer={shellFooter} />
+	</div>
+
+	<HomeFiveModals modals={shellModals} copy={shellCopy} header={shellHeader} />
 </div>
 
 <div

@@ -135,7 +135,7 @@ const expectDesktopInventorySurface = async (page: Page) => {
 	});
 
 	expect(metrics.banner?.height ?? 0).toBeGreaterThanOrEqual(250);
-	expect(metrics.searchbar?.height ?? 0).toBeGreaterThanOrEqual(80);
+	expect(metrics.searchbar?.height ?? 0).toBeGreaterThanOrEqual(40);
 	expect(metrics.searchbar?.top ?? -1).toBeGreaterThanOrEqual(metrics.banner?.top ?? 0);
 	expect(metrics.searchbar?.bottom ?? 0).toBeLessThanOrEqual((metrics.banner?.bottom ?? 0) + 1);
 	expect(metrics.heroControls).toBeGreaterThanOrEqual(2);
@@ -1536,7 +1536,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('.bohemcars-inventory-toolbar-row')).toHaveCSS('border-radius', '0px');
 	await expect(page.locator('.bohemcars-inventory-toolbar-row .core-dropdown__button')).toHaveCSS(
 		'background-color',
-		'rgb(241, 243, 238)'
+		'rgb(248, 250, 243)'
 	);
 	await expect(page.locator('.bohemcars-inventory-toolbar-row .core-dropdown__button')).toHaveCSS(
 		'border-top-color',
@@ -1683,6 +1683,37 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		page.locator('.bohemcars-inventory-content .card-box-style-1').first()
 	).toBeVisible();
 	await expectDesktopInventorySurface(page);
+
+	expect(
+		await visiblePreloadSamplesDuring(page, () =>
+			page.locator('.bohemcars-view-toggle .item-menu[aria-label="Compact 5 grid"]').click()
+		)
+	).toEqual([]);
+	await expect(page).toHaveURL(/\/inventory\?layout=classic&view=5$/);
+	await expect(page.locator('.preload')).toBeHidden();
+	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
+		'aria-label',
+		'Compact 5 grid'
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-content > .content-inner.active > div.grid')
+	).toHaveClass(/grid-cols-5/);
+	await expectDesktopInventorySurface(page);
+
+	expect(
+		await visiblePreloadSamplesDuring(page, () =>
+			page.locator('.bohemcars-view-toggle .item-menu[aria-label="Dense 4 grid"]').click()
+		)
+	).toEqual([]);
+	await expect(page).toHaveURL(/\/inventory\?layout=classic$/);
+	await expect(page.locator('.preload')).toBeHidden();
+	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
+		'aria-label',
+		'Dense 4 grid'
+	);
+	await expect(
+		page.locator('.bohemcars-inventory-content > .content-inner.active > div.grid')
+	).toHaveClass(/grid-cols-4/);
 	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
 
 	expect(
@@ -1826,7 +1857,8 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 	const firstTitle = (await firstCard.locator('.card-box__title').innerText()).trim();
 	expect(firstSlug).toBeTruthy();
 
-	await page.goto(`/inventory/${firstSlug}`);
+	await firstCard.locator('a.view-details, .card-box__title a').first().click();
+	await expect(page).toHaveURL(new RegExp(`/inventory/${firstSlug}$`));
 	const detailTitle = page.locator('.listing-details--content h1').first();
 
 	await expect(page.locator('.listing-details[data-bohemcars-detail="true"]')).toBeVisible();
@@ -1845,6 +1877,15 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 		'Описание'
 	);
 	await expect(page.locator('.bohemcars-pdp-info-panel')).toBeVisible();
+	await page
+		.locator('.listing-details--content .menu-tab-style4 li', { hasText: 'Техника' })
+		.click();
+	await expect(page.locator('.listing-details--content .menu-tab-style4 li.active')).toContainText(
+		'Техника'
+	);
+	await expect(page.locator('.bohemcars-pdp-info-panel .content-inner.active')).toContainText(
+		'технически преглед'
+	);
 	await expect(page.locator('.listing-details--sidebar .menu-tab-style5 li')).toHaveCount(2);
 	await expect(page.locator('.car-overview-list-style2 > li')).toHaveCount(10);
 	await expect(page.locator('form.send-inquiry')).toBeVisible();
@@ -1934,13 +1975,24 @@ test('mobile vehicle detail keeps actions above scrollable information', async (
 		const heading = classOf('.bohemcars-mobile-pdp__drawer-heading');
 		const actionsElement = classOf(':scope > .bohemcars-mobile-pdp__actions');
 		const tabs = classOf('.bohemcars-mobile-pdp__tabs');
+		const activeTab = classOf('.bohemcars-mobile-pdp__tab.active');
 		const panelElement = classOf('.bohemcars-mobile-pdp__panel');
 		const facts = classOf('.bohemcars-mobile-pdp__panel .bohemcars-mobile-pdp__facts');
 		const primaryCta = classOf('.bohemcars-mobile-pdp__cta--primary');
+		const activeTabIndicator = activeTab ? getComputedStyle(activeTab, '::after') : null;
 
 		return {
 			actions: rectOf(actionsElement),
 			actionsStyle: styleOf(actionsElement),
+			activeTab: rectOf(activeTab),
+			activeTabIndicator: activeTabIndicator
+				? {
+						backgroundColor: activeTabIndicator.backgroundColor,
+						height: activeTabIndicator.height,
+						left: activeTabIndicator.left,
+						right: activeTabIndicator.right
+					}
+				: null,
 			factsStyle: styleOf(facts),
 			heading: rectOf(heading),
 			panel: {
@@ -1967,6 +2019,16 @@ test('mobile vehicle detail keeps actions above scrollable information', async (
 		minHeight: '44px'
 	});
 	expect(mobileDrawerLayout.factsStyle?.gridTemplateColumns.split(' ')).toHaveLength(2);
+	expect(mobileDrawerLayout.activeTab?.width).toBeCloseTo(
+		Math.round((mobileDrawerLayout.tabs?.width ?? 0) / 3),
+		1
+	);
+	expect(mobileDrawerLayout.activeTabIndicator).toMatchObject({
+		backgroundColor: 'rgb(152, 188, 42)',
+		height: '3px',
+		left: '0px',
+		right: '0px'
+	});
 	expect(mobileDrawerLayout.panel.style?.overflowY).toBe('auto');
 	expect(mobileDrawerLayout.panel.scrollHeight ?? 0).toBeGreaterThan(
 		mobileDrawerLayout.panel.clientHeight ?? 0

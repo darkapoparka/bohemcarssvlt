@@ -16,5 +16,4 @@
 	shellFooter={data.shellFooter}
 	shellHeader={data.shellHeader}
 	shellModals={data.shellModals}
-	shellRuntimeHtml={data.shellRuntimeHtml}
 />

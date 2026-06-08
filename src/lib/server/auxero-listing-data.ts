@@ -211,6 +211,13 @@ const mileageFilterOptions = [
 ];
 
 const viewIcon = (view: InventoryView) => {
+	if (view === '5') {
+		return `<svg width="34" height="20" viewBox="0 0 34 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="3" cy="6" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="10" cy="6" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="17" cy="6" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="24" cy="6" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="31" cy="6" r="2.25" fill="white" stroke="#9FA1A4"/>
+			<circle cx="3" cy="14" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="10" cy="14" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="17" cy="14" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="24" cy="14" r="2.25" fill="white" stroke="#9FA1A4"/><circle cx="31" cy="14" r="2.25" fill="white" stroke="#9FA1A4"/>
+		</svg>`;
+	}
+
 	if (view === '4') {
 		return `<svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<circle cx="3" cy="6" r="2.5" fill="white" stroke="#9FA1A4"/><circle cx="11" cy="6" r="2.5" fill="white" stroke="#9FA1A4"/><circle cx="19" cy="6" r="2.5" fill="white" stroke="#9FA1A4"/><circle cx="27" cy="6" r="2.5" fill="white" stroke="#9FA1A4"/>
@@ -232,11 +239,12 @@ const viewIcon = (view: InventoryView) => {
 };
 
 const viewToggle = (state: InventoryState) =>
-	(['3', '4', 'map'] as const)
+	(['3', '4', '5', 'map'] as const)
 		.map((view) => {
 			const labels: Record<InventoryView, string> = {
 				'3': 'Comfortable 3 grid',
 				'4': 'Dense 4 grid',
+				'5': 'Compact 5 grid',
 				map: 'Half map'
 			};
 
@@ -1024,11 +1032,13 @@ const replaceFirstDivAfter = (
 
 const inventoryContent = (state: InventoryState) => {
 	const gridClass =
-		state.view === '4'
-			? 'grid grid-cols-4 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41'
-			: state.view === 'map'
-				? 'grid grid-cols-1 gap-20'
-				: 'grid grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
+		state.view === '5'
+			? 'grid grid-cols-5 lg-grid-cols-3 md-grid-cols-2 sm-grid-cols-1 gap-20'
+			: state.view === '4'
+				? 'grid grid-cols-4 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41'
+				: state.view === 'map'
+					? 'grid grid-cols-1 gap-20'
+					: 'grid grid-cols-3 lg-grid-cols-2 sm-grid-cols-1 gap-x-30 gap-y-41';
 	const cards = state.selected
 		.map((vehicle, index) => (state.view === 'map' ? listCard(vehicle) : gridCard(vehicle, index)))
 		.join('\n');

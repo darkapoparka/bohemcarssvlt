@@ -321,6 +321,11 @@
 		background: #f8faf8 !important;
 	}
 
+	:global(body.bohemcars-inventory-template) .card-box .top .highlight {
+		background: #ffffff !important;
+		color: #1c1c1c !important;
+	}
+
 	.card-box-style-1 .card-box__title {
 		display: -webkit-box;
 		min-height: 52px;

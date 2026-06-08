@@ -7,7 +7,7 @@ import {
 } from '$lib/data/vehicles';
 import { listPublicVehicles } from './public-vehicles';
 
-export type InventoryView = '3' | '4' | 'map';
+export type InventoryView = '3' | '4' | '5' | 'map';
 export type InventoryLayout = 'classic' | 'dashboard';
 export type InventoryFilterPresentation = 'popover' | 'modal';
 
@@ -84,6 +84,7 @@ const normalizeFilters = (filters: InventoryFilters) =>
 export const resolveInventoryView = (value?: string | InventoryView | null): InventoryView => {
 	if (value === '3' || value === 'grid3' || value === 'comfortable') return '3';
 	if (value === '4' || value === 'dense' || value === 'grid4') return '4';
+	if (value === '5' || value === 'compact' || value === 'grid5') return '5';
 	if (value === 'map' || value === 'half-map' || value === 'halfmap') return 'map';
 
 	return '4';
@@ -116,8 +117,15 @@ const defaultInventoryViewByLayout: Record<InventoryLayout, InventoryView> = {
 export const defaultInventoryViewForLayout = (layout: InventoryLayout): InventoryView =>
 	defaultInventoryViewByLayout[layout];
 
+export const constrainInventoryViewForLayout = (
+	layout: InventoryLayout,
+	view: InventoryView
+): InventoryView =>
+	layout === 'dashboard' && view === '5' ? defaultInventoryViewForLayout(layout) : view;
+
 export const inventoryTemplateForView = (view: InventoryView) => {
 	if (view === '4') return 'listing-grid4-columns.html';
+	if (view === '5') return 'listing-grid4-columns.html';
 	if (view === 'map') return 'listing-gridstyle-halfmap.html';
 
 	return 'listing-grid3-columns.html';
@@ -168,9 +176,10 @@ export const getInventoryState = (
 	const layout = resolveInventoryLayout(searchParams);
 	const filterPresentation = resolveInventoryFilterPresentation(searchParams);
 	const hasExplicitView = Boolean(options.view || searchParams.get('view'));
-	const view = hasExplicitView
+	const requestedView = hasExplicitView
 		? viewForInventoryTemplate(templateFile, options)
 		: defaultInventoryViewForLayout(layout);
+	const view = constrainInventoryViewForLayout(layout, requestedView);
 
 	return {
 		filterPresentation,

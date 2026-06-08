@@ -18,6 +18,11 @@ export const productRouteSources: ProductRouteSource[] = [
 		notes: 'Dense grid variant'
 	},
 	{
+		route: '/inventory?view=5',
+		source: 'listing-grid4-columns.html',
+		notes: 'Compact grid density variant'
+	},
+	{
 		route: '/inventory?view=map',
 		source: 'listing-gridstyle-halfmap.html',
 		notes: 'Map/list variant'

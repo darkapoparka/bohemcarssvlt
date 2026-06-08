@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { vehicles } from '$lib/data/vehicles';
 import {
+	constrainInventoryViewForLayout,
 	defaultInventoryViewForLayout,
 	getInventoryState,
 	inventoryTemplateForView,
@@ -17,9 +18,14 @@ describe('inventory-state', () => {
 		expect(resolveInventoryView('3')).toBe('3');
 		expect(resolveInventoryView('dense')).toBe('4');
 		expect(resolveInventoryView('grid4')).toBe('4');
+		expect(resolveInventoryView('compact')).toBe('5');
+		expect(resolveInventoryView('grid5')).toBe('5');
 		expect(resolveInventoryView('half-map')).toBe('map');
+		expect(constrainInventoryViewForLayout('classic', '5')).toBe('5');
+		expect(constrainInventoryViewForLayout('dashboard', '5')).toBe('4');
 		expect(inventoryTemplateForView('3')).toBe('listing-grid3-columns.html');
 		expect(inventoryTemplateForView('4')).toBe('listing-grid4-columns.html');
+		expect(inventoryTemplateForView('5')).toBe('listing-grid4-columns.html');
 		expect(inventoryTemplateForView('map')).toBe('listing-gridstyle-halfmap.html');
 	});
 
@@ -34,9 +40,14 @@ describe('inventory-state', () => {
 		const state = getInventoryState('listing-grid3-columns.html', {
 			searchParams: new URLSearchParams()
 		});
+		const compactState = getInventoryState('listing-grid4-columns.html', {
+			searchParams: new URLSearchParams('view=5')
+		});
 
 		expect(state.layout).toBe('dashboard');
 		expect(state.view).toBe('4');
+		expect(compactState.layout).toBe('dashboard');
+		expect(compactState.view).toBe('4');
 	});
 
 	it('resolves inventory filter presentation separately from layout mode aliases', () => {

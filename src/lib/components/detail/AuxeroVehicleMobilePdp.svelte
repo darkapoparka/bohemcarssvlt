@@ -818,7 +818,7 @@
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			align-items: center;
 			flex: 0 0 auto;
-			gap: 10px;
+			gap: 0;
 			overflow: visible;
 			border-bottom: 1px solid var(--bc-border);
 			padding: 4px 0 0;
@@ -854,9 +854,9 @@
 
 		.bohemcars-mobile-pdp__tab::after {
 			position: absolute;
-			right: 8px;
+			right: 0;
 			bottom: -1px;
-			left: 8px;
+			left: 0;
 			height: 3px;
 			border-radius: 999px 999px 0 0;
 			background: transparent;
@@ -1433,7 +1433,7 @@
 		}
 
 		.bohemcars-mobile-pdp__tabs {
-			gap: 4px;
+			gap: 0;
 		}
 
 		.bohemcars-mobile-pdp__tab {

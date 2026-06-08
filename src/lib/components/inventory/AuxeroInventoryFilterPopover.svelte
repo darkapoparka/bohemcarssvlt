@@ -36,6 +36,8 @@
 	let query = $state('');
 	let rootElement: HTMLDivElement | undefined;
 	let triggerElement: HTMLButtonElement | undefined;
+	let modalLockScrollY = 0;
+	let modalLockScrollbarWidth = 0;
 
 	const isChecked = (value: string) =>
 		value
@@ -67,6 +69,11 @@
 	}
 
 	function openPanel() {
+		if (usesModal) {
+			modalLockScrollY = window.scrollY;
+			modalLockScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+		}
+
 		open = true;
 		if (usesModal) onModalOpen?.(filter.name);
 		window.dispatchEvent(
@@ -134,7 +141,9 @@
 	};
 
 	const activateOpenPanel: Attachment<HTMLDivElement> = (element) => {
-		queueMicrotask(() => element.querySelector<HTMLInputElement>('.ifp__search input')?.focus());
+		queueMicrotask(() =>
+			element.querySelector<HTMLInputElement>('.ifp__search input')?.focus({ preventScroll: true })
+		);
 		const onPointerDown = (event: PointerEvent) => {
 			if (!usesModal && !element.contains(event.target as Node)) {
 				close(false);
@@ -147,8 +156,27 @@
 			if (event instanceof CustomEvent && event.detail !== element) close(false);
 		};
 		const previousOverflow = document.body.style.overflow;
+		const previousPaddingRight = document.body.style.paddingRight;
+		const previousPosition = document.body.style.position;
+		const previousTop = document.body.style.top;
+		const previousRight = document.body.style.right;
+		const previousLeft = document.body.style.left;
+		const previousWidth = document.body.style.width;
+		const previousScrollY = usesModal ? modalLockScrollY : window.scrollY;
+		const scrollbarWidth = usesModal
+			? modalLockScrollbarWidth
+			: window.innerWidth - document.documentElement.clientWidth;
 
-		if (usesModal) document.body.style.overflow = 'hidden';
+		if (usesModal) {
+			window.scrollTo(0, previousScrollY);
+			document.body.style.overflow = 'hidden';
+			document.body.style.position = 'fixed';
+			document.body.style.top = `-${previousScrollY}px`;
+			document.body.style.right = '0';
+			document.body.style.left = '0';
+			document.body.style.width = '100%';
+			if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+		}
 
 		document.addEventListener('pointerdown', onPointerDown);
 		document.addEventListener('keydown', onKey);
@@ -159,7 +187,16 @@
 			document.removeEventListener('keydown', onKey);
 			window.removeEventListener('bohemcars-inventory-filter-open', onFieldOpen);
 
-			if (usesModal) document.body.style.overflow = previousOverflow;
+			if (usesModal) {
+				document.body.style.overflow = previousOverflow;
+				document.body.style.paddingRight = previousPaddingRight;
+				document.body.style.position = previousPosition;
+				document.body.style.top = previousTop;
+				document.body.style.right = previousRight;
+				document.body.style.left = previousLeft;
+				document.body.style.width = previousWidth;
+				window.scrollTo(0, previousScrollY);
+			}
 		};
 	};
 </script>

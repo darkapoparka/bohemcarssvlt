@@ -7,6 +7,7 @@ const baseURL = `http://${host}:${port}`;
 export default defineConfig({
 	webServer: {
 		command: `npm run build && npm run preview -- --host ${host} --port ${port} --strictPort`,
+		reuseExistingServer: !process.env.CI,
 		timeout: 120_000,
 		url: baseURL
 	},
