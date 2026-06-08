@@ -1271,13 +1271,35 @@
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
+			position: relative;
 			width: 44px !important;
 			height: 44px !important;
-			border: 1px solid rgba(32, 53, 15, 0.24);
-			background: rgba(255, 255, 255, 0.2) !important;
+			border: 0 !important;
+			background: transparent !important;
 			box-sizing: border-box;
 			box-shadow: none;
 			color: #20350f !important;
+		}
+
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call::before
+		),
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map::before
+		) {
+			position: absolute;
+			inset: 3px;
+			z-index: 0;
+			border: 1px solid rgba(255, 255, 255, 0.5);
+			border-radius: inherit;
+			background: rgba(255, 255, 255, 0.2);
+			box-sizing: border-box;
+			content: '';
+			pointer-events: none;
+			transition:
+				background-color 0.18s ease,
+				border-color 0.18s ease,
+				box-shadow 0.18s ease;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
@@ -1288,15 +1310,36 @@
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
-			border-color: rgba(32, 53, 15, 0.42);
-			background: rgba(255, 255, 255, 0.32) !important;
+			background: transparent !important;
 			color: #20350f !important;
-			outline: 2px solid rgba(32, 53, 15, 0.64);
-			outline-offset: 2px;
+			outline: 0;
+		}
+
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover::before
+		),
+		:global(
+			body.auxero-template-home-05-html
+				.header-wrapper-style-4
+				.bohemcars-mobile-call:focus-visible::before
+		),
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:hover::before
+		),
+		:global(
+			body.auxero-template-home-05-html
+				.header-wrapper-style-4
+				.bohemcars-mobile-map:focus-visible::before
+		) {
+			border-color: rgba(255, 255, 255, 0.62);
+			background: rgba(255, 255, 255, 0.3);
+			box-shadow: 0 0 0 2px rgba(32, 53, 15, 0.28);
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
+			position: relative;
+			z-index: 1;
 			width: 17px !important;
 			height: 17px !important;
 			color: #20350f !important;

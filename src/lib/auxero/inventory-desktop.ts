@@ -1,7 +1,11 @@
 import { bohemcarsContact } from '$lib/data/bohemcars';
 import { bodyTypes, brands, fuels, vehicles, type Vehicle } from '$lib/data/vehicles';
 import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
-import type { InventoryFilterPresentation, InventoryState } from '$lib/server/inventory-state';
+import {
+	defaultInventoryViewForLayout,
+	type InventoryFilterPresentation,
+	type InventoryState
+} from '$lib/server/inventory-state';
 
 export type AuxeroInventoryFilterOption = {
 	count?: number;
@@ -380,7 +384,7 @@ const countBy = (values: string[]) =>
 
 const inventoryUrl = (state: InventoryState, overrides: Record<string, string | undefined>) => {
 	const params = new URLSearchParams(state.searchParams);
-	const defaultView = state.layout === 'dashboard' ? '3' : '4';
+	const defaultView = defaultInventoryViewForLayout(state.layout);
 
 	for (const [key, value] of Object.entries(overrides)) {
 		if (
@@ -440,7 +444,7 @@ const inventoryUrlWithoutFilterValue = (
 
 const inventoryClearFiltersUrl = (state: InventoryState) => {
 	const params = new URLSearchParams();
-	const defaultView = state.layout === 'dashboard' ? '3' : '4';
+	const defaultView = defaultInventoryViewForLayout(state.layout);
 
 	if (state.filterPresentation === 'modal') params.set('filters', 'modal');
 	if (state.layout === 'classic') params.set('layout', 'classic');
@@ -573,7 +577,7 @@ const makeFilter = ({
 });
 
 const hiddenInputs = (state: InventoryState): AuxeroInventoryHiddenInput[] => {
-	const defaultView = state.layout === 'dashboard' ? '3' : '4';
+	const defaultView = defaultInventoryViewForLayout(state.layout);
 
 	return [
 		state.filters.condition ? { name: 'condition', value: state.filters.condition } : undefined,

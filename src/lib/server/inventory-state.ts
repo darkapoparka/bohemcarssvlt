@@ -108,8 +108,13 @@ export const resolveInventoryFilterPresentation = (
 	return value === 'modal' || value === 'dialog' ? 'modal' : 'popover';
 };
 
+const defaultInventoryViewByLayout: Record<InventoryLayout, InventoryView> = {
+	classic: '4',
+	dashboard: '4'
+};
+
 export const defaultInventoryViewForLayout = (layout: InventoryLayout): InventoryView =>
-	layout === 'dashboard' ? '3' : '4';
+	defaultInventoryViewByLayout[layout];
 
 export const inventoryTemplateForView = (view: InventoryView) => {
 	if (view === '4') return 'listing-grid4-columns.html';

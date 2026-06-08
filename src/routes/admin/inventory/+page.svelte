@@ -138,6 +138,7 @@
 												size="sm"
 												class="cart-item__edit"
 												aria-label={`Edit ${vehicle.title}`}
+												data-sveltekit-reload
 											>
 												Edit
 											</Button>

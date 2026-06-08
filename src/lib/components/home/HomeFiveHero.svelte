@@ -60,19 +60,24 @@
 	let bodySelection = $state<string[]>([]);
 	let priceSelection = $state<string[]>([]);
 
-	const modelOptions = $derived.by(() => {
+	const modelOptionsForBrands = (brands: string[]) => {
 		const all = modelFilter?.options ?? [];
-		if (!brandSelection.length) return all;
-		return all.filter((option) => option.brand && brandSelection.includes(option.brand));
-	});
+		if (!brands.length) return all;
+		return all.filter((option) => option.brand && brands.includes(option.brand));
+	};
+	const pruneModelSelection = (selection: string[], brands = brandSelection) => {
+		const valid = new Set(modelOptionsForBrands(brands).map((option) => option.value));
+		return selection.filter((value) => valid.has(value));
+	};
+	const updateBrandSelection = (selection: string[]) => {
+		brandSelection = selection;
+		modelSelection = pruneModelSelection(modelSelection, selection);
+	};
+	const updateModelSelection = (selection: string[]) => {
+		modelSelection = pruneModelSelection(selection);
+	};
+	const modelOptions = $derived(modelOptionsForBrands(brandSelection));
 
-	// Drop a chosen model once it no longer belongs to the selected make(s).
-	$effect(() => {
-		const valid = new Set(modelOptions.map((option) => option.value));
-		if (modelSelection.some((value) => !valid.has(value))) {
-			modelSelection = modelSelection.filter((value) => valid.has(value));
-		}
-	});
 	const mobileSearchPlaceholder = $derived(
 		activeMobileAction?.placeholder ??
 			(isEnglish ? 'Search brand, model, price...' : 'Търси марка, модел, цена...')
@@ -512,7 +517,7 @@
 			<div class="swiper-container page-title--slider sw-single">
 				<div class="swiper-wrapper">
 					{#each hero.textSlides as slide, index (slide.id)}
-						<div class="swiper-slide" class:swiper-slide-active={index === 0}>
+						<div class={['swiper-slide', index === 0 && 'swiper-slide-active']}>
 							<div class="tp-showcase-slider-bg"></div>
 						</div>
 					{/each}
@@ -540,7 +545,7 @@
 				<div class="sw-single-thumb swiper">
 					<div class="swiper-wrapper">
 						{#each hero.textSlides as slide, index (slide.id)}
-							<div class="swiper-slide" class:swiper-slide-active={index === 0}>
+							<div class={['swiper-slide', index === 0 && 'swiper-slide-active']}>
 								<p class="search-cars__title effect-item effect-up text-center delay-3">
 									{slide.heading}
 								</p>
@@ -575,7 +580,7 @@
 						{#if brandFilter}
 							<HeroFilterPopover
 								select={brandFilter}
-								bind:selected={brandSelection}
+								bind:selected={() => brandSelection, updateBrandSelection}
 								mode="multi"
 								variant="grid"
 								searchable
@@ -586,7 +591,7 @@
 							<HeroFilterPopover
 								select={modelFilter}
 								options={modelOptions}
-								bind:selected={modelSelection}
+								bind:selected={() => modelSelection, updateModelSelection}
 								mode="single"
 								variant="list"
 								searchable
@@ -642,8 +647,7 @@
 
 				<!-- Advanced Filters Panel -->
 				<div
-					class:search-cars__advanced--hidden={!isInventoryMode}
-					class="search-cars__advanced"
+					class={['search-cars__advanced', !isInventoryMode && 'search-cars__advanced--hidden']}
 					id="advancedFilters"
 				>
 					<div class="search-cars__advanced-content">
@@ -959,16 +963,11 @@
 	}
 
 	@media (max-width: 767.98px) {
-		:global(body.auxero-template-home-05-html) {
-			--bohemcars-mobile-hero-top: #a7c936;
-			--bohemcars-mobile-hero-bg: #98bc2a;
-			--bohemcars-mobile-hero-bottom: #8fb526;
-			--bohemcars-mobile-hero-fill: linear-gradient(
-				180deg,
-				var(--bohemcars-mobile-hero-top) 0%,
-				var(--bohemcars-mobile-hero-bg) 48%,
-				var(--bohemcars-mobile-hero-bottom) 100%
-			);
+		:global(body.auxero-template-home-05-html.auxero-template-home-05-html) {
+			--bohemcars-mobile-hero-top: #8fca1a;
+			--bohemcars-mobile-hero-bg: #8fca1a;
+			--bohemcars-mobile-hero-bottom: #8fca1a;
+			--bohemcars-mobile-hero-fill: #8fca1a;
 			--bohemcars-mobile-ink: #1c1c1c;
 			--bohemcars-mobile-ink-muted: rgba(28, 28, 28, 0.82);
 			--bohemcars-mobile-ink-strong: #1c1c1c;
@@ -978,6 +977,8 @@
 			--bohemcars-mobile-action: #14210f;
 			--bohemcars-mobile-action-hover: #20350f;
 			--bohemcars-mobile-surface: #fbfcf7;
+			background: var(--bohemcars-mobile-hero-top) !important;
+			background-color: var(--bohemcars-mobile-hero-top) !important;
 		}
 
 		.bohemcars-desktop-hero {
@@ -991,10 +992,7 @@
 
 		.bohemcars-mobile-home {
 			margin: 0;
-			background:
-				radial-gradient(132% 118% at 50% 42%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 56%),
-				radial-gradient(165% 92% at 50% 117%, rgba(13, 23, 8, 0.22), rgba(13, 23, 8, 0) 62%),
-				var(--bohemcars-mobile-hero-fill, var(--bohemcars-mobile-hero-bg, #4f7012));
+			background: var(--bohemcars-mobile-hero-fill, var(--bohemcars-mobile-hero-bg, #8fca1a));
 			color: var(--bohemcars-mobile-ink, #ffffff);
 		}
 
@@ -1923,17 +1921,41 @@
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
-			width: 40px;
-			height: 40px;
-			border: 1px solid rgba(255, 255, 255, 0.5) !important;
-			background: rgba(255, 255, 255, 0.3);
+			position: relative;
+			width: 44px;
+			height: 44px;
+			border: 0 !important;
+			background: transparent !important;
 			box-sizing: border-box;
 			box-shadow: none;
 			color: #20350f;
 		}
 
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call::before
+		),
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map::before
+		) {
+			position: absolute;
+			inset: 3px;
+			z-index: 0;
+			border: 1px solid rgba(255, 255, 255, 0.5);
+			border-radius: inherit;
+			background: rgba(255, 255, 255, 0.2);
+			box-sizing: border-box;
+			content: '';
+			pointer-events: none;
+			transition:
+				background-color 0.18s ease,
+				border-color 0.18s ease,
+				box-shadow 0.18s ease;
+		}
+
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
+			position: relative;
+			z-index: 1;
 			width: 17px;
 			height: 17px;
 			color: #20350f !important;
@@ -1956,10 +1978,30 @@
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
 			border: 0 !important;
-			background: rgba(255, 255, 255, 0.28);
+			background: transparent !important;
 			color: #20350f;
-			outline: 2px solid rgba(32, 53, 15, 0.64);
-			outline-offset: 2px;
+			outline: 0;
+		}
+
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover::before
+		),
+		:global(
+			body.auxero-template-home-05-html
+				.header-wrapper-style-4
+				.bohemcars-mobile-call:focus-visible::before
+		),
+		:global(
+			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:hover::before
+		),
+		:global(
+			body.auxero-template-home-05-html
+				.header-wrapper-style-4
+				.bohemcars-mobile-map:focus-visible::before
+		) {
+			border-color: rgba(255, 255, 255, 0.62);
+			background: rgba(255, 255, 255, 0.3);
+			box-shadow: 0 0 0 2px rgba(32, 53, 15, 0.28);
 		}
 	}
 </style>

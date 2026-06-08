@@ -55,12 +55,9 @@ const syncGarageDom = (
 const shouldSyncGarageApi = () => {
 	if (!browser) return false;
 
-	const pathname = window.location.pathname;
 	return (
 		Boolean(new URLSearchParams(window.location.search).get('role')) ||
-		readStoredList(sessionKey).length > 0 ||
-		pathname.startsWith('/account') ||
-		pathname.startsWith('/admin')
+		readStoredList(sessionKey).length > 0
 	);
 };
 

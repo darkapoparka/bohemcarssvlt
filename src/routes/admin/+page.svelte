@@ -92,6 +92,15 @@
 			label: 'View analytics'
 		}
 	] as const;
+	const dashboardVehicleFallbackImage =
+		'/assets/bohemcars/hero/home-hero-available-inventory-two-car-v3.webp';
+
+	const handleInventoryImageError = (event: Event) => {
+		if (!(event.currentTarget instanceof HTMLImageElement)) return;
+		if (event.currentTarget.src.endsWith(dashboardVehicleFallbackImage)) return;
+
+		event.currentTarget.src = dashboardVehicleFallbackImage;
+	};
 </script>
 
 <svelte:head>
@@ -209,12 +218,15 @@
 							<a
 								class="hover:bg-muted/70 grid min-h-20 gap-3 px-4 py-3 transition-colors md:grid-cols-[minmax(0,1fr)_auto]"
 								href={resolve('/admin/inventory/edit/[id]', { id: vehicle.id })}
+								data-sveltekit-reload
 							>
 								<span class="flex min-w-0 items-center gap-3">
 									<img
 										class="ring-border size-14 rounded-lg object-cover ring-1"
 										src={vehicle.image}
-										alt=""
+										alt={vehicle.title}
+										decoding="async"
+										onerror={handleInventoryImageError}
 									/>
 									<span class="min-w-0">
 										<span class="block truncate font-medium">{vehicle.title}</span>

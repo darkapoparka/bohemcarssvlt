@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { vehicles } from '$lib/data/vehicles';
 import {
+	defaultInventoryViewForLayout,
 	getInventoryState,
 	inventoryTemplateForView,
 	resolveInventoryFilterPresentation,
@@ -10,6 +11,8 @@ import {
 
 describe('inventory-state', () => {
 	it('resolves Auxero inventory views and source templates', () => {
+		expect(defaultInventoryViewForLayout('dashboard')).toBe('4');
+		expect(defaultInventoryViewForLayout('classic')).toBe('4');
 		expect(resolveInventoryView(null)).toBe('4');
 		expect(resolveInventoryView('3')).toBe('3');
 		expect(resolveInventoryView('dense')).toBe('4');
@@ -25,6 +28,15 @@ describe('inventory-state', () => {
 
 		expect(viewForInventoryTemplate('listing-grid4-columns.html', { searchParams })).toBe('map');
 		expect(viewForInventoryTemplate('listing-topmap.html')).toBe('map');
+	});
+
+	it('defaults the sidebar dashboard inventory to the dense grid', () => {
+		const state = getInventoryState('listing-grid3-columns.html', {
+			searchParams: new URLSearchParams()
+		});
+
+		expect(state.layout).toBe('dashboard');
+		expect(state.view).toBe('4');
 	});
 
 	it('resolves inventory filter presentation separately from layout mode aliases', () => {

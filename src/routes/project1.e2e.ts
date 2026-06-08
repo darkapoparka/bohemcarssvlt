@@ -755,6 +755,68 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 
 	const mobileHero = page.locator('.bohemcars-mobile-home');
 	const importTab = mobileHero.getByRole('tab', { name: 'Внос' });
+	const mobileTopColors = await page.evaluate(() => {
+		const backgroundColor = (selector: string) => {
+			const element = document.querySelector(selector);
+
+			return element ? window.getComputedStyle(element).backgroundColor : null;
+		};
+
+		return {
+			body: window.getComputedStyle(document.body).backgroundColor,
+			header: backgroundColor('.header-wrapper-style-4 .header.header-style-4'),
+			headerShell: backgroundColor('.header-wrapper-style-4'),
+			hero: backgroundColor('.bohemcars-mobile-home'),
+			themeColor: document.querySelector('meta[name="theme-color"]')?.getAttribute('content'),
+			viewport: document.querySelector('meta[name="viewport"]')?.getAttribute('content')
+		};
+	});
+
+	expect(mobileTopColors).toEqual({
+		body: 'rgb(143, 202, 26)',
+		header: 'rgb(143, 202, 26)',
+		headerShell: 'rgb(143, 202, 26)',
+		hero: 'rgb(143, 202, 26)',
+		themeColor: '#8fca1a',
+		viewport: 'width=device-width, initial-scale=1, viewport-fit=cover'
+	});
+
+	await page.evaluate(() => window.scrollTo(0, 360));
+	const stickyHeaderAction = await page
+		.locator('.header-wrapper-style-4 .bohemcars-mobile-map')
+		.evaluate((action) => {
+			const header = document.querySelector('.header-wrapper-style-4 .header.header-style-4');
+
+			if (!(header instanceof HTMLElement) || !(action instanceof HTMLElement)) {
+				throw new Error('Expected mobile home sticky header action to render');
+			}
+
+			const headerRect = header.getBoundingClientRect();
+			const actionRect = action.getBoundingClientRect();
+			const actionStyles = window.getComputedStyle(action);
+			const ringStyles = window.getComputedStyle(action, '::before');
+
+			return {
+				actionBorderTop: actionStyles.borderTopWidth,
+				actionHeight: Math.round(actionRect.height),
+				headerHeight: Math.round(headerRect.height),
+				ringInsetBottom: ringStyles.bottom,
+				ringInsetTop: ringStyles.top,
+				visibleRingBottomGap: Math.round(
+					headerRect.bottom - actionRect.bottom + Number.parseFloat(ringStyles.bottom)
+				)
+			};
+		});
+
+	expect(stickyHeaderAction).toMatchObject({
+		actionBorderTop: '0px',
+		actionHeight: 44,
+		headerHeight: 56,
+		ringInsetBottom: '3px',
+		ringInsetTop: '3px'
+	});
+	expect(stickyHeaderAction.visibleRingBottomGap).toBeGreaterThanOrEqual(7);
+	await page.evaluate(() => window.scrollTo(0, 0));
 
 	await expect(mobileHero).toHaveAttribute('data-bohemcars-search-form', 'buy');
 	await expect(importTab).toHaveAttribute('aria-selected', 'false');
@@ -1370,8 +1432,8 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	expect(inventoryContentBox?.width ?? 0).toBeGreaterThan(950);
 	expect(inventoryContentBox?.width ?? 0).toBeLessThan(1100);
 	const refreshedFirstCardBox = await refreshedFirstCard.boundingBox();
-	expect(refreshedFirstCardBox?.width ?? 0).toBeGreaterThan(300);
-	expect(refreshedFirstCardBox?.width ?? 0).toBeLessThan(360);
+	expect(refreshedFirstCardBox?.width ?? 0).toBeGreaterThan(210);
+	expect(refreshedFirstCardBox?.width ?? 0).toBeLessThan(250);
 	const cardImageRatio = await boxRatio(refreshedFirstCard.locator('.card--img'));
 
 	expect(cardImageRatio).toBeGreaterThan(1.31);
@@ -1409,11 +1471,11 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expect(page.locator('.bohemcars-view-toggle .item-menu')).toHaveCount(3);
 	await expect(page.locator('.bohemcars-view-toggle .item-menu.active')).toHaveAttribute(
 		'aria-label',
-		'Comfortable 3 grid'
+		'Dense 4 grid'
 	);
 	await expect(
 		page.locator('.bohemcars-inventory-content > .content-inner.active > div.grid')
-	).toHaveClass(/grid-cols-3/);
+	).toHaveClass(/grid-cols-4/);
 	await expect(refreshedFirstCard).toHaveClass(/card-box-style-1/);
 	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveClass(/h6/);
 	await expect(refreshedFirstCard.locator('.card-box__title')).toHaveCSS('font-size', '18px');

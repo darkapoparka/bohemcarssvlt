@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { HomeFiveHeroSelect, HomeFiveHeroSelectOption } from '$lib/auxero/home-five';
 	import { Check, ChevronDown, Search } from '@lucide/svelte';
+	import type { Attachment } from 'svelte/attachments';
 
 	let {
 		select,
@@ -24,9 +25,8 @@
 
 	let open = $state(false);
 	let query = $state('');
-	let root = $state<HTMLDivElement>();
-	let trigger = $state<HTMLButtonElement>();
 
+	const triggerId = $derived(`${select.id}-popover-trigger`);
 	const opts = $derived(options ?? select.options);
 	const matches = (option: HomeFiveHeroSelectOption) => {
 		const needle = query.trim().toLowerCase();
@@ -61,18 +61,20 @@
 		selected = [];
 	};
 
-	function close() {
+	function dismissWithoutFocus() {
 		open = false;
 		query = '';
-		trigger?.focus();
 	}
 
-	$effect(() => {
-		if (!open) return;
+	function close() {
+		dismissWithoutFocus();
+		queueMicrotask(() => document.getElementById(triggerId)?.focus());
+	}
+
+	const dismissOnOutsideInput: Attachment<HTMLDivElement> = (element) => {
 		const onPointerDown = (event: PointerEvent) => {
-			if (root && !root.contains(event.target as Node)) {
-				open = false;
-				query = '';
+			if (!element.contains(event.target as Node)) {
+				dismissWithoutFocus();
 			}
 		};
 		const onKey = (event: KeyboardEvent) => {
@@ -84,7 +86,7 @@
 			document.removeEventListener('pointerdown', onPointerDown);
 			document.removeEventListener('keydown', onKey);
 		};
-	});
+	};
 
 	const doneLabel = $derived(
 		selected.length
@@ -95,7 +97,10 @@
 	);
 </script>
 
-<div class="hfp" class:hfp--open={open} class:hfp--grid={variant === 'grid'} bind:this={root}>
+<div
+	class={['hfp', open && 'hfp--open', variant === 'grid' && 'hfp--grid']}
+	{@attach open && dismissOnOutsideInput}
+>
 	<!-- Hidden inputs keep the existing GET form contract (name → value pairs) intact. -->
 	{#if selected.length === 0}
 		<input type="hidden" name={select.name} value="" />
@@ -107,14 +112,14 @@
 
 	<button
 		type="button"
+		id={triggerId}
 		class="hfp__field"
-		bind:this={trigger}
 		aria-haspopup="dialog"
 		aria-expanded={open}
-		onclick={() => (open ? close() : (open = true))}
+		onclick={() => (open ? dismissWithoutFocus() : (open = true))}
 	>
 		<span class="hfp__label">{select.title}</span>
-		<span class="hfp__value" class:hfp__value--placeholder={!selected.length}>{summary}</span>
+		<span class={['hfp__value', !selected.length && 'hfp__value--placeholder']}>{summary}</span>
 		<span class="hfp__chev"><ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" /></span>
 	</button>
 
@@ -201,8 +206,8 @@
 		align-content: center;
 		gap: 3px;
 		border: 1px solid transparent;
-		border-radius: 8px;
-		background: #ffffff;
+		border-radius: var(--bc-radius-md);
+		background: var(--bc-popover-bg);
 		padding: 9px 38px 8px 12px;
 		font: inherit;
 		text-align: left;
@@ -213,22 +218,22 @@
 	}
 
 	.hfp__field:hover {
-		border-color: #cdd6c0;
+		border-color: var(--bc-popover-border-hover);
 	}
 
 	.hfp--open .hfp__field {
-		border-color: #8fbf2e;
-		box-shadow: 0 0 0 3px rgba(143, 191, 46, 0.18);
+		border-color: var(--bc-popover-accent);
+		box-shadow: 0 0 0 3px var(--bc-popover-accent-ring);
 	}
 
 	.hfp__field:focus-visible {
-		outline: 2px solid #4f7012;
+		outline: 2px solid var(--bc-popover-focus);
 		outline-offset: 2px;
 	}
 
 	.hfp__label {
 		overflow: hidden;
-		color: #5f5f5f;
+		color: var(--bc-popover-muted);
 		font-size: 11px;
 		font-weight: 700;
 		line-height: 1.15;
@@ -240,7 +245,7 @@
 
 	.hfp__value {
 		overflow: hidden;
-		color: #1c1c1c;
+		color: var(--bc-ink);
 		font-size: 15px;
 		font-weight: 700;
 		line-height: 1.2;
@@ -249,7 +254,7 @@
 	}
 
 	.hfp__value--placeholder {
-		color: #7c7c7c;
+		color: var(--bc-popover-muted-strong);
 		font-weight: 600;
 	}
 
@@ -258,13 +263,13 @@
 		top: 50%;
 		right: 12px;
 		display: flex;
-		color: #9aa48c;
+		color: var(--bc-popover-icon);
 		transform: translateY(-50%);
 		transition: transform 0.18s ease;
 	}
 
 	.hfp--open .hfp__chev {
-		color: #5f8a14;
+		color: var(--bc-popover-icon-active);
 		transform: translateY(-50%) rotate(180deg);
 	}
 
@@ -274,11 +279,11 @@
 		left: 0;
 		z-index: 60;
 		width: min(320px, 86vw);
-		border: 1px solid #ececec;
-		border-radius: 14px;
-		background: #ffffff;
+		border: 1px solid var(--bc-popover-border);
+		border-radius: var(--bc-radius-lg);
+		background: var(--bc-popover-bg);
 		padding: 13px;
-		box-shadow: 0 26px 54px rgba(12, 18, 11, 0.26);
+		box-shadow: var(--bc-popover-shadow);
 		animation: hfp-pop 0.15s ease;
 	}
 
@@ -303,10 +308,10 @@
 		gap: 9px;
 		margin-bottom: 11px;
 		border-radius: 10px;
-		background: #f4f6ef;
+		background: var(--bc-popover-surface);
 		padding: 0 12px;
 		height: 44px;
-		color: #5f6b50;
+		color: var(--bc-subtle);
 	}
 
 	.hfp__search input {
@@ -317,7 +322,7 @@
 		background: transparent;
 		box-shadow: none !important;
 		padding: 0;
-		color: #1c1c1c;
+		color: var(--bc-ink);
 		font: inherit;
 		font-size: 14.5px;
 		font-weight: 600;
@@ -350,9 +355,9 @@
 		gap: 7px;
 		border: 1.5px solid transparent;
 		border-radius: 11px;
-		background: #f6f8f1;
+		background: var(--bc-popover-chip-bg);
 		padding: 6px;
-		color: #26331a;
+		color: var(--bc-popover-chip-ink);
 		font: inherit;
 		font-size: 12.5px;
 		font-weight: 700;
@@ -364,13 +369,13 @@
 	}
 
 	.hfp__chip:hover {
-		border-color: #cfe39a;
-		background: #eef4df;
+		border-color: var(--bc-popover-chip-border-hover);
+		background: var(--bc-popover-chip-hover);
 	}
 
 	.hfp__chip[aria-pressed='true'] {
-		border-color: #8fbf2e;
-		background: #eaf6cf;
+		border-color: var(--bc-popover-accent);
+		background: var(--bc-popover-accent-soft);
 	}
 
 	.hfp__chip img {
@@ -385,8 +390,8 @@
 		height: 30px;
 		place-items: center;
 		border-radius: 8px;
-		background: #2c3d1d;
-		color: #ffffff;
+		background: var(--bc-popover-mono-bg);
+		color: var(--bc-white);
 		font-size: 15px;
 		font-weight: 900;
 	}
@@ -413,9 +418,9 @@
 		gap: 10px;
 		border: 1.5px solid transparent;
 		border-radius: 10px;
-		background: #f6f8f1;
+		background: var(--bc-popover-chip-bg);
 		padding: 12px 13px;
-		color: #26331a;
+		color: var(--bc-popover-chip-ink);
 		font: inherit;
 		font-size: 14.5px;
 		font-weight: 700;
@@ -427,12 +432,12 @@
 	}
 
 	.hfp__row:hover {
-		background: #eef4df;
+		background: var(--bc-popover-chip-hover);
 	}
 
 	.hfp__row[aria-pressed='true'] {
-		border-color: #8fbf2e;
-		background: #eaf6cf;
+		border-color: var(--bc-popover-accent);
+		background: var(--bc-popover-accent-soft);
 	}
 
 	.hfp__rowlabel {
@@ -440,14 +445,14 @@
 	}
 
 	.hfp__row small {
-		color: #7a8a63;
+		color: var(--bc-popover-subtle);
 		font-size: 12px;
 		font-weight: 700;
 	}
 
 	.hfp__tick {
 		display: flex;
-		color: #5f8a14;
+		color: var(--bc-popover-icon-active);
 		opacity: 0;
 	}
 
@@ -457,7 +462,7 @@
 
 	.hfp__hint {
 		margin: 6px 2px;
-		color: #6b7563;
+		color: var(--bc-popover-hint);
 		font-size: 13.5px;
 		font-weight: 600;
 	}
@@ -467,7 +472,7 @@
 		justify-content: space-between;
 		gap: 10px;
 		margin-top: 12px;
-		border-top: 1px solid #eef0ea;
+		border-top: 1px solid var(--bc-popover-footer-line);
 		padding-top: 11px;
 	}
 
@@ -481,13 +486,13 @@
 	}
 
 	.hfp__clear {
-		background: #f1f3ec;
-		color: #39402f;
+		background: var(--bc-popover-clear-bg);
+		color: var(--bc-popover-clear-ink);
 	}
 
 	.hfp__done {
-		background: #1c1c1c;
-		color: #ffffff;
+		background: var(--bc-ink);
+		color: var(--bc-white);
 	}
 
 	@media (max-width: 767.98px) {

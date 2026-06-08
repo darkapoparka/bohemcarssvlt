@@ -39,6 +39,7 @@
 								<a
 									href={resolve('/admin/inventory/edit/[id]', { id: row.id })}
 									class="dash-table__vehicle"
+									data-sveltekit-reload
 								>
 									<div class="dash-table__image">
 										<img src={row.image} alt={row.title} />
@@ -91,6 +92,7 @@
 											href={resolve('/admin/inventory/edit/[id]', { id: row.id })}
 											class="dash-action"
 											aria-label={action.ariaLabel}
+											data-sveltekit-reload
 										>
 											<Edit3 size={16} strokeWidth={2.1} aria-hidden="true" />
 										</a>

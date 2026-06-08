@@ -4,6 +4,7 @@
 		AuxeroInventoryDesktopData
 	} from '$lib/auxero/inventory-desktop';
 	import { Check, ChevronDown, Search, X } from '@lucide/svelte';
+	import type { Attachment } from 'svelte/attachments';
 
 	let {
 		allSelectedValue,
@@ -29,9 +30,8 @@
 
 	let open = $state(false);
 	let query = $state('');
-	let root = $state<HTMLDivElement>();
-	let trigger = $state<HTMLButtonElement>();
-	let searchInput = $state<HTMLInputElement>();
+	let rootElement: HTMLDivElement | undefined;
+	let triggerElement: HTMLButtonElement | undefined;
 
 	const isChecked = (value: string) =>
 		value
@@ -58,12 +58,14 @@
 	function close(focusTrigger = true) {
 		open = false;
 		query = '';
-		if (focusTrigger) trigger?.focus();
+		if (focusTrigger) queueMicrotask(() => triggerElement?.focus());
 	}
 
 	function openPanel() {
 		open = true;
-		window.dispatchEvent(new CustomEvent('bohemcars-inventory-filter-open', { detail: root }));
+		window.dispatchEvent(
+			new CustomEvent('bohemcars-inventory-filter-open', { detail: rootElement })
+		);
 	}
 
 	function togglePanel() {
@@ -76,7 +78,7 @@
 	}
 
 	function clearField() {
-		const inputs = Array.from(root?.querySelectorAll<HTMLInputElement>('.ifp__input') ?? []);
+		const inputs = Array.from(rootElement?.querySelectorAll<HTMLInputElement>('.ifp__input') ?? []);
 		const allInput = inputs.find((input) => isAllFilterValue(input.value));
 
 		for (const input of inputs) {
@@ -94,13 +96,24 @@
 		if (event.key === 'Enter') event.preventDefault();
 	}
 
-	$effect(() => {
-		if (!open) return;
+	const captureRoot: Attachment<HTMLDivElement> = (element) => {
+		rootElement = element;
+		return () => {
+			if (rootElement === element) rootElement = undefined;
+		};
+	};
 
-		searchInput?.focus();
+	const captureTrigger: Attachment<HTMLButtonElement> = (element) => {
+		triggerElement = element;
+		return () => {
+			if (triggerElement === element) triggerElement = undefined;
+		};
+	};
 
+	const activateOpenPanel: Attachment<HTMLDivElement> = (element) => {
+		queueMicrotask(() => element.querySelector<HTMLInputElement>('.ifp__search input')?.focus());
 		const onPointerDown = (event: PointerEvent) => {
-			if (!usesModal && root && !root.contains(event.target as Node)) {
+			if (!usesModal && !element.contains(event.target as Node)) {
 				close(false);
 			}
 		};
@@ -108,7 +121,7 @@
 			if (event.key === 'Escape') close();
 		};
 		const onFieldOpen = (event: Event) => {
-			if (event instanceof CustomEvent && event.detail !== root) close(false);
+			if (event instanceof CustomEvent && event.detail !== element) close(false);
 		};
 		const previousOverflow = document.body.style.overflow;
 
@@ -125,7 +138,7 @@
 
 			if (usesModal) document.body.style.overflow = previousOverflow;
 		};
-	});
+	};
 </script>
 
 <!--
@@ -134,11 +147,9 @@
 	form change handler; modal changes are staged until the footer submit button.
 -->
 <div
-	class="ifp"
-	class:ifp--open={open}
-	class:ifp--grid={usesGridOptions}
-	class:ifp--modal={usesModal}
-	bind:this={root}
+	class={['ifp', open && 'ifp--open', usesGridOptions && 'ifp--grid', usesModal && 'ifp--modal']}
+	{@attach captureRoot}
+	{@attach open && activateOpenPanel}
 	data-name={filter.name}
 	data-inventory-filter-field
 	data-filter-mode={filter.mode}
@@ -147,13 +158,13 @@
 	<button
 		type="button"
 		class="ifp__field"
-		bind:this={trigger}
+		{@attach captureTrigger}
 		aria-haspopup="dialog"
 		aria-expanded={open}
 		onclick={togglePanel}
 	>
 		<span class="ifp__label">{filter.label}</span>
-		<span class="ifp__value" class:ifp__value--placeholder={allSelected}>{fieldValue}</span>
+		<span class={['ifp__value', allSelected && 'ifp__value--placeholder']}>{fieldValue}</span>
 		<span class="ifp__chev"><ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" /></span>
 	</button>
 
@@ -186,7 +197,6 @@
 					autocomplete="off"
 					placeholder={`Търси ${filter.label.toLowerCase()}...`}
 					bind:value={query}
-					bind:this={searchInput}
 					onkeydown={onSearchKeydown}
 				/>
 			</div>
@@ -290,9 +300,9 @@
 		min-height: 58px;
 		align-content: center;
 		gap: 2px;
-		border: 1px solid #e2e6dc;
+		border: 1px solid var(--bc-filter-field-border);
 		border-radius: 10px;
-		background: #ffffff;
+		background: var(--bc-popover-bg);
 		padding: 8px 38px 8px 14px;
 		font: inherit;
 		text-align: left;
@@ -304,23 +314,23 @@
 	}
 
 	.ifp__field:hover {
-		border-color: #c2cbb4;
-		background: #fbfcf8;
+		border-color: var(--bc-filter-field-hover-border);
+		background: var(--bc-filter-field-hover-bg);
 	}
 
 	.ifp--open .ifp__field {
-		border-color: #8fbf2e;
-		box-shadow: 0 0 0 3px rgba(143, 191, 46, 0.16);
+		border-color: var(--bc-popover-accent);
+		box-shadow: 0 0 0 3px var(--bc-filter-ring);
 	}
 
 	.ifp__field:focus-visible {
-		outline: 2px solid #4f7012;
+		outline: 2px solid var(--bc-popover-focus);
 		outline-offset: 2px;
 	}
 
 	.ifp__label {
 		overflow: hidden;
-		color: #6c7563;
+		color: var(--bc-filter-label);
 		font-size: 11px;
 		font-weight: 600;
 		line-height: 1.1;
@@ -332,7 +342,7 @@
 
 	.ifp__value {
 		overflow: hidden;
-		color: #1c1c1c;
+		color: var(--bc-ink);
 		font-size: 15px;
 		font-weight: 650;
 		line-height: 1.2;
@@ -341,7 +351,7 @@
 	}
 
 	.ifp__value--placeholder {
-		color: #7c7c7c;
+		color: var(--bc-popover-muted-strong);
 		font-weight: 550;
 	}
 
@@ -350,13 +360,13 @@
 		top: 50%;
 		right: 12px;
 		display: flex;
-		color: #9aa48c;
+		color: var(--bc-popover-icon);
 		transform: translateY(-50%);
 		transition: transform 0.18s ease;
 	}
 
 	.ifp--open .ifp__chev {
-		color: #5f8a14;
+		color: var(--bc-popover-icon-active);
 		transform: translateY(-50%) rotate(180deg);
 	}
 
@@ -365,7 +375,7 @@
 		inset: 0;
 		z-index: 10000;
 		border: 0;
-		background: rgba(13, 19, 26, 0.58);
+		background: var(--bc-filter-backdrop);
 		backdrop-filter: blur(5px);
 		cursor: default;
 	}
@@ -379,11 +389,11 @@
 		box-sizing: border-box;
 		width: min(520px, calc(100vw - 40px));
 		max-width: calc(100vw - 40px);
-		border: 1px solid #dfe6d4;
+		border: 1px solid var(--bc-filter-panel-border);
 		border-radius: 12px;
-		background: #ffffff;
+		background: var(--bc-popover-bg);
 		padding: 13px;
-		box-shadow: 0 18px 38px rgba(12, 18, 11, 0.16);
+		box-shadow: var(--bc-filter-panel-shadow);
 	}
 
 	.ifp__panel--modal {
@@ -397,9 +407,9 @@
 		max-height: min(680px, calc(100vh - 48px));
 		margin: 0 auto;
 		padding: 16px;
-		border-color: #f0f1ec;
+		border-color: var(--bc-filter-modal-border);
 		border-radius: 18px;
-		box-shadow: 0 28px 70px rgba(10, 15, 20, 0.35);
+		box-shadow: var(--bc-filter-modal-shadow);
 		transform: translateY(-50%);
 	}
 
@@ -425,7 +435,7 @@
 
 	.ifp__head p {
 		margin: 0;
-		color: #111111;
+		color: var(--bc-filter-heading);
 		font-size: 18px;
 		font-weight: 800;
 		line-height: 24px;
@@ -436,10 +446,10 @@
 		width: 34px;
 		height: 34px;
 		place-items: center;
-		border: 1px solid #ecefe5;
-		border-radius: 999px;
-		background: #f7f8f4;
-		color: #7d8375;
+		border: 1px solid var(--bc-filter-close-border);
+		border-radius: var(--bc-radius-pill);
+		background: var(--bc-filter-close-bg);
+		color: var(--bc-filter-close-ink);
 		cursor: pointer;
 		transition:
 			background-color 0.14s ease,
@@ -447,8 +457,8 @@
 	}
 
 	.ifp__close:hover {
-		background: #eef3e2;
-		color: #1c1c1c;
+		background: var(--bc-filter-close-hover-bg);
+		color: var(--bc-ink);
 	}
 
 	.ifp__search {
@@ -456,16 +466,16 @@
 		align-items: center;
 		gap: 9px;
 		border-radius: 10px;
-		background: #f4f6ef;
+		background: var(--bc-popover-surface);
 		padding: 0 12px;
 		height: 44px;
-		color: #5f6b50;
+		color: var(--bc-subtle);
 	}
 
 	.ifp__panel--modal .ifp__search {
 		height: 46px;
-		border: 1px solid #dfe5d8;
-		background: #ffffff;
+		border: 1px solid var(--bc-border);
+		background: var(--bc-popover-bg);
 	}
 
 	.ifp__search input {
@@ -476,7 +486,7 @@
 		background: transparent;
 		box-shadow: none !important;
 		padding: 0;
-		color: #1c1c1c;
+		color: var(--bc-ink);
 		font: inherit;
 		font-size: 14.5px;
 		font-weight: 500;
@@ -534,9 +544,9 @@
 		gap: 7px;
 		border: 1.5px solid transparent;
 		border-radius: 11px;
-		background: #f6f8f1;
+		background: var(--bc-popover-chip-bg);
 		padding: 6px;
-		color: #26331a;
+		color: var(--bc-popover-chip-ink);
 		font-size: 12.5px;
 		font-weight: 600;
 		text-align: center;
@@ -547,13 +557,13 @@
 	}
 
 	.ifp__chip:hover {
-		border-color: #cfe39a;
-		background: #eef4df;
+		border-color: var(--bc-popover-chip-border-hover);
+		background: var(--bc-popover-chip-hover);
 	}
 
 	.ifp__chip:has(.ifp__input:checked) {
-		border-color: #8fbf2e;
-		background: #eaf6cf;
+		border-color: var(--bc-popover-accent);
+		background: var(--bc-popover-accent-soft);
 	}
 
 	.ifp__chip img {
@@ -568,8 +578,8 @@
 		height: 30px;
 		place-items: center;
 		border-radius: 8px;
-		background: #2c3d1d;
-		color: #ffffff;
+		background: var(--bc-popover-mono-bg);
+		color: var(--bc-white);
 		font-size: 15px;
 		font-weight: 900;
 	}
@@ -582,7 +592,7 @@
 	}
 
 	.ifp__chipcount {
-		color: #5f6b50;
+		color: var(--bc-subtle);
 		font-size: 11px;
 		font-weight: 800;
 		line-height: 1;
@@ -590,7 +600,7 @@
 	}
 
 	.ifp__chip:has(.ifp__input:checked) .ifp__chipcount {
-		color: #3f5a14;
+		color: var(--bc-filter-chip-count-active);
 	}
 
 	.ifp__chip--all {
@@ -610,9 +620,9 @@
 		gap: 10px;
 		border: 1.5px solid transparent;
 		border-radius: 10px;
-		background: #f6f8f1;
+		background: var(--bc-popover-chip-bg);
 		padding: 10px 13px;
-		color: #26331a;
+		color: var(--bc-popover-chip-ink);
 		font-size: 14.5px;
 		font-weight: 600;
 		text-align: left;
@@ -626,27 +636,27 @@
 		min-height: 44px;
 		background: transparent;
 		padding: 8px 8px;
-		color: #151515;
+		color: var(--bc-filter-modal-row-ink);
 		font-size: 15px;
 		font-weight: 600;
 	}
 
 	.ifp__row:hover {
-		background: #eef4df;
+		background: var(--bc-popover-chip-hover);
 	}
 
 	.ifp__panel--modal .ifp__row:hover {
-		background: #f4f7ee;
+		background: var(--bc-filter-modal-row-hover);
 	}
 
 	.ifp__row:has(.ifp__input:checked) {
-		border-color: #8fbf2e;
-		background: #eaf6cf;
+		border-color: var(--bc-popover-accent);
+		background: var(--bc-popover-accent-soft);
 	}
 
 	.ifp__panel--modal .ifp__row:has(.ifp__input:checked) {
 		border-color: transparent;
-		background: #f1f6e4;
+		background: var(--bc-filter-modal-row-selected);
 	}
 
 	.ifp__control {
@@ -655,9 +665,9 @@
 		height: 18px;
 		flex: 0 0 18px;
 		place-items: center;
-		border: 1px solid #cfd5c6;
+		border: 1px solid var(--bc-filter-control-border);
 		border-radius: 5px;
-		background: #ffffff;
+		background: var(--bc-popover-bg);
 	}
 
 	.ifp__panel--modal .ifp__control {
@@ -666,16 +676,16 @@
 
 	.ifp__row:has(.ifp__input:checked) .ifp__control,
 	.ifp__panel--modal .ifp__row:has(.ifp__input:checked) .ifp__control {
-		border-color: #8fbf2e;
-		background: #8fbf2e;
+		border-color: var(--bc-popover-accent);
+		background: var(--bc-popover-accent);
 	}
 
 	.ifp__row:has(.ifp__input:checked) .ifp__control::after,
 	.ifp__panel--modal .ifp__row:has(.ifp__input:checked) .ifp__control::after {
 		width: 9px;
 		height: 6px;
-		border-bottom: 2px solid #ffffff;
-		border-left: 2px solid #ffffff;
+		border-bottom: 2px solid var(--bc-white);
+		border-left: 2px solid var(--bc-white);
 		content: '';
 		transform: rotate(-45deg);
 	}
@@ -696,14 +706,14 @@
 
 	.ifp__row small {
 		flex: 0 0 auto;
-		color: #7a8a63;
+		color: var(--bc-popover-subtle);
 		font-size: 12px;
 		font-weight: 700;
 	}
 
 	.ifp__tick {
 		display: flex;
-		color: #5f8a14;
+		color: var(--bc-popover-icon-active);
 		opacity: 0;
 	}
 
@@ -719,7 +729,7 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 10px;
-		border-top: 1px solid #eef0ea;
+		border-top: 1px solid var(--bc-popover-footer-line);
 		padding-top: 11px;
 	}
 
@@ -727,7 +737,7 @@
 		justify-content: space-between;
 		margin: 0 -16px -16px;
 		padding: 12px 16px;
-		background: #ffffff;
+		background: var(--bc-popover-bg);
 		border-radius: 0 0 18px 18px;
 	}
 
@@ -742,21 +752,21 @@
 	}
 
 	.ifp__done {
-		background: #1c1c1c;
-		color: #ffffff;
+		background: var(--bc-ink);
+		color: var(--bc-white);
 	}
 
 	.ifp__clear {
-		background: #f1f3ec;
-		color: #39402f;
+		background: var(--bc-popover-clear-bg);
+		color: var(--bc-popover-clear-ink);
 	}
 
 	.ifp__done:hover {
-		background: #2e2e2e;
+		background: var(--bc-filter-done-hover);
 	}
 
 	.ifp__clear:hover {
-		background: #e8eddd;
+		background: var(--bc-filter-clear-hover);
 	}
 
 	@media (max-width: 575px) {
