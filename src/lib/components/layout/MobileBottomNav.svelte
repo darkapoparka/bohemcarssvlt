@@ -418,8 +418,15 @@
 			inset: 0;
 			z-index: 1000;
 			display: block;
+			box-sizing: border-box;
 			visibility: hidden;
 			pointer-events: none;
+		}
+
+		.mobile-menu-sheet *,
+		.mobile-menu-sheet *::before,
+		.mobile-menu-sheet *::after {
+			box-sizing: border-box;
 		}
 
 		#mobile-bottom-menu-toggle:checked ~ .mobile-menu-sheet {
@@ -450,8 +457,10 @@
 			display: grid;
 			gap: 12px;
 			width: 100%;
+			max-width: 100%;
 			max-height: min(90dvh, 760px);
 			overflow-y: auto;
+			overflow-x: hidden;
 			margin: 0;
 			padding: 10px 14px calc(18px + env(safe-area-inset-bottom));
 			border: 0;
@@ -524,6 +533,9 @@
 			position: relative;
 			isolation: isolate;
 			display: flex;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 			min-height: 68px;
 			align-items: center;
 			justify-content: space-between;
@@ -531,7 +543,7 @@
 			overflow: hidden;
 			border-radius: 8px;
 			background: #1c1c1c;
-			padding: 12px 128px 12px 14px;
+			padding: 12px clamp(94px, 31vw, 128px) 12px 14px;
 			color: #ffffff;
 			transition:
 				background-color 0.18s ease,
@@ -620,6 +632,23 @@
 			user-select: none;
 		}
 
+		@media (max-width: 360px) {
+			.mobile-menu-sheet__panel {
+				padding-right: 12px;
+				padding-left: 12px;
+			}
+
+			.mobile-menu-sheet__sell {
+				padding-right: 88px;
+			}
+
+			.mobile-menu-sheet__sell-consultant {
+				right: 32px;
+				width: 74px;
+				height: 74px;
+			}
+		}
+
 		.mobile-menu-sheet__actions {
 			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -641,9 +670,22 @@
 			line-height: 18px;
 		}
 
+		.mobile-menu-sheet__actions a :global(svg),
+		.mobile-menu-sheet__actions a :global(svg *) {
+			color: currentColor !important;
+			stroke: currentColor !important;
+		}
+
 		.mobile-menu-sheet__actions a:first-child {
 			border-color: #d9f275;
 			background: #d9f275;
+			color: #14210a;
+		}
+
+		.mobile-menu-sheet__actions a:nth-child(2) {
+			border-color: #111111;
+			background: #111111;
+			color: #ffffff;
 		}
 
 		.mobile-menu-sheet__actions a:hover,

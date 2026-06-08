@@ -102,9 +102,9 @@
 									<Table.Cell>
 										<div class="flex min-w-72 items-center gap-3">
 											<img
-												class="ring-border size-12 rounded-md object-cover ring-1"
+												class="ring-border size-14 rounded-md object-cover ring-1"
 												src={vehicle.image}
-												alt=""
+												alt={vehicle.title}
 											/>
 											<span class="min-w-0">
 												<span class="block truncate font-medium">{vehicle.title}</span>
@@ -142,16 +142,31 @@
 											>
 												Edit
 											</Button>
-											<Button
-												type="button"
-												variant="ghost"
-												size="sm"
-												class="cart-item__remove action text-muted-foreground"
-												aria-label={`Archive ${vehicle.title}`}
-												disabled
-											>
-												Archive
-											</Button>
+											{#if vehicle.source === 'admin-listing' && vehicle.status !== 'archived'}
+												<form method="POST" action="?/archive">
+													<input type="hidden" name="id" value={vehicle.id} />
+													<Button
+														type="submit"
+														variant="ghost"
+														size="sm"
+														class="cart-item__remove action text-muted-foreground"
+														aria-label={`Archive ${vehicle.title}`}
+													>
+														Archive
+													</Button>
+												</form>
+											{:else}
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													class="cart-item__remove action text-muted-foreground"
+													aria-label={`Archive ${vehicle.title}`}
+													disabled
+												>
+													Archive
+												</Button>
+											{/if}
 										</div>
 									</Table.Cell>
 								</Table.Row>

@@ -1513,17 +1513,23 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 		'font-weight',
 		'600'
 	);
+	await expect(refreshedFirstCard).toHaveClass(/bohemcars-commerce-card/);
 	await expect(refreshedFirstCard.locator('.content')).toHaveCSS(
 		'background-color',
-		'rgb(238, 241, 237)'
+		'rgb(255, 255, 255)'
 	);
-	await expect(refreshedFirstCard).toHaveCSS('border-top-width', '0px');
+	await expect(refreshedFirstCard.locator('.tag li').first()).toHaveCSS(
+		'background-color',
+		'rgb(248, 250, 248)'
+	);
+	await expect(refreshedFirstCard).toHaveCSS('border-top-width', '1px');
+	await expect(refreshedFirstCard).toHaveCSS('border-top-color', 'rgb(221, 229, 216)');
 	await expect(refreshedFirstCard).toHaveCSS('background-color', 'rgb(255, 255, 255)');
 	await refreshedFirstCard.hover();
 	await expect(refreshedFirstCard).toHaveCSS('background-color', 'rgb(255, 255, 255)');
 	await expect(refreshedFirstCard.locator('.content')).toHaveCSS(
 		'background-color',
-		'rgb(228, 234, 223)'
+		'rgb(251, 252, 248)'
 	);
 	await expect(refreshedFirstCard.locator('.bohemcars-card-price__finance')).toBeVisible();
 	const inventoryMonthlyBox = await refreshedFirstCard
@@ -2244,17 +2250,22 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(adminEditForm.locator('input[name="source"]')).toHaveValue(
 		/static-vehicle|admin-listing/
 	);
-	await expect(adminEditForm).toContainText('Listing workspace');
+	await expect(adminEditForm).toContainText('Listing editor');
 	await expect(adminEditForm).toContainText('Record summary');
 	await expect(adminEditForm.locator('#title')).toHaveValue(/BMW X5|Audi|Mercedes|Volkswagen/);
 	await expect(adminEditForm.locator('#vin')).not.toHaveValue('');
 	await expect(adminEditForm.locator('#priceLabel')).not.toHaveValue('');
-	await expect(adminEditForm.locator('#routePath')).toHaveValue(/\/inventory\//);
+	await expect(adminEditForm.locator('#slug')).not.toHaveValue('');
+	await expect(adminEditForm.locator('#sourceUrl')).toHaveValue(/https?:\/\//);
+	await expect(adminEditForm.locator('input[type="file"][name="galleryImages"]')).toHaveAttribute(
+		'accept',
+		/image\/webp/
+	);
 	await expect(adminEditForm.locator('button[type="submit"]')).toContainText(/Save/);
 	await expect(page.locator('body')).not.toContainText('Lorem ipsum');
 
 	await page.goto('/admin/inventory/new?role=admin');
-	await expect(page.locator('body')).toContainText(/Add listing|Create inventory draft/);
+	await expect(page.locator('body')).toContainText(/Add listing|Create vehicle listing/);
 	const adminNewForm = page.locator('[data-bohemcars-admin-listing-editor]');
 	await expect(adminNewForm).toBeVisible();
 	await expect(adminNewForm).toHaveAttribute('data-bohemcars-admin-listing-mode', 'create');
@@ -2262,7 +2273,11 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(adminNewForm.locator('#title')).toHaveValue('');
 	await expect(adminNewForm.locator('#vin')).toHaveValue('');
 	await expect(adminNewForm.locator('#priceLabel')).toHaveValue('');
-	await expect(adminNewForm.locator('#routePath')).toHaveValue('');
+	await expect(adminNewForm.locator('#slug')).toHaveValue('');
+	await expect(adminNewForm.locator('input[type="file"][name="previewImage"]')).toHaveAttribute(
+		'accept',
+		/image\/webp/
+	);
 	await expect(adminNewForm.locator('button[type="submit"]')).toContainText('Create listing');
 
 	await page.goto('/admin/inquiries?role=agent');

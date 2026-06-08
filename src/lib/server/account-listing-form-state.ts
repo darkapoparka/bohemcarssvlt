@@ -16,6 +16,13 @@ import { listInventoryForAdmin, listVehicleSubmissions } from './inventory';
 
 const km = (value: number) => `${value.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} km`;
 
+const mileageText = (value: number | string | undefined, fallback: number) => {
+	if (typeof value === 'number') return km(value);
+	if (value) return value;
+
+	return km(fallback);
+};
+
 const editListingIdFromRoute = (routePath = '') => {
 	const match = routePath
 		.replace(/^\/+|\/+$/g, '')
@@ -188,7 +195,7 @@ export const accountListingFormData = (
 	const title = editSubmission?.title ?? editListing?.title ?? vehicle.title;
 	const priceLabel = editSubmission?.expectedPrice ?? editListing?.priceLabel ?? vehicle.priceLabel;
 	const vin = editSubmission?.vin ?? editListing?.vin ?? vehicle.stockNumber;
-	const mileage = editSubmission?.mileage ?? editListing?.mileage ?? km(vehicle.mileage);
+	const mileage = mileageText(editSubmission?.mileage ?? editListing?.mileage, vehicle.mileage);
 	const engine = editVehicle?.engine ?? vehicle.engine;
 	const color = editVehicle?.exterior ?? vehicle.exterior;
 	const sourceUrl = editVehicle?.sourceUrl ?? vehicle.sourceUrl;

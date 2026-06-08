@@ -3077,6 +3077,10 @@ function injectLocalBehavior(
 			return;
 		}
 
+		if (form.matches('.bohemcars-add-listing-form[data-bohemcars-native-submit="true"]')) {
+			return;
+		}
+
 		event.preventDefault();
 		const payload = formPayload(form);
 		if (form.matches('#LoginModal form')) {

@@ -1,11 +1,11 @@
 import {
 	filterVehicles,
 	sortVehicles,
-	vehicles,
 	type InventoryFilters,
 	type SortKey,
 	type Vehicle
 } from '$lib/data/vehicles';
+import { listPublicVehicles } from './public-vehicles';
 
 export type InventoryView = '3' | '4' | 'map';
 export type InventoryLayout = 'classic' | 'dashboard';
@@ -164,7 +164,8 @@ export const getInventoryState = (
 		transmission: getParamList(searchParams, 'transmission', 'Transmission', 'gearbox')
 	};
 	const normalizedFilters = normalizeFilters(filters);
-	const filtered = filterVehicles(vehicles, normalizedFilters);
+	const source = listPublicVehicles();
+	const filtered = filterVehicles(source, normalizedFilters);
 	const layout = resolveInventoryLayout(searchParams);
 	const filterPresentation = resolveInventoryFilterPresentation(searchParams);
 	const hasExplicitView = Boolean(options.view || searchParams.get('view'));

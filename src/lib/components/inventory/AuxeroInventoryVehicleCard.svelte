@@ -58,7 +58,10 @@
 </script>
 
 {#if variant === 'list'}
-	<div class="card-box card-box-style-9 bohemcars-no-image-zoom" data-bohemcars-slug={card.slug}>
+	<div
+		class="card-box card-box-style-9 bohemcars-no-image-zoom bohemcars-commerce-card"
+		data-bohemcars-slug={card.slug}
+	>
 		<div class="top">
 			<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
 			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
@@ -131,7 +134,7 @@
 	</div>
 {:else}
 	<div
-		class="card-box card-box-style-1 bohemcars-no-image-zoom wow fadeIn"
+		class="card-box card-box-style-1 bohemcars-no-image-zoom bohemcars-commerce-card wow fadeIn"
 		data-wow-delay={card.delay}
 		data-bohemcars-slug={card.slug}
 	>
@@ -316,8 +319,23 @@
 		height: 100%;
 	}
 
-	.card-box-style-1 .content {
-		background: #eef1ed !important;
+	.card-box-style-1.bohemcars-commerce-card,
+	.card-box-style-9.bohemcars-commerce-card {
+		box-sizing: border-box;
+		overflow: hidden;
+		border: 1px solid var(--bc-border) !important;
+		border-radius: 8px;
+	}
+
+	:global(body.bohemcars-inventory-template .bohemcars-inventory-content)
+		.card-box-style-1.bohemcars-commerce-card,
+	:global(body.bohemcars-inventory-template .bohemcars-inventory-content)
+		.card-box-style-9.bohemcars-commerce-card {
+		border: 1px solid var(--bc-border) !important;
+	}
+
+	.card-box-style-1.bohemcars-commerce-card .content {
+		background: #ffffff !important;
 		display: flex;
 		flex: 1;
 		flex-direction: column;
@@ -330,7 +348,7 @@
 
 	:global(body.bohemcars-inventory-template) .card-box-style-1:hover .content,
 	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within .content {
-		background: #e4eadf !important;
+		background: #fbfcf8 !important;
 	}
 
 	.card-box-style-1 .card-box__title {

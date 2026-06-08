@@ -1,6 +1,8 @@
 node_modules
 .codex-logs
 outputs
+.bohemcars-cms/
+static/uploads/cms/
 
 # Output
 .output

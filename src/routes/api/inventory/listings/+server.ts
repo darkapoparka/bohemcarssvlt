@@ -7,6 +7,7 @@ import {
 	updateInventoryListing
 } from '$lib/server/inventory';
 import type { BohemcarsInventoryListingStatus } from '$lib/server/db';
+import type { BohemcarsCmsDocument } from '$lib/types/account';
 
 export function GET({ request, url }: { request: Request; url: URL }) {
 	const access = requireBohemcarsApiAccess({
@@ -34,6 +35,75 @@ const inventoryStatus = (
 	return undefined;
 };
 
+const payloadNumber = (payload: Record<string, unknown>, ...keys: string[]) => {
+	const value = keys.map((key) => payload[key]).find((item) => item !== undefined);
+	const parsed =
+		typeof value === 'number' ? value : Number(String(value ?? '').replace(/[^\d.-]/g, ''));
+
+	return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const payloadList = (payload: Record<string, unknown>, key: string) => {
+	const value = payload[key];
+
+	if (Array.isArray(value)) {
+		return value.map((item) => String(item).trim()).filter(Boolean);
+	}
+
+	if (typeof value === 'string') {
+		return value
+			.split(/\r?\n|,/)
+			.map((item) => item.trim())
+			.filter(Boolean);
+	}
+
+	return undefined;
+};
+
+const payloadDocuments = (payload: Record<string, unknown>) => {
+	const value = payload.documents;
+
+	if (!Array.isArray(value)) return undefined;
+
+	return value
+		.map((document) => {
+			if (!document || typeof document !== 'object') return undefined;
+
+			const candidate = document as Partial<BohemcarsCmsDocument>;
+			const url = typeof candidate.url === 'string' ? candidate.url.trim() : '';
+			const originalName =
+				typeof candidate.originalName === 'string' ? candidate.originalName.trim() : '';
+
+			if (!url || !originalName) return undefined;
+
+			return {
+				filename:
+					typeof candidate.filename === 'string' && candidate.filename.trim()
+						? candidate.filename.trim()
+						: originalName,
+				id:
+					typeof candidate.id === 'string' && candidate.id.trim()
+						? candidate.id.trim()
+						: `${Date.now().toString(36)}-${originalName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+				mimeType:
+					typeof candidate.mimeType === 'string' && candidate.mimeType.trim()
+						? candidate.mimeType.trim()
+						: 'application/octet-stream',
+				originalName,
+				size:
+					typeof candidate.size === 'number' && Number.isFinite(candidate.size)
+						? candidate.size
+						: 0,
+				uploadedAt:
+					typeof candidate.uploadedAt === 'string' && candidate.uploadedAt.trim()
+						? candidate.uploadedAt.trim()
+						: new Date().toISOString(),
+				url
+			};
+		})
+		.filter((document): document is BohemcarsCmsDocument => Boolean(document));
+};
+
 export async function POST({ request }: { request: Request }) {
 	const payload = await readApiPayload(request);
 	const access = requireBohemcarsApiAccess({
@@ -52,7 +122,21 @@ export async function POST({ request }: { request: Request }) {
 	}
 
 	const listing = createInventoryListing({
+		bodyType: payloadString(payload, 'bodyType', 'type', 'Type'),
+		brand: payloadString(payload, 'brand', 'Brand'),
+		color: payloadString(payload, 'color', 'Color'),
+		description: payloadString(payload, 'description', 'Doorstextarea', 'message'),
+		documents: payloadDocuments(payload),
+		doors: payloadNumber(payload, 'doors', 'Doors'),
+		engine: payloadString(payload, 'engine', 'Enterengine'),
+		features: payloadList(payload, 'features'),
+		fuel: payloadString(payload, 'fuel', 'FuelType'),
+		galleryImages: payloadList(payload, 'galleryImages'),
+		location: payloadString(payload, 'location', 'SelectLocation', 'ListingAddress'),
 		mileage: payloadString(payload, 'mileage'),
+		model: payloadString(payload, 'model', 'Model'),
+		previewImage: payloadString(payload, 'previewImage'),
+		price: payloadNumber(payload, 'price', 'PriceListing', 'PriceListing2'),
 		priceLabel: payloadString(
 			payload,
 			'priceLabel',
@@ -62,9 +146,15 @@ export async function POST({ request }: { request: Request }) {
 			'Enternumber'
 		),
 		routePath: payloadString(payload, 'routePath'),
+		seats: payloadNumber(payload, 'seats', 'Seats'),
+		slug: payloadString(payload, 'slug'),
+		sourceUrl: payloadString(payload, 'sourceUrl', 'Yoururl'),
 		status: inventoryStatus(payloadString(payload, 'status')) ?? 'draft',
+		stockNumber: payloadString(payload, 'stockNumber', 'Enternumber'),
 		title,
-		vin: payloadString(payload, 'vin', 'VIN', 'EnterVIN')
+		transmission: payloadString(payload, 'transmission', 'Transmission'),
+		vin: payloadString(payload, 'vin', 'VIN', 'EnterVIN'),
+		year: payloadNumber(payload, 'year', 'Years')
 	});
 
 	return okJson({ listing }, { status: 201 });
@@ -88,7 +178,21 @@ export async function PATCH({ request }: { request: Request }) {
 	}
 
 	const listing = updateInventoryListing(id, {
+		bodyType: payloadString(payload, 'bodyType', 'type', 'Type'),
+		brand: payloadString(payload, 'brand', 'Brand'),
+		color: payloadString(payload, 'color', 'Color'),
+		description: payloadString(payload, 'description', 'Doorstextarea', 'message'),
+		documents: payloadDocuments(payload),
+		doors: payloadNumber(payload, 'doors', 'Doors'),
+		engine: payloadString(payload, 'engine', 'Enterengine'),
+		features: payloadList(payload, 'features'),
+		fuel: payloadString(payload, 'fuel', 'FuelType'),
+		galleryImages: payloadList(payload, 'galleryImages'),
+		location: payloadString(payload, 'location', 'SelectLocation', 'ListingAddress'),
 		mileage: payloadString(payload, 'mileage'),
+		model: payloadString(payload, 'model', 'Model'),
+		previewImage: payloadString(payload, 'previewImage'),
+		price: payloadNumber(payload, 'price', 'PriceListing', 'PriceListing2'),
 		priceLabel: payloadString(
 			payload,
 			'priceLabel',
@@ -98,9 +202,15 @@ export async function PATCH({ request }: { request: Request }) {
 			'Enternumber'
 		),
 		routePath: payloadString(payload, 'routePath'),
+		seats: payloadNumber(payload, 'seats', 'Seats'),
+		slug: payloadString(payload, 'slug'),
+		sourceUrl: payloadString(payload, 'sourceUrl', 'Yoururl'),
 		status: inventoryStatus(payloadString(payload, 'status')),
+		stockNumber: payloadString(payload, 'stockNumber', 'Enternumber'),
 		title: payloadString(payload, 'title', 'vehicleTitle'),
-		vin: payloadString(payload, 'vin', 'VIN', 'EnterVIN')
+		transmission: payloadString(payload, 'transmission', 'Transmission'),
+		vin: payloadString(payload, 'vin', 'VIN', 'EnterVIN'),
+		year: payloadNumber(payload, 'year', 'Years')
 	});
 
 	if (!listing) {
