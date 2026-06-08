@@ -188,7 +188,10 @@ export const accountListingFormData = (
 	const title = editSubmission?.title ?? editListing?.title ?? vehicle.title;
 	const priceLabel = editSubmission?.expectedPrice ?? editListing?.priceLabel ?? vehicle.priceLabel;
 	const vin = editSubmission?.vin ?? editListing?.vin ?? vehicle.stockNumber;
-	const mileage = editSubmission?.mileage ?? editListing?.mileage ?? km(vehicle.mileage);
+	const mileage =
+		editSubmission?.mileage ??
+		(typeof editListing?.mileage === 'number' ? km(editListing.mileage) : undefined) ??
+		km(vehicle.mileage);
 	const engine = editVehicle?.engine ?? vehicle.engine;
 	const color = editVehicle?.exterior ?? vehicle.exterior;
 	const sourceUrl = editVehicle?.sourceUrl ?? vehicle.sourceUrl;

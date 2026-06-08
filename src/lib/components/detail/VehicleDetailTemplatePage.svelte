@@ -116,15 +116,16 @@
 
 	:global(.bohemcars-pdp-desktop .title-section) {
 		align-items: center;
-		background: linear-gradient(135deg, rgba(217, 242, 117, 0.12), rgba(217, 242, 117, 0)), #132414;
-		border: 1px solid rgba(217, 242, 117, 0.18);
+		background:
+			linear-gradient(135deg, rgba(217, 242, 117, 0.22), rgba(255, 255, 255, 0.94) 52%), #f8faf5;
+		border: 1px solid #dfe8d4;
 		border-radius: 8px;
 		margin-bottom: 24px;
 		padding: 30px 32px;
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section h1) {
-		color: #ffffff;
+		color: #14210f;
 		margin-bottom: 0;
 		max-width: 650px;
 		min-width: 0;
@@ -135,10 +136,10 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle) {
-		background: rgba(255, 255, 255, 0.12);
-		border: 1px solid rgba(255, 255, 255, 0.16);
+		background: #eef1ed;
+		border: 1px solid #dce4d4;
 		box-sizing: border-box;
-		color: #ffffff;
+		color: #1c1c1c;
 		flex: 0 0 48px;
 		width: 48px;
 		height: 48px;
@@ -146,14 +147,24 @@
 		padding: 0;
 	}
 
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare) {
+		background: #d9f275;
+		border-color: #cde85c;
+	}
+
 	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle:hover) {
 		background: #d9f275;
 		border-color: #d9f275;
 	}
 
+	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover) {
+		background: #98bc2a;
+		border-color: #98bc2a;
+	}
+
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare svg path) {
 		fill: none !important;
-		stroke: #ffffff !important;
+		stroke: #1c1c1c !important;
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover svg path) {
@@ -162,7 +173,7 @@
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite svg path) {
 		fill: none !important;
-		stroke: #ffffff !important;
+		stroke: #1c1c1c !important;
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite:hover svg path) {
@@ -176,7 +187,7 @@
 			svg
 			path
 	) {
-		fill: #ffffff !important;
+		fill: #1c1c1c !important;
 	}
 
 	:global(
@@ -239,6 +250,26 @@
 
 	:global(.bohemcars-pdp-desktop .listing-details--content > .divider) {
 		display: none;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel) {
+		background: #ffffff;
+		border: 1px solid #e1e5dc;
+		border-radius: 8px;
+		margin-bottom: 40px;
+		padding: 24px;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel > .h4) {
+		margin-bottom: 16px;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .flat-tabs) {
+		margin-bottom: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .content-tab) {
+		min-width: 0;
 	}
 
 	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box),
@@ -309,7 +340,7 @@
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li) {
 		border-radius: 8px;
-		padding: 9px 14px;
+		padding: 9px 10px;
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active) {

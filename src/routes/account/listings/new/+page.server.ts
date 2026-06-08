@@ -1,8 +1,11 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountListingFormData } from '$lib/server/account-listing-form-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
+import { readInventoryListingFields } from '$lib/server/cms-listing-form';
+import { saveCmsUploadFiles } from '$lib/server/cms-persistence';
+import { createVehicleSubmission, updateVehicleSubmission } from '$lib/server/inventory';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const routePath = 'account/listings/new';
@@ -37,4 +40,34 @@ export const load: PageServerLoad = ({ request, url }) => {
 		formHtml: formSlot.sectionHtml,
 		pageDocument
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ request, url }) => {
+		const session = requireBohemcarsPageSession(request, 'account/listings/new', url.searchParams);
+		const formData = await request.formData();
+		const fields = readInventoryListingFields(formData);
+		const rawStatus = String(formData.get('listingStatus') ?? formData.get('status') ?? '').trim();
+		const submission = createVehicleSubmission({
+			email: session.email,
+			expectedPrice: fields.priceLabel,
+			message: fields.description,
+			mileage: fields.mileage ? String(fields.mileage) : undefined,
+			name: session.name,
+			phone: '',
+			routePath: 'account/listings/new',
+			source: 'customer-listing',
+			status: rawStatus === 'draft' ? 'draft' : 'submitted',
+			title: fields.title,
+			vin: fields.vin
+		});
+		const uploads = await saveCmsUploadFiles({ formData, recordId: submission.id });
+
+		updateVehicleSubmission({
+			documents: uploads.documents,
+			galleryImages: uploads.galleryImages,
+			id: submission.id,
+			previewImage: uploads.previewImage
+		});
+	}
 };

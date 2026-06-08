@@ -578,16 +578,28 @@ describe('Bohemcars API endpoints', () => {
 				{
 					EnterVIN: 'ADMIN-DRAFT-001',
 					PriceListing: '31 500 EUR',
+					doors: 4,
 					mileage: '91 000 km',
+					price: 31500,
+					seats: 5,
 					status: 'draft',
-					title: 'Admin Draft BMW 530d'
+					title: 'Admin Draft BMW 530d',
+					year: 2021
 				},
 				'POST',
 				authHeaders
 			)
 		});
 		const createBody = await readJson<{
-			listing: { id: string; status: string; title: string };
+			listing: {
+				doors: number;
+				id: string;
+				price: number;
+				seats: number;
+				status: string;
+				title: string;
+				year: number;
+			};
 		}>(createResponse);
 		const updateResponse = await listingPatch({
 			request: jsonRequest(
@@ -628,6 +640,12 @@ describe('Bohemcars API endpoints', () => {
 
 		expect(adminLoginResponse.status).toBe(200);
 		expect(createResponse.status).toBe(201);
+		expect(createBody.data.listing).toMatchObject({
+			doors: 4,
+			price: 31500,
+			seats: 5,
+			year: 2021
+		});
 		expect(createBody.data.listing.status).toBe('draft');
 		expect(updateResponse.status).toBe(200);
 		expect(updateBody.data.listing.status).toBe('published');

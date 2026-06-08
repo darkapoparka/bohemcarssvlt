@@ -12,6 +12,8 @@ import type {
 	BohemcarsUserStatus,
 	BohemcarsVehicleSubmissionRecord
 } from '$lib/types/account';
+import { readCmsCollection, writeCmsCollection } from './cms-persistence';
+import { normalizeCmsListingStatus } from './cms-workflow';
 
 export type {
 	BohemcarsInquiryRecord,
@@ -96,7 +98,7 @@ const messages: BohemcarsMessageRecord[] = [
 		vehicleSlug: vehicles[0]?.slug
 	}
 ];
-const vehicleSubmissions: BohemcarsVehicleSubmissionRecord[] = [
+const seededVehicleSubmissions: BohemcarsVehicleSubmissionRecord[] = [
 	{
 		contactEmail: 'seller@bohemcars.local',
 		contactName: 'Client vehicle seller',
@@ -128,7 +130,6 @@ const vehicleSubmissions: BohemcarsVehicleSubmissionRecord[] = [
 		vin: 'TRADE-IN-002'
 	}
 ];
-const inventoryListings: BohemcarsInventoryListingRecord[] = [];
 const passwordChanges: BohemcarsPasswordChangeRecord[] = [];
 
 export const listBohemcarsUsers = () => prototypeUsers.map((user) => ({ ...user }));
@@ -372,14 +373,22 @@ export const updateBohemcarsMessageRecord = (
 	return { ...records[0] };
 };
 
-export const listBohemcarsVehicleSubmissions = () => [...vehicleSubmissions];
+const persistedVehicleSubmissions = () => readCmsCollection('vehicle-submissions');
+
+const writePersistedVehicleSubmissions = (records: BohemcarsVehicleSubmissionRecord[]) =>
+	writeCmsCollection('vehicle-submissions', records);
+
+export const listBohemcarsVehicleSubmissions = () => [
+	...persistedVehicleSubmissions(),
+	...seededVehicleSubmissions
+];
 
 export const listBohemcarsInventoryListings = ({
 	includeArchived = false
 }: { includeArchived?: boolean } = {}) =>
 	(includeArchived
-		? inventoryListings
-		: inventoryListings.filter((listing) => listing.status !== 'archived')
+		? readCmsCollection('inventory-listings')
+		: readCmsCollection('inventory-listings').filter((listing) => listing.status !== 'archived')
 	).map((listing) => ({ ...listing }));
 
 const slugFromTitle = (title: string) =>
@@ -389,29 +398,128 @@ const slugFromTitle = (title: string) =>
 		.replace(/^-+|-+$/g, '')
 		.slice(0, 64) || 'bohemcars-listing';
 
+const numberFromValue = (value: unknown, fallback = 0) => {
+	if (typeof value === 'number' && Number.isFinite(value)) return value;
+	if (value === undefined || value === null) return fallback;
+
+	const normalized = String(value).replace(/[^\d.-]/g, '');
+
+	if (!normalized.trim()) return fallback;
+
+	const parsed = Number(normalized);
+
+	return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const integerFromValue = (value: unknown, fallback = 0) =>
+	Math.max(0, Math.round(numberFromValue(value, fallback)));
+
+const trimmedValue = (value: unknown) => String(value ?? '').trim();
+
+const featuresFromValue = (value: unknown) => {
+	if (Array.isArray(value)) return value.map(trimmedValue).filter(Boolean);
+
+	return trimmedValue(value)
+		.split(/\r?\n|,/)
+		.map((feature) => feature.trim())
+		.filter(Boolean);
+};
+
+const priceLabelFrom = (price: number, fallback?: string) => {
+	const label = trimmedValue(fallback);
+
+	if (label) return label;
+	if (price > 0) return `${price.toLocaleString('fr-FR').replace(/\u202f/g, ' ')} EUR`;
+
+	return 'On request';
+};
+
+const listingSlugs = (exceptId?: string) =>
+	new Set([
+		...vehicles.map((vehicle) => vehicle.slug),
+		...readCmsCollection('inventory-listings')
+			.filter((listing) => listing.id !== exceptId)
+			.map((listing) => listing.slug)
+	]);
+
+const uniqueListingSlug = (title: string, id: string, preferredSlug?: string) => {
+	const used = listingSlugs(id);
+	const base = slugFromTitle(trimmedValue(preferredSlug) || title);
+
+	if (!used.has(base)) return base;
+
+	const suffixed = `${base}-${id.replace(/^listing-/, '').slice(-8)}`;
+
+	return used.has(suffixed) ? `${base}-${Date.now().toString(36)}` : suffixed;
+};
+
+const normalizeListingRecord = (
+	input: Partial<BohemcarsInventoryListingRecord>,
+	existing?: BohemcarsInventoryListingRecord
+): BohemcarsInventoryListingRecord => {
+	const createdAt = existing?.createdAt ?? input.createdAt ?? stamp();
+	const id = existing?.id ?? (trimmedValue(input.id) || nextId('listing'));
+	const title = trimmedValue(input.title) || existing?.title || 'Bohemcars inventory draft';
+	const price = numberFromValue(input.price, existing?.price ?? numberFromValue(input.priceLabel));
+	const slug =
+		existing && !input.slug
+			? existing.slug
+			: uniqueListingSlug(title, id, trimmedValue(input.slug) || existing?.slug);
+
+	return {
+		bodyType: trimmedValue(input.bodyType) || existing?.bodyType || 'On request',
+		brand: trimmedValue(input.brand) || existing?.brand || title.split(/\s+/)[0] || 'Bohemcars',
+		color: trimmedValue(input.color) || existing?.color || 'On request',
+		createdAt,
+		description:
+			trimmedValue(input.description) ||
+			existing?.description ||
+			`${title} is queued in the Bohemcars CMS for review.`,
+		documents: input.documents ?? existing?.documents ?? [],
+		doors: integerFromValue(input.doors, existing?.doors ?? 0),
+		engine: trimmedValue(input.engine) || existing?.engine || 'On request',
+		features: input.features ? featuresFromValue(input.features) : (existing?.features ?? []),
+		fuel: trimmedValue(input.fuel) || existing?.fuel || 'On request',
+		galleryImages: input.galleryImages ?? existing?.galleryImages ?? [],
+		id,
+		location: trimmedValue(input.location) || existing?.location || bohemcarsContact.addressLabel,
+		mileage: numberFromValue(input.mileage, existing?.mileage ?? 0),
+		model: trimmedValue(input.model) || existing?.model || 'On request',
+		previewImage:
+			trimmedValue(input.previewImage) ||
+			existing?.previewImage ||
+			'/assets/images/card/card-1.jpg',
+		price,
+		priceLabel: priceLabelFrom(price, input.priceLabel ?? existing?.priceLabel),
+		routePath: trimmedValue(input.routePath) || existing?.routePath || `/inventory/${slug}`,
+		seats: integerFromValue(input.seats, existing?.seats ?? 0),
+		slug,
+		source: input.source ?? existing?.source ?? 'admin-listing',
+		sourceUrl: trimmedValue(input.sourceUrl) || existing?.sourceUrl || '',
+		status: normalizeCmsListingStatus(input.status ?? existing?.status),
+		stockNumber:
+			trimmedValue(input.stockNumber) ||
+			existing?.stockNumber ||
+			trimmedValue(input.vin) ||
+			'On request',
+		submissionId: input.submissionId ?? existing?.submissionId,
+		title,
+		transmission: trimmedValue(input.transmission) || existing?.transmission || 'On request',
+		updatedAt: existing ? stamp() : (input.updatedAt ?? createdAt),
+		vin:
+			trimmedValue(input.vin) || existing?.vin || trimmedValue(input.stockNumber) || 'On request',
+		year: integerFromValue(input.year, existing?.year ?? new Date().getFullYear())
+	};
+};
+
 export const createBohemcarsInventoryListingRecord = (
 	input: Partial<BohemcarsInventoryListingRecord>
 ): BohemcarsInventoryListingRecord => {
-	const createdAt = stamp();
-	const title = input.title?.trim() || 'Bohemcars inventory draft';
-	const id = nextId('listing');
-	const record: BohemcarsInventoryListingRecord = {
-		createdAt,
-		id,
-		mileage: input.mileage?.trim() || 'On request',
-		priceLabel: input.priceLabel?.trim() || 'On request',
-		routePath: input.routePath ?? '/admin/inventory/new',
-		slug: input.slug?.trim() || `${slugFromTitle(title)}-${id}`,
-		source: 'admin-listing',
-		status: input.status ?? 'draft',
-		submissionId: input.submissionId,
-		title,
-		updatedAt: createdAt,
-		vin: input.vin?.trim() || 'On request'
-	};
+	const records = readCmsCollection('inventory-listings');
+	const record = normalizeListingRecord(input);
 
-	inventoryListings.unshift(record);
-
+	records.unshift(record);
+	writeCmsCollection('inventory-listings', records);
 	return { ...record };
 };
 
@@ -419,26 +527,17 @@ export const updateBohemcarsInventoryListingRecord = (
 	id: string,
 	patch: Partial<BohemcarsInventoryListingRecord>
 ) => {
-	const listing = inventoryListings.find(
+	const records = readCmsCollection('inventory-listings');
+	const index = records.findIndex(
 		(candidate) => candidate.id === id || candidate.slug === id || candidate.submissionId === id
 	);
 
-	if (!listing) return undefined;
+	if (index < 0) return undefined;
 
-	const title = patch.title?.trim();
-	const priceLabel = patch.priceLabel?.trim();
-	const mileage = patch.mileage?.trim();
-	const routePath = patch.routePath?.trim();
-	const vin = patch.vin?.trim();
+	const listing = normalizeListingRecord(patch, records[index]);
 
-	if (title) listing.title = title;
-	if (priceLabel) listing.priceLabel = priceLabel;
-	if (mileage) listing.mileage = mileage;
-	if (routePath) listing.routePath = routePath;
-	if (vin) listing.vin = vin;
-	if (patch.status) listing.status = patch.status;
-	listing.updatedAt = stamp();
-
+	records[index] = listing;
+	writeCmsCollection('inventory-listings', records);
 	return { ...listing };
 };
 
@@ -448,15 +547,19 @@ export const archiveBohemcarsInventoryListingRecord = (id: string) =>
 export const createBohemcarsVehicleSubmissionRecord = (
 	input: Partial<BohemcarsVehicleSubmissionRecord>
 ): BohemcarsVehicleSubmissionRecord => {
+	const records = persistedVehicleSubmissions();
 	const record: BohemcarsVehicleSubmissionRecord = {
 		contactEmail: input.contactEmail?.trim() || bohemcarsContact.emailLabel,
 		contactName: input.contactName?.trim() || 'Bohemcars customer',
 		contactPhone: input.contactPhone?.trim() || bohemcarsContact.primaryPhoneLabel,
 		createdAt: stamp(),
+		documents: input.documents ?? [],
 		expectedPrice: input.expectedPrice?.trim() || 'On request',
+		galleryImages: input.galleryImages ?? [],
 		id: nextId('submission'),
 		message: input.message?.trim() || 'Vehicle submission queued for review.',
 		mileage: input.mileage?.trim() || 'On request',
+		previewImage: input.previewImage,
 		routePath: input.routePath ?? '/sell-your-car',
 		source: input.source ?? 'sell-your-car',
 		status: input.status ?? 'submitted',
@@ -464,7 +567,8 @@ export const createBohemcarsVehicleSubmissionRecord = (
 		vin: input.vin?.trim() || 'On request'
 	};
 
-	vehicleSubmissions.unshift(record);
+	records.unshift(record);
+	writePersistedVehicleSubmissions(records);
 
 	return record;
 };
@@ -474,11 +578,24 @@ export const updateBohemcarsVehicleSubmissionRecord = (
 	patch: Partial<
 		Pick<
 			BohemcarsVehicleSubmissionRecord,
-			'expectedPrice' | 'message' | 'mileage' | 'status' | 'title' | 'vin'
+			| 'documents'
+			| 'expectedPrice'
+			| 'galleryImages'
+			| 'message'
+			| 'mileage'
+			| 'previewImage'
+			| 'status'
+			| 'title'
+			| 'vin'
 		>
 	>
 ) => {
-	const record = vehicleSubmissions.find((submission) => submission.id === id);
+	const records = persistedVehicleSubmissions();
+	const index = records.findIndex((submission) => submission.id === id);
+	const record =
+		index >= 0
+			? records[index]
+			: seededVehicleSubmissions.find((submission) => submission.id === id);
 
 	if (!record) return undefined;
 
@@ -494,6 +611,13 @@ export const updateBohemcarsVehicleSubmissionRecord = (
 	if (title) record.title = title;
 	if (vin) record.vin = vin;
 	if (patch.status) record.status = patch.status;
+	if (patch.previewImage) record.previewImage = patch.previewImage;
+	if (patch.galleryImages) record.galleryImages = patch.galleryImages;
+	if (patch.documents) record.documents = patch.documents;
+	if (index >= 0) {
+		records[index] = record;
+		writePersistedVehicleSubmissions(records);
+	}
 
 	return { ...record };
 };

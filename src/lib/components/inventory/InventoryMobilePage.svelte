@@ -1026,8 +1026,8 @@
 
 <style>
 	:global(body.auxero-template-listing-grid4-columns-html) {
-		background: var(--bc-bg) !important;
-		background-color: var(--bc-bg) !important;
+		background: var(--bc-surface) !important;
+		background-color: var(--bc-surface) !important;
 	}
 
 	.bohemcars-inventory-mobile {
@@ -1035,7 +1035,7 @@
 		max-width: 100vw;
 		overflow-x: hidden;
 		min-height: 100vh;
-		background: var(--bc-bg);
+		background: var(--bc-surface);
 		color: #111111;
 	}
 
@@ -1062,9 +1062,10 @@
 		min-width: 0;
 		align-items: center;
 		gap: 10px;
-		border: 1px solid var(--bc-border);
+		border: 0;
 		border-radius: 999px;
-		background: var(--bc-surface);
+		background: #ffffff;
+		box-shadow: 0 1px 2px rgba(23, 31, 18, 0.06);
 		padding: 5px 5px 5px 14px;
 		color: #1c1c1c;
 	}
@@ -1152,8 +1153,8 @@
 		align-items: center;
 		gap: 8px;
 		border: 0;
-		border-radius: 11px;
-		background: var(--bc-surface);
+		border-radius: 10px;
+		background: #ffffff;
 		padding: 0 13px;
 		appearance: none;
 		color: #1c1c1c;
@@ -1167,14 +1168,14 @@
 
 	.bohemcars-inventory-mobile__tools button.active {
 		background: #d9f275;
-		box-shadow: inset 0 0 0 1px rgba(87, 118, 13, 0.08);
+		box-shadow: none;
 		color: #1c1c1c;
 	}
 
 	.bohemcars-inventory-mobile__tools button:focus-visible,
 	.bohemcars-inventory-mobile__tools a:focus-visible {
 		background: #d9f275;
-		box-shadow: inset 0 0 0 1px rgba(87, 118, 13, 0.08);
+		box-shadow: none;
 		color: #1c1c1c;
 		outline: 2px solid #1c1c1c;
 		outline-offset: 2px;
@@ -1219,9 +1220,9 @@
 
 	.bohemcars-inventory-mobile__tool-clear {
 		min-height: 44px;
-		border: 1px solid var(--bc-border);
-		border-radius: 999px;
-		background: var(--bc-surface);
+		border: 0;
+		border-radius: 10px;
+		background: #ffffff;
 		font-size: 13px;
 	}
 
@@ -1240,9 +1241,10 @@
 		grid-template-columns: 132px minmax(0, 1fr);
 		min-height: 154px;
 		overflow: hidden;
-		border: 1px solid var(--bc-border);
+		border: 0;
 		border-radius: 8px;
-		background: var(--bc-surface);
+		background: #ffffff;
+		box-shadow: 0 1px 3px rgba(23, 31, 18, 0.08);
 	}
 
 	.bohemcars-inventory-mobile-card__image {
@@ -1353,7 +1355,7 @@
 		gap: 5px;
 		overflow: hidden;
 		border-radius: 7px;
-		background: #ffffff;
+		background: #f8faf8;
 		padding: 0 8px;
 		color: #4b5563;
 		font-size: 12px;

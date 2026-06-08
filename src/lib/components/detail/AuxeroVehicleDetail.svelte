@@ -101,12 +101,14 @@
 			copy={detail.copy}
 		/>
 
-		<p class="h4 mb-16">{detail.copy.getToKnow}</p>
-		<AuxeroVehicleDetailFeatureTabs
-			description={detail.description}
-			descriptionLabel={detail.copy.description}
-			tabs={detail.featureTabs}
-		/>
+		<section class="bohemcars-pdp-info-panel" aria-labelledby="bohemcars-pdp-info-title">
+			<p class="h4 mb-16" id="bohemcars-pdp-info-title">{detail.copy.getToKnow}</p>
+			<AuxeroVehicleDetailFeatureTabs
+				description={detail.description}
+				descriptionLabel={detail.copy.description}
+				tabs={detail.featureTabs}
+			/>
+		</section>
 
 		<AuxeroVehicleDetailStaticContent {detail} />
 	</div>

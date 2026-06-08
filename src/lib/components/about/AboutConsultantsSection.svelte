@@ -17,56 +17,58 @@
 
 		<div class="bohemcars-consultants__grid">
 			{#each consultants as consultant, index (consultant.slug)}
-				<article
-					class={['bc-team-card sale-agent-box wow fadeInUp', index === 0 && 'active']}
+				<div
+					class="bohemcars-consultants__item wow fadeInUp"
 					data-wow-delay={`0.${(index % 3) + 1}s`}
 				>
-					<div class="bc-team-card__media">
-						<a
-							class="bc-team-card__image-link"
-							href={resolve('/agents/[slug]', { slug: consultant.slug })}
-							aria-label={consultant.name}
-						>
-							<img src={consultant.image} alt={consultant.name} loading="lazy" />
-						</a>
-						<div class="bc-team-card__actions sale-agent-social">
+					<article class={['bc-team-card sale-agent-box', index === 0 && 'active']}>
+						<div class="bc-team-card__media">
 							<a
-								class="bc-team-card__chip"
-								{...externalHref(consultant.phoneHref)}
-								aria-label={`Обади се — ${consultant.name}`}
+								class="bc-team-card__image-link"
+								href={resolve('/agents/[slug]', { slug: consultant.slug })}
+								aria-label={consultant.name}
 							>
-								<img src="/assets/icons/PhoneCall.svg" alt="" />
+								<img src={consultant.image} alt={consultant.name} loading="lazy" />
 							</a>
-							<a
-								class="bc-team-card__chip"
-								{...externalHref(consultant.emailHref)}
-								aria-label={`Имейл — ${consultant.name}`}
-							>
-								<img src="/assets/icons/input-telegram.svg" alt="" />
-							</a>
-							{#each consultant.socials.slice(0, 2) as social (social.label)}
+							<div class="bc-team-card__actions sale-agent-social">
 								<a
 									class="bc-team-card__chip"
-									{...externalHref(social.href)}
-									target="_blank"
-									rel="noreferrer"
-									aria-label={social.label}
+									{...externalHref(consultant.phoneHref)}
+									aria-label={`Обади се — ${consultant.name}`}
 								>
-									<img src={`/assets/icons/${social.icon}`} alt="" />
+									<img src="/assets/icons/PhoneCall.svg" alt="" />
 								</a>
-							{/each}
+								<a
+									class="bc-team-card__chip"
+									{...externalHref(consultant.emailHref)}
+									aria-label={`Имейл — ${consultant.name}`}
+								>
+									<img src="/assets/icons/input-telegram.svg" alt="" />
+								</a>
+								{#each consultant.socials.slice(0, 2) as social (social.label)}
+									<a
+										class="bc-team-card__chip"
+										{...externalHref(social.href)}
+										target="_blank"
+										rel="noreferrer"
+										aria-label={social.label}
+									>
+										<img src={`/assets/icons/${social.icon}`} alt="" />
+									</a>
+								{/each}
+							</div>
 						</div>
-					</div>
-					<div class="bc-team-card__body">
-						<a
-							class="bc-team-card__name sale-agent-title"
-							href={resolve('/agents/[slug]', { slug: consultant.slug })}
-						>
-							{consultant.name}
-						</a>
-						<p class="bc-team-card__role">{consultant.title}</p>
-					</div>
-				</article>
+						<div class="bc-team-card__body">
+							<a
+								class="bc-team-card__name sale-agent-title"
+								href={resolve('/agents/[slug]', { slug: consultant.slug })}
+							>
+								{consultant.name}
+							</a>
+							<p class="bc-team-card__role">{consultant.title}</p>
+						</div>
+					</article>
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -84,9 +86,14 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
+	.bohemcars-consultants__item {
+		min-width: 0;
+	}
+
 	.bc-team-card {
 		display: flex;
 		min-width: 0;
+		height: 100%;
 		flex-direction: column;
 		overflow: hidden;
 		border: 1px solid var(--bc-border);

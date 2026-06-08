@@ -1441,7 +1441,7 @@ function injectLocalBehavior(
 		will-change: auto !important;
 	}
 	body.${localScopeClass} .bohemcars-inventory-filter-grid .ifp__panel--modal {
-		transform: translateY(-50%) !important;
+		transform: none !important;
 	}
 	body.${localScopeClass} .bohemcars-inventory-filter-grid .ifp__chev {
 		transform: translateY(-50%) !important;
@@ -3074,6 +3074,10 @@ function injectLocalBehavior(
 		}
 
 		if (!form.matches('.send-inquiry, .bohemcars-contact-form, .bohemcars-profile-form, .bohemcars-password-form, .bohemcars-add-listing-form, .bohemcars-sell-form, .bohemcars-service-form, .bohemcars-blog-comment-form, .bohemcars-newsletter-form, .form-footer, .newsletter-form, #LoginModal form, #SignUpModal form, #ForgotPasswordModal form')) {
+			return;
+		}
+
+		if (form.matches('.bohemcars-add-listing-form[data-bohemcars-native-submit="true"]')) {
 			return;
 		}
 

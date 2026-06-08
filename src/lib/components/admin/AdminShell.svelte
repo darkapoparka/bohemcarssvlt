@@ -10,6 +10,7 @@
 	import Plus from '@lucide/svelte/icons/plus';
 	import Settings from '@lucide/svelte/icons/settings';
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
+	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Truck from '@lucide/svelte/icons/truck';
 	import Users from '@lucide/svelte/icons/users';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -22,6 +23,7 @@
 		| '/admin'
 		| '/admin/agents'
 		| '/admin/analytics'
+		| '/admin/copilot'
 		| '/admin/imports'
 		| '/admin/inquiries'
 		| '/admin/inventory'
@@ -61,6 +63,7 @@
 			label: 'Workspace',
 			items: [
 				{ icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
+				{ icon: Sparkles, label: 'AI Copilot', path: '/admin/copilot' },
 				{ icon: CarFront, label: 'Inventory', path: '/admin/inventory' },
 				{ icon: Plus, label: 'Add listing', path: '/admin/inventory/new' },
 				{ icon: Inbox, label: 'Inquiries', path: '/admin/inquiries' },

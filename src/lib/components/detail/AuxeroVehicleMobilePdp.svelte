@@ -264,13 +264,22 @@
 				<span>{detail.monthlyLabel}</span>
 			</div>
 
-			<div class="bohemcars-mobile-pdp__facts" aria-label={detail.copy.carOverview}>
-				{#each primaryFacts as item (item.label)}
-					<div>
-						<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
-						<span>{item.value}</span>
-					</div>
-				{/each}
+			<div class="bohemcars-mobile-pdp__actions" aria-label={detail.copy.inquiryTitle}>
+				<button
+					type="button"
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--primary"
+					onclick={openInquiry}
+				>
+					<Send size={17} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.inquiryCta}
+				</button>
+				<a
+					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
+					{...externalHref(detail.contact.primaryPhoneHref)}
+				>
+					<PhoneCall size={17} strokeWidth={2.3} aria-hidden="true" />
+					{detail.copy.callCta}
+				</a>
 			</div>
 
 			<Drawer.Description>
@@ -297,6 +306,15 @@
 			<div class="bohemcars-mobile-pdp__panel" role="tabpanel" tabindex="0" data-vaul-no-drag>
 				{#if activeTab === 'info'}
 					<div class="bohemcars-mobile-pdp__section">
+						<div class="bohemcars-mobile-pdp__facts" aria-label={detail.copy.carOverview}>
+							{#each primaryFacts as item (item.label)}
+								<div>
+									<img src={`/assets/icons/${item.icon}`} alt="" aria-hidden="true" />
+									<span>{item.value}</span>
+								</div>
+							{/each}
+						</div>
+
 						<p class="bohemcars-mobile-pdp__eyebrow">{detail.copy.description}</p>
 						<p class="bohemcars-mobile-pdp__body-copy">{detail.description}</p>
 
@@ -342,24 +360,6 @@
 						{/each}
 					</div>
 				{/if}
-			</div>
-
-			<div class="bohemcars-mobile-pdp__actions">
-				<button
-					type="button"
-					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--primary"
-					onclick={openInquiry}
-				>
-					<Send size={18} strokeWidth={2.3} aria-hidden="true" />
-					{detail.copy.inquiryCta}
-				</button>
-				<a
-					class="bohemcars-mobile-pdp__cta bohemcars-mobile-pdp__cta--call"
-					{...externalHref(detail.contact.primaryPhoneHref)}
-				>
-					<PhoneCall size={18} strokeWidth={2.3} aria-hidden="true" />
-					{detail.copy.callCta}
-				</a>
 			</div>
 		</Drawer.Content>
 	</Drawer.Root>
@@ -644,35 +644,37 @@
 
 		.bohemcars-mobile-pdp__facts {
 			display: grid;
-			grid-template-columns: repeat(4, minmax(0, 1fr));
-			flex: 0 0 auto;
-			gap: 5px;
-			padding: 0 0 8px;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 7px;
+			padding: 0;
 		}
 
 		.bohemcars-mobile-pdp__facts div {
-			display: grid;
+			display: flex;
 			min-width: 0;
-			justify-items: center;
-			gap: 3px;
+			min-height: 40px;
+			align-items: center;
+			gap: 7px;
 			border-radius: 8px;
 			background: var(--bc-surface);
 			color: #1c1c1c;
-			padding: 6px 3px 5px;
+			padding: 7px 10px;
 		}
 
 		.bohemcars-mobile-pdp__facts img {
 			width: 17px;
 			height: 17px;
+			flex: 0 0 17px;
 			object-fit: contain;
 		}
 
 		.bohemcars-mobile-pdp__facts span {
+			min-width: 0;
 			max-width: 100%;
 			overflow: hidden;
-			font-size: 10.5px;
+			font-size: 12.5px;
 			font-weight: 850;
-			line-height: 13px;
+			line-height: 15px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
@@ -758,7 +760,7 @@
 			align-items: flex-start;
 			justify-content: space-between;
 			gap: 14px;
-			padding: 4px 0 10px;
+			padding: 4px 0 8px;
 		}
 
 		.bohemcars-mobile-pdp__drawer-heading p,
@@ -819,7 +821,7 @@
 			gap: 10px;
 			overflow: visible;
 			border-bottom: 1px solid var(--bc-border);
-			padding: 2px 0 0;
+			padding: 4px 0 0;
 		}
 
 		.bohemcars-mobile-pdp__tab {
@@ -1015,23 +1017,23 @@
 
 		.bohemcars-mobile-pdp__actions {
 			display: grid;
-			grid-template-columns: 1.45fr 1fr;
-			gap: 9px;
-			border-top: 1px solid var(--bc-border);
-			padding-top: 10px;
+			grid-template-columns: 1.25fr 1fr;
+			flex: 0 0 auto;
+			gap: 8px;
+			padding: 0 0 4px;
 		}
 
 		.bohemcars-mobile-pdp__cta {
 			display: inline-flex;
-			min-height: 50px;
+			min-height: 44px;
 			align-items: center;
 			justify-content: center;
-			gap: 8px;
+			gap: 7px;
 			border: 0;
-			border-radius: 10px;
-			font-size: 15px;
+			border-radius: 8px;
+			font-size: 14px;
 			font-weight: 900;
-			line-height: 18px;
+			line-height: 16px;
 			text-align: center;
 			text-decoration: none;
 			cursor: pointer;

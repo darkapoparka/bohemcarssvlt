@@ -1061,9 +1061,9 @@
 			border: 0;
 			border-radius: 0;
 			background: transparent;
-			color: var(--bohemcars-mobile-ink-muted, rgba(255, 255, 255, 0.88));
-			font-size: 17px;
-			font-weight: 600;
+			color: rgba(20, 33, 15, 0.72);
+			font-size: 16px;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 22px;
 			text-align: center;
@@ -1078,19 +1078,19 @@
 		.bohemcars-mobile-hero__tab.active {
 			background: transparent;
 			box-shadow: none;
-			color: var(--bohemcars-mobile-ink-strong, #ffffff);
-			font-weight: 700;
+			color: #111111;
+			font-weight: 800;
 		}
 
-		/* Showroom intent tabs: one full rail, with only the selected intent emphasized. */
+		/* Showroom intent tabs: one full rail, with the active third as the selected segment. */
 		.bohemcars-mobile-hero__tabs::after {
 			position: absolute;
 			right: 0;
 			bottom: 0;
 			left: 0;
-			height: 2px;
-			border-radius: 0;
-			background: rgba(20, 33, 15, 0.1);
+			height: 1px;
+			border-radius: 999px;
+			background: rgba(20, 33, 15, 0.16);
 			content: '';
 			pointer-events: none;
 		}
@@ -1098,10 +1098,10 @@
 		.bohemcars-mobile-hero__tabs button::after {
 			position: absolute;
 			right: 0;
-			bottom: -1px;
+			bottom: 0;
 			left: 0;
 			z-index: 1;
-			height: 4px;
+			height: 3px;
 			border-radius: 999px;
 			background: transparent;
 			content: '';
@@ -1119,7 +1119,7 @@
 
 		@media (hover: hover) and (pointer: fine) {
 			.bohemcars-mobile-hero__tabs button:hover {
-				color: var(--bohemcars-mobile-ink-strong, #ffffff);
+				color: #14210f;
 			}
 		}
 
@@ -1632,7 +1632,7 @@
 			min-height: 52px;
 			align-items: center;
 			gap: 10px;
-			border-radius: 12px;
+			border-radius: 999px;
 			background: var(--bc-surface);
 			padding: 0 13px;
 			color: #111111;
@@ -1938,17 +1938,16 @@
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map::before
 		) {
 			position: absolute;
-			inset: 3px;
+			inset: 2px;
 			z-index: 0;
-			border: 1px solid rgba(255, 255, 255, 0.5);
+			border: 0;
 			border-radius: inherit;
-			background: rgba(255, 255, 255, 0.2);
+			background: #ffffff;
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
 			transition:
 				background-color 0.18s ease,
-				border-color 0.18s ease,
 				box-shadow 0.18s ease;
 		}
 
@@ -1999,9 +1998,8 @@
 				.header-wrapper-style-4
 				.bohemcars-mobile-map:focus-visible::before
 		) {
-			border-color: rgba(255, 255, 255, 0.62);
-			background: rgba(255, 255, 255, 0.3);
-			box-shadow: 0 0 0 2px rgba(32, 53, 15, 0.28);
+			background: #ffffff;
+			box-shadow: none;
 		}
 	}
 </style>

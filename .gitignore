@@ -38,7 +38,10 @@ codex-*.log
 codex-*.err.log
 codex-vite*.log
 .codex-review-screens/
+.codex-screenshots/
 .playwright-mcp/
+.bohemcars-cms/
+static/uploads/cms/
 .tmp/
 tmp/
 tmp-vite*.log

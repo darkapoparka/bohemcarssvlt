@@ -14,7 +14,6 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 
 	let { data } = $props();
-	const statuses = ['all', 'published', 'draft', 'archived'];
 </script>
 
 <svelte:head>
@@ -27,30 +26,38 @@
 	primaryAction={{ label: 'Add Listing', href: '/admin/inventory/new' }}
 >
 	<section
-		class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-3 lg:px-6"
+		class="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4 lg:px-6"
 		aria-label="Inventory summary"
 	>
 		<Card.Root size="sm">
 			<Card.Header>
-				<Card.Description>Live listings</Card.Description>
+				<Card.Description>Live</Card.Description>
 				<Card.Title class="text-2xl font-semibold tabular-nums">
-					{formatNumber(data.cms.kpis.liveListings)}
+					{formatNumber(data.summary.live)}
 				</Card.Title>
 			</Card.Header>
 		</Card.Root>
 		<Card.Root size="sm">
 			<Card.Header>
-				<Card.Description>Draft listings</Card.Description>
+				<Card.Description>Draft / intake</Card.Description>
 				<Card.Title class="text-2xl font-semibold tabular-nums">
-					{formatNumber(data.cms.kpis.draftListings)}
+					{formatNumber(data.summary.draftIntake)}
 				</Card.Title>
 			</Card.Header>
 		</Card.Root>
 		<Card.Root size="sm">
 			<Card.Header>
-				<Card.Description>Filtered records</Card.Description>
+				<Card.Description>Reserved / sold</Card.Description>
 				<Card.Title class="text-2xl font-semibold tabular-nums">
-					{formatNumber(data.inventory.length)}
+					{formatNumber(data.summary.reservedSold)}
+				</Card.Title>
+			</Card.Header>
+		</Card.Root>
+		<Card.Root size="sm">
+			<Card.Header>
+				<Card.Description>Needs work</Card.Description>
+				<Card.Title class="text-2xl font-semibold tabular-nums">
+					{formatNumber(data.summary.incomplete)}
 				</Card.Title>
 			</Card.Header>
 		</Card.Root>
@@ -71,25 +78,27 @@
 					<Button type="submit" variant="outline">Search</Button>
 				</form>
 				<div class="flex flex-wrap gap-2">
-					{#each statuses as statusName (statusName)}
+					{#each data.statusOptions as statusOption (statusOption.value)}
 						<Button
-							href={`/admin/inventory?status=${statusName}${data.query ? `&q=${encodeURIComponent(data.query)}` : ''}`}
-							variant={data.status === statusName ? 'default' : 'outline'}
+							href={`/admin/inventory?status=${statusOption.value}${data.query ? `&q=${encodeURIComponent(data.query)}` : ''}`}
+							variant={data.status === statusOption.value ? 'default' : 'outline'}
 							size="sm"
 							class="capitalize"
 						>
-							{statusName}
+							{statusOption.label}
 						</Button>
 					{/each}
 				</div>
 			</Card.Content>
 			<Card.Content class="p-0">
 				<div class="max-h-[calc(100svh-22rem)] min-h-[28rem] overflow-auto">
-					<Table.Root class="min-w-[58rem]">
+					<Table.Root class="min-w-[76rem]">
 						<Table.Header class="bg-card sticky top-0 z-10 shadow-[0_1px_0_var(--border)]">
 							<Table.Row>
 								<Table.Head>Vehicle</Table.Head>
 								<Table.Head>Status</Table.Head>
+								<Table.Head>Completeness</Table.Head>
+								<Table.Head>Media</Table.Head>
 								<Table.Head>Source</Table.Head>
 								<Table.Head class="hidden text-right md:table-cell">Price</Table.Head>
 								<Table.Head class="hidden text-right lg:table-cell">Updated</Table.Head>
@@ -104,7 +113,7 @@
 											<img
 												class="ring-border size-12 rounded-md object-cover ring-1"
 												src={vehicle.image}
-												alt=""
+												alt={`${vehicle.title} thumbnail`}
 											/>
 											<span class="min-w-0">
 												<span class="block truncate font-medium">{vehicle.title}</span>
@@ -116,8 +125,37 @@
 									</Table.Cell>
 									<Table.Cell>
 										<Badge variant={statusVariant(vehicle.status)} class="capitalize">
-											{formatStatus(vehicle.status)}
+											{vehicle.statusLabel || formatStatus(vehicle.status)}
 										</Badge>
+									</Table.Cell>
+									<Table.Cell>
+										<div class="grid min-w-36 gap-2">
+											<div class="flex items-center justify-between gap-3 text-xs">
+												<span class="font-medium">{vehicle.completeness.score}%</span>
+												<span class="text-muted-foreground capitalize">
+													{formatStatus(vehicle.completeness.level)}
+												</span>
+											</div>
+											<div class="bg-muted h-2 overflow-hidden rounded-full">
+												<div
+													class="bg-primary h-full rounded-full"
+													style={`width: ${vehicle.completeness.score}%`}
+												></div>
+											</div>
+											{#if vehicle.completeness.missing.length}
+												<p class="text-muted-foreground line-clamp-1 text-xs">
+													Add {vehicle.completeness.missing.slice(0, 3).join(', ')}
+												</p>
+											{/if}
+										</div>
+									</Table.Cell>
+									<Table.Cell>
+										<div class="grid gap-1 text-xs">
+											<span>{formatNumber(vehicle.mediaCount)} media files</span>
+											<span class="text-muted-foreground"
+												>{formatNumber(vehicle.documentCount)} documents</span
+											>
+										</div>
 									</Table.Cell>
 									<Table.Cell>
 										<Badge variant="outline" class="capitalize">
@@ -131,7 +169,7 @@
 										{formatDate(vehicle.updatedAt)}
 									</Table.Cell>
 									<Table.Cell class="text-right">
-										<div class="flex justify-end gap-2">
+										<div class="flex flex-wrap justify-end gap-2">
 											<Button
 												href={`/admin/inventory/edit/${encodeURIComponent(vehicle.id)}`}
 												variant="outline"
@@ -142,16 +180,47 @@
 											>
 												Edit
 											</Button>
-											<Button
-												type="button"
-												variant="ghost"
-												size="sm"
-												class="cart-item__remove action text-muted-foreground"
-												aria-label={`Archive ${vehicle.title}`}
-												disabled
-											>
-												Archive
-											</Button>
+											{#if vehicle.routePath?.startsWith('/') && vehicle.status !== 'archived'}
+												<Button href={vehicle.routePath} variant="ghost" size="sm">Preview</Button>
+											{/if}
+											{#if vehicle.source === 'admin-listing'}
+												<form method="POST" action="?/duplicate">
+													<input type="hidden" name="id" value={vehicle.id} />
+													<Button type="submit" variant="ghost" size="sm">Duplicate</Button>
+												</form>
+											{/if}
+											{#if vehicle.source === 'admin-listing' && vehicle.status !== 'sold' && vehicle.status !== 'archived'}
+												<form method="POST" action="?/status">
+													<input type="hidden" name="id" value={vehicle.id} />
+													<input type="hidden" name="status" value="sold" />
+													<Button type="submit" variant="ghost" size="sm">Mark sold</Button>
+												</form>
+											{/if}
+											{#if vehicle.source === 'admin-listing' && vehicle.status !== 'archived'}
+												<form method="POST" action="?/archive">
+													<input type="hidden" name="id" value={vehicle.id} />
+													<Button
+														type="submit"
+														variant="ghost"
+														size="sm"
+														class="cart-item__remove action text-muted-foreground"
+														aria-label={`Archive ${vehicle.title}`}
+													>
+														Archive
+													</Button>
+												</form>
+											{:else}
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													class="cart-item__remove action text-muted-foreground"
+													aria-label={`Archive ${vehicle.title}`}
+													disabled
+												>
+													Archive
+												</Button>
+											{/if}
 										</div>
 									</Table.Cell>
 								</Table.Row>

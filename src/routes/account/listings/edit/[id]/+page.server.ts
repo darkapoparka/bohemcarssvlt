@@ -1,8 +1,12 @@
-import type { PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountListingFormData } from '$lib/server/account-listing-form-state';
 import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
+import { readInventoryListingFields } from '$lib/server/cms-listing-form';
+import { saveCmsUploadFiles } from '$lib/server/cms-persistence';
+import { listVehicleSubmissions, updateVehicleSubmission } from '$lib/server/inventory';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
 	const routePath = `account/listings/edit/${params.id}`;
@@ -37,4 +41,33 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		formHtml: formSlot.sectionHtml,
 		pageDocument
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ params, request, url }) => {
+		requireBohemcarsPageSession(request, `account/listings/edit/${params.id}`, url.searchParams);
+		const existing = listVehicleSubmissions().find((submission) => submission.id === params.id);
+
+		if (!existing) {
+			return fail(404, { error: 'Vehicle submission not found.' });
+		}
+
+		const formData = await request.formData();
+		const fields = readInventoryListingFields(formData);
+		const rawStatus = String(formData.get('listingStatus') ?? formData.get('status') ?? '').trim();
+		const uploads = await saveCmsUploadFiles({ formData, recordId: existing.id });
+
+		updateVehicleSubmission({
+			documents: [...(existing.documents ?? []), ...uploads.documents],
+			expectedPrice: fields.priceLabel,
+			galleryImages: [...(existing.galleryImages ?? []), ...uploads.galleryImages],
+			id: existing.id,
+			message: fields.description,
+			mileage: fields.mileage ? String(fields.mileage) : undefined,
+			previewImage: uploads.previewImage ?? existing.previewImage,
+			status: rawStatus === 'draft' ? 'draft' : 'submitted',
+			title: fields.title,
+			vin: fields.vin
+		});
+	}
 };

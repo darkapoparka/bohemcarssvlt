@@ -236,31 +236,15 @@
 {/snippet}
 
 {#snippet compactCardMeta(card: AuxeroInventoryVehicleCard, tagClass: string)}
-	<ul
-		class={tagClass}
-		style="display: flex !important; flex-wrap: nowrap !important; gap: 5px !important; overflow: hidden !important;"
-	>
-		<li
-			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
-		>
-			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span
-				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
-				>{card.year}</span
-			>
+	<ul class={tagClass}>
+		<li>
+			<img src="/assets/icons/calendar.svg" alt={copy.yearAlt} /><span>{card.year}</span>
 		</li>
-		<li
-			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
-		>
-			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span
-				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
-				>{card.fuel}</span
-			>
+		<li>
+			<img src="/assets/icons/gaspump.svg" alt={copy.fuelAlt} /><span>{card.fuel}</span>
 		</li>
-		<li
-			style="display: flex !important; flex: 1 1 0 !important; justify-content: flex-start !important; min-width: 0 !important; padding: 5px 6px !important; white-space: nowrap !important;"
-		>
+		<li>
 			<img src="/assets/icons/transmission.svg" alt={copy.transmissionAlt} /><span
-				style="min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important;"
 				>{card.transmission}</span
 			>
 		</li>
@@ -317,7 +301,7 @@
 	}
 
 	.card-box-style-1 .content {
-		background: #eef1ed !important;
+		background: #ffffff !important;
 		display: flex;
 		flex: 1;
 		flex-direction: column;
@@ -330,7 +314,11 @@
 
 	:global(body.bohemcars-inventory-template) .card-box-style-1:hover .content,
 	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within .content {
-		background: #e4eadf !important;
+		background: #fbfcf8 !important;
+	}
+
+	.card-box-style-1 .content .tag li {
+		background: #f8faf8 !important;
 	}
 
 	.card-box-style-1 .card-box__title {
@@ -368,17 +356,19 @@
 	}
 
 	.bohemcars-card-specs {
+		display: flex !important;
 		flex-wrap: nowrap !important;
-		gap: 5px;
-		overflow: hidden;
+		gap: 5px !important;
+		overflow: hidden !important;
 	}
 
 	.bohemcars-card-specs li {
-		flex: 1 1 0;
-		justify-content: flex-start;
-		min-width: 0;
-		padding: 5px 6px;
-		white-space: nowrap;
+		display: flex !important;
+		flex: 1 1 0 !important;
+		justify-content: flex-start !important;
+		min-width: 0 !important;
+		padding: 5px 6px !important;
+		white-space: nowrap !important;
 	}
 
 	.bohemcars-card-specs li img {
@@ -389,9 +379,31 @@
 	}
 
 	.bohemcars-card-specs li span {
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		min-width: 0 !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+	}
+
+	:global(body.bohemcars-inventory-template) .card-box-style-1 .bohemcars-card-specs {
+		display: flex !important;
+		flex-wrap: nowrap !important;
+		gap: 5px !important;
+		overflow: hidden !important;
+	}
+
+	:global(body.bohemcars-inventory-template) .card-box-style-1 .bohemcars-card-specs li {
+		display: flex !important;
+		flex: 1 1 0 !important;
+		justify-content: flex-start !important;
+		min-width: 0 !important;
+		padding: 5px 6px !important;
+		white-space: nowrap !important;
+	}
+
+	:global(body.bohemcars-inventory-template) .card-box-style-1 .bohemcars-card-specs li span {
+		min-width: 0 !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
 	}
 
 	.bohemcars-card-price {

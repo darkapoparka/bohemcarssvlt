@@ -1,30 +1,16 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, isRedirect, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getAdminCmsOverview, getAdminInventoryRow } from '$lib/server/admin-cms';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
-import {
-	createInventoryListing,
-	updateInventoryListing,
-	type InventoryListingInput
-} from '$lib/server/inventory';
+import { mergeListingUploads, readInventoryListingFields } from '$lib/server/cms-listing-form';
+import { createInventoryListing, updateInventoryListing } from '$lib/server/inventory';
 
-const value = (formData: FormData, key: string) => String(formData.get(key) ?? '').trim();
-const statusValue = (status: string): InventoryListingInput['status'] =>
-	status === 'published' || status === 'archived' || status === 'draft' ? status : 'draft';
 const readNotice = (url: URL) => {
 	if (url.searchParams.get('created') === '1') return 'Listing created.';
 	if (url.searchParams.get('updated') === '1') return 'Listing updated.';
 
 	return '';
 };
-const readListingValues = (formData: FormData) => ({
-	mileage: value(formData, 'mileage'),
-	priceLabel: value(formData, 'priceLabel'),
-	routePath: value(formData, 'routePath'),
-	status: statusValue(value(formData, 'status')),
-	title: value(formData, 'title'),
-	vin: value(formData, 'vin')
-});
 
 export const load: PageServerLoad = ({ params, request, url }) => {
 	const routePath = `admin/inventory/edit/${params.id}`;
@@ -42,10 +28,12 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ params, request }) => {
+	default: async ({ params, request, url }) => {
+		requireBohemcarsPageSession(request, `admin/inventory/edit/${params.id}`, url.searchParams);
 		const formData = await request.formData();
-		const source = value(formData, 'source');
-		const values = readListingValues(formData);
+		const source = String(formData.get('source') ?? '').trim();
+		const existing = getAdminInventoryRow(params.id);
+		const values = readInventoryListingFields(formData);
 
 		if (!values.title) {
 			return fail(400, {
@@ -54,18 +42,34 @@ export const actions: Actions = {
 			});
 		}
 
-		const listing =
-			source === 'admin-listing'
-				? updateInventoryListing(params.id, values)
-				: createInventoryListing(values);
+		try {
+			const listing =
+				source === 'admin-listing' && existing?.source === 'admin-listing'
+					? updateInventoryListing(params.id, values)
+					: createInventoryListing(values);
 
-		if (!listing) {
-			return fail(404, {
-				error: 'Listing could not be saved.',
+			if (!listing) {
+				return fail(404, {
+					error: 'Listing could not be saved.',
+					values
+				});
+			}
+
+			const uploads = await mergeListingUploads({
+				existing,
+				formData,
+				recordId: listing.id
+			});
+			const saved = updateInventoryListing(listing.id, uploads) ?? listing;
+
+			redirect(303, `/admin/inventory/edit/${saved.id}?updated=1`);
+		} catch (error) {
+			if (isRedirect(error)) throw error;
+
+			return fail(400, {
+				error: error instanceof Error ? error.message : 'Listing could not be saved.',
 				values
 			});
 		}
-
-		redirect(303, `/admin/inventory/edit/${listing.id}?updated=1`);
 	}
 };

@@ -9,11 +9,15 @@
 	let {
 		allSelectedValue,
 		filter,
+		onModalClose,
+		onModalOpen,
 		optionLayout = 'auto',
 		presentation = 'popover'
 	}: {
 		allSelectedValue?: string;
 		filter: AuxeroInventoryFilter;
+		onModalClose?: (name: string) => void;
+		onModalOpen?: (name: string) => void;
 		optionLayout?: 'auto' | 'grid' | 'list';
 		presentation?: AuxeroInventoryDesktopData['filterPresentation'];
 	} = $props();
@@ -58,11 +62,13 @@
 	function close(focusTrigger = true) {
 		open = false;
 		query = '';
+		if (usesModal) onModalClose?.(filter.name);
 		if (focusTrigger) queueMicrotask(() => triggerElement?.focus());
 	}
 
 	function openPanel() {
 		open = true;
+		if (usesModal) onModalOpen?.(filter.name);
 		window.dispatchEvent(
 			new CustomEvent('bohemcars-inventory-filter-open', { detail: rootElement })
 		);
@@ -98,8 +104,25 @@
 
 	const captureRoot: Attachment<HTMLDivElement> = (element) => {
 		rootElement = element;
+		const onModalFilterSwitch = (event: Event) => {
+			if (!usesModal || !(event instanceof CustomEvent)) return;
+
+			const targetName = event.detail?.name;
+			if (typeof targetName !== 'string') return;
+
+			if (targetName === filter.name) {
+				openPanel();
+				return;
+			}
+
+			close(false);
+		};
+
+		window.addEventListener('bohemcars-inventory-filter-switch', onModalFilterSwitch);
+
 		return () => {
 			if (rootElement === element) rootElement = undefined;
+			window.removeEventListener('bohemcars-inventory-filter-switch', onModalFilterSwitch);
 		};
 	};
 
@@ -398,19 +421,20 @@
 
 	.ifp__panel--modal {
 		position: fixed;
-		top: 50%;
+		top: clamp(252px, 32vh, 290px);
 		right: 0;
 		left: 0;
 		z-index: 10001;
 		display: none;
-		width: min(464px, calc(100vw - 32px));
-		max-height: min(680px, calc(100vh - 48px));
+		width: min(500px, calc(100vw - 32px));
+		max-height: calc(100vh - 292px);
 		margin: 0 auto;
 		padding: 16px;
 		border-color: var(--bc-filter-modal-border);
 		border-radius: 18px;
+		background: var(--bc-popover-bg);
 		box-shadow: var(--bc-filter-modal-shadow);
-		transform: translateY(-50%);
+		transform: none;
 	}
 
 	.ifp--grid .ifp__panel {
@@ -522,7 +546,7 @@
 	}
 
 	.ifp__modal-list {
-		max-height: min(386px, calc(100vh - 250px));
+		max-height: min(270px, calc(100vh - 420px));
 		margin: 0 -4px;
 		padding: 0 4px;
 	}

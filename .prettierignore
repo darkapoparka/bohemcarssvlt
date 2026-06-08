@@ -13,6 +13,7 @@ PROJECT_PLAN.md
 # Local audit artifacts
 /.audit/
 /.codex-review-screens/
+/.codex-screenshots/
 /.playwright-mcp/
 /tmp/
 *.audit.png

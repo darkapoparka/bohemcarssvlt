@@ -1233,10 +1233,10 @@
 			height: 44px;
 			align-items: center;
 			justify-content: center;
-			border: 1px solid rgba(28, 28, 28, 0.1);
+			border: 0;
 			border-radius: 999px;
 			background: #ffffff;
-			box-shadow: 0 6px 16px rgba(17, 24, 39, 0.12);
+			box-shadow: none;
 			color: #1c1c1c;
 			cursor: pointer;
 			font: inherit;
@@ -1288,17 +1288,16 @@
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map::before
 		) {
 			position: absolute;
-			inset: 3px;
+			inset: 2px;
 			z-index: 0;
-			border: 1px solid rgba(255, 255, 255, 0.5);
+			border: 0;
 			border-radius: inherit;
-			background: rgba(255, 255, 255, 0.2);
+			background: #ffffff;
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
 			transition:
 				background-color 0.18s ease,
-				border-color 0.18s ease,
 				box-shadow 0.18s ease;
 		}
 
@@ -1331,9 +1330,8 @@
 				.header-wrapper-style-4
 				.bohemcars-mobile-map:focus-visible::before
 		) {
-			border-color: rgba(255, 255, 255, 0.62);
-			background: rgba(255, 255, 255, 0.3);
-			box-shadow: 0 0 0 2px rgba(32, 53, 15, 0.28);
+			background: #ffffff;
+			box-shadow: none;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
