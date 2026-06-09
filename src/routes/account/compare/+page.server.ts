@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
+import { vehicles } from '$lib/data/vehicles';
 import { resolveLocale } from '$lib/i18n/messages';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getCompareVehicles } from '$lib/server/compare-state';
@@ -29,6 +30,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 
 	return {
 		afterCompareHtml: compareSlot.afterHtml,
+		allVehicles: compareVehiclesFromVehicles(vehicles, locale),
 		auxeroFullPage: true,
 		beforeCompareHtml: compareSlot.beforeHtml,
 		dashboardShell: true,

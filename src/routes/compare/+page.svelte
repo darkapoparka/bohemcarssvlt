@@ -6,6 +6,7 @@
 </script>
 
 <CompareTemplatePage
+	allVehicles={data.allVehicles}
 	locale={data.locale}
 	pageDocument={data.pageDocument}
 	shellCopy={data.shellCopy}

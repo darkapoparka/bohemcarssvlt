@@ -41,7 +41,9 @@ const syncGarageDom = (
 		favorite.setAttribute('aria-pressed', String(isFavorite));
 	}
 
-	for (const link of document.querySelectorAll<HTMLElement>('[aria-label="Compare"]')) {
+	for (const link of document.querySelectorAll<HTMLElement>(
+		'[aria-label="Compare"], [aria-label="Сравни"]'
+	)) {
 		link.setAttribute('data-badge', String(compare.length));
 	}
 
@@ -93,6 +95,9 @@ const favoriteSlugsWith = (slug: string) => {
 const compareSlugsWith = (slug: string) =>
 	[slug, ...readStoredList(compareKey).filter((item) => item !== slug)].slice(0, compareLimit);
 
+const normalizedCompareSlugs = (slugs: string[]) =>
+	Array.from(new Set(slugs.filter(Boolean))).slice(0, compareLimit);
+
 export class GarageState {
 	favorites = $state<string[]>([]);
 	compare = $state<string[]>([]);
@@ -121,6 +126,20 @@ export class GarageState {
 
 	toggleCompare(slug: string) {
 		this.addCompare(slug);
+	}
+
+	removeCompare(slug: string) {
+		this.compare = readStoredList(compareKey).filter((item) => item !== slug);
+		writeStoredList(compareKey, this.compare);
+		syncGarageDom();
+		void syncGarageApi();
+	}
+
+	setCompare(slugs: string[]) {
+		this.compare = normalizedCompareSlugs(slugs);
+		writeStoredList(compareKey, this.compare);
+		syncGarageDom(this.favorites, this.compare);
+		void syncGarageApi();
 	}
 
 	isFavorite(slug: string) {

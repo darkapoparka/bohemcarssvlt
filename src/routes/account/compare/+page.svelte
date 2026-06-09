@@ -6,6 +6,7 @@
 
 <CompareTemplatePage
 	afterCompareHtml={data.afterCompareHtml}
+	allVehicles={data.allVehicles}
 	beforeCompareHtml={data.beforeCompareHtml}
 	dashboardShell={data.dashboardShell}
 	locale={data.locale}

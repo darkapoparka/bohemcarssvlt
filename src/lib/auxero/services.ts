@@ -170,18 +170,24 @@ export const serviceFormData: AuxeroServiceFormData = {
 
 export const importRequestSteps = [
 	{
-		title: 'Линк или VIN',
-		text: 'Изпрати конкретната обява, VIN или кратко описание на автомобила, който искаш да внесеш.'
+		title: 'Линк/VIN',
+		text: 'Обява или VIN'
 	},
 	{
 		title: 'Проверка',
-		text: 'Bohemcars преглежда история, снимки, продавач, пробег, оборудване и реалистични разходи.'
+		text: 'История и разходи'
 	},
 	{
-		title: 'Следващ ход',
-		text: 'Получаваш практичен отговор: струва ли си, какъв е рискът и как продължава вносът.'
+		title: 'Отговор',
+		text: 'Риск и следващ ход'
 	}
 ] as const;
+
+export const importRequestMobileCopy = {
+	intro: 'Прати линк или VIN.',
+	processLabel: 'Процес',
+	title: 'Внос от Канада'
+} as const;
 
 export const importRequestFormData = (vehicle = ''): AuxeroServiceFormData => ({
 	...serviceFormData,

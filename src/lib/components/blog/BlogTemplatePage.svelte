@@ -27,12 +27,15 @@
 		<div class="tf-spacing-style3"></div>
 		<div class="container">
 			<BlogListGrid {posts} />
-			<ul class="pagination justify-center">
+			<ul class="pagination bohemcars-blog-pagination justify-center">
 				<li>
 					<a href={resolve('/blog')} class="pagination__link active">{blogPage.pageLabel}</a>
 				</li>
 				<li>
-					<a href={resolve(blogPage.contactHref as '/contact')} class="pagination__link">
+					<a
+						href={resolve(blogPage.contactHref as '/contact')}
+						class="pagination__link pagination__link--cta"
+					>
 						{blogPage.contactLabel}
 					</a>
 				</li>
@@ -40,3 +43,13 @@
 		</div>
 	</section>
 </AuxeroPageShell>
+
+<style>
+	.bohemcars-blog-pagination .pagination__link--cta {
+		width: auto;
+		min-width: 40px;
+		padding-right: 18px;
+		padding-left: 18px;
+		white-space: nowrap;
+	}
+</style>

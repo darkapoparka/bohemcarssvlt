@@ -28,14 +28,14 @@
 			<h1 class="h2">{reviewsPage.title}</h1>
 			<div class="tf-spacing-style3"></div>
 			<AuxeroReviewsGrid {cards} />
-			<ul class="pagination justify-center">
+			<ul class="pagination bohemcars-reviews-pagination justify-center">
 				<li>
 					<a href={resolve('/reviews')} class="pagination__link active">{reviewsPage.pageLabel}</a>
 				</li>
 				<li>
 					<a
 						{...externalHref(reviewsPage.facebookHref)}
-						class="pagination__link"
+						class="pagination__link pagination__link--cta"
 						target="_blank"
 						rel="noreferrer"
 					>
@@ -70,5 +70,13 @@
 			padding-right: 14px !important;
 			padding-left: 14px !important;
 		}
+	}
+
+	.bohemcars-reviews-pagination .pagination__link--cta {
+		width: auto;
+		min-width: 40px;
+		padding-right: 18px;
+		padding-left: 18px;
+		white-space: nowrap;
 	}
 </style>

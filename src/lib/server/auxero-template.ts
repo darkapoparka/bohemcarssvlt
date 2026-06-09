@@ -2921,7 +2921,7 @@ function injectLocalBehavior(
 				favorite.setAttribute('aria-pressed', String(favorites.includes(slug)));
 			}
 		});
-		document.querySelectorAll('[aria-label="Compare"]').forEach((link) => {
+		document.querySelectorAll('[aria-label="Compare"], [aria-label="Сравни"]').forEach((link) => {
 			link.setAttribute('data-badge', String(compare.length));
 		});
 		document.querySelectorAll('[aria-label="Wishlist"], [aria-label="Любими"]').forEach((link) => {

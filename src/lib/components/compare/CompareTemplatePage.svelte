@@ -14,6 +14,7 @@
 
 	let {
 		afterCompareHtml = '',
+		allVehicles,
 		beforeCompareHtml = '',
 		dashboardShell = false,
 		locale,
@@ -26,6 +27,7 @@
 		vehicles
 	}: {
 		afterCompareHtml?: string;
+		allVehicles: AuxeroCompareVehicle[];
 		beforeCompareHtml?: string;
 		dashboardShell?: boolean;
 		locale: Locale;
@@ -48,7 +50,7 @@
 	>
 		<div class="dashboard-box bohemcars-dashboard-compare bg-white">
 			<div class="bohemcars-dashboard-compare-scroll overflow-x-auto">
-				<AuxeroCompareTable {locale} {vehicles} />
+				<AuxeroCompareTable {allVehicles} {locale} {vehicles} />
 			</div>
 		</div>
 	</AuxeroDashboardSlotShell>
@@ -103,7 +105,7 @@
 					</div>
 				</div>
 				<div class="card-details">
-					<AuxeroCompareTable {locale} {vehicles} />
+					<AuxeroCompareTable {allVehicles} {locale} {vehicles} />
 				</div>
 			</div>
 		</section>
@@ -276,8 +278,12 @@
 			background-color: var(--bc-bg) !important;
 		}
 
+		:global(body.auxero-template-compare-html .header-wrapper-style-4) {
+			display: none !important;
+		}
+
 		:global(body.auxero-template-compare-html section.pb-100) {
-			padding-top: 20px !important;
+			padding-top: 0 !important;
 			padding-bottom: 92px !important;
 		}
 
@@ -299,13 +305,7 @@
 		}
 
 		.bohemcars-compare-hero {
-			min-height: 0;
-			grid-template-columns: 1fr;
-			margin-bottom: 10px !important;
-			border: 0;
-			background: transparent;
-			box-shadow: none;
-			padding: 0;
+			display: none;
 		}
 
 		.bohemcars-compare-hero__visual {
@@ -352,10 +352,10 @@
 
 		:global(body.auxero-template-compare-html .card-details) {
 			overflow: hidden !important;
-			border: 1px solid #dfe5d5 !important;
-			border-radius: 10px !important;
-			background: #f6f8f0 !important;
-			padding: 8px !important;
+			border: 0 !important;
+			border-radius: 0 !important;
+			background: transparent !important;
+			padding: 0 !important;
 			box-shadow: none !important;
 		}
 

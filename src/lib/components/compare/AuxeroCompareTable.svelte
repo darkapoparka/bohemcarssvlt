@@ -1,22 +1,65 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
+	import { ArrowLeft, Check, Plus, Search, X } from '@lucide/svelte';
 	import type { AuxeroCompareRow, AuxeroCompareVehicle } from '$lib/auxero/compare';
 	import { compareRowsFromVehicles } from '$lib/auxero/compare';
 	import type { Locale } from '$lib/i18n/messages';
+	import { getGarageContext } from '$lib/state/garage.svelte';
+	import { onMount } from 'svelte';
 	import AuxeroCompareVehicleImage from './AuxeroCompareVehicleImage.svelte';
 
-	let { locale, vehicles }: { locale: Locale; vehicles: AuxeroCompareVehicle[] } = $props();
+	let {
+		allVehicles,
+		locale,
+		vehicles
+	}: {
+		allVehicles: AuxeroCompareVehicle[];
+		locale: Locale;
+		vehicles: AuxeroCompareVehicle[];
+	} = $props();
 
+	const garage = getGarageContext();
+	const compareStorageKey = 'bohemcars:compare';
+	const compareSlotStorageKey = 'bohemcars:compare:mobile-slots';
+	const compareLimit = 4;
+	type CompareSlotSlugs = [string | null, string | null];
 	const rows: AuxeroCompareRow[] = $derived(compareRowsFromVehicles(vehicles, locale));
-	const removeLabel = $derived(locale === 'bg' ? 'Премахни' : 'Remove');
-	const comparedLabel = $derived(locale === 'bg' ? 'сравнени автомобила' : 'vehicles compared');
-	const parameterLabel = $derived(locale === 'bg' ? 'Параметър' : 'Spec');
-	const matrixLabel = $derived(locale === 'bg' ? 'Всички автомобили' : 'All vehicles');
-	const pairLabel = $derived(locale === 'bg' ? 'Двойка за сравнение' : 'Comparison pair');
-	const pairChoiceLabel = $derived(locale === 'bg' ? 'Избери двойка' : 'Choose pair');
-	const pairInputName = $derived(
-		`bohemcars-compare-pair-${vehicles.map((vehicle) => vehicle.slug).join('-') || 'empty'}`
+	let selectedSlugsOverride = $state<string[] | undefined>();
+	let slotSlugsOverride = $state<CompareSlotSlugs | undefined>();
+	const selectedSlugs = $derived(
+		selectedSlugsOverride ?? vehicles.map((vehicle) => vehicle.slug).slice(0, compareLimit)
 	);
+	const slotSlugs = $derived(
+		slotSlugsOverride ?? [vehicles[0]?.slug ?? null, vehicles[1]?.slug ?? null]
+	);
+	let addDrawerOpen = $state(false);
+	let drawerSlotIndex = $state<0 | 1 | null>(null);
+	let addDrawerQuery = $state('');
+	let addDrawerBrand = $state('');
+	let selectionTouched = $state(false);
+
+	const removeLabel = $derived(locale === 'bg' ? 'Премахни' : 'Remove');
+	const addLabel = $derived(locale === 'bg' ? 'Добави автомобил' : 'Add vehicle');
+	const addToSlotLabel = $derived(locale === 'bg' ? 'Избери автомобил' : 'Choose vehicle');
+	const allBrandsLabel = $derived(locale === 'bg' ? 'Всички' : 'All');
+	const appTitle = $derived(locale === 'bg' ? 'Сравнение' : 'Compare');
+	const comparedLabel = $derived(locale === 'bg' ? 'сравнени автомобила' : 'vehicles compared');
+	const compareLimitLabel = $derived(locale === 'bg' ? 'до 4 автомобила' : 'up to 4 vehicles');
+	const drawerKicker = $derived(locale === 'bg' ? 'Модели и марки' : 'Makes and models');
+	const drawerSearchLabel = $derived(locale === 'bg' ? 'Търси автомобил' : 'Search vehicle');
+	const drawerSearchPlaceholder = $derived(
+		locale === 'bg' ? 'Марка, модел, година...' : 'Make, model, year...'
+	);
+	const emptySlotLabel = $derived(locale === 'bg' ? 'Свободно място' : 'Empty slot');
+	const emptyValue = $derived(locale === 'bg' ? 'Избери автомобил' : 'Choose vehicle');
+	const noResultsLabel = $derived(
+		locale === 'bg' ? 'Няма намерени автомобили' : 'No vehicles found'
+	);
+	const parameterLabel = $derived(locale === 'bg' ? 'Параметър' : 'Spec');
+	const selectedLabel = $derived(locale === 'bg' ? 'Избрана' : 'Selected');
+	const matrixLabel = $derived(locale === 'bg' ? 'Всички избрани' : 'All selected');
+	const pairLabel = $derived(locale === 'bg' ? 'Двойка за сравнение' : 'Comparison pair');
 	const groupsForRows = (sourceRows: AuxeroCompareRow[], firstGroupOpen = true) => {
 		const pickRows = (indexes: number[]) =>
 			indexes
@@ -41,41 +84,237 @@
 			}
 		].filter((group) => group.rows.length > 0);
 	};
-	const fullGroups = $derived(groupsForRows(rows, false));
-	const pairOptions = $derived.by(() => {
-		const options: {
-			groups: ReturnType<typeof groupsForRows>;
-			id: string;
-			vehicles: AuxeroCompareVehicle[];
-		}[] = [];
-
-		for (let leftIndex = 0; leftIndex < vehicles.length; leftIndex += 1) {
-			for (let rightIndex = leftIndex + 1; rightIndex < vehicles.length; rightIndex += 1) {
-				const optionVehicles = [vehicles[leftIndex], vehicles[rightIndex]].filter(
-					(vehicle): vehicle is AuxeroCompareVehicle => Boolean(vehicle)
-				);
-				const optionRows = compareRowsFromVehicles(optionVehicles, locale);
-
-				options.push({
-					groups: groupsForRows(optionRows, true),
-					id: optionVehicles.map((vehicle) => vehicle.slug).join('-'),
-					vehicles: optionVehicles
-				});
-			}
+	const vehicleBySlug = $derived(
+		Object.fromEntries(allVehicles.map((vehicle) => [vehicle.slug, vehicle])) as Record<
+			string,
+			AuxeroCompareVehicle | undefined
+		>
+	);
+	const selectedVehicles = $derived(
+		selectedSlugs
+			.map((slug) => vehicleBySlug[slug])
+			.filter((vehicle): vehicle is AuxeroCompareVehicle => Boolean(vehicle))
+	);
+	const selectedRows = $derived(compareRowsFromVehicles(selectedVehicles, locale));
+	const fullGroups = $derived(groupsForRows(selectedRows, false));
+	const mobileMatrixVehicleCount = $derived(Math.max(selectedVehicles.length, 1));
+	const slotVehicles = $derived(
+		slotSlugs.map((slug) => (slug ? (vehicleBySlug[slug] ?? null) : null))
+	);
+	const slotCompareVehicles = $derived(
+		slotVehicles.filter((vehicle): vehicle is AuxeroCompareVehicle => Boolean(vehicle))
+	);
+	const slotRows = $derived(compareRowsFromVehicles(slotCompareVehicles, locale));
+	const slotGroups = $derived(groupsForRows(slotRows, true));
+	const availableBrands = $derived.by(() => {
+		const brandCounts: Record<string, number> = {};
+		for (const vehicle of allVehicles) {
+			brandCounts[vehicle.brand] = (brandCounts[vehicle.brand] ?? 0) + 1;
 		}
 
-		if (options.length === 0 && vehicles[0]) {
-			const optionVehicles = [vehicles[0]];
-			const optionRows = compareRowsFromVehicles(optionVehicles, locale);
+		return Object.entries(brandCounts)
+			.map(([brand, count]) => ({ brand, count }))
+			.sort((left, right) => left.brand.localeCompare(right.brand, locale));
+	});
+	const visibleDrawerVehicles = $derived.by(() => {
+		const query = addDrawerQuery.trim().toLocaleLowerCase();
 
-			options.push({
-				groups: groupsForRows(optionRows, true),
-				id: vehicles[0].slug,
-				vehicles: optionVehicles
+		return allVehicles
+			.filter((vehicle) => {
+				const matchesBrand = !addDrawerBrand || vehicle.brand === addDrawerBrand;
+				const matchesQuery =
+					!query ||
+					[vehicle.title, vehicle.brand, vehicle.model, vehicle.year, vehicle.priceLabel]
+						.join(' ')
+						.toLocaleLowerCase()
+						.includes(query);
+
+				return matchesBrand && matchesQuery;
+			})
+			.sort((left, right) => {
+				const leftSelected = selectedSlugs.includes(left.slug) ? 0 : 1;
+				const rightSelected = selectedSlugs.includes(right.slug) ? 0 : 1;
+
+				return leftSelected - rightSelected || left.title.localeCompare(right.title, locale);
 			});
+	});
+
+	const normalizeSlugs = (slugs: (string | null | undefined)[]) =>
+		Array.from(
+			new Set(
+				slugs.filter(
+					(slug): slug is string => typeof slug === 'string' && Boolean(vehicleBySlug[slug])
+				)
+			)
+		).slice(0, compareLimit);
+	const readStoredCompare = () => {
+		if (!browser) return [];
+
+		try {
+			const value = JSON.parse(localStorage.getItem(compareStorageKey) || '[]');
+
+			return Array.isArray(value) ? value.filter((item) => typeof item === 'string') : [];
+		} catch {
+			return [];
+		}
+	};
+	const sameSlugList = (left: string[], right: string[]) =>
+		left.length === right.length && left.every((slug, index) => slug === right[index]);
+	const compactSlotsFromSelection = (slugs: string[]): CompareSlotSlugs => [
+		slugs[0] ?? null,
+		slugs[1] ?? null
+	];
+	const normalizeSlots = (
+		slots: (string | null | undefined)[],
+		cleanSlugs: string[]
+	): CompareSlotSlugs => [
+		slots[0] && cleanSlugs.includes(slots[0]) ? slots[0] : null,
+		slots[1] && cleanSlugs.includes(slots[1]) ? slots[1] : null
+	];
+	const readStoredCompareSlots = (cleanSlugs: string[]) => {
+		if (!browser) return undefined;
+
+		try {
+			const value = JSON.parse(localStorage.getItem(compareSlotStorageKey) || 'null');
+			const compare = Array.isArray(value?.compare)
+				? normalizeSlugs(value.compare.filter((item: unknown) => typeof item === 'string'))
+				: [];
+			const slots = Array.isArray(value?.slots) ? value.slots : undefined;
+
+			if (!slots || !sameSlugList(compare, cleanSlugs)) return undefined;
+
+			return normalizeSlots(slots, cleanSlugs);
+		} catch {
+			return undefined;
+		}
+	};
+	const writeStoredCompareSlots = (cleanSlugs: string[], slots: CompareSlotSlugs) => {
+		if (!browser) return;
+
+		localStorage.setItem(
+			compareSlotStorageKey,
+			JSON.stringify({
+				compare: cleanSlugs,
+				slots
+			})
+		);
+	};
+	const setLocalSelection = (
+		slugs: (string | null | undefined)[],
+		nextSlots?: CompareSlotSlugs
+	) => {
+		const cleanSlugs = normalizeSlugs(slugs);
+		selectedSlugsOverride = cleanSlugs;
+		slotSlugsOverride = nextSlots
+			? normalizeSlots(nextSlots, cleanSlugs)
+			: compactSlotsFromSelection(cleanSlugs);
+	};
+	const commitSelection = (slugs: (string | null | undefined)[], nextSlots?: CompareSlotSlugs) => {
+		const cleanSlugs = normalizeSlugs(slugs);
+		const preservedSlots = normalizeSlots(nextSlots ?? slotSlugs, cleanSlugs);
+		const slotsForSelection =
+			preservedSlots.some((slug) => slug) || !cleanSlugs.length
+				? preservedSlots
+				: compactSlotsFromSelection(cleanSlugs);
+
+		selectionTouched = true;
+		setLocalSelection(cleanSlugs, slotsForSelection);
+		garage.setCompare(cleanSlugs);
+		writeStoredCompareSlots(cleanSlugs, slotsForSelection);
+
+		if (browser) {
+			window.dispatchEvent(
+				new CustomEvent('bohemcars:compare-updated', {
+					detail: { compare: cleanSlugs, slots: slotsForSelection }
+				})
+			);
+		}
+	};
+	const openAddDrawer = (slotIndex: 0 | 1 | null = null) => {
+		drawerSlotIndex = slotIndex;
+		addDrawerQuery = '';
+		addDrawerOpen = true;
+	};
+	const openTopAddDrawer = () => {
+		if (!slotSlugs[0]) {
+			openAddDrawer(0);
+			return;
 		}
 
-		return options;
+		if (!slotSlugs[1]) {
+			openAddDrawer(1);
+			return;
+		}
+
+		openAddDrawer(null);
+	};
+	const chooseVehicle = (slug: string) => {
+		const currentWithoutChosen = selectedSlugs.filter((item) => item !== slug);
+		let nextSlots: CompareSlotSlugs = [slotSlugs[0], slotSlugs[1]];
+		let nextSlugs: (string | null | undefined)[];
+
+		if (drawerSlotIndex !== null) {
+			nextSlots[drawerSlotIndex] = slug;
+			nextSlugs = [
+				nextSlots[0],
+				nextSlots[1],
+				...currentWithoutChosen.filter((item) => item !== nextSlots[0] && item !== nextSlots[1])
+			];
+		} else if (!slotSlugs[0] || !slotSlugs[1]) {
+			const emptyIndex = !slotSlugs[0] ? 0 : 1;
+			nextSlots[emptyIndex] = slug;
+			nextSlugs = [
+				nextSlots[0],
+				nextSlots[1],
+				...currentWithoutChosen.filter((item) => item !== nextSlots[0] && item !== nextSlots[1])
+			];
+		} else {
+			nextSlugs = [slug, ...currentWithoutChosen];
+			nextSlots = compactSlotsFromSelection(normalizeSlugs(nextSlugs));
+		}
+
+		commitSelection(nextSlugs, nextSlots);
+		addDrawerOpen = false;
+	};
+	const removeSlotVehicle = (index: 0 | 1) => {
+		const slug = slotSlugs[index];
+		if (!slug) return;
+
+		const nextSlots: CompareSlotSlugs = [slotSlugs[0], slotSlugs[1]];
+		nextSlots[index] = null;
+		commitSelection(
+			selectedSlugs.filter((item) => item !== slug),
+			nextSlots
+		);
+	};
+	const drawerButtonDisabled = (slug: string) =>
+		drawerSlotIndex === null &&
+		selectedSlugs.includes(slug) &&
+		selectedSlugs.length >= compareLimit;
+	const rowValuesForSlots = (row: AuxeroCompareRow) => {
+		let valueIndex = 0;
+
+		return slotSlugs.map((slug) => {
+			if (!slug) return emptyValue;
+
+			const value = row.values[valueIndex] ?? emptyValue;
+			valueIndex += 1;
+
+			return value;
+		});
+	};
+
+	onMount(() => {
+		if (selectionTouched) return;
+
+		const stored = readStoredCompare();
+		const cleanSlugs = normalizeSlugs(
+			stored.length ? stored : vehicles.map((vehicle) => vehicle.slug)
+		);
+		setLocalSelection(
+			cleanSlugs,
+			readStoredCompareSlots(cleanSlugs) ?? compactSlotsFromSelection(cleanSlugs)
+		);
 	});
 </script>
 
@@ -83,128 +322,153 @@
 	class="bohemcars-compare-mobile"
 	aria-label={locale === 'bg' ? 'Мобилно сравнение' : 'Mobile compare'}
 >
+	<header class="bohemcars-compare-mobile__appbar">
+		<a href={resolve('/inventory')} aria-label={locale === 'bg' ? 'Към коли' : 'Back to cars'}>
+			<ArrowLeft size={21} strokeWidth={2.35} aria-hidden="true" />
+		</a>
+		<div>
+			<p>Bohemcars</p>
+			<strong>{appTitle}</strong>
+			<span>{selectedSlugs.length} {comparedLabel} · {compareLimitLabel}</span>
+		</div>
+		<button type="button" aria-label={addLabel} onclick={openTopAddDrawer}>
+			<Plus size={22} strokeWidth={2.4} aria-hidden="true" />
+		</button>
+	</header>
+
 	<section class="bohemcars-compare-mobile__pair" aria-label={pairLabel}>
 		<header class="bohemcars-compare-mobile__pair-head">
 			<div>
 				<p>{pairLabel}</p>
-				<strong>{vehicles.length} {comparedLabel}</strong>
+				<strong>{slotCompareVehicles.length}/2 · {selectedSlugs.length} {comparedLabel}</strong>
 			</div>
+			<button type="button" onclick={openTopAddDrawer}>
+				<Plus size={17} strokeWidth={2.4} aria-hidden="true" />
+				{addLabel}
+			</button>
 		</header>
 
-		<div class="bohemcars-compare-mobile__pair-switcher">
-			{#each pairOptions as option, index (option.id)}
-				<input
-					class="bohemcars-compare-mobile__pair-radio"
-					type="radio"
-					name={pairInputName}
-					id={`${pairInputName}-${index}`}
-					checked={index === 0}
-				/>
+		<div class="bohemcars-compare-mobile__selected-cars">
+			{#each [0, 1] as slotIndex (`slot-${slotIndex}`)}
+				{@const vehicle = slotVehicles[slotIndex]}
+				{#if vehicle}
+					<div class="bohemcars-compare-mobile__selected-card">
+						<span>{slotIndex === 0 ? 'A' : 'B'}</span>
+						<button
+							class="bohemcars-compare-mobile__remove"
+							type="button"
+							aria-label={`${removeLabel} ${vehicle.title}`}
+							title={`${removeLabel} ${vehicle.title}`}
+							onclick={() => removeSlotVehicle(slotIndex === 0 ? 0 : 1)}
+						>
+							<X size={16} strokeWidth={2.35} aria-hidden="true" />
+						</button>
+						<a
+							class="bohemcars-compare-mobile__image"
+							href={resolve('/inventory/[slug]', { slug: vehicle.slug })}
+						>
+							<AuxeroCompareVehicleImage src={vehicle.image} title={vehicle.title} />
+						</a>
+						<p class="bohemcars-compare-mobile__mini-title">
+							<a href={resolve('/inventory/[slug]', { slug: vehicle.slug })}>
+								{vehicle.title}
+							</a>
+						</p>
+						<strong>{vehicle.priceLabel}</strong>
+					</div>
+				{:else}
+					<button
+						type="button"
+						class="bohemcars-compare-mobile__selected-card bohemcars-compare-mobile__add-card"
+						aria-label={`${addToSlotLabel} ${slotIndex === 0 ? 'A' : 'B'}`}
+						onclick={() => openAddDrawer(slotIndex === 0 ? 0 : 1)}
+					>
+						<span>{slotIndex === 0 ? 'A' : 'B'}</span>
+						<strong aria-hidden="true">
+							<Plus size={31} strokeWidth={2.1} />
+						</strong>
+						<em>{emptySlotLabel}</em>
+						<small>{addLabel}</small>
+					</button>
+				{/if}
 			{/each}
+		</div>
 
-			<div class="bohemcars-compare-mobile__picker">
-				<p>{pairChoiceLabel}</p>
-				<div class="bohemcars-compare-mobile__picker-rail">
-					{#each pairOptions as option, index (option.id)}
-						<label class="bohemcars-compare-mobile__picker-card" for={`${pairInputName}-${index}`}>
-							{#each option.vehicles as vehicle (vehicle.slug)}
-								<span>{vehicle.title}</span>
-							{/each}
-						</label>
-					{/each}
-				</div>
-			</div>
-
-			<div class="bohemcars-compare-mobile__pair-panels">
-				{#each pairOptions as option (option.id)}
-					<article class="bohemcars-compare-mobile__pair-panel">
-						<div class="bohemcars-compare-mobile__selected-cars">
-							{#each option.vehicles as vehicle, index (vehicle.slug)}
-								<div
-									class="bohemcars-compare-mobile__selected-card"
-									data-bohemcars-compare-column={vehicle.slug}
-								>
-									<span>{index === 0 ? 'A' : 'B'}</span>
-									<button
-										class="bohemcars-compare-mobile__remove"
-										type="button"
-										data-bohemcars-compare-remove={vehicle.slug}
-										aria-label={`${removeLabel} ${vehicle.title}`}
-										title={`${removeLabel} ${vehicle.title}`}
-									>
-										<img src="/assets/icons/close-modal.svg" alt="" aria-hidden="true" />
-									</button>
-									<a
-										class="bohemcars-compare-mobile__image"
-										href={resolve('/inventory/[slug]', { slug: vehicle.slug })}
-									>
-										<AuxeroCompareVehicleImage src={vehicle.image} title={vehicle.title} />
-									</a>
-									<p class="bohemcars-compare-mobile__mini-title">
-										<a href={resolve('/inventory/[slug]', { slug: vehicle.slug })}>
-											{vehicle.title}
-										</a>
-									</p>
-									<strong>{vehicle.priceLabel}</strong>
-								</div>
-							{/each}
-						</div>
-
-						<div class="bohemcars-compare-mobile__pair-table">
-							{#each option.groups as group (group.title)}
-								<details class="bohemcars-compare-mobile__pair-group" open={group.open}>
-									<summary>
-										<span>{group.title}</span>
-										<b>{group.rows.length}</b>
-									</summary>
-									{#each group.rows as row (row.label)}
-										<div class="bohemcars-compare-mobile__pair-row">
-											<div class="bohemcars-compare-mobile__pair-label">
-												{#if row.icon !== 'Payment.png'}
-													<img src={`/assets/icons/${row.icon}`} alt={row.alt} />
-												{/if}
-												<span>{row.label}</span>
-											</div>
-											{#each row.values as value, valueIndex (`mobile-pair-${row.label}-${option.vehicles[valueIndex]?.slug ?? valueIndex}`)}
-												<div class="bohemcars-compare-mobile__pair-value">{value}</div>
-											{/each}
-										</div>
-									{/each}
-								</details>
-							{/each}
-						</div>
-					</article>
+		{#if selectedVehicles.length > 2}
+			<div class="bohemcars-compare-mobile__selected-rail" aria-label={matrixLabel}>
+				{#each selectedVehicles as vehicle (vehicle.slug)}
+					<button
+						type="button"
+						class:active={slotSlugs.includes(vehicle.slug)}
+						aria-pressed={slotSlugs.includes(vehicle.slug)}
+						onclick={() => chooseVehicle(vehicle.slug)}
+					>
+						<span>{vehicle.brand}</span>
+						<strong>{vehicle.model}</strong>
+					</button>
 				{/each}
 			</div>
+		{/if}
+
+		<div class="bohemcars-compare-mobile__pair-table">
+			{#if slotGroups.length}
+				{#each slotGroups as group (group.title)}
+					<details class="bohemcars-compare-mobile__pair-group" open={group.open}>
+						<summary>
+							<span>{group.title}</span>
+							<b>{group.rows.length}</b>
+						</summary>
+						{#each group.rows as row (row.label)}
+							<div class="bohemcars-compare-mobile__pair-row">
+								<div class="bohemcars-compare-mobile__pair-label">
+									{#if row.icon !== 'Payment.png'}
+										<img src={`/assets/icons/${row.icon}`} alt={row.alt} />
+									{/if}
+									<span>{row.label}</span>
+								</div>
+								{#each rowValuesForSlots(row) as value, valueIndex (`mobile-pair-${row.label}-${valueIndex}`)}
+									<div class="bohemcars-compare-mobile__pair-value">{value}</div>
+								{/each}
+							</div>
+						{/each}
+					</details>
+				{/each}
+			{:else}
+				<div class="bohemcars-compare-mobile__empty">
+					<strong>{locale === 'bg' ? 'Избери два автомобила' : 'Choose two vehicles'}</strong>
+					<button type="button" onclick={() => openAddDrawer(0)}>
+						<Plus size={18} strokeWidth={2.4} aria-hidden="true" />
+						{addLabel}
+					</button>
+				</div>
+			{/if}
 		</div>
 	</section>
 
-	<details class="bohemcars-compare-mobile__all">
+	<details class="bohemcars-compare-mobile__all" open={selectedVehicles.length > 2}>
 		<summary>
 			<span>{matrixLabel}</span>
-			<b>{vehicles.length}</b>
+			<b>{selectedVehicles.length}</b>
 		</summary>
 		<div
 			class="bohemcars-compare-mobile__matrix"
 			aria-label={matrixLabel}
-			style:--vehicle-count={vehicles.length}
+			style:--vehicle-count={mobileMatrixVehicleCount}
 		>
 			<div class="bohemcars-compare-mobile__scroller">
 				<div class="bohemcars-compare-mobile__head-row">
 					<div class="bohemcars-compare-mobile__corner">{parameterLabel}</div>
-					{#each vehicles as vehicle (vehicle.slug)}
-						<article
-							class="bohemcars-compare-mobile__mini-car"
-							data-bohemcars-compare-column={vehicle.slug}
-						>
+					{#each selectedVehicles as vehicle (vehicle.slug)}
+						<article class="bohemcars-compare-mobile__mini-car">
 							<button
 								class="bohemcars-compare-mobile__remove"
 								type="button"
-								data-bohemcars-compare-remove={vehicle.slug}
 								aria-label={`${removeLabel} ${vehicle.title}`}
 								title={`${removeLabel} ${vehicle.title}`}
+								onclick={() =>
+									commitSelection(selectedSlugs.filter((item) => item !== vehicle.slug))}
 							>
-								<img src="/assets/icons/close-modal.svg" alt="" aria-hidden="true" />
+								<X size={14} strokeWidth={2.35} aria-hidden="true" />
 							</button>
 							<a
 								class="bohemcars-compare-mobile__image"
@@ -234,7 +498,7 @@
 									{/if}
 									<span>{row.label}</span>
 								</div>
-								{#each row.values as value, index (`mobile-row-${row.label}-${vehicles[index]?.slug ?? index}`)}
+								{#each row.values as value, index (`mobile-row-${row.label}-${selectedVehicles[index]?.slug ?? index}`)}
 									<div class="bohemcars-compare-mobile__value">{value}</div>
 								{/each}
 							</div>
@@ -244,6 +508,108 @@
 			</div>
 		</div>
 	</details>
+
+	{#if addDrawerOpen}
+		<button
+			type="button"
+			class="bohemcars-compare-mobile-drawer__backdrop"
+			aria-label={locale === 'bg' ? 'Затвори' : 'Close'}
+			onclick={() => (addDrawerOpen = false)}
+		>
+			<span>{locale === 'bg' ? 'Затвори' : 'Close'}</span>
+		</button>
+		<div
+			class="bohemcars-compare-mobile-drawer__sheet"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="bohemcarsCompareMobileDrawerTitle"
+		>
+			<span class="bohemcars-compare-mobile-drawer__handle" aria-hidden="true"></span>
+			<header>
+				<div>
+					<p>{drawerKicker}</p>
+					<h2 id="bohemcarsCompareMobileDrawerTitle">
+						<span>{drawerSlotIndex === null ? addLabel : addToSlotLabel}</span>
+					</h2>
+				</div>
+				<button
+					type="button"
+					aria-label={locale === 'bg' ? 'Затвори' : 'Close'}
+					onclick={() => (addDrawerOpen = false)}
+				>
+					<X size={21} strokeWidth={2.35} aria-hidden="true" />
+				</button>
+			</header>
+			<p class="bohemcars-compare-mobile-drawer__description">
+				{locale === 'bg'
+					? 'Избери автомобил от наличните модели на Bohemcars.'
+					: 'Choose from available Bohemcars models.'}
+			</p>
+
+			<label class="bohemcars-compare-mobile-drawer__search" data-vaul-no-drag>
+				<Search size={18} strokeWidth={2.25} aria-hidden="true" />
+				<span>{drawerSearchLabel}</span>
+				<input bind:value={addDrawerQuery} type="search" placeholder={drawerSearchPlaceholder} />
+			</label>
+
+			<div
+				class="bohemcars-compare-mobile-drawer__brands"
+				aria-label={drawerKicker}
+				data-vaul-no-drag
+			>
+				<button
+					type="button"
+					class:active={!addDrawerBrand}
+					aria-pressed={!addDrawerBrand}
+					onclick={() => (addDrawerBrand = '')}
+				>
+					{allBrandsLabel}
+				</button>
+				{#each availableBrands as option (option.brand)}
+					<button
+						type="button"
+						class:active={addDrawerBrand === option.brand}
+						aria-pressed={addDrawerBrand === option.brand}
+						onclick={() => (addDrawerBrand = option.brand)}
+					>
+						{option.brand}
+						<small>{option.count}</small>
+					</button>
+				{/each}
+			</div>
+
+			<div class="bohemcars-compare-mobile-drawer__list" data-vaul-no-drag>
+				{#if visibleDrawerVehicles.length}
+					{#each visibleDrawerVehicles as vehicle (vehicle.slug)}
+						<button
+							type="button"
+							class:active={selectedSlugs.includes(vehicle.slug)}
+							aria-pressed={selectedSlugs.includes(vehicle.slug)}
+							disabled={drawerButtonDisabled(vehicle.slug)}
+							onclick={() => chooseVehicle(vehicle.slug)}
+						>
+							<img src={vehicle.image} alt="" loading="lazy" />
+							<span>
+								<small>{vehicle.brand} · {vehicle.year}</small>
+								<strong>{vehicle.title}</strong>
+								<em>{vehicle.priceLabel}</em>
+							</span>
+							{#if selectedSlugs.includes(vehicle.slug)}
+								<b>
+									<Check size={16} strokeWidth={2.6} aria-hidden="true" />
+									{selectedLabel}
+								</b>
+							{:else}
+								<b>{addLabel}</b>
+							{/if}
+						</button>
+					{/each}
+				{:else}
+					<p class="bohemcars-compare-mobile-drawer__empty">{noResultsLabel}</p>
+				{/if}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <div class="bohemcars-compare-scroll">
@@ -370,6 +736,89 @@
 			color: #111111;
 		}
 
+		.bohemcars-compare-mobile__appbar {
+			display: grid;
+			grid-template-columns: 44px minmax(0, 1fr) 44px;
+			align-items: center;
+			gap: 10px;
+			min-height: 70px;
+			margin: 0 -14px;
+			background: #111111;
+			padding: max(10px, env(safe-area-inset-top)) 14px 10px;
+			color: #ffffff;
+		}
+
+		.bohemcars-compare-mobile__appbar a,
+		.bohemcars-compare-mobile__appbar button {
+			display: flex;
+			width: 44px;
+			height: 44px;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.1);
+			color: #ffffff;
+			cursor: pointer;
+			padding: 0;
+			text-decoration: none;
+		}
+
+		.bohemcars-compare-mobile__appbar a:hover,
+		.bohemcars-compare-mobile__appbar a:focus-visible,
+		.bohemcars-compare-mobile__appbar button:hover,
+		.bohemcars-compare-mobile__appbar button:focus-visible {
+			background: #d9f275;
+			color: #111111;
+			outline: 0;
+		}
+
+		.bohemcars-compare-mobile__appbar a :global(svg),
+		.bohemcars-compare-mobile__appbar a :global(svg *),
+		.bohemcars-compare-mobile__appbar button :global(svg),
+		.bohemcars-compare-mobile__appbar button :global(svg *) {
+			color: currentColor !important;
+			pointer-events: none;
+			stroke: currentColor !important;
+		}
+
+		.bohemcars-compare-mobile__appbar div {
+			min-width: 0;
+		}
+
+		.bohemcars-compare-mobile__appbar p,
+		.bohemcars-compare-mobile__appbar strong,
+		.bohemcars-compare-mobile__appbar span {
+			display: block;
+			min-width: 0;
+			margin: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile__appbar p {
+			color: #d9f275;
+			font-size: 11px;
+			font-weight: 800;
+			line-height: 14px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-compare-mobile__appbar strong {
+			color: #ffffff;
+			font-size: 20px;
+			font-weight: 800;
+			line-height: 24px;
+		}
+
+		.bohemcars-compare-mobile__appbar span {
+			color: rgba(255, 255, 255, 0.7);
+			font-size: 12px;
+			font-weight: 650;
+			line-height: 16px;
+		}
+
 		.bohemcars-compare-mobile__pair {
 			display: grid;
 			gap: 8px;
@@ -407,19 +856,20 @@
 			line-height: 20px;
 		}
 
-		.bohemcars-compare-mobile__pair-switcher {
-			position: relative;
-			display: grid;
-			gap: 8px;
-		}
-
-		.bohemcars-compare-mobile__pair-radio {
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			overflow: hidden;
-			clip: rect(0 0 0 0);
-			clip-path: inset(50%);
+		.bohemcars-compare-mobile__pair-head button {
+			display: inline-flex;
+			min-height: 36px;
+			align-items: center;
+			gap: 6px;
+			border: 0;
+			border-radius: 999px;
+			background: #d9f275;
+			color: #111111;
+			cursor: pointer;
+			padding: 0 12px;
+			font-size: 12px;
+			font-weight: 800;
+			line-height: 15px;
 			white-space: nowrap;
 		}
 
@@ -435,9 +885,11 @@
 			grid-template-rows: 18px 76px 38px 18px;
 			min-width: 0;
 			overflow: hidden;
+			border: 0;
 			border-radius: 8px;
 			background: #f6f8f0;
 			padding: 8px;
+			text-align: left;
 		}
 
 		.bohemcars-compare-mobile__selected-card > span {
@@ -475,22 +927,67 @@
 			line-height: 18px;
 		}
 
-		.bohemcars-compare-mobile__picker {
-			display: grid;
-			gap: 6px;
+		.bohemcars-compare-mobile__add-card {
+			grid-template-rows: 18px minmax(44px, 1fr) auto auto;
+			align-items: center;
+			justify-items: start;
+			border: 1px dashed rgba(17, 17, 17, 0.28);
+			background: #eef3e9;
+			color: #111111;
+			cursor: pointer;
 		}
 
-		.bohemcars-compare-mobile__picker > p {
-			margin: 0;
-			color: rgb(255 255 255 / 0.74);
+		.bohemcars-compare-mobile__add-card:hover,
+		.bohemcars-compare-mobile__add-card:focus-visible {
+			background: #d9f275;
+			outline: 0;
+		}
+
+		.bohemcars-compare-mobile__add-card strong {
+			display: flex;
+			width: 56px;
+			height: 56px;
+			align-items: center;
+			justify-content: center;
+			justify-self: center;
+			border-radius: 999px;
+			background: #ffffff;
+			color: #111111;
+		}
+
+		.bohemcars-compare-mobile__add-card em,
+		.bohemcars-compare-mobile__add-card small {
+			display: block;
+			min-width: 0;
+			max-width: 100%;
+			overflow: hidden;
+			color: inherit;
+			font-style: normal;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile__add-card em {
+			font-size: 14px;
+			font-weight: 800;
+			line-height: 18px;
+		}
+
+		.bohemcars-compare-mobile__add-card small {
+			color: #5c653f;
 			font-size: 12px;
-			font-weight: 600;
+			font-weight: 700;
 			line-height: 16px;
-			letter-spacing: 0.04em;
-			text-transform: uppercase;
 		}
 
-		.bohemcars-compare-mobile__picker-rail {
+		.bohemcars-compare-mobile__pair-head button :global(svg),
+		.bohemcars-compare-mobile__pair-head button :global(svg *),
+		.bohemcars-compare-mobile__add-card :global(svg),
+		.bohemcars-compare-mobile__add-card :global(svg *) {
+			pointer-events: none;
+		}
+
+		.bohemcars-compare-mobile__selected-rail {
 			display: flex;
 			gap: 7px;
 			overflow-x: auto;
@@ -499,142 +996,91 @@
 			-webkit-overflow-scrolling: touch;
 		}
 
-		.bohemcars-compare-mobile__picker-rail::-webkit-scrollbar {
+		.bohemcars-compare-mobile__selected-rail::-webkit-scrollbar {
 			display: none;
 		}
 
-		.bohemcars-compare-mobile__picker-card {
-			position: relative;
+		.bohemcars-compare-mobile__selected-rail button {
 			display: grid;
-			width: 112px;
-			min-width: 112px;
-			min-height: 48px;
+			min-width: 108px;
+			min-height: 46px;
 			align-content: center;
 			gap: 1px;
-			border: 1px solid rgb(255 255 255 / 0.14);
+			border: 1px solid rgba(255, 255, 255, 0.13);
 			border-radius: 999px;
-			background: rgb(255 255 255 / 0.08);
+			background: rgba(255, 255, 255, 0.08);
 			color: #ffffff;
 			cursor: pointer;
-			padding: 6px 10px;
+			padding: 6px 11px;
 			text-align: left;
 		}
 
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(1):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(1),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(2):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(2),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(3):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(3),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(4):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(4),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(5):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(5),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(6):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(6),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(7):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(7),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(8):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(8),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(9):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(9),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(10):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(10),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(11):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(11),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(12):checked
-			~ .bohemcars-compare-mobile__picker
-			.bohemcars-compare-mobile__picker-card:nth-child(12) {
+		.bohemcars-compare-mobile__selected-rail button.active,
+		.bohemcars-compare-mobile__selected-rail button:hover,
+		.bohemcars-compare-mobile__selected-rail button:focus-visible {
 			border-color: #d9f275;
 			background: #d9f275;
 			color: #111111;
+			outline: 0;
 		}
 
-		.bohemcars-compare-mobile__picker-card span {
-			display: block;
-			min-width: 0;
+		.bohemcars-compare-mobile__selected-rail span,
+		.bohemcars-compare-mobile__selected-rail strong {
 			overflow: hidden;
 			color: inherit;
-			font-size: 12px;
-			font-weight: 600;
-			line-height: 15px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
-		.bohemcars-compare-mobile__picker-card span + span::before {
-			content: 'vs';
-			margin-right: 4px;
-			color: inherit;
-			font-size: 12px;
-			font-weight: 600;
-			opacity: 0.6;
+		.bohemcars-compare-mobile__selected-rail span {
+			font-size: 10px;
+			font-weight: 800;
+			line-height: 12px;
 			text-transform: uppercase;
+			opacity: 0.7;
 		}
 
-		.bohemcars-compare-mobile__pair-panels {
-			min-width: 0;
-		}
-
-		.bohemcars-compare-mobile__pair-panel {
-			display: none;
-			gap: 8px;
-		}
-
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(1):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(1),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(2):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(2),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(3):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(3),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(4):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(4),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(5):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(5),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(6):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(6),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(7):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(7),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(8):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(8),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(9):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(9),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(10):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(10),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(11):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(11),
-		.bohemcars-compare-mobile__pair-radio:nth-of-type(12):checked
-			~ .bohemcars-compare-mobile__pair-panels
-			.bohemcars-compare-mobile__pair-panel:nth-child(12) {
-			display: grid;
+		.bohemcars-compare-mobile__selected-rail strong {
+			font-size: 13px;
+			font-weight: 800;
+			line-height: 16px;
 		}
 
 		.bohemcars-compare-mobile__pair-table {
 			overflow: hidden;
 			border-radius: 8px;
 			background: #ffffff;
+		}
+
+		.bohemcars-compare-mobile__empty {
+			display: grid;
+			justify-items: start;
+			gap: 10px;
+			background: #ffffff;
+			padding: 16px;
+		}
+
+		.bohemcars-compare-mobile__empty strong {
+			color: #111111;
+			font-size: 16px;
+			font-weight: 800;
+			line-height: 20px;
+		}
+
+		.bohemcars-compare-mobile__empty button {
+			display: inline-flex;
+			min-height: 44px;
+			align-items: center;
+			gap: 7px;
+			border: 0;
+			border-radius: 9px;
+			background: #d9f275;
+			color: #111111;
+			cursor: pointer;
+			padding: 0 13px;
+			font-size: 14px;
+			font-weight: 800;
+			line-height: 18px;
 		}
 
 		.bohemcars-compare-mobile__pair-group {
@@ -863,10 +1309,336 @@
 			padding: 0;
 		}
 
-		.bohemcars-compare-mobile__remove img {
-			width: 14px;
-			height: 14px;
+		.bohemcars-compare-mobile__remove :global(svg) {
+			color: #111111;
+			stroke: #111111;
+		}
+
+		.bohemcars-compare-mobile-drawer__backdrop {
+			position: fixed;
+			inset: 0;
+			z-index: 1200;
+			border: 0;
+			background: rgba(17, 17, 17, 0.38);
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__backdrop span {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet {
+			position: fixed;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 1201;
+			display: grid;
+			grid-template-rows: max-content max-content max-content max-content minmax(0, 1fr);
+			gap: 12px;
+			height: min(88dvh, 740px);
+			overflow: hidden;
+			border-radius: 20px 20px 0 0;
+			background: var(--bc-bg);
+			outline: 0;
+			padding: 10px 14px max(16px, env(safe-area-inset-bottom));
+		}
+
+		.bohemcars-compare-mobile-drawer__handle {
+			position: relative;
+			display: block;
+			width: 56px;
+			height: 22px;
+			justify-self: center;
+			border-radius: 0;
+			background: transparent;
+			opacity: 1;
+		}
+
+		.bohemcars-compare-mobile-drawer__handle::after {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 42px;
+			height: 4px;
+			transform: translate(-50%, -50%);
+			border-radius: 999px;
+			background: var(--bc-border);
+			content: '';
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header div {
+			min-width: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header p {
+			margin: 0 0 2px;
+			color: #8fbd24;
+			font-size: 11px;
+			font-weight: 900;
+			line-height: 14px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header h2 {
+			margin: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header span {
+			display: block;
+			color: #111111;
+			font-size: 21px;
+			font-weight: 900;
+			line-height: 26px;
+		}
+
+		.bohemcars-compare-mobile-drawer__sheet header button {
+			display: flex;
+			width: 44px;
+			height: 44px;
+			align-items: center;
+			justify-content: center;
+			flex: 0 0 44px;
+			border: 0;
+			border-radius: 999px;
+			background: var(--bc-surface);
+			color: #111111;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__description {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__search {
+			display: flex;
+			min-height: 50px;
+			align-items: center;
+			gap: 9px;
+			border: 1px solid #e2e8dc;
+			border-radius: 999px;
+			background: #ffffff;
+			padding: 0 13px;
+			color: #111111;
+		}
+
+		.bohemcars-compare-mobile-drawer__search span {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__search input {
+			width: 100%;
+			min-width: 0;
+			height: 48px;
+			border: 0 !important;
+			background: transparent !important;
+			color: #111111;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 22px;
+			outline: 0;
+			padding: 0 !important;
+		}
+
+		.bohemcars-compare-mobile-drawer__brands {
+			display: flex;
+			gap: 8px;
+			margin: 0 -14px;
+			overflow-x: auto;
+			padding: 0 14px 2px;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.bohemcars-compare-mobile-drawer__brands::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-compare-mobile-drawer__brands button {
+			display: inline-flex;
+			min-height: 40px;
+			align-items: center;
+			gap: 7px;
+			flex: 0 0 auto;
+			border: 0;
+			border-radius: 999px;
+			background: #ffffff;
+			color: #111111;
+			cursor: pointer;
+			padding: 0 13px;
+			font-size: 13px;
+			font-weight: 800;
+			line-height: 17px;
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__brands button.active,
+		.bohemcars-compare-mobile-drawer__brands button:hover,
+		.bohemcars-compare-mobile-drawer__brands button:focus-visible {
+			background: #d9f275;
+			outline: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__brands small {
+			display: inline-flex;
+			min-width: 21px;
+			height: 21px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.72);
+			font-size: 11px;
+			font-weight: 900;
+			line-height: 21px;
+		}
+
+		.bohemcars-compare-mobile-drawer__list {
+			display: grid;
+			align-content: start;
+			gap: 8px;
+			min-height: 0;
+			overflow-y: auto;
+			padding-bottom: 2px;
+			scrollbar-width: none;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.bohemcars-compare-mobile-drawer__list::-webkit-scrollbar {
+			display: none;
+		}
+
+		.bohemcars-compare-mobile-drawer__list > button {
+			display: grid;
+			grid-template-columns: 92px minmax(0, 1fr) auto;
+			align-items: center;
+			gap: 10px;
+			min-height: 88px;
+			border: 0;
+			border-radius: 8px;
+			background: #ffffff;
+			color: #111111;
+			cursor: pointer;
+			padding: 8px;
+			text-align: left;
+		}
+
+		.bohemcars-compare-mobile-drawer__list > button:hover,
+		.bohemcars-compare-mobile-drawer__list > button:focus-visible {
+			background: #eef3e9;
+			outline: 0;
+		}
+
+		.bohemcars-compare-mobile-drawer__list > button.active {
+			background: #f4f8e9;
+		}
+
+		.bohemcars-compare-mobile-drawer__list > button:disabled {
+			cursor: default;
+			opacity: 0.72;
+		}
+
+		.bohemcars-compare-mobile-drawer__list img {
+			display: block;
+			width: 92px;
+			height: 70px;
+			border-radius: 7px;
+			background: var(--bc-surface);
 			object-fit: contain;
+		}
+
+		.bohemcars-compare-mobile-drawer__list span {
+			display: grid;
+			min-width: 0;
+			gap: 2px;
+		}
+
+		.bohemcars-compare-mobile-drawer__list small,
+		.bohemcars-compare-mobile-drawer__list strong,
+		.bohemcars-compare-mobile-drawer__list em {
+			display: block;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__list small {
+			color: #6d7680;
+			font-size: 11px;
+			font-weight: 800;
+			line-height: 14px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-compare-mobile-drawer__list strong {
+			color: #111111;
+			font-size: 15px;
+			font-weight: 850;
+			line-height: 19px;
+		}
+
+		.bohemcars-compare-mobile-drawer__list em {
+			color: #8fbd24;
+			font-size: 13px;
+			font-style: normal;
+			font-weight: 900;
+			line-height: 17px;
+		}
+
+		.bohemcars-compare-mobile-drawer__list b {
+			display: inline-flex;
+			min-height: 34px;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+			border-radius: 999px;
+			background: #111111;
+			color: #ffffff;
+			padding: 0 10px;
+			font-size: 12px;
+			font-weight: 850;
+			line-height: 15px;
+			white-space: nowrap;
+		}
+
+		.bohemcars-compare-mobile-drawer__list > button.active b {
+			background: #d9f275;
+			color: #111111;
+		}
+
+		.bohemcars-compare-mobile-drawer__empty {
+			margin: 0;
+			border-radius: 8px;
+			background: #ffffff;
+			color: #6d7680;
+			padding: 16px;
+			font-size: 14px;
+			font-weight: 800;
+			line-height: 18px;
 		}
 
 		.bohemcars-compare-mobile__group {

@@ -3,6 +3,7 @@ import { translateVehicleTerm, type Locale } from '$lib/i18n/messages';
 import { formatInventoryKm } from './inventory';
 
 export type AuxeroCompareVehicle = {
+	brand: string;
 	engine: string;
 	exterior: string;
 	fuel: string;
@@ -10,6 +11,7 @@ export type AuxeroCompareVehicle = {
 	interior: string;
 	location: string;
 	mileageLabel: string;
+	model: string;
 	priceLabel: string;
 	slug: string;
 	stockNumber: string;
@@ -38,6 +40,7 @@ export const compareVehiclesFromVehicles = (
 	locale: Locale = 'en'
 ): AuxeroCompareVehicle[] =>
 	vehicles.map((vehicle) => ({
+		brand: vehicle.brand,
 		engine: vehicle.engine || compareFallback(locale),
 		exterior: vehicle.exterior || compareFallback(locale),
 		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
@@ -45,6 +48,7 @@ export const compareVehiclesFromVehicles = (
 		interior: vehicle.interior || compareFallback(locale),
 		location: vehicle.location,
 		mileageLabel: formatInventoryKm(vehicle.mileage),
+		model: vehicle.model,
 		priceLabel: vehicle.priceLabel,
 		slug: vehicle.slug,
 		stockNumber: vehicle.stockNumber,
