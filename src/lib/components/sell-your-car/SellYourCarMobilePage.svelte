@@ -156,10 +156,10 @@
 	.bohemcars-sell-mobile__form header p {
 		margin: 0;
 		color: #d9f275;
-		font-size: 10px;
-		font-weight: 900;
-		letter-spacing: 0;
-		line-height: 14px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		line-height: 16px;
 		text-transform: uppercase;
 	}
 
@@ -175,9 +175,9 @@
 		margin: 0;
 		color: #ffffff;
 		font-size: 22px;
-		font-weight: 900;
+		font-weight: 700;
 		letter-spacing: 0;
-		line-height: 26px;
+		line-height: 28px;
 		white-space: nowrap;
 	}
 
@@ -205,9 +205,9 @@
 	.bohemcars-sell-mobile__form header strong {
 		color: #111111;
 		font-size: 20px;
-		font-weight: 900;
+		font-weight: 700;
 		letter-spacing: 0;
-		line-height: 25px;
+		line-height: 26px;
 	}
 
 	.bohemcars-sell-mobile__fields {
@@ -223,9 +223,9 @@
 
 	.bohemcars-sell-mobile__fields span {
 		color: #111111;
-		font-size: 13px;
-		font-weight: 900;
-		line-height: 16px;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 18px;
 	}
 
 	.bohemcars-sell-mobile__fields input {
@@ -238,7 +238,7 @@
 		box-shadow: none !important;
 		color: #111111;
 		font-size: 16px;
-		font-weight: 800;
+		font-weight: 500;
 		line-height: 22px;
 		outline: 0;
 		padding: 0 13px !important;
@@ -264,16 +264,16 @@
 		border-radius: 8px;
 		background: #1c1c1c;
 		color: #ffffff;
-		font-size: 15px;
-		font-weight: 900;
+		font-size: 16px;
+		font-weight: 700;
 		line-height: 20px;
 	}
 
 	.bohemcars-sell-mobile__status {
 		margin: -2px 0 0;
 		color: #4b5563;
-		font-size: 13px;
-		font-weight: 800;
+		font-size: 14px;
+		font-weight: 600;
 		line-height: 18px;
 	}
 
@@ -295,8 +295,8 @@
 		background: var(--bc-surface);
 		padding: 0 9px;
 		color: #111111;
-		font-size: 13.5px;
-		font-weight: 900;
+		font-size: 14px;
+		font-weight: 700;
 		line-height: 18px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -315,8 +315,8 @@
 		margin: 3px 0 1px;
 		color: #111111;
 		font-size: 12px;
-		font-weight: 900;
-		letter-spacing: 0;
+		font-weight: 600;
+		letter-spacing: 0.04em;
 		line-height: 16px;
 		text-transform: uppercase;
 	}
@@ -343,8 +343,8 @@
 		border-radius: 999px;
 		background: #1c1c1c;
 		color: #d9f275;
-		font-size: 15px;
-		font-weight: 900;
+		font-size: 14px;
+		font-weight: 700;
 		line-height: 1;
 	}
 
@@ -356,17 +356,17 @@
 
 	.bohemcars-sell-mobile__steps h2 {
 		color: #111111;
-		font-size: 15px;
-		font-weight: 900;
-		line-height: 19px;
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 20px;
 	}
 
 	.bohemcars-sell-mobile__steps p {
 		margin-top: 2px;
 		color: #56635a;
-		font-size: 13px;
-		font-weight: 700;
-		line-height: 17px;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 18px;
 	}
 
 	@media (max-width: 374px) {
@@ -381,8 +381,8 @@
 
 	@media (max-width: 359px) {
 		.bohemcars-sell-mobile__intro h1 {
-			font-size: 21.5px;
-			line-height: 25px;
+			font-size: 20px;
+			line-height: 24px;
 		}
 	}
 </style>

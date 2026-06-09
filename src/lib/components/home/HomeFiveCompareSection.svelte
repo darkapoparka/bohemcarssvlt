@@ -18,7 +18,9 @@
 {#if pairs.length}
 	<section class="bohemcars-home-compare py-100">
 		<div class="container">
-			<div class="title-section mb-42 flex items-center justify-between">
+			<div
+				class="title-section bohemcars-home-compare__banner mb-42 flex items-center justify-between"
+			>
 				<h2>{copy.compareTitle}</h2>
 				<HomeSectionCta href="/compare" label={copy.commonCta} />
 			</div>
@@ -75,6 +77,21 @@
 		padding-bottom: 64px;
 	}
 
+	.bohemcars-home-compare__banner {
+		position: relative;
+		overflow: hidden;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		background: linear-gradient(135deg, #14210f 0%, #1f3318 58%, #0f190c 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		padding: 24px 28px;
+	}
+
+	.bohemcars-home-compare__banner h2 {
+		margin: 0;
+		color: #ffffff;
+	}
+
 	.bohemcars-home-compare__grid {
 		display: grid;
 		gap: 30px;
@@ -102,6 +119,11 @@
 		text-align: center;
 	}
 
+	.bohemcars-home-compare__vehicle:hover,
+	.bohemcars-home-compare__vehicle:focus-visible {
+		color: #1c1c1c;
+	}
+
 	.bohemcars-home-compare__image {
 		align-items: center;
 		aspect-ratio: 16 / 10;
@@ -112,6 +134,12 @@
 		margin-bottom: 16px;
 		overflow: hidden;
 		padding: 12px;
+		transition: background-color 0.18s ease;
+	}
+
+	.bohemcars-home-compare__vehicle:hover .bohemcars-home-compare__image,
+	.bohemcars-home-compare__vehicle:focus-visible .bohemcars-home-compare__image {
+		background: #e7f4c6;
 	}
 
 	.bohemcars-home-compare__image img {
@@ -153,7 +181,7 @@
 	.bohemcars-home-compare__price {
 		color: #1c1c1c;
 		font-size: 18px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 24px;
 	}
 
@@ -164,7 +192,7 @@
 		color: #14210f;
 		display: inline-flex;
 		font-size: 14px;
-		font-weight: 800;
+		font-weight: 700;
 		height: 48px;
 		align-items: center;
 		justify-content: center;
@@ -193,9 +221,19 @@
 			margin-bottom: 14px !important;
 		}
 
+		.bohemcars-home-compare__banner {
+			overflow: visible;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			box-shadow: none;
+			padding: 0;
+		}
+
 		.bohemcars-home-compare :global(.title-section h2) {
+			color: #1c1c1c;
 			font-size: 24px;
-			font-weight: 800;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 30px;
 		}
@@ -235,18 +273,18 @@
 		}
 
 		.bohemcars-home-compare__brand {
-			font-size: 11px;
-			line-height: 14px;
+			font-size: 12px;
+			line-height: 16px;
 		}
 
 		.bohemcars-home-compare__title {
-			font-size: 13px;
-			line-height: 17px;
+			font-size: 14px;
+			line-height: 18px;
 		}
 
 		.bohemcars-home-compare__price {
-			font-size: 14px;
-			line-height: 19px;
+			font-size: 16px;
+			line-height: 22px;
 		}
 
 		.bohemcars-home-compare__divider {

@@ -1844,9 +1844,9 @@
 		{
 			"badge": "",
 			"category": "",
-			"color": "Бензинов",
-			"displacement": "Седан",
-			"euroStandard": "Автоматична",
+			"color": "Черен",
+			"displacement": "",
+			"euroStandard": "Евро 6",
 			"features": [
 				"4(5) Врати",
 				"Auto Start Stop function",
@@ -1899,7 +1899,7 @@
 				"Централно заключване",
 				"Шибедах"
 			],
-			"fuel": "340 к.с.",
+			"fuel": "Бензинов",
 			"gearbox": "",
 			"href": "https://bohemcars.mobile.bg/obiava-11778678187411931-bmw-740-zavivasht-zaden-most",
 			"id": "11778678187411931",
@@ -1907,7 +1907,7 @@
 			"location": "обл. София, гр. София",
 			"mileage": "72 000 км",
 			"photoCount": "17",
-			"power": "Евро 6",
+			"power": "340 к.с.",
 			"price": "51 000 €",
 			"priceBgn": "99 747.33 лв.",
 			"production": "юли 2021 г.",

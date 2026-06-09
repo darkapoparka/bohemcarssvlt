@@ -252,39 +252,39 @@ const dashboardMenu = (context: AccountContext) => {
 						}
 					]
 				: [
-						{ href: '/account', icon: dashboardIcon, id: 'dashboard', label: 'Dashboard' },
+						{ href: '/account', icon: dashboardIcon, id: 'dashboard', label: 'Табло' },
 						{
 							href: '/account/listings',
 							icon: listingIcon,
 							id: 'listings',
-							label: 'My Listings'
+							label: 'Моите обяви'
 						},
 						{
 							href: '/account/listings/new',
 							icon: addListingIcon,
 							id: 'add',
-							label: 'Submit Vehicle'
+							label: 'Подай автомобил'
 						},
 						{
 							href: '/account/favorites',
 							icon: favoritesIcon,
 							id: 'favorites',
-							label: 'My Favorites'
+							label: 'Любими'
 						},
-						{ href: '/account/compare', icon: reviewsIcon, id: 'compare', label: 'My Compare' },
+						{ href: '/account/compare', icon: reviewsIcon, id: 'compare', label: 'Сравнения' },
 						{
 							badge: messageCount,
 							href: '/account/messages',
 							icon: messagesIcon,
 							id: 'messages',
-							label: 'Messages'
+							label: 'Съобщения'
 						},
-						{ href: '/account/profile', icon: profileIcon, id: 'profile', label: 'My Profile' },
+						{ href: '/account/profile', icon: profileIcon, id: 'profile', label: 'Профил' },
 						{
 							href: '/account/password',
 							icon: passwordIcon,
 							id: 'password',
-							label: 'Change Password'
+							label: 'Смяна на парола'
 						}
 					];
 
@@ -292,7 +292,7 @@ const dashboardMenu = (context: AccountContext) => {
 	${items
 		.map((item) => menuItem(context, item.id, item.href, item.icon, item.label, item.badge))
 		.join('\n')}
-	${menuItem(context, 'logout', '/', logoutIcon, 'Logout')}
+	${menuItem(context, 'logout', '/', logoutIcon, context.isAdmin ? 'Logout' : 'Изход')}
 </ul>`;
 };
 
@@ -351,27 +351,27 @@ const accountDropdown = (context: AccountContext) => {
 						}
 					]
 				: [
-						{ href: '/account', icon: dashboardIcon, id: 'dashboard', label: 'Account Dashboard' },
+						{ href: '/account', icon: dashboardIcon, id: 'dashboard', label: 'Табло на акаунта' },
 						{
 							href: '/account/listings',
 							icon: listingIcon,
 							id: 'listings',
-							label: 'My Listings'
+							label: 'Моите обяви'
 						},
 						{
 							href: '/account/favorites',
 							icon: favoritesIcon,
 							id: 'favorites',
-							label: 'My Favorites'
+							label: 'Любими'
 						},
-						{ href: '/account/compare', icon: reviewsIcon, id: 'compare', label: 'My Compare' },
-						{ href: '/account/messages', icon: messagesIcon, id: 'messages', label: 'Messages' },
-						{ href: '/account/profile', icon: profileIcon, id: 'profile', label: 'My Profile' }
+						{ href: '/account/compare', icon: reviewsIcon, id: 'compare', label: 'Сравнения' },
+						{ href: '/account/messages', icon: messagesIcon, id: 'messages', label: 'Съобщения' },
+						{ href: '/account/profile', icon: profileIcon, id: 'profile', label: 'Профил' }
 					];
 
 	return `<ul class="core-dropdown__list user-admin-links">
 	${items.map(accountDropdownItem).join('\n')}
-	${accountDropdownItem({ href: '/', icon: logoutIcon, id: 'logout', label: 'Logout' })}
+	${accountDropdownItem({ href: '/', icon: logoutIcon, id: 'logout', label: context.isAdmin ? 'Logout' : 'Изход' })}
 </ul>`;
 };
 
@@ -391,7 +391,7 @@ const applyRoleScopedAccountChrome = (html: string, context: AccountContext) => 
 	if (!context.isAdmin) {
 		return html
 			.replaceAll('href="/admin/inventory/new"', 'href="/account/listings/new"')
-			.replaceAll('Add Listing', 'Submit Vehicle');
+			.replaceAll('Add Listing', 'Подай автомобил');
 	}
 
 	if (context.session.role !== 'agent') return html;

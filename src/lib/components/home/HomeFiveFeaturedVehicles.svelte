@@ -52,8 +52,9 @@
 					<div class="bohemcars-newest-banner__inner">
 						<div class="bohemcars-newest-banner__content">
 							<div class="title-section bohemcars-newest-heading">
-								<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileFeaturedTitle}>
-									{copy.featuredTitle}
+								<h2 class="bohemcars-mobile-title-swap">
+									<span class="bohemcars-title-desktop">{copy.featuredTitle}</span>
+									<span class="bohemcars-title-mobile">{mobileFeaturedTitle}</span>
 								</h2>
 								<HomeSectionCta href="/inventory" label={copy.commonCta} />
 							</div>
@@ -685,6 +686,22 @@
 		text-shadow: none;
 	}
 
+	.bohemcars-newest-heading .bohemcars-title-desktop {
+		color: #ffffff !important;
+	}
+
+	/* Real desktop/mobile heading text (no font-size:0 + ::before hack).
+	   font:inherit beats the template `h2 span` rule (else 16px/400). */
+	.bohemcars-mobile-title-swap .bohemcars-title-desktop,
+	.bohemcars-mobile-title-swap .bohemcars-title-mobile {
+		font: inherit;
+		letter-spacing: inherit;
+	}
+
+	.bohemcars-title-mobile {
+		display: none;
+	}
+
 	.bohemcars-newest-heading :global(.bohemcars-section-cta) {
 		flex: 0 0 auto;
 		border-color: #98bc2a !important;
@@ -695,8 +712,8 @@
 	.bohemcars-newest-heading :global(.bohemcars-section-cta:hover),
 	.bohemcars-newest-heading :global(.bohemcars-section-cta:focus-visible),
 	.bohemcars-newest-heading :global(.bohemcars-section-cta:active) {
-		border-color: #a6c93a !important;
-		background: #a6c93a !important;
+		border-color: #ffffff !important;
+		background: #ffffff !important;
 		color: #14210f !important;
 	}
 
@@ -770,24 +787,32 @@
 	}
 
 	.bohemcars-filter-pill:not(.active) {
-		background: rgba(255, 255, 255, 0.94) !important;
+		background: #f6f7f3 !important;
 	}
 
 	.bohemcars-filter-pill:hover,
 	.bohemcars-filter-pill.active {
-		border-color: rgba(152, 188, 42, 0.54) !important;
+		border-color: #98bc2a !important;
 	}
 
 	.bohemcars-filter-pill:hover:not(.active),
 	.bohemcars-filter-pill:focus-within:not(.active) {
-		background: #f0f8d9 !important;
-		color: #14210f;
+		background: #d9f275 !important;
+		border-color: #d9f275 !important;
+		color: #14210f !important;
 	}
 
 	.bohemcars-filter-pill.active,
-	.bohemcars-filter-pill.active:hover {
+	.bohemcars-filter-pill.active:focus-within {
 		background: #d9f275 !important;
 		border-color: #c6e759 !important;
+		color: #14210f !important;
+	}
+
+	.bohemcars-filter-pill.active:hover {
+		background: #ffffff !important;
+		border-color: #ffffff !important;
+		color: #14210f !important;
 	}
 
 	.bohemcars-filter-pill a {
@@ -963,19 +988,21 @@
 		.bohemcars-mobile-title-swap {
 			width: 100%;
 			margin: 0;
-			font-size: 0;
-			line-height: 1;
+			color: #1c1c1c;
+			font-size: 24px;
+			font-weight: 700;
+			letter-spacing: 0;
+			line-height: 30px;
 			text-align: center;
 			white-space: nowrap;
 		}
 
-		.bohemcars-mobile-title-swap::before {
-			content: attr(data-mobile-title);
-			color: #1c1c1c;
-			font-size: 24px;
-			font-weight: 800;
-			letter-spacing: 0;
-			line-height: 30px;
+		.bohemcars-mobile-title-swap .bohemcars-title-desktop {
+			display: none;
+		}
+
+		.bohemcars-mobile-title-swap .bohemcars-title-mobile {
+			display: inline;
 		}
 
 		.bohemcars-quick-filter-shell,

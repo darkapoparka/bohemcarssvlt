@@ -66,7 +66,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['account/compare', 'Сравни автомобили от Bohemcars', 'customer'],
 			['account/messages', 'Messages', 'customer'],
 			['account/listings', 'My Listings', 'customer'],
-			['account/profile', 'My Profile', 'customer'],
+			['account/profile', 'Профил', 'customer'],
 			['account/password', 'Change Password', 'customer'],
 			['admin', 'Admin Dashboard', 'admin'],
 			['admin/inventory', 'Inventory Management', 'admin'],
@@ -267,7 +267,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			searchParams: new URLSearchParams('view=4')
 		});
 		const compactResponse = auxeroResponse('inventory', {
-			searchParams: new URLSearchParams('layout=classic&view=5')
+			searchParams: new URLSearchParams('layout=classic')
 		});
 		const mapResponse = auxeroResponse('inventory', {
 			searchParams: new URLSearchParams('view=map')
@@ -568,7 +568,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		const html = renderAuxeroTemplate('dashboard.html', { routePath: 'account' });
 		const listings = renderAuxeroTemplate('my-listings.html', { routePath: 'account/listings' });
 
-		expect(html).toContain('Submit Vehicle');
+		expect(html).toContain('Подай автомобил');
 		expect(html).toContain('/sell-your-car');
 		expect(html).toContain('data-bohemcars-submissions-table');
 		expect(html).toContain('Client BMW evaluation');

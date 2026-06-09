@@ -410,6 +410,9 @@ const inventoryUrl = (state: InventoryState, overrides: Record<string, string | 
 	const requestedView = params.get('view')
 		? resolveInventoryView(params.get('view'))
 		: defaultInventoryViewForLayout(targetLayout);
+	if (requestedView === defaultView) {
+		params.delete('view');
+	}
 	if (constrainInventoryViewForLayout(targetLayout, requestedView) !== requestedView) {
 		params.delete('view');
 	}

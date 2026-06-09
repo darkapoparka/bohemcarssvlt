@@ -5,8 +5,11 @@
 </script>
 
 <ImportRequestTemplatePage
-	afterImportHtml={data.afterImportHtml}
-	beforeImportHtml={data.beforeImportHtml}
 	form={data.form}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

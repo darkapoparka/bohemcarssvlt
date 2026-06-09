@@ -11,6 +11,7 @@
 		filter,
 		onModalClose,
 		onModalOpen,
+		fieldDisplayMode = 'label-value',
 		optionLayout = 'auto',
 		presentation = 'popover'
 	}: {
@@ -18,6 +19,7 @@
 		filter: AuxeroInventoryFilter;
 		onModalClose?: (name: string) => void;
 		onModalOpen?: (name: string) => void;
+		fieldDisplayMode?: 'label-value' | 'single-title';
 		optionLayout?: 'auto' | 'grid' | 'list';
 		presentation?: AuxeroInventoryDesktopData['filterPresentation'];
 	} = $props();
@@ -54,6 +56,14 @@
 
 	const fieldValue = $derived(
 		allSelected ? (allSelectedValue ?? filter.placeholder) : filter.selectedSummary
+	);
+	const fieldLabel = $derived(
+		fieldDisplayMode === 'single-title' && !allSelected ? fieldValue : filter.label
+	);
+	const fieldAriaLabel = $derived(
+		fieldDisplayMode === 'single-title' && !allSelected
+			? `${filter.label}: ${fieldValue}`
+			: undefined
 	);
 	const allOptionLabel = $derived(allSelectedValue ?? filter.placeholder);
 	const listClass = $derived(
@@ -217,14 +227,17 @@
 >
 	<button
 		type="button"
-		class="ifp__field"
+		class={['ifp__field', !allSelected && 'ifp__field--selected']}
 		{@attach captureTrigger}
 		aria-haspopup="dialog"
 		aria-expanded={open}
+		aria-label={fieldAriaLabel}
 		onclick={togglePanel}
 	>
-		<span class="ifp__label">{filter.label}</span>
-		<span class={['ifp__value', allSelected && 'ifp__value--placeholder']}>{fieldValue}</span>
+		<span class="ifp__label">{fieldLabel}</span>
+		{#if fieldDisplayMode !== 'single-title'}
+			<span class={['ifp__value', allSelected && 'ifp__value--placeholder']}>{fieldValue}</span>
+		{/if}
 		<span class="ifp__chev"><ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" /></span>
 	</button>
 
@@ -370,7 +383,7 @@
 		transition:
 			background-color 0.16s ease,
 			border-color 0.16s ease,
-			box-shadow 0.16s ease;
+			color 0.16s ease;
 	}
 
 	.ifp__field:hover {
@@ -380,7 +393,7 @@
 
 	.ifp--open .ifp__field {
 		border-color: var(--bc-popover-accent);
-		box-shadow: 0 0 0 3px var(--bc-filter-ring);
+		box-shadow: none;
 	}
 
 	.ifp__field:focus-visible {

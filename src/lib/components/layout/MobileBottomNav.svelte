@@ -311,7 +311,7 @@
 			appearance: none;
 			color: #4c5149;
 			font-size: 11px;
-			font-weight: 750;
+			font-weight: 600;
 			line-height: 14px;
 			cursor: pointer;
 			padding: 4px 0;
@@ -338,8 +338,8 @@
 
 		.mobile-bottom-nav__label {
 			color: inherit;
-			font-size: 10.8px;
-			font-weight: 750;
+			font-size: 12px;
+			font-weight: 600;
 			line-height: 14px;
 		}
 
@@ -348,7 +348,7 @@
 		}
 
 		.mobile-bottom-nav a.mobile-bottom-nav__item--commerce .mobile-bottom-nav__label {
-			font-weight: 750;
+			font-weight: 600;
 		}
 
 		.mobile-bottom-nav a.active,
@@ -371,7 +371,7 @@
 			~ .mobile-bottom-nav
 			.mobile-bottom-nav__menu-trigger
 			.mobile-bottom-nav__label {
-			font-weight: 900;
+			font-weight: 700;
 		}
 
 		.mobile-bottom-nav a:focus-visible,
@@ -572,14 +572,14 @@
 		.mobile-menu-sheet__sell strong {
 			color: #ffffff;
 			font-size: 16px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 20px;
 		}
 
 		.mobile-menu-sheet__sell small {
 			color: #d9f275;
 			font-size: 12px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 15px;
 		}
 
@@ -637,7 +637,7 @@
 			background: #ffffff;
 			color: #14210a;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 18px;
 		}
 
@@ -666,7 +666,7 @@
 			margin: 0;
 			color: #626d7c;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 16px;
 			text-transform: uppercase;

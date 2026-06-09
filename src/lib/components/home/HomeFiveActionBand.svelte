@@ -71,13 +71,13 @@
 		overflow: hidden;
 		padding: 30px 34px;
 		position: relative;
-		transition:
-			background-color 0.2s ease,
-			box-shadow 0.2s ease;
+		transition: color 0.2s ease;
 	}
 
-	.bohemcars-action-card:hover {
+	.bohemcars-action-card:hover,
+	.bohemcars-action-card:focus-visible {
 		box-shadow: none;
+		outline: none;
 		transform: none;
 	}
 
@@ -86,8 +86,9 @@
 		color: #1a2a16;
 	}
 
-	.bohemcars-action-card--import:hover {
-		background: #8fb321;
+	.bohemcars-action-card--import:hover,
+	.bohemcars-action-card--import:focus-visible {
+		background: #98bc2a;
 		color: #1a2a16;
 	}
 
@@ -96,8 +97,9 @@
 		color: #ffffff;
 	}
 
-	.bohemcars-action-card--consultation:hover {
-		background: #14210f;
+	.bohemcars-action-card--consultation:hover,
+	.bohemcars-action-card--consultation:focus-visible {
+		background: #1a2a16;
 		color: #ffffff;
 	}
 
@@ -164,8 +166,10 @@
 		color: #ffffff;
 	}
 
-	.bohemcars-action-card--import:hover .bohemcars-action-card__cta {
-		background: #0d160a;
+	.bohemcars-action-card--import:hover .bohemcars-action-card__cta,
+	.bohemcars-action-card--import:focus-visible .bohemcars-action-card__cta {
+		background: #ffffff;
+		color: #14210f;
 	}
 
 	.bohemcars-action-card--consultation .bohemcars-action-card__cta {
@@ -173,8 +177,10 @@
 		color: #14210f;
 	}
 
-	.bohemcars-action-card--consultation:hover .bohemcars-action-card__cta {
-		background: #c8e85a;
+	.bohemcars-action-card--consultation:hover .bohemcars-action-card__cta,
+	.bohemcars-action-card--consultation:focus-visible .bohemcars-action-card__cta {
+		background: #ffffff;
+		color: #14210f;
 	}
 
 	.bohemcars-action-card__cta :global(svg) {
@@ -193,6 +199,18 @@
 		stroke: #ffffff !important;
 	}
 
+	.bohemcars-action-card--import:hover .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card--import:hover .bohemcars-action-card__cta :global(path),
+	.bohemcars-action-card--import:hover .bohemcars-action-card__cta :global(line),
+	.bohemcars-action-card--import:hover .bohemcars-action-card__cta :global(polyline),
+	.bohemcars-action-card--import:focus-visible .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card--import:focus-visible .bohemcars-action-card__cta :global(path),
+	.bohemcars-action-card--import:focus-visible .bohemcars-action-card__cta :global(line),
+	.bohemcars-action-card--import:focus-visible .bohemcars-action-card__cta :global(polyline) {
+		color: #14210f !important;
+		stroke: #14210f !important;
+	}
+
 	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(svg),
 	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(path),
 	.bohemcars-action-card--consultation .bohemcars-action-card__cta :global(line),
@@ -201,7 +219,8 @@
 		stroke: #14210f !important;
 	}
 
-	.bohemcars-action-card:hover .bohemcars-action-card__cta :global(svg) {
+	.bohemcars-action-card:hover .bohemcars-action-card__cta :global(svg),
+	.bohemcars-action-card:focus-visible .bohemcars-action-card__cta :global(svg) {
 		transform: none;
 	}
 

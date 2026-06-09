@@ -1,27 +1,26 @@
 import type { PageServerLoad } from './$types';
 import { importRequestFormData } from '$lib/auxero/services';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: importSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const renderOptions = {
+		request,
+		routePath: 'import',
+		searchParams: url.searchParams
+	};
+	const pageDocument = renderAuxeroPageDocument(
 		'services-center.html',
-		{
-			request,
-			routePath: 'import',
-			searchParams: url.searchParams
-		},
-		{
-			marker: 'data-bohemcars-services',
-			templateError: 'Import template could not be rendered',
-			slotError: 'Import content slot could not be located'
-		}
+		renderOptions,
+		'Import template could not be rendered'
 	);
 
 	return {
-		afterImportHtml: importSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeImportHtml: importSlot.beforeHtml,
 		form: importRequestFormData(url.searchParams.get('vehicle') ?? ''),
-		pageDocument
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/import')
 	};
 };

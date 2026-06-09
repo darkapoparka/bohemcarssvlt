@@ -425,6 +425,38 @@
 		.bohemcars-about-location__map-link {
 			right: 14px;
 			bottom: 14px;
+			min-height: 44px;
+		}
+
+		/* Mobile typography: align with the even scale + weight cap, larger tap targets. */
+		.bohemcars-about-location__panel-head span {
+			font-weight: 600;
+		}
+
+		.bohemcars-about-location__panel-head strong {
+			font-size: 18px;
+			font-weight: 700;
+		}
+
+		.bohemcars-about-location-card h3 {
+			font-size: 16px;
+			font-weight: 700;
+		}
+
+		.bohemcars-about-location-card a {
+			display: inline-flex;
+			width: fit-content;
+			min-height: 44px;
+			align-items: center;
+		}
+
+		.bohemcars-about-location__action {
+			min-height: 44px;
+			font-weight: 700;
+		}
+
+		.bohemcars-about-location__map-info small {
+			font-size: 12px;
 		}
 	}
 </style>

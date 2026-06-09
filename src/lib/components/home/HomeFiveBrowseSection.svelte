@@ -15,7 +15,7 @@
 	} = $props();
 
 	const mobileBrandTitle = $derived(copy.brandTitle === 'Explore Our Brands' ? 'Brands' : 'Марки');
-	const mobileTypeTitle = $derived(copy.typeTitle === 'Browse By Type' ? 'Body type' : 'Тип купе');
+	const mobileTypeTitle = $derived(copy.typeTitle === 'Browse By Type' ? 'Body type' : 'Категория');
 </script>
 
 <section class="bohemcars-browse-section py-100">
@@ -26,8 +26,9 @@
 					class="title-section bohemcars-section-banner bohemcars-section-banner--brand wow fadeInDown mb-34"
 					data-wow-delay="0.1s"
 				>
-					<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileBrandTitle}>
-						{copy.brandTitle}
+					<h2 class="bohemcars-mobile-title-swap">
+						<span class="bohemcars-title-desktop">{copy.brandTitle}</span>
+						<span class="bohemcars-title-mobile">{mobileBrandTitle}</span>
 					</h2>
 					<HomeSectionCta href="/inventory" label={copy.brandCta} />
 				</div>
@@ -63,8 +64,9 @@
 					class="title-section bohemcars-section-banner bohemcars-section-banner--type wow fadeInDown mb-42"
 					data-wow-delay="0.1s"
 				>
-					<h2 class="bohemcars-mobile-title-swap" data-mobile-title={mobileTypeTitle}>
-						{copy.typeTitle}
+					<h2 class="bohemcars-mobile-title-swap">
+						<span class="bohemcars-title-desktop">{copy.typeTitle}</span>
+						<span class="bohemcars-title-mobile">{mobileTypeTitle}</span>
 					</h2>
 					<a
 						href={resolve('/inventory?view=4')}
@@ -142,6 +144,29 @@
 		margin: 0;
 	}
 
+	/* Real desktop/mobile heading text (no font-size:0 + ::before hack).
+	   font:inherit makes each span take the h2's size, beating the template's
+	   `h2 span` rule (which otherwise forces 16px/400). */
+	.bohemcars-mobile-title-swap .bohemcars-title-desktop,
+	.bohemcars-mobile-title-swap .bohemcars-title-mobile {
+		font: inherit;
+		letter-spacing: inherit;
+	}
+
+	/* The visible heading text lives in these spans, not directly in the h2.
+	   The global `* { color:#1c1c1c }` rule sets the span dark, so the banner's
+	   white h2 color never reaches it — making the heading invisible on the
+	   dark-green desktop banner. The desktop span is display:none at ≤767px,
+	   so forcing it white is desktop-only and safe (mobile span stays dark on
+	   its transparent/white banner). */
+	.bohemcars-title-desktop {
+		color: #ffffff;
+	}
+
+	.bohemcars-title-mobile {
+		display: none;
+	}
+
 	.bohemcars-section-banner--brand {
 		margin-bottom: 26px !important;
 	}
@@ -205,9 +230,19 @@
 
 	.bohemcars-browse-section :global(.out-brand-2:hover),
 	.bohemcars-browse-section :global(.out-brand-2.active) {
-		background-color: var(--bc-surface-hover) !important;
-		border-color: transparent;
+		background-color: #e7f4c6 !important;
+		border-color: #abc86f !important;
 		box-shadow: none !important;
+	}
+
+	.bohemcars-browse-section :global(.out-brand-2:hover .h5),
+	.bohemcars-browse-section :global(.out-brand-2:focus-visible .h5) {
+		color: #1c1c1c !important;
+	}
+
+	.bohemcars-browse-section :global(.out-brand-2:hover .text-muted),
+	.bohemcars-browse-section :global(.out-brand-2:focus-visible .text-muted) {
+		color: #4f5c48 !important;
 	}
 
 	.bohemcars-browse-section :global(.pagination-swiper-outbrand-3) {
@@ -228,8 +263,8 @@
 
 	.bohemcars-type-gallery__cta:hover,
 	.bohemcars-type-gallery__cta:focus-visible {
-		background: #a6c93a !important;
-		border-color: #a6c93a !important;
+		background: #ffffff !important;
+		border-color: #ffffff !important;
 		color: #14210f !important;
 		transform: none !important;
 	}
@@ -276,9 +311,16 @@
 			box-shadow 0.2s ease;
 	}
 
-	.bohemcars-type-card:hover {
-		background-color: var(--bc-surface-hover);
+	.bohemcars-type-card:hover,
+	.bohemcars-type-card:focus-visible {
+		background-color: #e7f4c6;
+		color: #1c1c1c;
 		transform: none;
+	}
+
+	.bohemcars-type-card:hover .bohemcars-type-card__label,
+	.bohemcars-type-card:focus-visible .bohemcars-type-card__label {
+		color: #1c1c1c;
 	}
 
 	.bohemcars-type-card__image {
@@ -352,19 +394,25 @@
 		.bohemcars-mobile-title-swap {
 			width: 100%;
 			margin: 0;
-			font-size: 0;
-			line-height: 1;
+			color: #1c1c1c;
+			font-size: 24px;
+			font-weight: 700;
+			letter-spacing: 0;
+			line-height: 30px;
 			text-align: left;
 			white-space: nowrap;
 		}
 
-		.bohemcars-mobile-title-swap::before {
-			content: attr(data-mobile-title);
-			color: #1c1c1c;
-			font-size: 22px;
+		.bohemcars-mobile-title-swap .bohemcars-title-desktop {
+			display: none;
+		}
+
+		.bohemcars-mobile-title-swap .bohemcars-title-mobile {
+			display: inline;
+			font-size: 24px;
 			font-weight: 700;
+			line-height: 30px;
 			letter-spacing: 0;
-			line-height: 28px;
 		}
 
 		.bohemcars-browse-section :global(.bohemcars-section-cta),
@@ -399,7 +447,7 @@
 		}
 
 		.bohemcars-browse-section :global(.out-brand-2) {
-			min-height: 104px;
+			min-height: 116px;
 			border: 0 !important;
 			border-radius: 8px;
 			background-color: var(--bc-surface) !important;
@@ -407,32 +455,35 @@
 		}
 
 		.bohemcars-brand-logo-frame {
-			height: 34px;
-			margin-bottom: 8px;
-			width: 66px;
+			height: 44px;
+			margin-bottom: 10px;
+			width: 76px;
 		}
 
 		.bohemcars-brand-logo-frame :global(.out-brand--img) {
-			height: 30px !important;
-			max-height: 30px;
-			max-width: 66px;
-			width: 66px !important;
+			height: 40px !important;
+			max-height: 40px;
+			max-width: 76px;
+			width: 76px !important;
 		}
 
 		.bohemcars-browse-section :global(.out-brand-2 .h5) {
 			overflow: hidden;
 			max-width: 100%;
 			margin: 0;
-			font-size: 13px;
-			font-weight: 800;
-			line-height: 16px;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 18px;
+			letter-spacing: -0.1px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
 		.bohemcars-browse-section :global(.out-brand-2 .text-muted) {
-			font-size: 11px;
-			line-height: 14px;
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 16px;
+			white-space: nowrap;
 		}
 
 		.bohemcars-browse-section :global(.pagination-swiper-outbrand-3) {
@@ -477,9 +528,10 @@
 		}
 
 		.bohemcars-type-card__label {
-			font-size: 14px;
-			font-weight: 800;
-			line-height: 18px;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 22px;
+			letter-spacing: -0.2px;
 		}
 	}
 

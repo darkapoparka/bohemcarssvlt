@@ -411,6 +411,40 @@
 		text-overflow: ellipsis !important;
 	}
 
+	/* grid4 is the densest layout (~220px cards). The shared equal-thirds
+	   `flex: 1 1 0` clamps each chip to ~59px there and truncates the labels
+	   ("2019"→"20…", "Бензин"→"Бе…"). At that density only, drop the small icons
+	   and let chips size to their content (wrap as a safety net) so the specs
+	   read in full. grid3 / halfmap keep the tidy single icon-row above. */
+	:global(body.auxero-template-listing-grid4-columns-html) .card-box-style-1 .bohemcars-card-specs {
+		flex-wrap: wrap !important;
+		overflow: visible !important;
+	}
+
+	:global(body.auxero-template-listing-grid4-columns-html)
+		.card-box-style-1
+		.bohemcars-card-specs
+		li {
+		flex: 0 0 auto !important;
+	}
+
+	:global(body.auxero-template-listing-grid4-columns-html)
+		.card-box-style-1
+		.bohemcars-card-specs
+		li
+		img {
+		display: none !important;
+	}
+
+	:global(body.auxero-template-listing-grid4-columns-html)
+		.card-box-style-1
+		.bohemcars-card-specs
+		li
+		span {
+		overflow: visible !important;
+		text-overflow: clip !important;
+	}
+
 	.bohemcars-card-price {
 		align-items: center;
 		display: flex;

@@ -202,8 +202,105 @@
 			padding: 48px 0 64px !important;
 		}
 
+		:global(body.auxero-template-contact-us-html .container.contact-page > .grid) {
+			grid-template-columns: minmax(0, 1fr) !important;
+			gap: 22px !important;
+		}
+
 		:global(body.auxero-template-contact-us-html .contact-page-info) {
 			margin-bottom: 28px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		:global(body.auxero-template-contact-us-html #wrapper),
+		:global(body.auxero-template-contact-us-html section.bg-white.pb-84) {
+			background: #111111 !important;
+			background-color: #111111 !important;
+		}
+
+		:global(body.auxero-template-contact-us-html section.bg-white.pb-84) {
+			min-height: auto;
+			overflow: hidden;
+			padding: 34px 0 92px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html section.bg-white.pb-84::before) {
+			background:
+				linear-gradient(180deg, rgb(0 0 0 / 0.76), rgb(0 0 0 / 0.58)),
+				url('/assets/bohemcars/proof-studio-import-handoff.webp') 58% center / cover;
+		}
+
+		:global(body.auxero-template-contact-us-html section.bg-white.pb-84 > .container) {
+			width: 100% !important;
+			max-width: none !important;
+			padding-right: 14px !important;
+			padding-left: 14px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .container.contact-page > .grid) {
+			width: 100%;
+			min-width: 0;
+			align-items: stretch !important;
+			gap: 14px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info) {
+			width: 100%;
+			max-width: none;
+			margin-bottom: 0;
+			padding-top: 0;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info .text-highlight) {
+			margin-bottom: 7px !important;
+			font-size: 12px !important;
+			line-height: 16px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info h1) {
+			max-width: 330px;
+			margin-bottom: 10px !important;
+			font-size: 30px !important;
+			font-weight: 700 !important;
+			line-height: 36px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info > p) {
+			max-width: 330px;
+			margin-bottom: 20px !important;
+			font-size: 16px !important;
+			line-height: 24px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact) {
+			gap: 10px !important;
+			margin-bottom: 14px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact .icon) {
+			width: 42px !important;
+			min-width: 42px !important;
+			height: 42px !important;
+			flex-basis: 42px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact p),
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact a),
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact span) {
+			font-size: 16px !important;
+			line-height: 22px !important;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info .contact a) {
+			display: inline-flex;
+			width: fit-content;
+			align-items: center;
+			min-height: 44px;
+		}
+
+		:global(body.auxero-template-contact-us-html .contact-page-info-social) {
+			margin-top: 12px !important;
 		}
 	}
 </style>

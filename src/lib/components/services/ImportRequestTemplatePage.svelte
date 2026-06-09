@@ -2,20 +2,32 @@
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { AuxeroServiceFormData } from '$lib/auxero/services';
 	import { importRequestSteps } from '$lib/auxero/services';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
+	import type { HomePageCopy } from '$lib/i18n/messages';
 	import PageBanner from '$lib/components/common/PageBanner.svelte';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import ServiceFormCard from './ServiceFormCard.svelte';
 
 	let {
-		afterImportHtml,
-		beforeImportHtml,
 		form,
-		pageDocument
+		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterImportHtml: string;
-		beforeImportHtml: string;
 		form: AuxeroServiceFormData;
 		pageDocument: AuxeroPageDocument;
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
 
 	const banner = {
@@ -27,7 +39,15 @@
 	};
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeImportHtml} afterHtml={afterImportHtml}>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title="Внос от Канада — Bohemcars"
+>
 	<div class="bohemcars-import-page" data-bohemcars-import>
 		<PageBanner {banner} />
 
@@ -59,7 +79,7 @@
 			</div>
 		</section>
 	</div>
-</AuxeroPageShell>
+</AuxeroPublicShell>
 
 <style>
 	.bohemcars-import-page {
@@ -77,9 +97,9 @@
 	.bohemcars-import-page__eyebrow {
 		margin: 0 0 8px;
 		color: var(--primary);
-		font-size: 13px;
-		font-weight: 800;
-		letter-spacing: 0;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.04em;
 		line-height: 18px;
 		text-transform: uppercase;
 	}
@@ -97,7 +117,7 @@
 	.bohemcars-import-page__copy > p:not(.bohemcars-import-page__eyebrow) {
 		max-width: 650px;
 		margin-bottom: 28px;
-		font-size: 17px;
+		font-size: 16px;
 		line-height: 1.62;
 	}
 
@@ -122,9 +142,10 @@
 		display: block;
 		margin-bottom: 8px;
 		color: var(--primary);
-		font-size: 11px;
-		font-weight: 900;
-		line-height: 14px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		line-height: 16px;
 		text-transform: uppercase;
 	}
 
@@ -132,9 +153,9 @@
 		margin: 0 0 8px;
 		color: #111111;
 		font-size: 18px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
-		line-height: 23px;
+		line-height: 24px;
 	}
 
 	.bohemcars-import-page__steps p {
@@ -155,13 +176,46 @@
 	}
 
 	@media (max-width: 767px) {
+		.bohemcars-import-page :global(.background-light.py-100) {
+			padding-top: 34px !important;
+			padding-bottom: 92px !important;
+		}
+
+		.bohemcars-import-page :global(.container) {
+			width: 100% !important;
+			max-width: none !important;
+			padding-right: 14px !important;
+			padding-left: 14px !important;
+		}
+
+		.bohemcars-import-page :global(.grid.grid-cols-2) {
+			grid-template-columns: minmax(0, 1fr) !important;
+			gap: 14px !important;
+		}
+
 		.bohemcars-import-page__copy h2 {
 			font-size: 30px;
+			font-weight: 700;
+			line-height: 34px;
 		}
 
 		.bohemcars-import-page__copy > p:not(.bohemcars-import-page__eyebrow) {
-			font-size: 15px;
+			margin-bottom: 18px;
+			font-size: 16px;
 			line-height: 1.55;
+		}
+
+		.bohemcars-import-page__steps {
+			gap: 8px;
+		}
+
+		.bohemcars-import-page__steps article {
+			padding: 14px;
+		}
+
+		.bohemcars-import-page__steps h3 {
+			font-size: 16px;
+			line-height: 22px;
 		}
 	}
 </style>

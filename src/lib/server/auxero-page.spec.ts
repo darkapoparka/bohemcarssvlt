@@ -411,7 +411,7 @@ describe('splitAuxeroDocument', () => {
 
 		expect(split?.beforeHtml).toContain('Account Dashboard');
 		expect(split?.beforeHtml).toContain('data-bohemcars-dashboard-stat="submissions"');
-		expect(split?.sectionHtml).toContain('Recent Messages');
+		expect(split?.sectionHtml).toContain('Скорошни съобщения');
 		expect(split?.sectionHtml).toContain('Bohemcars Sales');
 		expect(split?.sectionHtml).not.toContain('Great Experience!');
 		expect(split?.afterHtml).toContain('LoginModal');

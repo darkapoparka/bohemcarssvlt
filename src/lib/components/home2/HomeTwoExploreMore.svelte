@@ -345,10 +345,17 @@
 	}
 
 	.home2-browse-cta:hover .home2-browse-cta__arrow {
-		background: #98bc2a;
+		background: #ffffff;
+		color: var(--bc-hover-accent);
 	}
 
 	.home2-browse-cta__arrow :global(svg) {
+		stroke: currentColor !important;
+	}
+
+	.home2-browse-cta:hover .home2-browse-cta__arrow :global(svg),
+	.home2-browse-cta:hover .home2-browse-cta__arrow :global(svg *) {
+		color: currentColor !important;
 		stroke: currentColor !important;
 	}
 

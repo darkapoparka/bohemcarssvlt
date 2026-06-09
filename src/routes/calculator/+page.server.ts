@@ -4,30 +4,29 @@ import {
 	auxeroCalculatorData,
 	auxeroCalculatorFaqs
 } from '$lib/auxero/calculator';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: calculatorSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const renderOptions = {
+		request,
+		routePath: 'calculator',
+		searchParams: url.searchParams
+	};
+	const pageDocument = renderAuxeroPageDocument(
 		'calculator.html',
-		{
-			request,
-			routePath: 'calculator',
-			searchParams: url.searchParams
-		},
-		{
-			marker: 'data-bohemcars-calculator-page',
-			templateError: 'Calculator template could not be rendered',
-			slotError: 'Calculator page slot could not be located'
-		}
+		renderOptions,
+		'Calculator template could not be rendered'
 	);
 
 	return {
-		afterCalculatorHtml: calculatorSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeCalculatorHtml: calculatorSlot.beforeHtml,
 		budgetLinks: auxeroCalculatorBudgetLinks,
 		calculator: auxeroCalculatorData,
 		faqs: auxeroCalculatorFaqs,
-		pageDocument
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/calculator')
 	};
 };

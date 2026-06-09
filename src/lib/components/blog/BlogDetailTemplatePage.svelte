@@ -78,3 +78,23 @@
 		</section>
 	</div>
 </AuxeroPageShell>
+
+<style>
+	@media (max-width: 767.98px) {
+		/* The final breadcrumb crumb repeats the full post title (already shown as the
+		   <h1> below) and wraps across the hero image as a grey "ghost". Hide it and its
+		   preceding chevron on phones so the breadcrumb stays a clean "Начало › Съвети". */
+		:global([data-bohemcars-blog-detail-page] .blog-details-banner .breadcrumb li:last-child),
+		:global(
+			[data-bohemcars-blog-detail-page] .blog-details-banner .breadcrumb li:nth-last-child(2)
+		) {
+			display: none !important;
+		}
+
+		/* Tame the desktop-sized hero title (40px) to the mobile display scale. */
+		:global([data-bohemcars-blog-detail-page] .blog-details-banner .content h1) {
+			font-size: 30px !important;
+			line-height: 38px !important;
+		}
+	}
+</style>

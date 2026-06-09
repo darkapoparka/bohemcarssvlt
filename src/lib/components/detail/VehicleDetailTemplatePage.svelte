@@ -153,13 +153,15 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle:hover) {
-		background: #d9f275;
-		border-color: #d9f275;
+		background: var(--bc-hover-accent);
+		border-color: var(--bc-hover-accent);
+		color: var(--bc-hover-accent-ink);
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover) {
-		background: #98bc2a;
-		border-color: #98bc2a;
+		background: var(--bc-hover-accent);
+		border-color: var(--bc-hover-accent);
+		color: var(--bc-hover-accent-ink);
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare svg path) {
@@ -168,7 +170,7 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover svg path) {
-		stroke: #1c1c1c !important;
+		stroke: var(--bc-hover-accent-ink) !important;
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite svg path) {
@@ -177,7 +179,7 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite:hover svg path) {
-		stroke: #1c1c1c !important;
+		stroke: var(--bc-hover-accent-ink) !important;
 	}
 
 	:global(
@@ -197,7 +199,7 @@
 			svg
 			path
 	) {
-		fill: #1c1c1c !important;
+		fill: var(--bc-hover-accent-ink) !important;
 	}
 
 	:global(.bohemcars-pdp-desktop .bohemcars-pdp-gallery-main) {
@@ -330,25 +332,60 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4) {
+		align-items: stretch;
 		background: #eef1ed;
 		border: 1px solid #e1e5dc;
 		border-radius: 8px;
-		display: inline-flex;
-		gap: 4px;
+		border-bottom: 1px solid #e1e5dc;
+		display: flex;
+		gap: 6px;
 		padding: 6px;
+		width: 100%;
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li) {
 		border-radius: 8px;
+		flex: 1 1 0;
 		padding: 9px 10px;
+		text-align: center;
+		transition:
+			background-color 160ms ease,
+			box-shadow 160ms ease;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li:not(:last-child)) {
+		margin-right: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li::before) {
+		display: none;
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active) {
-		background: #d9f275;
+		background: #d9f275 !important;
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active span) {
 		color: #1c1c1c !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li:not(.active):hover),
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li:not(.active):focus-within) {
+			background: rgba(217, 242, 117, 0.52) !important;
+			box-shadow: inset 0 0 0 1px rgba(152, 188, 42, 0.34) !important;
+		}
+
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li:not(.active):hover span),
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li:not(.active):focus-within span) {
+			color: #14210f !important;
+		}
+
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active:hover),
+		:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4 li.active:focus-within) {
+			background: #cfee50 !important;
+			box-shadow: inset 0 0 0 1px rgba(152, 188, 42, 0.22) !important;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .bohemcars-pdp-tab-description) {

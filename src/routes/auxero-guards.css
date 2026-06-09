@@ -623,6 +623,14 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 		max-height: none !important;
 	}
 
+	/* The mobile dashboard header intentionally shows the desktop (light-background,
+	   dark-text) logo above. The template's separate `.logo-mobile` (a dark-background,
+	   white-text asset) was ALSO rendering — two overlapping logos, the source of the
+	   broken "BOHEM … CARS + arrow" jumble. Hide the duplicate. */
+	.dashboard-container .dashboard-content > .header .logo-mobile {
+		display: none !important;
+	}
+
 	.dashboard-container .dashboard-content > .header .header-right,
 	.dashboard-container .dashboard-content > .header .mobile-button {
 		display: none !important;
@@ -1591,8 +1599,9 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 .bohemcars-type-gallery__cta:hover,
 .bohemcars-type-gallery__cta:focus-visible,
 .bohemcars-type-gallery__cta:active {
-	background-color: #a6c93a !important;
-	border-color: #a6c93a !important;
+	background-color: #ffffff !important;
+	border-color: #ffffff !important;
+	color: #14210f !important;
 }
 
 .btn.btn-primary-3.bohemcars-section-cta svg,
@@ -1600,9 +1609,13 @@ body.auxero-template-listing-details-3-html .progress-wrap {
 	display: none !important;
 }
 
+/* White is correct only for the circular icon-button variant (white glyph on
+   a green circle). The plain `.view-details` text link lives on light cards
+   (home) where white = invisible; it sets its own ink per component, and the
+   inventory template re-darkens its own copy below. Scope white to the circle
+   variant only. */
 .bohemcars-card-actions .bohemcars-card-detail-circle,
-.bohemcars-card-actions .view-details.bohemcars-card-detail-circle,
-.bohemcars-card-actions .view-details {
+.bohemcars-card-actions .view-details.bohemcars-card-detail-circle {
 	color: #ffffff !important;
 }
 
@@ -1660,4 +1673,770 @@ body.bohemcars-inventory-template
 	.view-details
 	img {
 	display: inline-block !important;
+}
+
+/* ── Desktop hover system ──────────────────────────────────────────────
+   Keep desktop controls responsive without Auxero's older sliding fills,
+   lift transforms, zooms, or glow/shadow-heavy feedback. */
+@media (min-width: 992px) {
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(
+			.btn,
+			button,
+			[role='button'],
+			.header-action-btn,
+			.icon-button,
+			.core-dropdown__button,
+			.bohemcars-favorite,
+			.heart,
+			.car-box,
+			.menu-tab-style2,
+			.filter-select-dropdown__button,
+			.view-details,
+			.compare-details,
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.dash-icon-button,
+			.dash-user-button,
+			.dash-primary-button,
+			.dash-secondary-button
+		) {
+		transition:
+			background-color var(--bc-motion-hover),
+			border-color var(--bc-motion-hover),
+			color var(--bc-motion-hover),
+			filter var(--bc-motion-hover),
+			opacity var(--bc-motion-hover) !important;
+	}
+
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(
+			.btn,
+			button,
+			[role='button'],
+			.header-action-btn,
+			.icon-button,
+			.core-dropdown__button,
+			.bohemcars-favorite,
+			.heart,
+			.car-box,
+			.menu-tab-style2,
+			.filter-select-dropdown__button,
+			.compare-details,
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.dash-icon-button,
+			.dash-user-button,
+			.dash-primary-button,
+			.dash-secondary-button
+		):where(:hover, :focus-visible, :active) {
+		box-shadow: none !important;
+		transform: none !important;
+	}
+
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(.btn, .btn-line-hover, .hover-fill-white, .hover-stroke-white)::before,
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(.btn, .btn-line-hover, .hover-fill-white, .hover-stroke-white)::after {
+		display: none !important;
+		width: 0 !important;
+		height: 0 !important;
+		background: transparent !important;
+		content: none !important;
+		opacity: 0 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+
+	:where(body[class*='auxero-template-'], .search-modal)
+		:where(
+			.btn-primary,
+			.btn-primary-3,
+			.bg-sign-in,
+			button[type='submit'],
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.bohemcars-sell-form button[type='submit'],
+			.search-form-listing button,
+			.search-form-contact button
+		):where(:hover, :focus-visible, :active),
+	body.dashboard :where(.dash-primary-button):where(:hover, :focus-visible, :active),
+	.site-header :where(.header-pill--solid):where(:hover, :focus-visible),
+	.search-modal :where(.search-modal__form .btn):where(:hover, :focus-visible),
+	.bohemcars-home-two-shell
+		:where(
+			button[type='submit'],
+			a[class*='cta'],
+			a[class*='action'],
+			.home2-browse-cta,
+			.home2-header__action
+		):where(:hover, :focus-visible) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+	}
+
+	:where(body[class*='auxero-template-'], body.dashboard, .bohemcars-home-two-shell)
+		:where(
+			.btn-line-style-2,
+			.btn-line-hover,
+			.btn-filter,
+			.core-dropdown__button,
+			.filter-select-dropdown__button,
+			.car-box,
+			.menu-tab-style2,
+			.dashboard-toggle-btn,
+			.dash-secondary-button,
+			.dash-user-button
+		):where(:hover, :focus-visible, :active),
+	.site-header :where(.header-pill--outline):where(:hover, :focus-visible),
+	.search-modal :where(.search-modal__close):where(:hover, :focus-visible),
+	.bohemcars-home-two-shell :where(summary, .home2-search__tabs a):where(:hover, :focus-visible) {
+		border-color: var(--bc-hover-border) !important;
+		background: var(--bc-hover-surface) !important;
+		background-color: var(--bc-hover-surface) !important;
+		color: var(--bc-hover-quiet-ink) !important;
+	}
+
+	:where(body[class*='auxero-template-'], body.dashboard, .site-header, .bohemcars-home-two-shell)
+		:where(.header-action-btn, .icon-button, .bohemcars-favorite, .heart, .dash-icon-button):where(
+			:hover,
+			:focus-visible,
+			:active
+		) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+		opacity: 1 !important;
+	}
+
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(
+			.btn,
+			button,
+			[role='button'],
+			.header-action-btn,
+			.icon-button,
+			.bohemcars-favorite,
+			.heart,
+			.car-box,
+			.menu-tab-style2,
+			.filter-select-dropdown__button,
+			.compare-details,
+			.dash-icon-button,
+			.dash-primary-button,
+			.dash-secondary-button
+		):where(:hover, :focus-visible, :active)
+		:where(svg, svg *) {
+		color: currentColor !important;
+		stroke: currentColor !important;
+	}
+
+	:where(body[class*='auxero-template-'], body.dashboard, .site-header, .bohemcars-home-two-shell)
+		:where(.bohemcars-favorite, .heart, .btn-icon-circle):where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: none !important;
+		stroke: currentColor !important;
+	}
+
+	:where(body[class*='auxero-template-'], body.dashboard, .site-header, .bohemcars-home-two-shell)
+		:where(.bohemcars-favorite.is-active, .heart.is-active):where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: currentColor !important;
+		stroke: currentColor !important;
+	}
+
+	:where(body[class*='auxero-template-'], .bohemcars-home-two-shell)
+		:where(
+			.card-box__title a,
+			.view-details,
+			.bohemcars-card-price__finance-link,
+			.sale-agent-title,
+			.post-title a,
+			.breadcrumb a
+		):where(:hover, :focus-visible),
+	.site-header :where(.site-nav__link):where(:hover, :focus-visible),
+	.bohemcars-home-two-shell
+		:where(a:not([class*='cta']):not([class*='action'])):where(:hover, :focus-visible) {
+		background: transparent !important;
+		color: var(--bc-hover-accent) !important;
+		text-decoration: none !important;
+	}
+
+	:where(body[class*='auxero-template-'])
+		:where(.view-details, .bohemcars-card-price__finance-link):where(:hover, :focus-visible)
+		img {
+		filter: brightness(0) saturate(100%) invert(45%) sepia(45%) saturate(962%) hue-rotate(38deg)
+			brightness(92%) contrast(89%);
+		opacity: 0.95;
+	}
+
+	:where(body[class*='auxero-template-'])
+		:where(.compare-details.open-modal, .compare-details.btn):where(
+			:hover,
+			:focus-visible,
+			:active
+		) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+	}
+
+	:where(body[class*='auxero-template-'])
+		:where(.compare-details.open-modal, .compare-details.btn):where(:hover, :focus-visible, :active)
+		:where(svg, svg *) {
+		color: currentColor !important;
+		stroke: currentColor !important;
+	}
+}
+
+/* ── Project-wide desktop control hover contract ───────────────────────
+   Auxero's source stylesheet uses sliding pseudo fills (`effect-line-*`,
+   `hover-fill-*`, `btn-line-*`) and broad `transition: all` rules. Bohemcars
+   desktop controls use tokenized color feedback instead: primary actions deepen
+   to green/white, quieter controls get a soft green-grey fill, and controls do
+   not lift, zoom, glow, or animate pseudo-elements. */
+@media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+	body
+		:where(
+			a[href],
+			a.btn,
+			button,
+			[role='button'],
+			summary,
+			.open-modal,
+			.btn-filter,
+			.btn-clear-items,
+			.btn-icon-circle,
+			.btn-submit,
+			.close-modal,
+			.compare-item-remove,
+			.compare-details,
+			.view-details,
+			.bohemcars-favorite,
+			.heart,
+			.action,
+			.cart-item__edit,
+			.cart-item__remove,
+			.core-dropdown__button,
+			.search-modal__close,
+			.search-modal__submit,
+			.header-action-btn,
+			.icon-button,
+			.dashboard-toggle-btn,
+			.dash-icon-button,
+			.dash-user-button,
+			.dash-primary-button,
+			.dash-secondary-button,
+			.dash-action,
+			.dash-message-contact,
+			.message-contact,
+			.home2-header__action,
+			.home2-browse-cta,
+			.home2-shortcut,
+			.home2-budget-tile,
+			.home2-brand-grid a,
+			.home2-body-grid a,
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.bohemcars-service-card__cta,
+			.bohemcars-service-card__media,
+			.bohemcars-page-banner__actions .btn,
+			.bohemcars-card-price__finance-link,
+			.effect-svg-hover,
+			.bohemcars-top-contact-link,
+			[class*='transition-all'],
+			a[class*='cta' i],
+			button[class*='cta' i],
+			[role='button'][class*='cta' i],
+			a[class*='toggle' i],
+			button[class*='toggle' i],
+			[role='button'][class*='toggle' i],
+			a[class*='filter' i],
+			button[class*='filter' i],
+			[role='button'][class*='filter' i],
+			a[class*='submit' i],
+			button[class*='submit' i],
+			[role='button'][class*='submit' i],
+			a[class*='close' i],
+			button[class*='close' i],
+			[role='button'][class*='close' i],
+			a[class*='remove' i],
+			button[class*='remove' i],
+			[role='button'][class*='remove' i],
+			a[class*='edit' i],
+			button[class*='edit' i],
+			[role='button'][class*='edit' i]
+		) {
+		transition:
+			background-color var(--bc-motion-hover),
+			border-color var(--bc-motion-hover),
+			color var(--bc-motion-hover),
+			fill var(--bc-motion-hover),
+			stroke var(--bc-motion-hover),
+			filter var(--bc-motion-hover),
+			opacity var(--bc-motion-hover) !important;
+		transition-property:
+			background-color, border-color, color, fill, stroke, filter, opacity !important;
+		transition-duration: 140ms !important;
+		transition-timing-function: ease !important;
+	}
+
+	body
+		:where(
+			.btn,
+			.btn-line,
+			.btn-line-1,
+			.btn-line-primary,
+			.btn-line-white,
+			.btn-line-hover,
+			.btn-line-style-2,
+			.btn-line-blur,
+			.btn-blur,
+			.btn-white,
+			.btn-primary,
+			.btn-primary-2,
+			.btn-primary-3,
+			.btn-primary-4,
+			.effect-line-white,
+			.effect-line-primary,
+			.hover-fill-primary,
+			.hover-fill-white,
+			.hover-fill-hover,
+			.hover-stroke-white,
+			.hover-stroke-hover,
+			.compare-details
+		)::before,
+	body
+		:where(
+			.btn,
+			.btn-line,
+			.btn-line-1,
+			.btn-line-primary,
+			.btn-line-white,
+			.btn-line-hover,
+			.btn-line-style-2,
+			.btn-line-blur,
+			.btn-blur,
+			.btn-white,
+			.btn-primary,
+			.btn-primary-2,
+			.btn-primary-3,
+			.btn-primary-4,
+			.effect-line-white,
+			.effect-line-primary,
+			.hover-fill-primary,
+			.hover-fill-white,
+			.hover-fill-hover,
+			.hover-stroke-white,
+			.hover-stroke-hover,
+			.compare-details
+		)::after {
+		display: none !important;
+		width: 0 !important;
+		height: 0 !important;
+		background: transparent !important;
+		content: none !important;
+		opacity: 0 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+
+	body
+		:where(
+			a[href],
+			a.btn,
+			button,
+			[role='button'],
+			summary,
+			.open-modal,
+			.btn-filter,
+			.btn-clear-items,
+			.btn-icon-circle,
+			.btn-submit,
+			.close-modal,
+			.compare-item-remove,
+			.compare-details,
+			.bohemcars-favorite,
+			.heart,
+			.action,
+			.cart-item__edit,
+			.cart-item__remove,
+			.core-dropdown__button,
+			.search-modal__close,
+			.search-modal__submit,
+			.header-action-btn,
+			.icon-button,
+			.dashboard-toggle-btn,
+			.dash-icon-button,
+			.dash-user-button,
+			.dash-primary-button,
+			.dash-secondary-button,
+			.dash-action,
+			.dash-message-contact,
+			.message-contact,
+			.home2-header__action,
+			.home2-browse-cta,
+			.home2-shortcut,
+			.home2-budget-tile,
+			.home2-brand-grid a,
+			.home2-body-grid a,
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.bohemcars-service-card__cta,
+			.bohemcars-service-card__media,
+			.bohemcars-page-banner__actions .btn,
+			.effect-svg-hover,
+			.bohemcars-top-contact-link,
+			[class*='transition-all'],
+			a[class*='cta' i],
+			button[class*='cta' i],
+			[role='button'][class*='cta' i],
+			a[class*='toggle' i],
+			button[class*='toggle' i],
+			[role='button'][class*='toggle' i],
+			a[class*='filter' i],
+			button[class*='filter' i],
+			[role='button'][class*='filter' i],
+			a[class*='submit' i],
+			button[class*='submit' i],
+			[role='button'][class*='submit' i],
+			a[class*='close' i],
+			button[class*='close' i],
+			[role='button'][class*='close' i],
+			a[class*='remove' i],
+			button[class*='remove' i],
+			[role='button'][class*='remove' i],
+			a[class*='edit' i],
+			button[class*='edit' i],
+			[role='button'][class*='edit' i]
+		):where(:hover, :focus-visible, :active) {
+		box-shadow: none !important;
+		transform: none !important;
+	}
+
+	body
+		:where(
+			.btn-primary,
+			.btn-primary-2,
+			.btn-primary-3,
+			.btn-primary-4,
+			.bg-sign-in,
+			.btn-submit,
+			.search-modal__submit,
+			.close-modal,
+			.search-modal__close,
+			.compare-item-remove,
+			button[type='submit'],
+			.btn-clear-items,
+			.open-modal.compare-details,
+			.compare-details.btn,
+			.btn-icon-circle,
+			.bohemcars-favorite,
+			.heart,
+			.header-action-btn,
+			.icon-button,
+			.dash-primary-button,
+			.dash-icon-button,
+			.home2-header__action,
+			.home2-browse-cta,
+			.bohemcars-section-cta,
+			.bohemcars-type-gallery__cta,
+			.bohemcars-service-card__cta,
+			.bohemcars-page-banner__actions .btn.btn-primary,
+			a[class*='cta' i],
+			button[class*='cta' i],
+			[role='button'][class*='cta' i],
+			a[class*='submit' i],
+			button[class*='submit' i],
+			[role='button'][class*='submit' i],
+			a[class*='close' i],
+			button[class*='close' i],
+			[role='button'][class*='close' i],
+			a[class*='remove' i],
+			button[class*='remove' i],
+			[role='button'][class*='remove' i],
+			a[class*='edit' i],
+			button[class*='edit' i],
+			[role='button'][class*='edit' i]
+		):where(:hover, :focus-visible, :active) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+		opacity: 1 !important;
+	}
+
+	body
+		:where(
+			.btn-line,
+			.btn-line-1,
+			.btn-line-primary,
+			.btn-line-white,
+			.btn-line-hover,
+			.btn-line-style-2,
+			.btn-line-blur,
+			.btn-blur,
+			.btn-white,
+			.btn-filter,
+			.core-dropdown__button,
+			.dashboard-toggle-btn,
+			.dash-secondary-button,
+			.dash-user-button,
+			.dash-action,
+			.dash-message-contact,
+			.message-contact,
+			.cart-item__edit,
+			.cart-item__remove,
+			.action,
+			summary,
+			.home2-shortcut,
+			.home2-budget-tile,
+			.home2-brand-grid a,
+			.home2-body-grid a
+		):where(:hover, :focus-visible, :active) {
+		border-color: var(--bc-hover-border) !important;
+		background: var(--bc-hover-surface) !important;
+		background-color: var(--bc-hover-surface) !important;
+		color: var(--bc-hover-quiet-ink) !important;
+		opacity: 1 !important;
+	}
+
+	body
+		:where(
+			.btn-icon-circle,
+			.hover-fill-primary,
+			.hover-fill-white,
+			.hover-fill-hover,
+			.hover-stroke-white,
+			.hover-stroke-hover
+		):where(:hover, :focus-visible, :active) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+		opacity: 1 !important;
+	}
+
+	body
+		:where(
+			a.btn,
+			button,
+			[role='button'],
+			.open-modal,
+			.btn-icon-circle,
+			.btn-submit,
+			.close-modal,
+			.compare-item-remove,
+			.compare-details,
+			.bohemcars-favorite,
+			.heart,
+			.action,
+			.cart-item__edit,
+			.cart-item__remove,
+			.search-modal__close,
+			.search-modal__submit,
+			.header-action-btn,
+			.icon-button,
+			.dashboard-toggle-btn,
+			.dash-icon-button,
+			.dash-primary-button,
+			.dash-secondary-button,
+			.dash-action,
+			.bohemcars-service-card__cta,
+			.bohemcars-page-banner__actions .btn
+		):where(:hover, :focus-visible, :active)
+		:where(svg, svg *, path) {
+		color: currentColor !important;
+		stroke: currentColor !important;
+	}
+
+	body
+		:where(.bohemcars-favorite, .heart, .hover-stroke-white, .hover-stroke-hover)
+		:where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: none !important;
+		stroke: currentColor !important;
+	}
+
+	body
+		:where(.hover-fill-primary, .hover-fill-white, .hover-fill-hover)
+		:where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: currentColor !important;
+		stroke: none !important;
+	}
+
+	body
+		:where(.bohemcars-favorite.is-active, .heart.is-active):where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: currentColor !important;
+		stroke: currentColor !important;
+	}
+
+	body :where(.header-action-btn.header-action-icon)::before,
+	body :where(.header-action-btn.header-action-icon)::after {
+		box-shadow: none !important;
+		transform: none !important;
+		transition:
+			background-color var(--bc-motion-hover),
+			border-color var(--bc-motion-hover),
+			color var(--bc-motion-hover),
+			opacity var(--bc-motion-hover) !important;
+		transition-property: background-color, border-color, color, opacity !important;
+		transition-duration: 140ms !important;
+		transition-timing-function: ease !important;
+	}
+
+	body :where(.header-action-btn.header-action-icon):where(:hover, :focus-visible, :active)::after {
+		border-color: var(--bc-hover-accent-ink) !important;
+		background: var(--bc-hover-accent-soft) !important;
+		color: var(--bc-hover-quiet-ink) !important;
+	}
+
+	body
+		:where(.header-action-btn.header-action-icon):where(:hover, :focus-visible, :active)
+		:where(svg, svg *, path) {
+		color: var(--bc-hover-accent-ink) !important;
+		stroke: var(--bc-hover-accent-ink) !important;
+	}
+
+	body
+		:where(
+			.view-details,
+			.card-box__title a,
+			.bohemcars-card-price__finance-link,
+			.sale-agent-title,
+			.post-title a,
+			.breadcrumb a
+		):where(:hover, :focus-visible) {
+		background: transparent !important;
+		color: var(--bc-hover-accent) !important;
+		text-decoration: none !important;
+	}
+
+	body
+		:where(.view-details, .bohemcars-card-price__finance-link):where(:hover, :focus-visible)
+		img {
+		filter: brightness(0) saturate(100%) invert(45%) sepia(45%) saturate(962%) hue-rotate(38deg)
+			brightness(92%) contrast(89%) !important;
+		opacity: 0.95 !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(.bohemcars-pdp-desktop .title-section .btn-icon-circle):where(
+			:hover,
+			:focus-visible,
+			:active
+		) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(
+			.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare,
+			.bohemcars-pdp-desktop .title-section .bohemcars-favorite
+		):where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: none !important;
+		stroke: var(--bc-hover-accent-ink) !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(
+			.bohemcars-pdp-desktop
+				.title-section
+				.btn-icon-circle:not(.bohemcars-favorite):not(.bohemcars-pdp-compare)
+		):where(:hover, :focus-visible, :active)
+		:where(svg path) {
+		fill: var(--bc-hover-accent-ink) !important;
+		stroke: none !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(.bohemcars-pdp-desktop .listing-details-item--button):where(
+			:hover,
+			:focus-visible,
+			:active
+		) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(.bohemcars-pdp-desktop .swiper-listing-details-main .swiper-button) {
+		transform: translateY(-50%) !important;
+		transition:
+			background-color var(--bc-motion-hover),
+			border-color var(--bc-motion-hover),
+			color var(--bc-motion-hover),
+			fill var(--bc-motion-hover),
+			stroke var(--bc-motion-hover),
+			opacity var(--bc-motion-hover) !important;
+		transition-property: background-color, border-color, color, fill, stroke, opacity !important;
+		transition-duration: 140ms !important;
+		transition-timing-function: ease !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(.bohemcars-pdp-desktop .swiper-listing-details-main .swiper-button):where(
+			:hover,
+			:focus-visible,
+			:active
+		) {
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		background-color: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
+		transform: translateY(-50%) !important;
+	}
+
+	body.auxero-template-listing-details-3-html
+		:where(.bohemcars-pdp-desktop .swiper-listing-details-main .swiper-button):where(
+			:hover,
+			:focus-visible,
+			:active
+		)
+		:where(svg path) {
+		fill: var(--bc-hover-accent-ink) !important;
+		stroke: none !important;
+	}
 }

@@ -75,7 +75,7 @@ describe('account-dashboard-state', () => {
 			searchParams: new URLSearchParams('role=admin')
 		});
 
-		expect(customerRecent.heading).toBe('Recent Messages');
+		expect(customerRecent.heading).toBe('Скорошни съобщения');
 		expect(customerRecent.items.length).toBeGreaterThan(0);
 		expect(customerRecent.items[0]?.name).toContain('Bohemcars');
 		expect(customerRecent.actions.map((action) => action.id)).toContain('open-messages');
@@ -118,7 +118,7 @@ describe('account-dashboard-state', () => {
 	});
 
 	it('formats dashboard dates with deterministic fallback labels', () => {
-		expect(formatDashboardDate('2026-05-27T08:00:00.000Z')).toBe('May 27, 2026');
+		expect(formatDashboardDate('2026-05-27T08:00:00.000Z')).toBe('27.05.2026 г.');
 		expect(formatDashboardDate('not-a-date', 'Fallback')).toBe('Fallback');
 	});
 });

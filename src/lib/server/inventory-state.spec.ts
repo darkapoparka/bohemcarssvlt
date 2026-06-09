@@ -13,7 +13,7 @@ import {
 describe('inventory-state', () => {
 	it('resolves Auxero inventory views and source templates', () => {
 		expect(defaultInventoryViewForLayout('dashboard')).toBe('4');
-		expect(defaultInventoryViewForLayout('classic')).toBe('4');
+		expect(defaultInventoryViewForLayout('classic')).toBe('5');
 		expect(resolveInventoryView(null)).toBe('4');
 		expect(resolveInventoryView('3')).toBe('3');
 		expect(resolveInventoryView('dense')).toBe('4');
@@ -48,6 +48,15 @@ describe('inventory-state', () => {
 		expect(state.view).toBe('4');
 		expect(compactState.layout).toBe('dashboard');
 		expect(compactState.view).toBe('4');
+	});
+
+	it('defaults the classic inventory grid to the compact five-card view', () => {
+		const state = getInventoryState('listing-grid4-columns.html', {
+			searchParams: new URLSearchParams('layout=classic')
+		});
+
+		expect(state.layout).toBe('classic');
+		expect(state.view).toBe('5');
 	});
 
 	it('resolves inventory filter presentation separately from layout mode aliases', () => {

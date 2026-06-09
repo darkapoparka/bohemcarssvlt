@@ -66,3 +66,116 @@
 		</a>
 	</div>
 </div>
+
+<style>
+	@media (max-width: 767.98px) {
+		[data-bohemcars-calculator] {
+			display: grid !important;
+			grid-template-columns: minmax(0, 1fr) !important;
+			gap: 10px !important;
+			min-width: 0;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box) {
+			width: 100%;
+			min-width: 0;
+			border-color: transparent !important;
+			border-radius: 8px !important;
+			background: #eef3e9 !important;
+			padding: 17px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child) {
+			border-color: #111111 !important;
+			background: #111111 !important;
+			color: #ffffff !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child p),
+		[data-bohemcars-calculator] :global(.border-box:last-child span),
+		[data-bohemcars-calculator] :global(.border-box:last-child .h3),
+		[data-bohemcars-calculator] :global(.border-box:last-child .h4),
+		[data-bohemcars-calculator] :global(.border-box:last-child .h5),
+		[data-bohemcars-calculator] :global(.border-box:last-child .h7) {
+			color: inherit !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child .text-secondary) {
+			color: rgb(255 255 255 / 0.68) !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child .text-56),
+		[data-bohemcars-calculator]
+			:global(.border-box:last-child [data-bohemcars-calc-output='total']) {
+			color: #d9f275 !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child .divider) {
+			background: rgb(255 255 255 / 0.18) !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box > .h3) {
+			margin-bottom: 14px !important;
+			font-size: 22px !important;
+			font-weight: 700 !important;
+			line-height: 28px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.calculate-form) {
+			width: 100%;
+			min-width: 0;
+		}
+
+		[data-bohemcars-calculator] :global(.calculate-form > .grid) {
+			gap: 11px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.calculate-form p),
+		[data-bohemcars-calculator] :global(.h7) {
+			font-size: 14px !important;
+			font-weight: 600 !important;
+			line-height: 18px !important;
+		}
+
+		[data-bohemcars-calculator] :global(input) {
+			width: 100%;
+			height: 48px !important;
+			border-radius: 8px !important;
+			font-size: 16px !important;
+			line-height: 22px !important;
+			padding: 0 13px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.text-56) {
+			font-size: 36px !important;
+			line-height: 42px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.h5) {
+			margin-bottom: 18px !important;
+			font-size: 14px !important;
+			font-weight: 500 !important;
+			line-height: 20px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.divider) {
+			margin-bottom: 18px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.mb-28.flex.flex-col) {
+			gap: 11px !important;
+			margin-bottom: 18px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.btn) {
+			min-height: 50px;
+			border-radius: 8px !important;
+		}
+
+		[data-bohemcars-calculator] :global(.border-box:last-child .btn) {
+			border-color: #d9f275 !important;
+			background: #d9f275 !important;
+			color: #111111 !important;
+		}
+	}
+</style>

@@ -50,17 +50,25 @@
 		padding-top: 42px !important;
 	}
 
+	/* The large page title already appears as the content heading below; the topbar
+	   context header repeated it verbatim. Hide the duplicate — the role toggle
+	   (Автомобили / Табло) beside it stays. */
+	:global(body.dashboard .bohemcars-dashboard-context-heading) {
+		display: none !important;
+	}
+
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type) {
 		gap: 18px !important;
 		margin-bottom: 18px !important;
 	}
 
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type .dashboard-cart) {
-		min-height: 132px;
+		min-height: 0;
+		align-items: center !important;
 		border-color: var(--bc-dashboard-border) !important;
 		border-radius: var(--bc-dashboard-card-radius) !important;
 		box-shadow: none !important;
-		padding: 21px 24px !important;
+		padding: 20px 22px !important;
 		transition:
 			background-color var(--bc-motion-standard),
 			border-color var(--bc-motion-standard) !important;
@@ -83,9 +91,10 @@
 	}
 
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type .dashboard-cart .h3) {
-		font-size: 32px;
-		font-weight: 500;
-		line-height: 38px;
+		margin-top: 6px;
+		font-size: 34px;
+		font-weight: 800;
+		line-height: 40px;
 	}
 
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type .dashboard-cart .icon) {

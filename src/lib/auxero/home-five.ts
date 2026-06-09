@@ -1334,7 +1334,9 @@ export function homeFiveHeroDataFromVehicles(
 				name: 'bodyType',
 				options: selectOptions(
 					locale,
-					vehicles.map((vehicle) => vehicle.bodyType).filter(Boolean),
+					vehicles
+						.map((vehicle) => vehicle.bodyType)
+						.filter((bodyType) => Boolean(bodyType) && bodyType !== 'Car'),
 					'bodyTypes'
 				),
 				title: t.filters.bodyType

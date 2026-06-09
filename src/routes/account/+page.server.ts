@@ -29,8 +29,8 @@ export const load: PageServerLoad = ({ request, url }) => {
 		auxeroFullPage: true,
 		beforeRecentHtml: recentSlot.beforeHtml,
 		dashboard: getAccountDashboardPageData('dashboard.html', renderOptions, {
-			subtitle: 'Saved cars, listing submissions, and open Bohemcars conversations.',
-			title: 'Account Dashboard'
+			subtitle: 'Запазени автомобили, подадени обяви и активни разговори с Bohemcars.',
+			title: 'Табло на акаунта'
 		}),
 		pageDocument
 	};

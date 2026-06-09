@@ -186,8 +186,8 @@
 	.home2-header__menu summary:hover,
 	.home2-header__action:focus-visible,
 	.home2-header__menu summary:focus-visible {
-		background: rgb(255 255 255 / 0.14);
-		color: #b9ee39;
+		background: var(--bc-hover-accent);
+		color: var(--bc-hover-accent-ink);
 		outline: 0;
 	}
 
@@ -204,15 +204,15 @@
 
 	.home2-header__action:hover span,
 	.home2-header__menu summary:hover span {
-		color: #b9ee39;
+		color: var(--bc-hover-accent-ink);
 	}
 
 	.home2-header__action:hover :global(svg),
 	.home2-header__menu summary:hover :global(svg),
 	.home2-header__action:hover :global(svg *),
 	.home2-header__menu summary:hover :global(svg *) {
-		color: #b9ee39 !important;
-		stroke: #b9ee39 !important;
+		color: var(--bc-hover-accent-ink) !important;
+		stroke: var(--bc-hover-accent-ink) !important;
 	}
 
 	.home2-header__menu {

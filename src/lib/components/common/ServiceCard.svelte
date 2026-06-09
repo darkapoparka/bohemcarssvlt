@@ -155,7 +155,7 @@
 		padding: 0 14px;
 		gap: 8px;
 		color: #ffffff !important;
-		font-size: 13px;
+		font-size: 14px;
 		font-weight: 700;
 		line-height: 1;
 		text-decoration: none;
@@ -177,10 +177,10 @@
 	.bohemcars-service-card__cta:hover,
 	.bohemcars-service-card__cta:focus-visible,
 	.bohemcars-service-card:hover .bohemcars-service-card__cta {
-		--service-card-cta-icon-color: #1c1c1c;
+		--service-card-cta-icon-color: var(--bc-hover-accent-ink);
 
-		background: #98bc2a;
-		color: #1c1c1c !important;
+		background: var(--bc-hover-accent);
+		color: var(--bc-hover-accent-ink) !important;
 		text-decoration: none;
 	}
 
@@ -222,6 +222,10 @@
 		.bohemcars-service-card__description {
 			-webkit-line-clamp: initial;
 			line-clamp: initial;
+		}
+
+		.bohemcars-service-card__cta {
+			min-height: 44px;
 		}
 	}
 </style>

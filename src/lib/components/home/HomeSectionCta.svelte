@@ -22,8 +22,9 @@
 
 	.bohemcars-section-cta:hover,
 	.bohemcars-section-cta:focus-visible {
-		border-color: #a6c93a !important;
-		background-color: #a6c93a !important;
+		border-color: #ffffff !important;
+		background: #ffffff !important;
+		background-color: #ffffff !important;
 		color: #14210f !important;
 		transform: none !important;
 	}

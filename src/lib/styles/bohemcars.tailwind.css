@@ -46,6 +46,14 @@
 	--color-bc-control: var(--bc-control);
 	--color-bc-control-hover: var(--bc-control-hover);
 	--color-bc-control-active: var(--bc-control-active);
+	--color-bc-hover-surface: var(--bc-hover-surface);
+	--color-bc-hover-surface-strong: var(--bc-hover-surface-strong);
+	--color-bc-hover-border: var(--bc-hover-border);
+	--color-bc-hover-accent: var(--bc-hover-accent);
+	--color-bc-hover-accent-strong: var(--bc-hover-accent-strong);
+	--color-bc-hover-accent-soft: var(--bc-hover-accent-soft);
+	--color-bc-hover-accent-ink: var(--bc-hover-accent-ink);
+	--color-bc-hover-quiet-ink: var(--bc-hover-quiet-ink);
 	--color-bc-white: var(--bc-white);
 	--color-bc-accent: var(--bc-accent);
 	--color-bc-accent-hover: var(--bc-accent-hover);

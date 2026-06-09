@@ -10,9 +10,9 @@
 	--dash-heading: var(--bc-dashboard-heading);
 	--dash-muted: var(--bc-dashboard-muted);
 	--dash-primary: var(--bc-accent);
-	--dash-primary-hover: var(--bc-accent-hover);
+	--dash-primary-hover: var(--bc-hover-accent);
 	--dash-primary-soft: var(--bc-accent-soft);
-	--dash-primary-contrast: var(--bc-accent-contrast);
+	--dash-primary-contrast: var(--bc-hover-accent-ink);
 	--dash-success: var(--bc-success);
 	--dash-warning: var(--bc-warning);
 	--dash-danger: var(--bc-danger);
@@ -203,7 +203,8 @@
 
 .dash-icon-button:hover {
 	border-color: var(--dash-primary);
-	color: var(--dash-primary);
+	background: var(--bc-hover-accent);
+	color: var(--bc-hover-accent-ink);
 }
 
 .dash-user-button {
@@ -249,8 +250,9 @@
 }
 
 .dash-secondary-button:hover {
-	border-color: var(--dash-primary);
-	color: var(--dash-primary);
+	border-color: var(--bc-hover-border);
+	background: var(--bc-hover-surface);
+	color: var(--bc-hover-quiet-ink);
 }
 
 .dash-mobile-nav {
@@ -543,9 +545,9 @@
 }
 
 .dash-action:hover {
-	border-color: var(--dash-primary);
-	background: var(--dash-primary-soft);
-	color: var(--dash-primary);
+	border-color: var(--bc-hover-border);
+	background: var(--bc-hover-surface);
+	color: var(--bc-hover-quiet-ink);
 }
 
 .dash-action--danger:hover {

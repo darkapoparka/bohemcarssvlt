@@ -209,7 +209,7 @@
 	.bohemcars-review-more-card__eyebrow {
 		color: #d9f275;
 		font-size: 12px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 16px;
 		text-transform: uppercase;
@@ -247,7 +247,7 @@
 
 	.bohemcars-review-more-card__meta {
 		color: rgb(255 255 255 / 0.72);
-		font-size: 13px;
+		font-size: 14px;
 		font-weight: 500;
 		line-height: 18px;
 	}
@@ -286,7 +286,7 @@
 		.bohemcars-home-reviews :global(.title-section h2) {
 			color: #1c1c1c;
 			font-size: 24px;
-			font-weight: 800;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 30px;
 			text-align: left;
@@ -344,7 +344,7 @@
 		}
 
 		.bohemcars-review-stars::before {
-			font-size: 15px;
+			font-size: 16px;
 			letter-spacing: 0;
 			line-height: 18px;
 		}
@@ -392,7 +392,7 @@
 			margin-top: 12px;
 			color: #d9f275;
 			font-size: 12px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 15px;
 			text-transform: uppercase;
 		}
@@ -436,7 +436,7 @@
 
 		.bohemcars-review-more-card__stars {
 			color: #98bc2a;
-			font-size: 13px;
+			font-size: 14px;
 			letter-spacing: 1px;
 			line-height: 16px;
 			white-space: nowrap;
@@ -445,13 +445,13 @@
 		.bohemcars-review-more-card__title {
 			margin-top: 12px;
 			color: #ffffff;
-			font-size: 21px;
-			line-height: 26px;
+			font-size: 22px;
+			line-height: 28px;
 		}
 
 		.bohemcars-review-more-card__meta {
 			color: rgb(255 255 255 / 0.72);
-			font-size: 13px;
+			font-size: 14px;
 			line-height: 18px;
 		}
 
@@ -466,7 +466,7 @@
 			background: #d9f275;
 			color: #14210f;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 20px;
 			padding: 7px 8px 7px 14px;
 		}

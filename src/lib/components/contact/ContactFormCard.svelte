@@ -42,6 +42,8 @@
 
 <style>
 	.contact-page-form {
+		width: 100%;
+		min-width: 0;
 		height: fit-content;
 		border: 1px solid var(--bc-border);
 		background: var(--bc-surface) !important;
@@ -93,7 +95,57 @@
 
 	@media (max-width: 767px) {
 		.contact-page-form {
-			padding: 24px 18px;
+			border-radius: 8px;
+			padding: 17px;
+		}
+
+		.contact-page-form > :global(.h3) {
+			font-size: 24px;
+			line-height: 30px;
+		}
+
+		.contact-page-form > :global(.text-body-style-2) {
+			margin-bottom: 16px !important;
+			font-size: 14px !important;
+			line-height: 22px !important;
+		}
+
+		.contact-page-form :global(.bohemcars-contact-form > div) {
+			grid-template-columns: minmax(0, 1fr) !important;
+			gap: 12px !important;
+		}
+
+		.contact-page-form :global(.bohemcars-contact-form > div > div) {
+			grid-column: auto !important;
+			min-width: 0;
+		}
+
+		.contact-page-form :global(.bohemcars-contact-form p) {
+			font-size: 14px !important;
+			font-weight: 600 !important;
+			line-height: 18px !important;
+		}
+
+		.contact-page-form :global(input),
+		.contact-page-form :global(textarea) {
+			width: 100%;
+			font-size: 16px !important;
+			line-height: 22px !important;
+		}
+
+		.contact-page-form :global(input) {
+			height: 48px;
+			border-radius: 8px;
+		}
+
+		.contact-page-form :global(textarea) {
+			min-height: 96px;
+			border-radius: 8px;
+		}
+
+		.contact-page-form :global(.bohemcars-contact-form button) {
+			min-height: 50px;
+			border-radius: 8px;
 		}
 	}
 </style>

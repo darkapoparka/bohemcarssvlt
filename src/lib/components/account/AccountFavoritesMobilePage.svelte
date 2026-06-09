@@ -193,12 +193,12 @@
 
 	.bohemcars-favorites-mobile__hero p {
 		margin: 0;
-		letter-spacing: 0;
+		letter-spacing: 0.04em;
 		overflow: hidden;
 		color: #d9f275;
 		font-size: 12px;
-		font-weight: 900;
-		line-height: 15px;
+		font-weight: 600;
+		line-height: 16px;
 		text-overflow: ellipsis;
 		text-transform: uppercase;
 		white-space: nowrap;
@@ -215,7 +215,7 @@
 		padding: 0 16px;
 		color: #111111;
 		font-size: 14px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 18px;
 	}
 
@@ -246,7 +246,7 @@
 		box-shadow: none !important;
 		color: #111111;
 		font-size: 16px;
-		font-weight: 800;
+		font-weight: 500;
 		line-height: 22px;
 		outline: 0;
 		padding: 0 !important;
@@ -310,8 +310,8 @@
 		background: #8fbd24;
 		padding: 0 8px;
 		color: #ffffff;
-		font-size: 10px;
-		font-weight: 900;
+		font-size: 12px;
+		font-weight: 700;
 		line-height: 24px;
 		text-transform: uppercase;
 	}
@@ -333,9 +333,10 @@
 	.bohemcars-favorites-mobile-card__body p {
 		margin: 0;
 		color: #728093;
-		font-size: 11px;
-		font-weight: 900;
-		line-height: 13px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		line-height: 16px;
 		text-transform: uppercase;
 	}
 
@@ -352,7 +353,7 @@
 		overflow: hidden;
 		color: #101010;
 		font-size: 16px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 20px;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
@@ -369,8 +370,8 @@
 		margin-bottom: 7px;
 		color: #8fbd24;
 		font-size: 18px;
-		font-weight: 900;
-		line-height: 21px;
+		font-weight: 700;
+		line-height: 22px;
 	}
 
 	.bohemcars-favorites-mobile-card__body ul {
@@ -394,9 +395,9 @@
 		background: #ffffff;
 		padding: 0 5px;
 		color: #4b5563;
-		font-size: 11px;
-		font-weight: 800;
-		line-height: 13px;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 16px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
@@ -410,9 +411,9 @@
 		border-radius: 8px;
 		background: #ffffff;
 		color: #111111;
-		font-size: 12px;
-		font-weight: 900;
-		line-height: 15px;
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 16px;
 	}
 
 	.bohemcars-favorites-mobile__empty {
@@ -434,15 +435,15 @@
 
 	.bohemcars-favorites-mobile__empty h2 {
 		color: #111111;
-		font-size: 21px;
-		font-weight: 900;
+		font-size: 22px;
+		font-weight: 700;
 		line-height: 26px;
 	}
 
 	.bohemcars-favorites-mobile__empty p {
 		color: #5f6b5d;
 		font-size: 14px;
-		font-weight: 700;
+		font-weight: 500;
 		line-height: 20px;
 	}
 
@@ -456,7 +457,7 @@
 		padding: 0 13px;
 		color: #ffffff;
 		font-size: 14px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 18px;
 	}
 
@@ -471,7 +472,7 @@
 		padding: 0 13px;
 		color: #ffffff;
 		font-size: 14px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 18px;
 	}
 

@@ -166,12 +166,50 @@
 	};
 	const activeMobileQuickLinks = $derived.by(() => quickLinksForMode(mobileMode));
 	let mobileSearchOpen = $state(false);
-	const openMobileSearch = () => {
+	let mobileSearchTrigger: HTMLElement | null = null;
+	const openMobileSearch = (event?: Event) => {
+		mobileSearchTrigger = (event?.currentTarget as HTMLElement) ?? null;
 		mobileSearchOpen = true;
 	};
 	const closeMobileSearch = () => {
 		mobileSearchOpen = false;
+		mobileSearchTrigger?.focus?.();
 	};
+
+	// Drawer a11y: move focus in, trap Tab, close on Escape, restore focus to the trigger.
+	$effect(() => {
+		if (!mobileSearchOpen) return;
+		const panel = document.getElementById('bohemcars-mobile-search-panel');
+		if (!panel) return;
+		const focusable = () =>
+			Array.from(
+				panel.querySelectorAll<HTMLElement>(
+					'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+				)
+			).filter((el) => el.offsetParent !== null);
+		focusable()[0]?.focus();
+		const onKeydown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				closeMobileSearch();
+				return;
+			}
+			if (event.key !== 'Tab') return;
+			const items = focusable();
+			if (!items.length) return;
+			const first = items[0];
+			const last = items[items.length - 1];
+			if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		};
+		document.addEventListener('keydown', onKeydown);
+		return () => document.removeEventListener('keydown', onKeydown);
+	});
 	const modeAllText = (action: { mode: string; secondaryLabel?: string }) =>
 		action.mode === 'buy' && hero
 			? `${isEnglish ? 'All' : 'Всички'} ${hero.totalMatches} ${hero.searchSubmitSuffix}`
@@ -881,7 +919,7 @@
 		max-width: 100%;
 		overflow: hidden;
 		color: #5f5f5f;
-		font-size: 11px;
+		font-size: 12px;
 		line-height: 1.15;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -908,7 +946,7 @@
 
 	.search-cars__intent-field span {
 		color: #5f5f5f;
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 700;
 		line-height: 1.15;
 	}
@@ -1079,7 +1117,7 @@
 			background: transparent;
 			box-shadow: none;
 			color: #111111;
-			font-weight: 800;
+			font-weight: 700;
 		}
 
 		/* Showroom intent tabs: one full rail, with the active third as the selected segment. */
@@ -1232,7 +1270,7 @@
 			padding: 0 14px;
 			color: #14210f !important;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 16px;
 			text-decoration: none;
 			transition: background-color 0.18s ease;
@@ -1332,8 +1370,8 @@
 
 		.bohemcars-mobile-location-sheet__panel header p {
 			color: #8fbd24;
-			font-size: 11px;
-			font-weight: 900;
+			font-size: 12px;
+			font-weight: 700;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
@@ -1341,7 +1379,7 @@
 		.bohemcars-mobile-location-sheet__panel header h2 {
 			color: #111111;
 			font-size: 20px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 26px;
 		}
 
@@ -1453,7 +1491,7 @@
 			padding: 7px 11px;
 			color: #111111;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 14px;
 			box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
 		}
@@ -1468,8 +1506,8 @@
 
 		.bohemcars-mobile-location-address span {
 			color: #6b7280;
-			font-size: 11px;
-			font-weight: 900;
+			font-size: 12px;
+			font-weight: 700;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
@@ -1477,15 +1515,15 @@
 		.bohemcars-mobile-location-address strong {
 			color: #111111;
 			font-size: 16px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 21px;
 		}
 
 		.bohemcars-mobile-location-address p {
 			margin: 0;
 			color: #4b5563;
-			font-size: 13px;
-			font-weight: 800;
+			font-size: 14px;
+			font-weight: 700;
 			line-height: 18px;
 		}
 
@@ -1506,7 +1544,7 @@
 			padding: 0 12px;
 			color: #ffffff;
 			font-size: 14px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 18px;
 			text-align: center;
 			text-decoration: none;
@@ -1576,6 +1614,12 @@
 			transform: translateY(0) !important;
 		}
 
+		/* Lock background scroll while a hero drawer is open (search + location). */
+		:global(body:has(.bohemcars-mobile-search-sheet.is-open)),
+		:global(body:has(.bohemcars-mobile-location-toggle:checked)) {
+			overflow: hidden;
+		}
+
 		.bohemcars-mobile-search-sheet__handle {
 			justify-self: center;
 			width: 42px;
@@ -1599,8 +1643,8 @@
 
 		.bohemcars-mobile-search-sheet__panel header p {
 			color: #8fbd24;
-			font-size: 11px;
-			font-weight: 900;
+			font-size: 12px;
+			font-weight: 700;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
@@ -1608,7 +1652,7 @@
 		.bohemcars-mobile-search-sheet__panel header h2 {
 			color: #111111;
 			font-size: 20px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 26px;
 		}
 
@@ -1678,8 +1722,8 @@
 		.bohemcars-mobile-search-sheet__group p {
 			margin: 0;
 			color: #728093;
-			font-size: 11px;
-			font-weight: 900;
+			font-size: 12px;
+			font-weight: 700;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
@@ -1711,7 +1755,7 @@
 			padding: 0 12px;
 			color: #111111;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 18px;
 			text-decoration: none;
 		}
@@ -1765,7 +1809,7 @@
 			padding: 12px 13px;
 			color: #4b5563;
 			font-size: 14px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 20px;
 		}
 
@@ -1787,7 +1831,7 @@
 			padding: 0 12px;
 			color: #111111;
 			font-size: 14px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 18px;
 			text-align: center;
 			text-decoration: none;

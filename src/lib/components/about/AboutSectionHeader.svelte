@@ -44,7 +44,7 @@
 		}
 
 		.bohemcars-about-banner h2 {
-			font-size: 21px;
+			font-size: 22px;
 		}
 
 		.bohemcars-about-banner p {

@@ -20,7 +20,7 @@
 		</a>
 	</div>
 
-	<div class="bohemcars-dashboard-overview__summary" aria-label="Dashboard summary">
+	<div class="bohemcars-dashboard-overview__summary" aria-label="Обобщение на таблото">
 		{#each recent.summary as item (item.id)}
 			<div
 				class={[
@@ -35,28 +35,10 @@
 		{/each}
 	</div>
 
-	<div class="bohemcars-dashboard-actions" aria-label="Quick dashboard actions">
-		{#each recent.actions as action (action.id)}
-			<a
-				href={resolve(action.href)}
-				class="bohemcars-dashboard-action"
-				data-bohemcars-dashboard-action={action.id}
-			>
-				<span class="bohemcars-dashboard-action__icon">
-					<img src={action.icon} alt="" aria-hidden="true" />
-				</span>
-				<span class="bohemcars-dashboard-action__copy">
-					<span class="bohemcars-dashboard-action__label">{action.label}</span>
-					<span class="bohemcars-dashboard-action__meta">{action.meta}</span>
-				</span>
-			</a>
-		{/each}
-	</div>
-
 	<div class="bohemcars-dashboard-recent">
 		<div class="bohemcars-dashboard-recent__header">
-			<p class="h5 mb-0">Priority queue</p>
-			<p class="text-secondary mb-0 text-sm">{recent.items.length} latest</p>
+			<p class="h5 mb-0">Приоритетна опашка</p>
+			<p class="text-secondary mb-0 text-sm">{recent.items.length} последни</p>
 		</div>
 
 		<div class="bohemcars-dashboard-recent__list">
@@ -91,9 +73,9 @@
 				</article>
 			{:else}
 				<div class="comment-box bohemcars-dashboard-recent-card is-empty">
-					<p class="h5 mb-8">Nothing needs attention right now</p>
+					<p class="h5 mb-8">В момента няма нищо за внимание</p>
 					<p class="h7 line-height-28 mb-0">
-						New leads, messages, and listing updates will appear here as soon as they arrive.
+						Нови запитвания, съобщения и обяви ще се появят тук веднага щом постъпят.
 					</p>
 				</div>
 			{/each}
@@ -217,12 +199,6 @@
 		border: 1px solid #e3eadc;
 		border-radius: 9px;
 		background: #ffffff;
-	}
-
-	.bohemcars-dashboard-action__icon img {
-		width: 20px;
-		height: 20px;
-		object-fit: contain;
 	}
 
 	.bohemcars-dashboard-action__copy {

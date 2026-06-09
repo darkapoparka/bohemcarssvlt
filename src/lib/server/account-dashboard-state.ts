@@ -38,12 +38,12 @@ export const accountAvatarByRole: Record<BohemcarsRole, string> = {
 	customer: '/assets/bohemcars/team/avatar-inspection.jpg'
 };
 
-export const formatDashboardDate = (value: string, fallback = 'Today') => {
+export const formatDashboardDate = (value: string, fallback = 'Днес') => {
 	const date = new Date(value);
 
 	if (Number.isNaN(date.getTime())) return fallback;
 
-	return date.toLocaleDateString('en-US', {
+	return date.toLocaleDateString('bg-BG', {
 		day: 'numeric',
 		month: 'short',
 		year: 'numeric'
@@ -83,9 +83,9 @@ const inquiryStatusLabel = (status: string) => {
 
 const messageStatusLabel = (status: string) => {
 	const labels: Record<string, string> = {
-		closed: 'Closed',
-		open: 'Open',
-		read: 'Read'
+		closed: 'Затворен',
+		open: 'Отворен',
+		read: 'Прочетен'
 	};
 
 	return labels[status] ?? status;
@@ -93,10 +93,10 @@ const messageStatusLabel = (status: string) => {
 
 const submissionStatusLabel = (status: string) => {
 	const labels: Record<string, string> = {
-		draft: 'Draft',
-		published: 'Published',
-		reviewing: 'Reviewing',
-		submitted: 'Submitted'
+		draft: 'Чернова',
+		published: 'Публикувана',
+		reviewing: 'В преглед',
+		submitted: 'Подадена'
 	};
 
 	return labels[status] ?? status;
@@ -197,28 +197,28 @@ export const accountDashboardStatsData = (context: AccountContext): DashboardSta
 					href: '/account/listings',
 					icon: '/assets/images/dashboard/car.svg',
 					id: 'submissions',
-					label: 'Submitted Listings',
+					label: 'Подадени обяви',
 					value: String(submissionCount)
 				},
 				{
 					href: '/account/messages',
 					icon: '/assets/images/dashboard/clockCountdown.svg',
 					id: 'messages',
-					label: 'Open Conversations',
+					label: 'Отворени разговори',
 					value: String(messageCount)
 				},
 				{
 					href: '/account/favorites',
 					icon: '/assets/images/dashboard/star.svg',
 					id: 'favorites',
-					label: 'My Favorites',
+					label: 'Любими',
 					value: String(garage?.favorites.length ?? 0)
 				},
 				{
 					href: '/account/compare',
 					icon: '/assets/images/dashboard/chats.svg',
 					id: 'compare',
-					label: 'Compare List',
+					label: 'За сравнение',
 					value: String(garage?.compare.length ?? 0)
 				}
 			];
@@ -328,7 +328,7 @@ export const accountDashboardRecentData = (context: AccountContext): AuxeroDashb
 		name: message.threadId === 'bohemcars-sales' ? 'Bohemcars Sales' : message.authorName,
 		title: message.vehicleSlug
 			? (vehicles.find((vehicle) => vehicle.slug === message.vehicleSlug)?.title ??
-				'Bohemcars vehicle')
+				'Автомобил на Bohemcars')
 			: message.threadId
 	}));
 
@@ -338,37 +338,37 @@ export const accountDashboardRecentData = (context: AccountContext): AuxeroDashb
 				href: '/account/messages',
 				icon: '/assets/images/dashboard/chats.svg',
 				id: 'open-messages',
-				label: 'Open messages',
-				meta: countLabel(openMessages.length, 'open thread')
+				label: 'Отвори съобщенията',
+				meta: countLabel(openMessages.length, 'отворена тема', 'отворени теми')
 			},
 			{
 				href: '/account/listings',
 				icon: '/assets/images/dashboard/car.svg',
 				id: 'view-listings',
-				label: 'My listings',
-				meta: countLabel(submissions.length, 'submission')
+				label: 'Моите обяви',
+				meta: countLabel(submissions.length, 'обява', 'обяви')
 			},
 			{
 				href: '/account/favorites',
 				icon: '/assets/images/dashboard/star.svg',
 				id: 'view-favorites',
-				label: 'Favorites',
-				meta: countLabel(garage?.favorites.length ?? 0, 'saved car')
+				label: 'Любими',
+				meta: countLabel(garage?.favorites.length ?? 0, 'запазен автомобил', 'запазени автомобила')
 			}
 		],
-		heading: 'Recent Messages',
-		intro: 'Pick up the latest Bohemcars conversation and keep saved vehicles moving.',
+		heading: 'Скорошни съобщения',
+		intro: 'Продължи последния разговор с Bohemcars и движи запазените автомобили напред.',
 		items: items.map((item, index) => {
 			const message = messages[index];
 
 			return {
-				actionLabel: 'Open thread',
+				actionLabel: 'Отвори темата',
 				avatar: accountAvatarByRole[item.avatarRole],
 				body: item.body,
-				dateLabel: formatDashboardDate(item.date, `May ${20 + index}, 2026`),
+				dateLabel: formatDashboardDate(item.date, `${20 + index} май 2026`),
 				href: '/account/messages',
 				id: message?.id ?? `${item.name}-${item.title}-${index}`,
-				metaLabel: message?.threadId ?? 'Bohemcars sales',
+				metaLabel: message?.threadId ?? 'Продажби Bohemcars',
 				name: item.name,
 				statusLabel: messageStatusLabel(message?.status ?? 'open'),
 				title: item.title
@@ -378,25 +378,25 @@ export const accountDashboardRecentData = (context: AccountContext): AuxeroDashb
 			href: '/account/messages',
 			icon: '/assets/images/dashboard/chats.svg',
 			id: 'primary-open-messages',
-			label: 'Open messages',
-			meta: countLabel(openMessages.length, 'open thread')
+			label: 'Отвори съобщенията',
+			meta: countLabel(openMessages.length, 'отворена тема', 'отворени теми')
 		},
 		summary: [
 			{
 				id: 'open-threads',
-				label: 'Open threads',
+				label: 'Отворени теми',
 				tone: openMessages.length > 0 ? 'attention' : 'neutral',
 				value: String(openMessages.length)
 			},
 			{
 				id: 'saved-cars',
-				label: 'Saved cars',
+				label: 'Запазени автомобили',
 				tone: 'calm',
 				value: String(garage?.favorites.length ?? 0)
 			},
 			{
 				id: 'latest-status',
-				label: 'Latest status',
+				label: 'Последен статус',
 				tone: 'neutral',
 				value: submissionStatusLabel(submissions[0]?.status ?? 'submitted')
 			}
@@ -424,11 +424,7 @@ export const getAccountDashboardPageData = (
 	return {
 		isAdmin: context.isAdmin,
 		recent: accountDashboardRecentData(context),
-		roleLabel: context.isAdmin
-			? context.session.role === 'agent'
-				? 'Agent'
-				: 'Admin'
-			: 'Customer',
+		roleLabel: context.isAdmin ? (context.session.role === 'agent' ? 'Agent' : 'Admin') : 'Клиент',
 		sessionEmail: context.session.email,
 		sessionName: context.session.name,
 		stats: accountDashboardStatsData(context),

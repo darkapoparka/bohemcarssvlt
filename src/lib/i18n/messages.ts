@@ -403,7 +403,7 @@ export const messages: Record<Locale, PublicMessages> = {
 				allPrice: 'Всички цени',
 				allStatuses: 'Всички статуси',
 				allTransmissions: 'Всички скорости',
-				bodyType: 'Тип купе',
+				bodyType: 'Категория',
 				fuelType: 'Гориво',
 				maxPrice: 'Макс. цена',
 				selectBrand: 'Избери марка',

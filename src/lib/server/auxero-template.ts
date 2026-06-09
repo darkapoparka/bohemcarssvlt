@@ -534,16 +534,16 @@ function rewritePrimaryNavigation(html: string, templateFile: string) {
 }
 
 const accountDashboardTitles: Record<string, string> = {
-	add: 'Submit Vehicle',
-	compare: 'My Compare',
-	dashboard: 'Account Dashboard',
-	favorites: 'Saved Vehicles',
-	inquiries: 'Inquiries',
-	listings: 'My Vehicles',
-	messages: 'Messages',
-	password: 'Profile Security',
-	profile: 'Contact Details',
-	reviews: 'My Reviews'
+	add: 'Подай автомобил',
+	compare: 'Сравнения',
+	dashboard: 'Табло на акаунта',
+	favorites: 'Запазени автомобили',
+	inquiries: 'Запитвания',
+	listings: 'Моите автомобили',
+	messages: 'Съобщения',
+	password: 'Сигурност на профила',
+	profile: 'Данни за контакт',
+	reviews: 'Отзиви'
 };
 
 const adminDashboardTitles: Record<string, string> = {
@@ -562,14 +562,14 @@ function dashboardContextHeaderMarkup(templateFile: string, options: AuxeroRende
 	const context = accountContext(templateFile, options);
 	const titleMap = context.isAdmin ? adminDashboardTitles : accountDashboardTitles;
 	const title = titleMap[context.active] ?? titleMap.dashboard;
-	const eyebrow = context.isAdmin ? 'Admin dashboard' : 'Client dashboard';
-	const dashboardLabel = context.isAdmin ? 'Admin Dashboard' : 'Client Dashboard';
+	const eyebrow = context.isAdmin ? 'Admin dashboard' : 'Клиентско табло';
+	const dashboardLabel = context.isAdmin ? 'Admin Dashboard' : 'Табло';
 	const dashboardHref = context.basePath;
 	const links = [
 		{
 			active: false,
 			href: '/inventory',
-			label: 'Inventory'
+			label: context.isAdmin ? 'Inventory' : 'Автомобили'
 		},
 		{ active: context.active === 'dashboard', href: dashboardHref, label: dashboardLabel }
 	];
@@ -854,16 +854,16 @@ function injectLocalBehavior(
 	}
 	@media (min-width: 1200px) {
 		body.${localScopeClass} .header-right.main-nav-wrapper {
-			display: grid;
+			display: flex !important;
 			flex: 1 1 auto;
-			gap: 22px;
-			grid-template-columns: minmax(0, 1fr) auto auto;
-			min-width: 0;
 			align-items: center;
+			justify-content: flex-end;
+			gap: 20px;
+			min-width: 0;
 		}
 		body.${localScopeClass} #main-nav {
-			justify-self: center;
-			margin-right: 0 !important;
+			margin-right: auto !important;
+			margin-left: auto !important;
 			min-width: 0;
 		}
 		body.${localScopeClass} #menu-primary-menu {
@@ -874,7 +874,7 @@ function injectLocalBehavior(
 			justify-self: end;
 		}
 		body.${localScopeClass} .header-actions {
-			margin-left: 0 !important;
+			margin-left: 20px !important;
 		}
 	}
 `
@@ -2434,7 +2434,8 @@ function injectLocalBehavior(
 		color: #ffffff !important;
 	}
 	body.${localScopeClass} .mobile-hidden-header-button .bg-sign-in.open-modal:hover {
-		background: #1c1c1c !important;
+		background: var(--bc-hover-accent, #789f1b) !important;
+		border-color: var(--bc-hover-accent, #789f1b) !important;
 		color: #ffffff !important;
 	}
 	body.${localScopeClass} .mobile-hidden-header-button .bg-sign-in.open-modal svg path {

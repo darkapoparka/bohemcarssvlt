@@ -191,13 +191,16 @@
 	}
 
 	.bohemcars-news-card__category {
-		background: #98bc2a;
+		background: rgba(13, 20, 12, 0.5);
+		-webkit-backdrop-filter: blur(6px);
+		backdrop-filter: blur(6px);
+		border: 1px solid rgba(255, 255, 255, 0.26);
 		border-radius: 999px;
-		color: #1a2a16;
+		color: #ffffff;
 		font-size: 11px;
-		font-weight: 800;
+		font-weight: 600;
 		left: 18px;
-		letter-spacing: 0.03em;
+		letter-spacing: 0.05em;
 		padding: 6px 13px;
 		position: absolute;
 		text-transform: uppercase;
@@ -236,7 +239,7 @@
 		color: #ffffff;
 		display: -webkit-box;
 		font-size: 18px;
-		font-weight: 800;
+		font-weight: 700;
 		line-clamp: 2;
 		line-height: 1.25;
 		overflow: hidden;
@@ -250,10 +253,19 @@
 		color: #14210f;
 		display: inline-flex;
 		font-size: 14px;
-		font-weight: 800;
+		font-weight: 700;
 		gap: 9px;
 		margin-top: 5px;
 		padding: 7px 8px 7px 14px;
+		transition:
+			background-color 0.18s ease,
+			color 0.18s ease;
+	}
+
+	.bohemcars-news-card:hover .bohemcars-news-card__cta,
+	.bohemcars-news-card:focus-visible .bohemcars-news-card__cta {
+		background: #ffffff;
+		color: #14210f;
 	}
 
 	.bohemcars-news-card__cta :global(svg) {
@@ -322,7 +334,7 @@
 			color: #1c1c1c;
 			margin: 0;
 			font-size: 24px;
-			font-weight: 800;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 30px;
 			text-align: left;
@@ -354,7 +366,7 @@
 		.bohemcars-news-card__category {
 			left: 18px;
 			top: 14px;
-			font-size: 10.5px;
+			font-size: 12px;
 			line-height: 16px;
 			padding: 5px 11px;
 		}
@@ -366,21 +378,21 @@
 		}
 
 		.bohemcars-news-card__meta {
-			font-size: 13.5px;
+			font-size: 14px;
 			line-height: 18px;
 		}
 
 		.bohemcars-news-card__title {
 			-webkit-line-clamp: 2;
-			font-size: 19px;
+			font-size: 18px;
 			line-clamp: 2;
-			line-height: 22px;
+			line-height: 24px;
 		}
 
 		.bohemcars-news-card__cta {
 			margin-top: 2px;
 			gap: 8px;
-			font-size: 14.5px;
+			font-size: 14px;
 			line-height: 20px;
 			padding: 6px 8px 6px 13px;
 		}
@@ -412,7 +424,7 @@
 		}
 
 		.bohemcars-news-all-card:hover {
-			background: linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 34%), #8fb321;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 34%), #98bc2a;
 			color: #1c1c1c;
 			transform: none;
 		}
@@ -439,7 +451,7 @@
 			max-width: 260px;
 			margin-top: 8px;
 			font-size: 24px;
-			font-weight: 900;
+			font-weight: 700;
 			letter-spacing: 0;
 			line-height: 28px;
 		}
@@ -464,9 +476,18 @@
 			background: #14210f;
 			color: #ffffff;
 			font-size: 14px;
-			font-weight: 900;
+			font-weight: 700;
 			line-height: 20px;
 			padding: 8px 10px 8px 16px;
+			transition:
+				background-color 0.18s ease,
+				color 0.18s ease;
+		}
+
+		.bohemcars-news-all-card:hover .bohemcars-news-all-card__cta,
+		.bohemcars-news-all-card:focus-visible .bohemcars-news-all-card__cta {
+			background: #ffffff;
+			color: #14210f;
 		}
 
 		.bohemcars-news-all-card__cta span {

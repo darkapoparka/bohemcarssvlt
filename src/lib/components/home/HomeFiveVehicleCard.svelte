@@ -13,42 +13,7 @@
 		style2?: boolean;
 		vehicle: HomeFiveVehicleCardData;
 	} = $props();
-
-	let compareIconClipId = $derived(`compare-icon-clip-${vehicle.slug}`);
 </script>
-
-{#snippet compareIcon()}
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<g clip-path={`url(#${compareIconClipId})`}>
-			<path
-				d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-				stroke="#1C1C1C"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			/>
-			<path
-				d="M6.875 10H13.125"
-				stroke="#1C1C1C"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			/>
-			<path
-				d="M10 6.875V13.125"
-				stroke="#1C1C1C"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			/>
-		</g>
-		<defs>
-			<clipPath id={compareIconClipId}>
-				<rect width="20" height="20" fill="white" />
-			</clipPath>
-		</defs>
-	</svg>
-{/snippet}
 
 <div
 	class="card-box card-box-style-1 bohemcars-no-image-zoom bohemcars-card-soft-hover"
@@ -114,7 +79,7 @@
 				<span>{vehicle.transmission}</span>
 			</li>
 		</ul>
-		<p class="card-box__price bohemcars-card-price h6 mb-15">
+		<p class="card-box__price bohemcars-card-price h6">
 			<span class="bohemcars-card-price__amount">{vehicle.priceLabel}</span>
 			<span class="bohemcars-card-price__finance">
 				<span class="bohemcars-card-price__monthly text-sm">{vehicle.monthlyLabel}</span>
@@ -126,28 +91,6 @@
 				</a>
 			</span>
 		</p>
-		<div class="divider mb-15"></div>
-		<div class="bohemcars-card-actions flex justify-between">
-			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
-			<p
-				class="compare-details btn btn-small open-modal"
-				data-modal-id="#CompareModal"
-				data-bohemcars-compare={vehicle.slug}
-				role="button"
-				tabindex="0"
-			>
-				{@render compareIcon()}
-				{copy.compare}
-			</p>
-			<a
-				href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}
-				class="view-details"
-				aria-label={`${copy.viewDetails} ${vehicle.title}`}
-			>
-				{copy.viewDetails}
-				<img class="ml-4" src="/assets/icons/CaretCircleRight.svg" alt={copy.viewDetails} />
-			</a>
-		</div>
 	</div>
 </div>
 
@@ -217,6 +160,8 @@
 		display: flex;
 		gap: 12px;
 		justify-content: space-between;
+		margin-top: auto;
+		margin-bottom: 0 !important;
 	}
 
 	.bohemcars-card-price__amount {
@@ -246,11 +191,6 @@
 		line-height: 16px;
 		margin-left: 0;
 		white-space: nowrap;
-	}
-
-	.bohemcars-card-actions {
-		align-items: center;
-		margin-top: auto;
 	}
 
 	.bohemcars-card-soft-hover {
@@ -303,8 +243,7 @@
 		}
 
 		.bohemcars-card-soft-hover .card-box__title a,
-		.bohemcars-card-soft-hover .bottom .category a,
-		.bohemcars-card-soft-hover .view-details {
+		.bohemcars-card-soft-hover .bottom .category a {
 			text-decoration: none !important;
 		}
 
@@ -423,6 +362,12 @@
 			background-color: transparent;
 			color: var(--bc-card-ink, #171a15);
 		}
+
+		.bohemcars-card-soft-hover .bohemcars-card-price__finance-link:hover,
+		.bohemcars-card-soft-hover .bohemcars-card-price__finance-link:focus-visible {
+			color: var(--bc-hover-accent) !important;
+			text-decoration: none !important;
+		}
 	}
 
 	@media (max-width: 767px) {
@@ -457,8 +402,9 @@
 			min-height: 24px;
 			padding: 0 9px;
 			border-radius: 7px;
-			font-size: 10px;
-			font-weight: 800;
+			font-size: 12px;
+			font-weight: 700;
+			letter-spacing: -0.1px;
 			line-height: 24px;
 			border: 1px solid rgba(28, 28, 28, 0.08);
 			background: #ffffff !important;
@@ -480,8 +426,8 @@
 		.card-box-style-1 .card-box__title {
 			min-height: 0;
 			margin-bottom: 8px;
-			font-size: 17px;
-			font-weight: 500;
+			font-size: 16px;
+			font-weight: 600;
 			line-height: 22px;
 		}
 
@@ -540,7 +486,7 @@
 
 		.bohemcars-card-price__amount {
 			font-size: 18px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 22px;
 		}
 
@@ -552,8 +498,9 @@
 
 		.bohemcars-card-price__monthly,
 		.bohemcars-card-price__finance-link {
-			font-size: 11px;
-			line-height: 15px;
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 16px;
 		}
 
 		.bohemcars-card-price__finance-link {
@@ -561,13 +508,6 @@
 			min-height: 44px;
 			align-items: center;
 			margin-block: -14px;
-		}
-
-		/* Mobile: the whole card taps to the detail page, so drop the footer
-		   (divider + Сравни + Виж детайли). Compare still lives on the PDP + header. */
-		.card-box-style-1 .divider,
-		.bohemcars-card-actions {
-			display: none;
 		}
 	}
 </style>

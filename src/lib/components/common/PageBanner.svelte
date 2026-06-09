@@ -130,9 +130,9 @@
 
 	.bohemcars-page-banner__actions :global(.btn.btn-primary:hover),
 	.bohemcars-page-banner__actions :global(.btn.btn-primary:focus-visible) {
-		border-color: #d9f275 !important;
-		background: #d9f275 !important;
-		color: #1c1c1c !important;
+		border-color: var(--bc-hover-accent) !important;
+		background: var(--bc-hover-accent) !important;
+		color: var(--bc-hover-accent-ink) !important;
 	}
 
 	.bohemcars-page-banner__secondary {
@@ -162,7 +162,12 @@
 
 		.bohemcars-page-banner p:not(.bohemcars-page-banner__eyebrow) {
 			font-size: 14px;
-			line-height: 21px;
+			line-height: 22px;
+		}
+
+		.bohemcars-page-banner__eyebrow {
+			font-size: 12px;
+			letter-spacing: 0.04em;
 		}
 	}
 </style>

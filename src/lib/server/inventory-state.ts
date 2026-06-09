@@ -110,7 +110,7 @@ export const resolveInventoryFilterPresentation = (
 };
 
 const defaultInventoryViewByLayout: Record<InventoryLayout, InventoryView> = {
-	classic: '4',
+	classic: '5',
 	dashboard: '4'
 };
 
