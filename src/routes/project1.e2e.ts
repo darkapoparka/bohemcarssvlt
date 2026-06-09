@@ -940,7 +940,7 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 			const tabsStyles = window.getComputedStyle(tabs);
 			const tab = tabs.querySelector('.bohemcars-mobile-hero__tab.active');
 			const tabStyles = tab ? window.getComputedStyle(tab) : null;
-			const indicatorStyles = tab ? window.getComputedStyle(tab, '::after') : null;
+			const indicatorStyles = window.getComputedStyle(tabs, '::before');
 			const tabsRect = tabs.getBoundingClientRect();
 			const tabRect = tab?.getBoundingClientRect();
 

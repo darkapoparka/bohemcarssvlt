@@ -1376,6 +1376,9 @@
 			border: 0;
 			border-radius: inherit;
 			background: #ffffff;
+			/* Hairline keeps the white disc from reading as a flat sticker on the
+			   green hero (box-shadow, not border — the e2e ring contract pins 0px). */
+			box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
@@ -1410,8 +1413,8 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
 			position: relative;
 			z-index: 1;
-			width: 17px !important;
-			height: 17px !important;
+			width: 19px !important;
+			height: 19px !important;
 			color: #20350f !important;
 			fill: none !important;
 			stroke: #20350f !important;

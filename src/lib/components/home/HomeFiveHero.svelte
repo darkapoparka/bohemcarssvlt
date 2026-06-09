@@ -108,6 +108,12 @@
 	);
 	const mobileShowAllCommand = $derived(isEnglish ? 'Show all' : 'Покажи всички');
 	const mobileActionTabs = $derived.by(() => hero?.actions ?? []);
+	const mobileTabIndex = $derived(
+		Math.max(
+			0,
+			mobileActionTabs.findIndex((tab) => tab.mode === mobileMode)
+		)
+	);
 	const mobileQuickFilters = $derived(
 		isEnglish
 			? [
@@ -372,7 +378,12 @@
 				</div>
 
 				<div class="bohemcars-mobile-hero__search-module">
-					<div class="bohemcars-mobile-hero__tabs" aria-label={hero.heading} role="tablist">
+					<div
+						class="bohemcars-mobile-hero__tabs"
+						style:--bohemcars-tab-index={mobileTabIndex}
+						aria-label={hero.heading}
+						role="tablist"
+					>
 						{#each mobileActionTabs as tab (tab.mode)}
 							<button
 								type="button"
@@ -1204,7 +1215,8 @@
 			font-weight: 700;
 		}
 
-		/* Showroom intent tabs: one full rail, with the active third as the selected segment. */
+		/* Showroom intent tabs: one full rail with a short indicator that slides
+		   to the active third (centered under the label). */
 		.bohemcars-mobile-hero__tabs::after {
 			position: absolute;
 			right: 0;
@@ -1217,20 +1229,24 @@
 			pointer-events: none;
 		}
 
-		.bohemcars-mobile-hero__tabs button::after {
+		.bohemcars-mobile-hero__tabs::before {
 			position: absolute;
-			right: 0;
 			bottom: 0;
-			left: 0;
+			left: calc((var(--bohemcars-tab-index, 0) + 0.5) * 33.333% - 19px);
 			z-index: 1;
+			width: 38px;
 			height: 3px;
 			border-radius: 999px;
-			background: transparent;
+			background: #14210f;
 			content: '';
+			pointer-events: none;
+			transition: left 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 		}
 
-		.bohemcars-mobile-hero__tab.active::after {
-			background: #14210f;
+		@media (prefers-reduced-motion: reduce) {
+			.bohemcars-mobile-hero__tabs::before {
+				transition: none;
+			}
 		}
 
 		.bohemcars-mobile-hero__tab:focus-visible {
