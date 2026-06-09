@@ -390,7 +390,7 @@
 	}
 
 	.bohemcars-sell-mobile__icon-action--primary {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #111111;
 	}
 
@@ -452,7 +452,7 @@
 
 	.bohemcars-sell-mobile-sheet__header p {
 		margin: 0;
-		color: #d9f275;
+		color: var(--bc-accent-bright-soft);
 		font-size: 12px;
 		font-weight: 600;
 		letter-spacing: 0.04em;
@@ -908,7 +908,7 @@
 		justify-content: center;
 		border: 4px solid #ffffff;
 		border-radius: 999px;
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #111111;
 		transform: translateX(-50%);
 	}
@@ -984,7 +984,7 @@
 	}
 
 	.bohemcars-sell-mobile-sheet__actions a:first-child {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 	}
 
 	.bohemcars-sell-mobile__contact {
@@ -1002,8 +1002,9 @@
 		justify-content: center;
 		gap: 7px;
 		overflow: hidden;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
 		padding: 0 9px;
 		color: #111111;
@@ -1015,7 +1016,7 @@
 	}
 
 	.bohemcars-sell-mobile__contact a:first-child {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 	}
 
 	.bohemcars-sell-mobile__contact label {
@@ -1043,9 +1044,9 @@
 		gap: 11px;
 		align-items: center;
 		min-height: 60px;
-		border: 0;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
 		padding: 10px 14px;
 		color: #111111;
@@ -1059,7 +1060,7 @@
 		justify-content: center;
 		border-radius: 999px;
 		background: #1c1c1c;
-		color: #d9f275;
+		color: var(--bc-accent-bright-soft);
 		font-size: 14px;
 		font-weight: 700;
 		line-height: 1;

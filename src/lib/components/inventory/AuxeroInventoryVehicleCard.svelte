@@ -448,7 +448,8 @@
 	.bohemcars-card-price {
 		align-items: center;
 		display: flex;
-		gap: 12px;
+		flex-wrap: wrap;
+		gap: 4px 12px;
 		justify-content: space-between;
 	}
 
@@ -464,6 +465,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		margin-left: auto;
 		text-align: right;
 	}
 

@@ -744,7 +744,7 @@
 			align-items: center;
 			gap: 9px;
 			min-height: 58px;
-			border: 1px solid #e3eadc;
+			border: 1px solid var(--bc-border);
 			border-radius: 16px;
 			background: #ffffff;
 			box-shadow: 0 1px 3px rgba(23, 31, 18, 0.06);
@@ -769,7 +769,7 @@
 		}
 
 		.bohemcars-compare-mobile__appbar button {
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 		}
 
 		.bohemcars-compare-mobile__appbar a:hover,
@@ -806,7 +806,7 @@
 		}
 
 		.bohemcars-compare-mobile__appbar p {
-			color: #8fbd24;
+			color: var(--bc-accent);
 			font-size: 11px;
 			font-weight: 850;
 			line-height: 14px;
@@ -847,7 +847,7 @@
 
 		.bohemcars-compare-mobile__pair-head p {
 			margin: 0;
-			color: #8fbd24;
+			color: var(--bc-accent);
 			font-size: 12px;
 			font-weight: 850;
 			line-height: 16px;
@@ -870,7 +870,7 @@
 			gap: 6px;
 			border: 0;
 			border-radius: 999px;
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			cursor: pointer;
 			padding: 0 12px;
@@ -892,7 +892,7 @@
 			grid-template-rows: 18px 76px 38px 18px;
 			min-width: 0;
 			overflow: hidden;
-			border: 1px solid #e1e8d8;
+			border: 1px solid var(--bc-border);
 			border-radius: 8px;
 			background: #ffffff;
 			padding: 8px;
@@ -902,7 +902,7 @@
 		.bohemcars-compare-mobile__selected-card > span {
 			width: fit-content;
 			border-radius: 999px;
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			font-size: 12px;
 			font-weight: 850;
@@ -946,7 +946,7 @@
 
 		.bohemcars-compare-mobile__add-card:hover,
 		.bohemcars-compare-mobile__add-card:focus-visible {
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			outline: 0;
 		}
 
@@ -1013,7 +1013,7 @@
 			min-height: 46px;
 			align-content: center;
 			gap: 1px;
-			border: 1px solid #e1e8d8;
+			border: 1px solid var(--bc-border);
 			border-radius: 999px;
 			background: #ffffff;
 			color: #111111;
@@ -1025,8 +1025,8 @@
 		.bohemcars-compare-mobile__selected-rail button.active,
 		.bohemcars-compare-mobile__selected-rail button:hover,
 		.bohemcars-compare-mobile__selected-rail button:focus-visible {
-			border-color: #d9f275;
-			background: #d9f275;
+			border-color: var(--bc-accent-bright-soft);
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			outline: 0;
 		}
@@ -1055,7 +1055,7 @@
 
 		.bohemcars-compare-mobile__pair-table {
 			overflow: hidden;
-			border: 1px solid #dfe5d5;
+			border: 1px solid var(--bc-border);
 			border-radius: 8px;
 			background: #ffffff;
 		}
@@ -1082,7 +1082,7 @@
 			gap: 7px;
 			border: 0;
 			border-radius: 9px;
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			cursor: pointer;
 			padding: 0 13px;
@@ -1147,7 +1147,7 @@
 			align-items: center;
 			justify-content: center;
 			border-radius: 999px;
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			font-size: 12px;
 			font-weight: 850;
@@ -1200,7 +1200,7 @@
 
 		.bohemcars-compare-mobile__all {
 			overflow: hidden;
-			border: 1px solid #dfe5d5;
+			border: 1px solid var(--bc-border);
 			border-radius: 10px;
 			background: #ffffff;
 		}
@@ -1212,7 +1212,7 @@
 
 		.bohemcars-compare-mobile__matrix {
 			overflow: hidden;
-			border: 1px solid #dfe5d5;
+			border: 1px solid var(--bc-border);
 			border-radius: 8px;
 			background: #ffffff;
 		}
@@ -1294,7 +1294,7 @@
 		}
 
 		.bohemcars-compare-mobile__mini-car strong {
-			color: #d9f275;
+			color: var(--bc-accent-bright-soft);
 			font-size: 12px;
 			font-weight: 700;
 			line-height: 16px;
@@ -1394,7 +1394,7 @@
 
 		.bohemcars-compare-mobile-drawer__sheet header p {
 			margin: 0 0 2px;
-			color: #8fbd24;
+			color: var(--bc-accent);
 			font-size: 11px;
 			font-weight: 900;
 			line-height: 14px;
@@ -1442,7 +1442,7 @@
 			min-height: 50px;
 			align-items: center;
 			gap: 9px;
-			border: 1px solid #e2e8dc;
+			border: 1px solid var(--bc-border);
 			border-radius: 999px;
 			background: #ffffff;
 			padding: 0 13px;
@@ -1507,7 +1507,7 @@
 		.bohemcars-compare-mobile-drawer__brands button.active,
 		.bohemcars-compare-mobile-drawer__brands button:hover,
 		.bohemcars-compare-mobile-drawer__brands button:focus-visible {
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			outline: 0;
 		}
 
@@ -1610,7 +1610,7 @@
 		}
 
 		.bohemcars-compare-mobile-drawer__list em {
-			color: #8fbd24;
+			color: var(--bc-accent);
 			font-size: 13px;
 			font-style: normal;
 			font-weight: 900;
@@ -1624,7 +1624,7 @@
 			justify-content: center;
 			gap: 5px;
 			border-radius: 999px;
-			background: #d9f275;
+			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			padding: 0 10px;
 			font-size: 12px;
@@ -1703,7 +1703,7 @@
 			justify-content: center;
 			border-radius: 999px;
 			background: #111111;
-			color: #d9f275;
+			color: var(--bc-accent-bright-soft);
 			font-size: 12px;
 			font-weight: 700;
 			line-height: 1;

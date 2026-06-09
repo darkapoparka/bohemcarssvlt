@@ -1,27 +1,47 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroBlogListPageData } from '$lib/auxero/blog-list';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { BlogPost } from '$lib/data/blog';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import BlogListGrid from './BlogListGrid.svelte';
 
 	let {
-		afterBlogHtml,
-		beforeBlogHtml,
 		blogPage,
 		pageDocument,
-		posts
+		posts,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterBlogHtml: string;
-		beforeBlogHtml: string;
 		blogPage: AuxeroBlogListPageData;
 		pageDocument: AuxeroPageDocument;
 		posts: BlogPost[];
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeBlogHtml} afterHtml={afterBlogHtml}>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title="Новини — Bohemcars"
+>
 	<section class="pb-100" data-bohemcars-blog-page>
 		<div class="container"><h1 class="h2">{blogPage.title}</h1></div>
 		<div class="tf-spacing-style3"></div>
@@ -42,7 +62,7 @@
 			</ul>
 		</div>
 	</section>
-</AuxeroPageShell>
+</AuxeroPublicShell>
 
 <style>
 	.bohemcars-blog-pagination .pagination__link--cta {

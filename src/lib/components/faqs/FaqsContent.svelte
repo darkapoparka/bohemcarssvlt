@@ -11,7 +11,7 @@
 	} = $props();
 </script>
 
-<section class="bg-white pb-84" data-bohemcars-faqs>
+<section class="pb-84" data-bohemcars-faqs>
 	<div class="container mb-60">
 		<h1 class="h2">Често задавани въпроси</h1>
 		<div class="tf-spacing-style3"></div>
@@ -29,3 +29,9 @@
 		</div>
 	{/each}
 </section>
+
+<style>
+	[data-bohemcars-faqs] {
+		background: var(--bc-bg);
+	}
+</style>

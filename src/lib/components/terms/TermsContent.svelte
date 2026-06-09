@@ -33,7 +33,7 @@
 
 <style>
 	.bohemcars-terms {
-		background: var(--bc-white);
+		background: var(--bc-bg);
 		padding-bottom: 100px;
 	}
 
@@ -68,7 +68,7 @@
 		height: fit-content;
 		flex-direction: column;
 		gap: 36px;
-		border-left: 1px solid #e7e7e7;
+		border-left: 1px solid var(--bc-border);
 		padding-top: 11px;
 	}
 

@@ -45,7 +45,7 @@
 
 	<div class="dash-card overflow-hidden">
 		<div class="grid gap-0 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
-			<div class="relative min-h-72 bg-[#edf0f5]">
+			<div class="relative min-h-72 bg-[#edf2e8]">
 				<img src={vehicle.image} alt={vehicle.title} class="h-full min-h-72 w-full object-cover" />
 				<span
 					class="absolute top-4 left-4 rounded-full bg-[var(--dash-primary)] px-3 py-1 text-xs font-black text-white"
@@ -62,7 +62,7 @@
 					<p class="m-0 mt-3 text-2xl font-black text-[var(--dash-primary)]">
 						{vehicle.priceLabel}
 					</p>
-					<p class="m-0 mt-4 text-sm leading-6 font-semibold text-[#526484]">
+					<p class="m-0 mt-4 text-sm leading-6 font-semibold text-[var(--dash-muted)]">
 						{vehicle.description}
 					</p>
 				</div>

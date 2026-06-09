@@ -1,31 +1,28 @@
 import type { PageServerLoad } from './$types';
 import { auxeroBlogListPage } from '$lib/auxero/blog-list';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 import { listBlogPosts } from '$lib/server/blog-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
+	const locale = resolveLocale(url.searchParams.get('lang'));
 	const posts = listBlogPosts();
-	const { pageDocument, slot: blogSlot } = renderAuxeroPageSlot(
+	const pageDocument = renderAuxeroPageDocument(
 		'blog-grid-style-1.html',
 		{
 			request,
 			routePath: 'blog',
 			searchParams: url.searchParams
 		},
-		{
-			marker: 'data-bohemcars-blog-page',
-			tagName: 'section',
-			templateError: 'Blog template could not be rendered',
-			slotError: 'Blog page slot could not be located'
-		}
+		'Blog template could not be rendered'
 	);
 
 	return {
-		afterBlogHtml: blogSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeBlogHtml: blogSlot.beforeHtml,
 		blogPage: auxeroBlogListPage,
 		pageDocument,
-		posts
+		posts,
+		...auxeroPublicShellData(pageDocument, locale, '/blog')
 	};
 };

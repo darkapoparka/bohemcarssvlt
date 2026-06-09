@@ -1,28 +1,48 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroBlogDetailContent } from '$lib/auxero/blog-detail';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import BlogDetailMainContent from './BlogDetailMainContent.svelte';
 	import BlogDetailRelatedCard from './BlogDetailRelatedCard.svelte';
 	import BlogDetailSidebar from './BlogDetailSidebar.svelte';
 
 	let {
-		afterDetailHtml,
-		beforeDetailHtml,
 		content,
-		pageDocument
+		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterDetailHtml: string;
-		beforeDetailHtml: string;
 		content: AuxeroBlogDetailContent;
 		pageDocument: AuxeroPageDocument;
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
 
 	let post = $derived(content.post);
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeDetailHtml} afterHtml={afterDetailHtml}>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title={`${post.title} — Bohemcars`}
+>
 	<div data-bohemcars-blog-detail-page>
 		<section class="blog-details-banner">
 			<img
@@ -77,7 +97,7 @@
 			</div>
 		</section>
 	</div>
-</AuxeroPageShell>
+</AuxeroPublicShell>
 
 <style>
 	@media (max-width: 767.98px) {

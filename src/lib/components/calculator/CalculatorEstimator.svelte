@@ -100,7 +100,7 @@
 		</div>
 		<div class="divider mb-28 w-full"></div>
 		<div class="mb-16 flex justify-between gap-8">
-			<p class="h4">Estimated Total</p>
+			<p class="h4">{calculator.totalRowLabel}</p>
 			<p class="h4" data-bohemcars-calc-output="totalSmall">{totalLabel}</p>
 		</div>
 		<a

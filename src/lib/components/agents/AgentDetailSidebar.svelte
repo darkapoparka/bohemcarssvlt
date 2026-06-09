@@ -140,3 +140,13 @@
 		</form>
 	</div>
 </div>
+
+<style>
+	/* Scoped to the agent-detail sidebar only — the vehicle PDP uses the same
+	   legacy class but has its own token-compliant override, so we must not
+	   touch the global rule. Match the flat-card language: 1px border + surface. */
+	.listing-details--sidebar-box {
+		border-width: 1px;
+		background: var(--bc-surface);
+	}
+</style>

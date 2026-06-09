@@ -274,7 +274,7 @@
 		gap: 10px;
 		grid-auto-rows: max-content;
 		overflow-x: hidden;
-		background: var(--bc-bg);
+		background: var(--bc-surface);
 		color: #111111;
 		padding: 0 14px 92px;
 	}
@@ -304,10 +304,11 @@
 	}
 
 	.bohemcars-calculator-mobile__topbar p {
-		color: #d9f275;
+		color: var(--bc-accent-bright-soft);
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 14px;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
@@ -366,7 +367,7 @@
 
 	.bohemcars-calculator-mobile__result strong {
 		overflow-wrap: anywhere;
-		color: #d9f275;
+		color: var(--bc-accent-bright-soft);
 		font-size: 28px;
 		font-weight: 900;
 		line-height: 32px;
@@ -391,13 +392,13 @@
 
 	.bohemcars-calculator-mobile__form-card {
 		display: grid;
-		gap: 11px;
-		border: 0;
+		gap: 12px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
 		color: #111111;
-		padding: 14px;
+		padding: 16px;
 	}
 
 	.bohemcars-calculator-mobile__form-card header {
@@ -414,8 +415,9 @@
 	.bohemcars-calculator-mobile__form-card p {
 		color: #5d7e16;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 14px;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
@@ -449,7 +451,7 @@
 		gap: 8px;
 		color: #111111;
 		font-size: 13px;
-		font-weight: 800;
+		font-weight: 650;
 		line-height: 17px;
 	}
 
@@ -464,7 +466,7 @@
 		display: block;
 		width: 100%;
 		height: 46px !important;
-		border: 0 !important;
+		border: 1px solid var(--bc-border) !important;
 		border-radius: 8px !important;
 		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
@@ -505,7 +507,7 @@
 	}
 
 	.bohemcars-calculator-mobile__actions a:last-child {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #14210f;
 	}
 
@@ -547,8 +549,9 @@
 	.bohemcars-calculator-mobile__budget p {
 		color: #5d7e16;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 14px;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
@@ -585,8 +588,9 @@
 		align-items: center;
 		grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr) 30px;
 		gap: 8px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
 		color: #111111;
 		padding: 10px 11px 10px 13px;
@@ -610,7 +614,7 @@
 	.bohemcars-calculator-mobile__budget span {
 		color: #5d7e16;
 		font-size: 14px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 18px;
 	}
 
@@ -702,8 +706,9 @@
 		margin: 0 0 2px;
 		color: #5d7e16;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 16px;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
@@ -753,9 +758,10 @@
 	}
 
 	.bohemcars-calculator-mobile-drawer__breakdown {
+		border: 1px solid var(--bc-border);
 		border-radius: 10px;
-		background: #ffffff;
-		padding: 12px;
+		background: var(--bc-surface-raised);
+		padding: 14px;
 	}
 
 	.bohemcars-calculator-mobile-drawer__breakdown p,
@@ -789,8 +795,9 @@
 	}
 
 	.bohemcars-calculator-mobile-drawer__faq details {
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		padding: 0;
 	}
 

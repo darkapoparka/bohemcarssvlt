@@ -54,15 +54,11 @@
 
 	@media (max-width: 767.98px) {
 		.services-center-form {
-			border-color: #111111;
 			border-radius: 8px;
-			background: #111111 !important;
-			color: #ffffff;
 			padding: 17px !important;
 		}
 
 		.services-center-form > :global(.h4) {
-			color: #ffffff !important;
 			margin-bottom: 14px !important;
 			font-size: 22px !important;
 			font-weight: 700 !important;
@@ -80,7 +76,7 @@
 		}
 
 		.services-center-form :global(.bohemcars-service-form p) {
-			color: rgb(255 255 255 / 0.82) !important;
+			color: var(--bc-muted) !important;
 			margin-bottom: 6px !important;
 			font-size: 14px !important;
 			font-weight: 600 !important;
@@ -99,10 +95,10 @@
 
 		.services-center-form :global(.bohemcars-service-form button) {
 			min-height: 50px;
-			border-color: #d9f275 !important;
+			border-color: var(--bc-accent-bright-soft) !important;
 			border-radius: 8px !important;
-			background: #d9f275 !important;
-			color: #111111 !important;
+			background: var(--bc-accent-bright-soft) !important;
+			color: var(--bc-ink) !important;
 		}
 	}
 </style>

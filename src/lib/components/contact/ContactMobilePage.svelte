@@ -271,7 +271,7 @@
 
 	.bohemcars-contact-mobile__icon-action:hover,
 	.bohemcars-contact-mobile__icon-action:focus-visible {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #14210f;
 		outline: 0;
 	}
@@ -352,8 +352,9 @@
 		justify-content: center;
 		gap: 7px;
 		overflow: hidden;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		color: #111111;
 		cursor: pointer;
 		font-size: 14px;
@@ -365,7 +366,7 @@
 	}
 
 	.bohemcars-contact-mobile__actions a:first-child {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #14210f;
 	}
 
@@ -388,8 +389,9 @@
 		min-width: 0;
 		align-items: flex-start;
 		gap: 12px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		padding: 13px;
 	}
 
@@ -449,8 +451,9 @@
 		grid-template-columns: 118px minmax(0, 1fr);
 		gap: 12px;
 		align-items: stretch;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		padding: 10px;
 	}
 
@@ -567,7 +570,7 @@
 		justify-content: center;
 		border: 4px solid #ffffff;
 		border-radius: 999px;
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #111111;
 		transform: translateX(-50%);
 	}

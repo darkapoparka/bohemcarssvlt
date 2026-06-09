@@ -93,7 +93,7 @@
 		gap: 10px;
 		min-height: 100svh;
 		overflow-x: hidden;
-		background: var(--bc-bg);
+		background: var(--bc-surface);
 		color: #111111;
 		padding: 0 14px 92px;
 	}
@@ -152,7 +152,7 @@
 
 	.bohemcars-import-mobile__icon-action:hover,
 	.bohemcars-import-mobile__icon-action:focus-visible {
-		background: #d9f275;
+		background: var(--bc-accent-bright-soft);
 		color: #14210f;
 		outline: 0;
 	}
@@ -203,12 +203,13 @@
 
 	.bohemcars-import-mobile__form-section {
 		display: grid;
-		gap: 11px;
+		gap: 12px;
 		min-width: 0;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
-		padding: 14px;
+		padding: 16px;
 	}
 
 	.bohemcars-import-mobile__form-section h2 {
@@ -249,7 +250,7 @@
 		display: block;
 		width: 100%;
 		height: 48px !important;
-		border: 0 !important;
+		border: 1px solid var(--bc-border) !important;
 		border-radius: 8px !important;
 		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
@@ -294,7 +295,7 @@
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__submit:hover),
 	.bohemcars-import-mobile__form-section
 		:global(.bohemcars-import-mobile-form__submit:focus-visible) {
-		background: #d9f275 !important;
+		background: var(--bc-accent-bright-soft) !important;
 		color: #111111 !important;
 		outline: 0;
 	}
@@ -316,10 +317,11 @@
 		display: grid;
 		gap: 5px;
 		min-width: 0;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #ffffff;
+		background: var(--bc-surface-raised);
 		box-shadow: var(--bc-shadow-subtle);
-		padding: 13px 14px;
+		padding: 14px;
 	}
 
 	.bohemcars-import-mobile__steps span {
@@ -328,10 +330,10 @@
 		min-height: 26px;
 		align-items: center;
 		border-radius: 999px;
-		background: var(--bc-surface);
-		color: #14210f;
+		background: var(--bc-accent-soft);
+		color: var(--bc-accent-contrast);
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 700;
 		line-height: 13px;
 		padding: 0 10px;
 		text-transform: uppercase;

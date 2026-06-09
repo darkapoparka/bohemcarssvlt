@@ -824,6 +824,7 @@
 }
 
 .dash-bubble__text {
+	border: 1px solid var(--dash-border);
 	border-radius: 8px;
 	background: #ffffff;
 	padding: 0.875rem 1rem;

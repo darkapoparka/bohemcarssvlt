@@ -185,6 +185,26 @@
 	--bc-motion-drawer: 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Restore the design-system display font for headings.
+   app.css sets `* { font-family: Manrope }`, which silently overrides the intended
+   --bc-font-heading (Albert Sans) on every heading. Element/class selectors below
+   beat the universal selector by specificity (no !important needed), giving headings
+   the intended display font and proper display/body contrast. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+	font-family: var(--bc-font-heading);
+}
+
 .bc-container {
 	width: min(100% - (var(--bc-page-x) * 2), var(--bc-container-page));
 	margin-inline: auto;

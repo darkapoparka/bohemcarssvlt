@@ -5,9 +5,12 @@
 </script>
 
 <FaqsTemplatePage
-	afterFaqsHtml={data.afterFaqsHtml}
-	beforeFaqsHtml={data.beforeFaqsHtml}
 	featured={data.featured}
 	groups={data.groups}
 	pageDocument={data.pageDocument}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

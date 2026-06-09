@@ -37,6 +37,7 @@ export type AuxeroCalculatorData = {
 	title: string;
 	total: number;
 	totalNote: string;
+	totalRowLabel: string;
 };
 
 export type AuxeroCalculatorBudgetLink = {
@@ -136,7 +137,8 @@ export const createAuxeroCalculatorData = (): AuxeroCalculatorData => {
 		subtitle: 'Обобщение на разходите',
 		title: 'Ориентировъчна крайна цена*',
 		total: totals.total,
-		totalNote: 'преди потвърждение за конкретния автомобил'
+		totalNote: 'преди потвърждение за конкретния автомобил',
+		totalRowLabel: 'Обща сума'
 	};
 };
 

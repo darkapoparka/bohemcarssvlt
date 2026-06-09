@@ -1,8 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { auxeroBlogDetailFromState } from '$lib/auxero/blog-detail';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 import { getBlogDetailBySlug } from '$lib/server/blog-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ params, request, url }) => {
 	const detailState = getBlogDetailBySlug(params.slug);
@@ -12,26 +14,21 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 	}
 
 	const content = auxeroBlogDetailFromState(detailState);
-
-	const { pageDocument, slot: detailSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const pageDocument = renderAuxeroPageDocument(
 		'blog-details-1.html',
 		{
 			request,
 			routePath: `blog/${params.slug}`,
 			searchParams: url.searchParams
 		},
-		{
-			marker: 'data-bohemcars-blog-detail-page',
-			templateError: 'Blog detail template could not be rendered',
-			slotError: 'Blog detail page slot could not be located'
-		}
+		'Blog detail template could not be rendered'
 	);
 
 	return {
-		afterDetailHtml: detailSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeDetailHtml: detailSlot.beforeHtml,
 		content,
-		pageDocument
+		pageDocument,
+		...auxeroPublicShellData(pageDocument, locale, '/blog')
 	};
 };

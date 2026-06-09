@@ -72,6 +72,7 @@
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type .dashboard-cart) {
 		min-height: 0;
 		align-items: center !important;
+		background: var(--bc-dashboard-surface) !important;
 		border-color: var(--bc-dashboard-border) !important;
 		border-radius: var(--bc-dashboard-card-radius) !important;
 		box-shadow: none !important;

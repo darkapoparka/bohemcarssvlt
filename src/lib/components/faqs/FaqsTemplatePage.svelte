@@ -1,24 +1,44 @@
 <script lang="ts">
 	import type { AuxeroFaq, AuxeroFaqGroup } from '$lib/auxero/faqs';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import FaqsContent from './FaqsContent.svelte';
 
 	let {
-		afterFaqsHtml,
-		beforeFaqsHtml,
 		featured,
 		groups,
-		pageDocument
+		pageDocument,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterFaqsHtml: string;
-		beforeFaqsHtml: string;
 		featured: AuxeroFaq[];
 		groups: AuxeroFaqGroup[];
 		pageDocument: AuxeroPageDocument;
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeFaqsHtml} afterHtml={afterFaqsHtml}>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title="Въпроси — Bohemcars"
+>
 	<FaqsContent {featured} {groups} />
-</AuxeroPageShell>
+</AuxeroPublicShell>

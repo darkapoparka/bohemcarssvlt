@@ -30,7 +30,9 @@
 
 	.testimonior-box:hover {
 		background: var(--bc-surface-hover);
-		border-color: var(--primary);
+		border-color: var(--bc-hover-border);
+		transform: none;
+		box-shadow: none;
 	}
 
 	@media (max-width: 767.98px) {

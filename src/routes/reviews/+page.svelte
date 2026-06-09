@@ -5,9 +5,12 @@
 </script>
 
 <ReviewsTemplatePage
-	afterReviewsHtml={data.afterReviewsHtml}
-	beforeReviewsHtml={data.beforeReviewsHtml}
 	cards={data.cards}
 	pageDocument={data.pageDocument}
 	reviewsPage={data.reviewsPage}
+	shellCopy={data.shellCopy}
+	shellFooter={data.shellFooter}
+	shellHeader={data.shellHeader}
+	shellModals={data.shellModals}
+	shellRuntimeHtml={data.shellRuntimeHtml}
 />

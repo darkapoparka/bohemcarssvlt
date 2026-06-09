@@ -1,29 +1,26 @@
 import type { PageServerLoad } from './$types';
 import { auxeroReviewCards, auxeroReviewsPage } from '$lib/auxero/reviews';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: reviewsSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const pageDocument = renderAuxeroPageDocument(
 		'clients-reviews.html',
 		{
 			request,
 			routePath: 'reviews',
 			searchParams: url.searchParams
 		},
-		{
-			marker: 'data-bohemcars-reviews-page',
-			tagName: 'section',
-			templateError: 'Reviews template could not be rendered',
-			slotError: 'Reviews page slot could not be located'
-		}
+		'Reviews template could not be rendered'
 	);
 
 	return {
-		afterReviewsHtml: reviewsSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeReviewsHtml: reviewsSlot.beforeHtml,
 		cards: auxeroReviewCards,
+		pageDocument,
 		reviewsPage: auxeroReviewsPage,
-		pageDocument
+		...auxeroPublicShellData(pageDocument, locale, '/reviews')
 	};
 };

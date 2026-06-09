@@ -1,28 +1,48 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type {
+		HomeFiveFooterData,
+		HomeFiveHeaderData,
+		HomeFiveModalsData
+	} from '$lib/auxero/home-five';
 	import type { AuxeroPageDocument } from '$lib/auxero/page-document';
 	import type { AuxeroReviewCard, AuxeroReviewsPageData } from '$lib/auxero/reviews';
-	import AuxeroPageShell from '$lib/components/layout/AuxeroPageShell.svelte';
+	import type { HomePageCopy } from '$lib/i18n/messages';
+	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import AuxeroReviewsGrid from './AuxeroReviewsGrid.svelte';
 
 	let {
-		afterReviewsHtml,
-		beforeReviewsHtml,
 		cards,
 		pageDocument,
-		reviewsPage
+		reviewsPage,
+		shellCopy,
+		shellFooter,
+		shellHeader,
+		shellModals,
+		shellRuntimeHtml
 	}: {
-		afterReviewsHtml: string;
-		beforeReviewsHtml: string;
 		cards: AuxeroReviewCard[];
 		pageDocument: AuxeroPageDocument;
 		reviewsPage: AuxeroReviewsPageData;
+		shellCopy: HomePageCopy;
+		shellFooter: HomeFiveFooterData;
+		shellHeader: HomeFiveHeaderData;
+		shellModals?: HomeFiveModalsData;
+		shellRuntimeHtml: string;
 	} = $props();
 
 	const externalHref = (href: string) => ({ href });
 </script>
 
-<AuxeroPageShell {pageDocument} beforeHtml={beforeReviewsHtml} afterHtml={afterReviewsHtml}>
+<AuxeroPublicShell
+	copy={shellCopy}
+	footer={shellFooter}
+	header={shellHeader}
+	modals={shellModals}
+	{pageDocument}
+	runtimeHtml={shellRuntimeHtml}
+	title="Отзиви — Bohemcars"
+>
 	<section class="pb-100" data-bohemcars-reviews-page>
 		<div class="container">
 			<h1 class="h2">{reviewsPage.title}</h1>
@@ -45,7 +65,7 @@
 			</ul>
 		</div>
 	</section>
-</AuxeroPageShell>
+</AuxeroPublicShell>
 
 <style>
 	@media (max-width: 767.98px) {

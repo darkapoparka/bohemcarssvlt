@@ -27,7 +27,7 @@
 		'/assets/app.css'
 	];
 	const auxeroFontStylesheetHref =
-		'https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Manrope:wght@200..800&display=swap';
+		'https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400..800&family=Manrope:wght@300..800&display=swap';
 	let isAuxeroFullPage = $derived(Boolean(page.data.auxeroFullPage));
 	let isAuxeroTemplatePage = $derived(
 		Boolean((page.data as AuxeroTemplatePageData).pageDocument?.headAssets)

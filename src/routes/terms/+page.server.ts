@@ -1,29 +1,26 @@
 import type { PageServerLoad } from './$types';
 import { auxeroTermsPageTitle, auxeroTermsSections } from '$lib/auxero/terms';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import { resolveLocale } from '$lib/i18n/messages';
+import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
+import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
 export const load: PageServerLoad = ({ request, url }) => {
-	const { pageDocument, slot: termsSlot } = renderAuxeroPageSlot(
+	const locale = resolveLocale(url.searchParams.get('lang'));
+	const pageDocument = renderAuxeroPageDocument(
 		'terms.html',
 		{
 			request,
 			routePath: 'terms',
 			searchParams: url.searchParams
 		},
-		{
-			marker: 'data-bohemcars-terms-page',
-			tagName: 'section',
-			templateError: 'Terms template could not be rendered',
-			slotError: 'Terms page slot could not be located'
-		}
+		'Terms template could not be rendered'
 	);
 
 	return {
-		afterTermsHtml: termsSlot.afterHtml,
 		auxeroFullPage: true,
-		beforeTermsHtml: termsSlot.beforeHtml,
 		pageDocument,
 		sections: auxeroTermsSections,
-		title: auxeroTermsPageTitle
+		title: auxeroTermsPageTitle,
+		...auxeroPublicShellData(pageDocument, locale, '/terms')
 	};
 };
