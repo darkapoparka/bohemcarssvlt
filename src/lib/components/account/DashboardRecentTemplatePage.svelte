@@ -57,6 +57,13 @@
 		display: none !important;
 	}
 
+	:global(body.dashboard .bohemcars-dashboard-context-links .menu-item-main > a),
+	:global(body.dashboard .bohemcars-dashboard-context-links .current-menu-item > a) {
+		background-color: #98bc2a !important;
+		border-color: #98bc2a !important;
+		color: #14210f !important;
+	}
+
 	:global(body.dashboard .dashboard-content--details > .grid:first-of-type) {
 		gap: 18px !important;
 		margin-bottom: 18px !important;

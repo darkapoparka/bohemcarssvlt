@@ -2571,7 +2571,7 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	);
 
 	await page.goto('/account/listings?role=customer');
-	await expect(page.locator('body')).toContainText('My Listings');
+	await expect(page.locator('body')).toContainText('Моите автомобили');
 	const accountListings = page.locator('[data-bohemcars-account-listings]');
 	const accountSubmissionRows = accountListings.locator('.cart-item[data-bohemcars-submission-id]');
 	await expect(accountListings).toBeVisible();

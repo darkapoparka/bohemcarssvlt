@@ -5,11 +5,7 @@ import type {
 import { bohemcarsContact } from '$lib/data/bohemcars';
 import { vehicles, type Vehicle } from '$lib/data/vehicles';
 import type { AuxeroRenderOptions } from './auxero-listing-data';
-import {
-	accountAvatarByRole,
-	accountContext,
-	type AccountContext
-} from './account-dashboard-state';
+import { accountContext, type AccountContext } from './account-dashboard-state';
 import { listVehicleSubmissions } from './inventory';
 
 export const accountInventoryListingRows = (
@@ -41,33 +37,53 @@ export const accountInventoryListingRows = (
 		title: vehicle.title
 	}));
 
-export const accountSubmissionListingRows = (context: AccountContext): AuxeroAccountListingRow[] =>
+const submissionStatusBg: Record<string, string> = {
+	draft: 'Чернова',
+	published: 'Публикувана',
+	reviewing: 'В преглед',
+	submitted: 'Подадена'
+};
+
+// The in-memory demo submissions may carry English seed/default messages. Localize
+// the known ones at display time so the list reads fully in Bulgarian regardless of
+// when the data was created.
+const submissionMessageBg: Record<string, string> = {
+	'Vehicle submission queued for review.': 'Заявката е в опашка за преглед.',
+	'Client vehicle submitted with VIN, photos, and service history for review.':
+		'Клиентският автомобил е подаден с VIN, снимки и сервизна история за преглед.',
+	'Customer asked whether Bohemcars can prepare a direct offer or client listing.':
+		'Клиентът пита дали Bohemcars може да подготви директна оферта или обява.'
+};
+
+const localizeSubmissionMessage = (message: string) => submissionMessageBg[message] ?? message;
+
+export const accountSubmissionListingRows = (): AuxeroAccountListingRow[] =>
 	listVehicleSubmissions().map((submission) => ({
 		actions: [
 			{
-				ariaLabel: `Edit ${submission.title}`,
+				ariaLabel: `Редактирай ${submission.title}`,
 				href: `/account/listings/edit/${encodeURIComponent(submission.id)}`,
 				icon: '/assets/icons/dashboard-edit.svg',
 				kind: 'edit-submission',
-				label: 'Edit Submission'
+				label: 'Редактирай'
 			},
 			{
-				ariaLabel: 'Message Bohemcars',
+				ariaLabel: 'Съобщение до Bohemcars',
 				href: '/account/messages',
 				icon: '/assets/images/dashboard/Messages.svg',
 				kind: 'message',
-				label: 'Message'
+				label: 'Съобщение'
 			}
 		],
 		columns: [
 			submission.contactPhone,
 			submission.expectedPrice,
 			submission.mileage,
-			submission.status
+			submissionStatusBg[submission.status] ?? submission.status
 		],
-		description: submission.message,
+		description: localizeSubmissionMessage(submission.message),
 		id: submission.id,
-		image: accountAvatarByRole[context.session.role],
+		image: '/assets/images/dashboard/car.svg',
 		kind: 'submission',
 		title: submission.title,
 		titleMeta: submission.vin
@@ -86,10 +102,10 @@ export const accountListingsData = (
 				rows: accountInventoryListingRows(source)
 			}
 		: {
-				footerText: `Showing ${listVehicleSubmissions().length} Bohemcars sell-your-car submissions`,
-				headers: ['Submission', 'Contact', 'Expected Price', 'Mileage', 'Status', 'Action'],
+				footerText: `Показани ${listVehicleSubmissions().length} заявки за продажба`,
+				headers: ['Автомобил', 'Контакти', 'Очаквана цена', 'Пробег', 'Статус', 'Действие'],
 				isSubmissions: true,
-				rows: accountSubmissionListingRows(context)
+				rows: accountSubmissionListingRows()
 			};
 
 export const getAccountListingsData = (templateFile: string, options: AuxeroRenderOptions = {}) =>

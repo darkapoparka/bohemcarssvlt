@@ -49,7 +49,7 @@
 		:global(body.auxero-template-my-profile-html .dashboard-content--inner > .h3) {
 			margin-bottom: 18px !important;
 			font-size: 30px !important;
-			font-weight: 800 !important;
+			font-weight: 700 !important;
 			line-height: 36px !important;
 		}
 
@@ -61,7 +61,7 @@
 			box-shadow: none !important;
 			color: #1c1c1c !important;
 			padding: 0 18px !important;
-			font-size: 15px !important;
+			font-size: 16px !important;
 			line-height: 20px !important;
 		}
 

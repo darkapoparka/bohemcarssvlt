@@ -407,7 +407,7 @@ const applyAccountShell = (
 	options: AuxeroRenderOptions = {}
 ) => {
 	const context = accountContext(templateFile, options);
-	const listingHeading = context.isAdmin ? 'Bohemcars Inventory' : 'My Listings';
+	const listingHeading = context.isAdmin ? 'Bohemcars Inventory' : 'Моите автомобили';
 
 	const next = html
 		.replaceAll('Bohemcars Admin', escapeHtml(context.session.name))
@@ -1074,8 +1074,8 @@ const applyListingsData = (
 ) => {
 	const context = accountContext(templateFile, options);
 	let next = applyAccountShell(html, templateFile, options)
-		.replaceAll('My Listings', context.isAdmin ? 'Inventory Management' : 'My Listings')
-		.replaceAll('Showing 1 to 9 of 16 entries', `Showing 1 to 5 of ${vehicles.length} entries`);
+		.replaceAll('My Listings', context.isAdmin ? 'Inventory Management' : 'Моите автомобили')
+		.replaceAll('Showing 1 to 9 of 16 entries', `Показани 1–5 от ${vehicles.length}`);
 
 	next = replaceFirstDivAfter(
 		next,
@@ -1083,6 +1083,12 @@ const applyListingsData = (
 		'<div class="cart-wrapper">',
 		cartWrapper(accountListingsData(context))
 	);
+
+	next = next
+		.replaceAll('Search by keyword', 'Търсене по ключова дума')
+		.replaceAll('Sort by', 'Подреди по')
+		.replaceAll('Newest', 'Най-нови')
+		.replaceAll('Oldest', 'Най-стари');
 
 	return replaceDashboardDemoText(next);
 };

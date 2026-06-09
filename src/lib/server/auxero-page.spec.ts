@@ -489,7 +489,7 @@ describe('splitAuxeroDocument', () => {
 		const document = splitAuxeroDocument(html!);
 		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-account-listings');
 
-		expect(split?.beforeHtml).toContain('My Listings');
+		expect(split?.beforeHtml).toContain('Моите автомобили');
 		expect(split?.beforeHtml).toContain('dashboard-menu-item active');
 		expect(split?.sectionHtml).toContain('data-bohemcars-submissions-table');
 		expect(split?.sectionHtml).toContain('Client BMW evaluation');

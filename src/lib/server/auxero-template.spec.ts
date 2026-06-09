@@ -65,7 +65,7 @@ describe('Auxero template Bohemcars adapter', () => {
 			['account/favorites', 'My Favorites', 'customer'],
 			['account/compare', 'Сравни автомобили от Bohemcars', 'customer'],
 			['account/messages', 'Messages', 'customer'],
-			['account/listings', 'My Listings', 'customer'],
+			['account/listings', 'Моите автомобили', 'customer'],
 			['account/profile', 'Профил', 'customer'],
 			['account/password', 'Change Password', 'customer'],
 			['admin', 'Admin Dashboard', 'admin'],
@@ -571,11 +571,11 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain('Подай автомобил');
 		expect(html).toContain('/sell-your-car');
 		expect(html).toContain('data-bohemcars-submissions-table');
-		expect(html).toContain('Client BMW evaluation');
 		expect(listings).toContain('data-bohemcars-submissions-table');
-		expect(listings).toContain('My Listings');
+		expect(listings).toContain('Моите автомобили');
+		expect(listings).toContain('Client BMW evaluation');
 		expect(listings).toContain('Trade-in review request');
-		expect(listings).not.toContain('My Listingss');
+		expect(listings).not.toContain('Моите автомобилиs');
 		expect(html).not.toContain('/admin/inventory/new?role=customer');
 		expect(listings).not.toContain('/admin/inventory/new?role=customer');
 	});

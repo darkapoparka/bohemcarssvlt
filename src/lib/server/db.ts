@@ -557,13 +557,13 @@ export const createBohemcarsVehicleSubmissionRecord = (
 		expectedPrice: input.expectedPrice?.trim() || 'On request',
 		galleryImages: input.galleryImages ?? [],
 		id: nextId('submission'),
-		message: input.message?.trim() || 'Vehicle submission queued for review.',
+		message: input.message?.trim() || 'Заявката е в опашка за преглед.',
 		mileage: input.mileage?.trim() || 'On request',
 		previewImage: input.previewImage,
 		routePath: input.routePath ?? '/sell-your-car',
 		source: input.source ?? 'sell-your-car',
 		status: input.status ?? 'submitted',
-		title: input.title?.trim() || 'Client vehicle',
+		title: input.title?.trim() || 'Клиентски автомобил',
 		vin: input.vin?.trim() || 'On request'
 	};
 

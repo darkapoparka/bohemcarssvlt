@@ -49,7 +49,7 @@
 		:global(body.auxero-template-my-listings-html .dashboard-content--inner > .h3) {
 			margin-bottom: 18px !important;
 			font-size: 30px !important;
-			font-weight: 800 !important;
+			font-weight: 700 !important;
 			line-height: 36px !important;
 		}
 
@@ -61,7 +61,7 @@
 			box-shadow: none !important;
 			color: #1c1c1c !important;
 			padding: 0 18px !important;
-			font-size: 15px !important;
+			font-size: 16px !important;
 			line-height: 20px !important;
 		}
 
@@ -74,6 +74,139 @@
 			border-radius: 8px !important;
 			background: var(--bc-surface) !important;
 			padding: 14px !important;
+		}
+
+		/* The listings "cart" table is a 900px desktop grid that forces horizontal
+		   scrolling on phones. Restack each row into a self-contained card with
+		   labelled meta rows so it reads as a real mobile layout. */
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings) {
+			overflow: visible !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-header) {
+			display: none !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-items) {
+			display: grid !important;
+			gap: 10px !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item) {
+			display: flex !important;
+			width: 100% !important;
+			min-width: 0 !important;
+			flex-direction: column !important;
+			align-items: stretch !important;
+			border: 1px solid var(--bc-border) !important;
+			border-radius: 8px !important;
+			background: var(--bc-surface) !important;
+			padding: 12px !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__product) {
+			width: auto !important;
+			min-width: 0 !important;
+			padding-bottom: 10px !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__price),
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__year),
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__total),
+		:global(
+			body.auxero-template-my-listings-html
+				.bohemcars-account-listings
+				.cart-item
+				> div:not([class])
+		) {
+			display: flex !important;
+			width: auto !important;
+			min-height: 40px !important;
+			align-items: center !important;
+			justify-content: space-between !important;
+			gap: 12px !important;
+			border-top: 1px solid var(--bc-border) !important;
+			color: #111111 !important;
+			font-size: 14px !important;
+			font-weight: 600 !important;
+		}
+
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__price
+		)::before {
+			content: 'Контакт';
+		}
+
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__year
+		)::before {
+			content: 'Очаквана цена';
+		}
+
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__total
+		)::before {
+			content: 'Пробег';
+		}
+
+		:global(
+			body.auxero-template-my-listings-html
+				.bohemcars-account-listings
+				.cart-item
+				> div:not([class])
+		)::before {
+			content: 'Статус';
+		}
+
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__price
+		)::before,
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__year
+		)::before,
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__total
+		)::before,
+		:global(
+			body.auxero-template-my-listings-html
+				.bohemcars-account-listings
+				.cart-item
+				> div:not([class])
+		)::before {
+			flex: 0 0 auto !important;
+			color: #6b7280 !important;
+			font-size: 12px !important;
+			font-weight: 500 !important;
+			text-transform: uppercase !important;
+		}
+
+		:global(body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__action) {
+			justify-content: flex-start !important;
+			gap: 8px !important;
+			border-top: 1px solid var(--bc-border) !important;
+			padding-top: 10px !important;
+			margin-top: 10px !important;
+		}
+
+		/* Right-align the meta values so each row reads as label … value. */
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__price > span
+		),
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__year > span
+		),
+		:global(
+			body.auxero-template-my-listings-html .bohemcars-account-listings .cart-item__total > span
+		),
+		:global(
+			body.auxero-template-my-listings-html
+				.bohemcars-account-listings
+				.cart-item
+				> div:not([class])
+				> span
+		) {
+			margin-left: auto !important;
+			text-align: right !important;
 		}
 	}
 </style>

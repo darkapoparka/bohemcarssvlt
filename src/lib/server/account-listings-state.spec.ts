@@ -38,12 +38,12 @@ describe('account-listings-state', () => {
 
 		expect(customer.isSubmissions).toBe(true);
 		expect(customer.headers).toEqual([
-			'Submission',
-			'Contact',
-			'Expected Price',
-			'Mileage',
-			'Status',
-			'Action'
+			'Автомобил',
+			'Контакти',
+			'Очаквана цена',
+			'Пробег',
+			'Статус',
+			'Действие'
 		]);
 		expect(customer.pagination).toBeUndefined();
 		expect(customer.rows.length).toBeGreaterThan(1);
@@ -52,7 +52,7 @@ describe('account-listings-state', () => {
 			'edit-submission',
 			'message'
 		]);
-		expect(customer.footerText).toContain('sell-your-car submissions');
+		expect(customer.footerText).toContain('заявки за продажба');
 	});
 
 	it('keeps direct state helpers aligned with route-friendly accessors', () => {
