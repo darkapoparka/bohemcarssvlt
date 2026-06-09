@@ -184,7 +184,7 @@ export const importRequestSteps = [
 ] as const;
 
 export const importRequestMobileCopy = {
-	intro: 'Прати линк или VIN.',
+	intro: 'Проверка на обява, история и крайна цена преди ангажимент.',
 	processLabel: 'Процес',
 	title: 'Внос от Канада'
 } as const;
