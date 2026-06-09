@@ -12,10 +12,12 @@
 	let {
 		allVehicles,
 		locale,
+		useStoredSelection = true,
 		vehicles
 	}: {
 		allVehicles: AuxeroCompareVehicle[];
 		locale: Locale;
+		useStoredSelection?: boolean;
 		vehicles: AuxeroCompareVehicle[];
 	} = $props();
 
@@ -148,7 +150,7 @@
 			)
 		).slice(0, compareLimit);
 	const readStoredCompare = () => {
-		if (!browser) return [];
+		if (!browser || !useStoredSelection) return [];
 
 		try {
 			const value = JSON.parse(localStorage.getItem(compareStorageKey) || '[]');
@@ -172,7 +174,7 @@
 		slots[1] && cleanSlugs.includes(slots[1]) ? slots[1] : null
 	];
 	const readStoredCompareSlots = (cleanSlugs: string[]) => {
-		if (!browser) return undefined;
+		if (!browser || !useStoredSelection) return undefined;
 
 		try {
 			const value = JSON.parse(localStorage.getItem(compareSlotStorageKey) || 'null');
@@ -189,7 +191,7 @@
 		}
 	};
 	const writeStoredCompareSlots = (cleanSlugs: string[], slots: CompareSlotSlugs) => {
-		if (!browser) return;
+		if (!browser || !useStoredSelection) return;
 
 		localStorage.setItem(
 			compareSlotStorageKey,
@@ -731,44 +733,50 @@
 
 		.bohemcars-compare-mobile {
 			display: grid;
-			gap: 8px;
+			gap: 10px;
 			min-width: 0;
 			color: #111111;
 		}
 
 		.bohemcars-compare-mobile__appbar {
 			display: grid;
-			grid-template-columns: 44px minmax(0, 1fr) 44px;
+			grid-template-columns: 40px minmax(0, 1fr) 40px;
 			align-items: center;
-			gap: 10px;
-			min-height: 70px;
-			margin: 0 -14px;
-			background: #111111;
-			padding: max(10px, env(safe-area-inset-top)) 14px 10px;
-			color: #ffffff;
+			gap: 9px;
+			min-height: 58px;
+			border: 1px solid #e3eadc;
+			border-radius: 16px;
+			background: #ffffff;
+			box-shadow: 0 1px 3px rgba(23, 31, 18, 0.06);
+			color: #111111;
+			padding: 7px;
 		}
 
 		.bohemcars-compare-mobile__appbar a,
 		.bohemcars-compare-mobile__appbar button {
 			display: flex;
-			width: 44px;
-			height: 44px;
+			width: 40px;
+			height: 40px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
 			border-radius: 999px;
-			background: rgba(255, 255, 255, 0.1);
-			color: #ffffff;
+			background: #f2f6ed;
+			color: #111111;
 			cursor: pointer;
 			padding: 0;
 			text-decoration: none;
+		}
+
+		.bohemcars-compare-mobile__appbar button {
+			background: #d9f275;
 		}
 
 		.bohemcars-compare-mobile__appbar a:hover,
 		.bohemcars-compare-mobile__appbar a:focus-visible,
 		.bohemcars-compare-mobile__appbar button:hover,
 		.bohemcars-compare-mobile__appbar button:focus-visible {
-			background: #d9f275;
+			background: #c8e66d;
 			color: #111111;
 			outline: 0;
 		}
@@ -798,22 +806,22 @@
 		}
 
 		.bohemcars-compare-mobile__appbar p {
-			color: #d9f275;
+			color: #8fbd24;
 			font-size: 11px;
-			font-weight: 800;
+			font-weight: 850;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
 
 		.bohemcars-compare-mobile__appbar strong {
-			color: #ffffff;
-			font-size: 20px;
+			color: #111111;
+			font-size: 19px;
 			font-weight: 800;
-			line-height: 24px;
+			line-height: 23px;
 		}
 
 		.bohemcars-compare-mobile__appbar span {
-			color: rgba(255, 255, 255, 0.7);
+			color: #65705f;
 			font-size: 12px;
 			font-weight: 650;
 			line-height: 16px;
@@ -822,37 +830,36 @@
 		.bohemcars-compare-mobile__pair {
 			display: grid;
 			gap: 8px;
-			overflow: hidden;
-			border-radius: 10px;
-			background: #111111;
-			padding: 8px;
+			overflow: visible;
+			border-radius: 0;
+			background: transparent;
+			padding: 0;
 		}
 
 		.bohemcars-compare-mobile__pair-head {
 			display: flex;
-			min-height: 38px;
+			min-height: 40px;
 			align-items: center;
 			justify-content: space-between;
 			gap: 10px;
-			color: #ffffff;
+			color: #111111;
 		}
 
 		.bohemcars-compare-mobile__pair-head p {
 			margin: 0;
-			color: rgb(255 255 255 / 0.72);
+			color: #8fbd24;
 			font-size: 12px;
-			font-weight: 600;
+			font-weight: 850;
 			line-height: 16px;
-			letter-spacing: 0.04em;
 			text-transform: uppercase;
 		}
 
 		.bohemcars-compare-mobile__pair-head strong {
 			display: block;
 			margin-top: 1px;
-			color: #ffffff;
+			color: #111111;
 			font-size: 16px;
-			font-weight: 700;
+			font-weight: 800;
 			line-height: 20px;
 		}
 
@@ -885,9 +892,9 @@
 			grid-template-rows: 18px 76px 38px 18px;
 			min-width: 0;
 			overflow: hidden;
-			border: 0;
+			border: 1px solid #e1e8d8;
 			border-radius: 8px;
-			background: #f6f8f0;
+			background: #ffffff;
 			padding: 8px;
 			text-align: left;
 		}
@@ -895,10 +902,10 @@
 		.bohemcars-compare-mobile__selected-card > span {
 			width: fit-content;
 			border-radius: 999px;
-			background: #111111;
-			color: #d9f275;
+			background: #d9f275;
+			color: #111111;
 			font-size: 12px;
-			font-weight: 700;
+			font-weight: 850;
 			line-height: 16px;
 			padding: 0 8px;
 			text-transform: uppercase;
@@ -931,8 +938,8 @@
 			grid-template-rows: 18px minmax(44px, 1fr) auto auto;
 			align-items: center;
 			justify-items: start;
-			border: 1px dashed rgba(17, 17, 17, 0.28);
-			background: #eef3e9;
+			border: 1px dashed #c5d7ad;
+			background: #f5f9ee;
 			color: #111111;
 			cursor: pointer;
 		}
@@ -1006,10 +1013,10 @@
 			min-height: 46px;
 			align-content: center;
 			gap: 1px;
-			border: 1px solid rgba(255, 255, 255, 0.13);
+			border: 1px solid #e1e8d8;
 			border-radius: 999px;
-			background: rgba(255, 255, 255, 0.08);
-			color: #ffffff;
+			background: #ffffff;
+			color: #111111;
 			cursor: pointer;
 			padding: 6px 11px;
 			text-align: left;
@@ -1048,6 +1055,7 @@
 
 		.bohemcars-compare-mobile__pair-table {
 			overflow: hidden;
+			border: 1px solid #dfe5d5;
 			border-radius: 8px;
 			background: #ffffff;
 		}
@@ -1139,10 +1147,10 @@
 			align-items: center;
 			justify-content: center;
 			border-radius: 999px;
-			background: #111111;
-			color: #d9f275;
+			background: #d9f275;
+			color: #111111;
 			font-size: 12px;
-			font-weight: 700;
+			font-weight: 850;
 			line-height: 1;
 		}
 
@@ -1616,8 +1624,8 @@
 			justify-content: center;
 			gap: 5px;
 			border-radius: 999px;
-			background: #111111;
-			color: #ffffff;
+			background: #d9f275;
+			color: #111111;
 			padding: 0 10px;
 			font-size: 12px;
 			font-weight: 850;
@@ -1626,7 +1634,7 @@
 		}
 
 		.bohemcars-compare-mobile-drawer__list > button.active b {
-			background: #d9f275;
+			background: #eef8ce;
 			color: #111111;
 		}
 

@@ -46,6 +46,7 @@
 		id="sell-mobile-form-toggle"
 		class="bohemcars-sell-mobile__sheet-toggle"
 		type="checkbox"
+		autocomplete="off"
 		tabindex="-1"
 		aria-hidden="true"
 	/>
@@ -53,6 +54,7 @@
 		id="sell-mobile-location-toggle"
 		class="bohemcars-sell-mobile__sheet-toggle"
 		type="checkbox"
+		autocomplete="off"
 		tabindex="-1"
 		aria-hidden="true"
 	/>
@@ -123,8 +125,11 @@
 			/>
 		</section>
 
-		<form class="bohemcars-sell-mobile__inline-drawer" aria-label={copy.formTitle} onsubmit={handleSubmit}>
-			<span class="bohemcars-sell-mobile__drawer-handle" aria-hidden="true"></span>
+		<form
+			class="bohemcars-sell-mobile__inline-drawer"
+			aria-label={copy.formTitle}
+			onsubmit={handleSubmit}
+		>
 			<header class="bohemcars-sell-mobile__inline-header">
 				<div>
 					<strong>{copy.submitLabel}</strong>
@@ -142,7 +147,11 @@
 
 			<div class="bohemcars-sell-mobile__inline-fields">
 				{#each form.fields as field (field.id)}
-					<label class:bohemcars-sell-mobile__inline-field--wide={field.name === 'vin' || field.name === 'phone'} for={`inline-${field.id}`}>
+					<label
+						class:bohemcars-sell-mobile__inline-field--wide={field.name === 'vin' ||
+							field.name === 'phone'}
+						for={`inline-${field.id}`}
+					>
 						<span>{field.mobileLabel}</span>
 						<input
 							id={`inline-${field.id}`}
@@ -529,17 +538,16 @@
 		position: relative;
 		z-index: 3;
 		display: grid;
-		gap: 11px;
-		margin-top: -10px;
-		border: 1px solid rgba(28, 28, 28, 0.07);
-		border-radius: 18px 18px 8px 8px;
+		gap: 12px;
+		border: 0;
+		border-radius: 8px;
 		background: #ffffff;
-		box-shadow: 0 12px 28px rgba(28, 28, 28, 0.08);
-		padding: 9px 12px 12px;
+		box-shadow: var(--bc-shadow-subtle);
+		padding: 14px;
 	}
 
 	.bohemcars-sell-mobile__drawer-handle {
-		display: block;
+		display: none;
 		width: 42px;
 		height: 5px;
 		justify-self: center;
@@ -619,15 +627,15 @@
 	.bohemcars-sell-mobile__inline-fields input {
 		display: block;
 		width: 100%;
-		height: 43px !important;
-		border: 1px solid #dde3de !important;
+		height: 46px !important;
+		border: 0 !important;
 		border-radius: 8px !important;
-		background: #f7f9f7 !important;
+		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
 		color: #111111;
-		font-size: 15px;
+		font-size: 16px;
 		font-weight: 600;
-		line-height: 20px;
+		line-height: 22px;
 		outline: 0;
 		padding: 0 12px !important;
 	}
@@ -995,7 +1003,8 @@
 		gap: 7px;
 		overflow: hidden;
 		border-radius: 8px;
-		background: var(--bc-surface);
+		background: #ffffff;
+		box-shadow: var(--bc-shadow-subtle);
 		padding: 0 9px;
 		color: #111111;
 		font-size: 14px;
@@ -1036,7 +1045,8 @@
 		min-height: 60px;
 		border: 0;
 		border-radius: 8px;
-		background: var(--bc-surface);
+		background: #ffffff;
+		box-shadow: var(--bc-shadow-subtle);
 		padding: 10px 14px;
 		color: #111111;
 	}

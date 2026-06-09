@@ -50,7 +50,7 @@
 	>
 		<div class="dashboard-box bohemcars-dashboard-compare bg-white">
 			<div class="bohemcars-dashboard-compare-scroll overflow-x-auto">
-				<AuxeroCompareTable {allVehicles} {locale} {vehicles} />
+				<AuxeroCompareTable {allVehicles} {locale} useStoredSelection={false} {vehicles} />
 			</div>
 		</div>
 	</AuxeroDashboardSlotShell>
@@ -283,7 +283,7 @@
 		}
 
 		:global(body.auxero-template-compare-html section.pb-100) {
-			padding-top: 0 !important;
+			padding-top: max(10px, env(safe-area-inset-top)) !important;
 			padding-bottom: 92px !important;
 		}
 

@@ -1,10 +1,54 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { formatEur, type AuxeroCalculatorData } from '$lib/auxero/calculator';
+	import {
+		auxeroCalculatorInitial,
+		calculateAuxeroCalculatorTotals,
+		formatEur,
+		type AuxeroCalculatorData,
+		type AuxeroCalculatorInputKey,
+		type AuxeroCalculatorSummaryRow
+	} from '$lib/auxero/calculator';
 
 	let { calculator }: { calculator: AuxeroCalculatorData } = $props();
 
 	const inputClass = (active: boolean) => `${active ? 'active ' : ''}input-large`;
+	const fieldValue = (key: AuxeroCalculatorInputKey) =>
+		calculator.fields.find((field) => field.key === key)?.value ?? auxeroCalculatorInitial[key];
+	const summaryLabel = (key: AuxeroCalculatorSummaryRow['key'], fallback: string) =>
+		calculator.summaryRows.find((row) => row.key === key)?.label ?? fallback;
+
+	let values = $state<Record<AuxeroCalculatorInputKey, number>>({
+		dutyRate: fieldValue('dutyRate'),
+		prep: fieldValue('prep'),
+		price: fieldValue('price'),
+		transport: fieldValue('transport'),
+		vatRate: fieldValue('vatRate')
+	});
+
+	const totals = $derived.by(() =>
+		calculateAuxeroCalculatorTotals({
+			dutyRate: values.dutyRate,
+			prep: values.prep,
+			price: values.price,
+			transport: values.transport,
+			vatRate: values.vatRate
+		})
+	);
+	const totalLabel = $derived(formatEur(totals.total));
+	const summaryRows = $derived<AuxeroCalculatorSummaryRow[]>([
+		{ key: 'price', label: summaryLabel('price', 'Цена на автомобила'), value: values.price },
+		{ key: 'transport', label: summaryLabel('transport', 'Транспорт'), value: values.transport },
+		{ key: 'duty', label: summaryLabel('duty', 'Мито'), value: totals.duty },
+		{ key: 'vat', label: summaryLabel('vat', 'ДДС'), value: totals.vat },
+		{ key: 'prep', label: summaryLabel('prep', 'Подготовка и регистрация'), value: values.prep }
+	]);
+
+	const setNumberValue = (key: AuxeroCalculatorInputKey, event: Event) => {
+		const input = event.currentTarget as HTMLInputElement;
+		const next = input.valueAsNumber;
+
+		values[key] = Number.isFinite(next) ? next : 0;
+	};
 </script>
 
 <div class="lg-grid-cols-1 grid grid-cols-2 gap-40" data-bohemcars-calculator>
@@ -28,7 +72,8 @@
 							name={field.name}
 							step={field.step}
 							type="number"
-							value={field.value}
+							value={values[field.key]}
+							oninput={(event) => setNumberValue(field.key, event)}
 						/>
 					</div>
 				{/each}
@@ -39,14 +84,14 @@
 		<p class="h3 mb-8">{calculator.title}</p>
 		<p class="mb-10">
 			<span class="text-56 font-weight-600" data-bohemcars-calc-output="total">
-				{formatEur(calculator.total)}
+				{totalLabel}
 			</span>
 		</p>
 		<p class="h5 mb-28 capitalize">{calculator.totalNote}</p>
 		<div class="divider mb-28 w-full"></div>
 		<p class="h4 mb-20">{calculator.subtitle}</p>
 		<div class="mb-28 flex flex-col gap-18">
-			{#each calculator.summaryRows as row (row.key)}
+			{#each summaryRows as row (row.key)}
 				<p class="flex justify-between gap-8">
 					<span class="h7 text-secondary">{row.label}</span>
 					<span class="h7" data-bohemcars-calc-output={row.key}>{formatEur(row.value)}</span>
@@ -56,7 +101,7 @@
 		<div class="divider mb-28 w-full"></div>
 		<div class="mb-16 flex justify-between gap-8">
 			<p class="h4">Estimated Total</p>
-			<p class="h4" data-bohemcars-calc-output="totalSmall">{formatEur(calculator.total)}</p>
+			<p class="h4" data-bohemcars-calc-output="totalSmall">{totalLabel}</p>
 		</div>
 		<a
 			href={resolve(calculator.ctaHref as '/')}

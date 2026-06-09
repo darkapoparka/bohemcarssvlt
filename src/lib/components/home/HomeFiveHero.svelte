@@ -166,14 +166,87 @@
 	};
 	const activeMobileQuickLinks = $derived.by(() => quickLinksForMode(mobileMode));
 	let mobileSearchOpen = $state(false);
+	let mobileSearchDragOffset = $state(0);
+	let mobileLocationDragOffset = $state(0);
+	let activeDrawerDrag = $state<'search' | 'location' | null>(null);
+	let drawerDragStartY = 0;
 	let mobileSearchTrigger: HTMLElement | null = null;
 	const openMobileSearch = (event?: Event) => {
 		mobileSearchTrigger = (event?.currentTarget as HTMLElement) ?? null;
+		mobileSearchDragOffset = 0;
 		mobileSearchOpen = true;
 	};
 	const closeMobileSearch = () => {
+		activeDrawerDrag = null;
+		mobileSearchDragOffset = 0;
 		mobileSearchOpen = false;
 		mobileSearchTrigger?.focus?.();
+	};
+	const closeMobileLocation = () => {
+		activeDrawerDrag = null;
+		mobileLocationDragOffset = 0;
+		const toggle = document.getElementById(
+			'bohemcars-mobile-location-toggle'
+		) as HTMLInputElement | null;
+		if (toggle) toggle.checked = false;
+	};
+	const drawerDragOffset = (drawer: 'search' | 'location') =>
+		drawer === 'search' ? mobileSearchDragOffset : mobileLocationDragOffset;
+	const setDrawerDragOffset = (drawer: 'search' | 'location', offset: number) => {
+		if (drawer === 'search') {
+			mobileSearchDragOffset = offset;
+		} else {
+			mobileLocationDragOffset = offset;
+		}
+	};
+	const closeDrawer = (drawer: 'search' | 'location') => {
+		if (drawer === 'search') {
+			closeMobileSearch();
+		} else {
+			closeMobileLocation();
+		}
+	};
+	const canStartDrawerDrag = (event: PointerEvent) => {
+		const target = event.target as HTMLElement | null;
+		if (!target) return false;
+		if (target.closest('a, button, input, label, select, textarea')) return false;
+		return Boolean(
+			target.closest(
+				'.bohemcars-mobile-search-sheet__handle, .bohemcars-mobile-search-sheet__panel header, .bohemcars-mobile-location-sheet__handle, .bohemcars-mobile-location-sheet__panel header'
+			)
+		);
+	};
+	const startDrawerDrag = (drawer: 'search' | 'location', event: PointerEvent) => {
+		if (!canStartDrawerDrag(event)) return;
+		activeDrawerDrag = drawer;
+		drawerDragStartY = event.clientY;
+		setDrawerDragOffset(drawer, 0);
+		try {
+			(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+		} catch {
+			// Some browser/device pairs reject capture during synthetic pointer paths.
+		}
+		event.preventDefault();
+	};
+	const moveDrawerDrag = (drawer: 'search' | 'location', event: PointerEvent) => {
+		if (activeDrawerDrag !== drawer) return;
+		const offset = Math.max(0, event.clientY - drawerDragStartY);
+		setDrawerDragOffset(drawer, Math.min(offset, window.innerHeight * 0.75));
+		event.preventDefault();
+	};
+	const finishDrawerDrag = (drawer: 'search' | 'location', event: PointerEvent) => {
+		if (activeDrawerDrag !== drawer) return;
+		const panel = event.currentTarget as HTMLElement;
+		const offset = drawerDragOffset(drawer);
+		const threshold = Math.min(128, panel.offsetHeight * 0.28);
+		activeDrawerDrag = null;
+		setDrawerDragOffset(drawer, 0);
+		try {
+			panel.releasePointerCapture?.(event.pointerId);
+		} catch {
+			// Capture may already be released when the pointer is cancelled.
+		}
+		if (offset >= threshold) closeDrawer(drawer);
 	};
 
 	// Drawer a11y: move focus in, trap Tab, close on Escape, restore focus to the trigger.
@@ -358,10 +431,15 @@
 			<div
 				id="bohemcars-mobile-location-panel"
 				class="bohemcars-mobile-location-sheet__panel"
+				style={`--bohemcars-mobile-location-drag-y: ${mobileLocationDragOffset}px`}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="bohemcars-mobile-location-title"
 				tabindex="-1"
+				onpointerdown={(event) => startDrawerDrag('location', event)}
+				onpointermove={(event) => moveDrawerDrag('location', event)}
+				onpointerup={(event) => finishDrawerDrag('location', event)}
+				onpointercancel={(event) => finishDrawerDrag('location', event)}
 			>
 				<span class="bohemcars-mobile-location-sheet__handle"></span>
 				<header>
@@ -422,11 +500,19 @@
 			></button>
 			<div
 				id="bohemcars-mobile-search-panel"
-				class="bohemcars-mobile-search-sheet__panel"
+				class={[
+					'bohemcars-mobile-search-sheet__panel',
+					activeDrawerDrag === 'search' && 'is-dragging'
+				]}
+				style={`--bohemcars-mobile-search-drag-y: ${mobileSearchDragOffset}px`}
 				role="dialog"
 				aria-modal="true"
 				aria-label={mobileSearchDrawerTitle}
 				aria-hidden={!mobileSearchOpen}
+				onpointerdown={(event) => startDrawerDrag('search', event)}
+				onpointermove={(event) => moveDrawerDrag('search', event)}
+				onpointerup={(event) => finishDrawerDrag('search', event)}
+				onpointercancel={(event) => finishDrawerDrag('search', event)}
 			>
 				<span class="bohemcars-mobile-search-sheet__handle"></span>
 				{#if activeMobileAction}
@@ -1010,10 +1096,9 @@
 			--bohemcars-mobile-ink-muted: rgba(28, 28, 28, 0.82);
 			--bohemcars-mobile-ink-strong: #1c1c1c;
 			--bohemcars-mobile-cta: rgba(251, 252, 247, 0.32);
-			--bohemcars-mobile-cta-hover: rgba(251, 252, 247, 0.44);
 			--bohemcars-mobile-cta-ink: #14210f;
 			--bohemcars-mobile-action: #14210f;
-			--bohemcars-mobile-action-hover: #20350f;
+			--bohemcars-mobile-action-focus: #20350f;
 			--bohemcars-mobile-surface: #fbfcf7;
 			background: var(--bohemcars-mobile-hero-top) !important;
 			background-color: var(--bohemcars-mobile-hero-top) !important;
@@ -1110,7 +1195,6 @@
 			user-select: none;
 			-webkit-user-select: none;
 			z-index: 1;
-			transition: color 0.18s ease;
 		}
 
 		.bohemcars-mobile-hero__tab.active {
@@ -1143,7 +1227,6 @@
 			border-radius: 999px;
 			background: transparent;
 			content: '';
-			transition: background-color 0.18s ease;
 		}
 
 		.bohemcars-mobile-hero__tab.active::after {
@@ -1153,12 +1236,6 @@
 		.bohemcars-mobile-hero__tab:focus-visible {
 			outline: 2px solid rgba(28, 28, 28, 0.64);
 			outline-offset: 3px;
-		}
-
-		@media (hover: hover) and (pointer: fine) {
-			.bohemcars-mobile-hero__tabs button:hover {
-				color: #14210f;
-			}
 		}
 
 		.bohemcars-mobile-search-sheet__panel .bc-drawer {
@@ -1227,12 +1304,10 @@
 			color: #ffffff;
 			cursor: pointer;
 			padding: 0;
-			transition: background-color 0.18s ease;
 		}
 
-		.bohemcars-mobile-hero__search-action:hover,
 		.bohemcars-mobile-hero__search-action:focus-visible {
-			background: var(--bohemcars-mobile-action-hover, #1c1c1c);
+			background: var(--bohemcars-mobile-action-focus, #1c1c1c);
 			color: #ffffff;
 			outline: 0;
 		}
@@ -1273,7 +1348,6 @@
 			font-weight: 700;
 			line-height: 16px;
 			text-decoration: none;
-			transition: background-color 0.18s ease;
 		}
 
 		.bohemcars-mobile-hero__all span {
@@ -1284,7 +1358,6 @@
 			white-space: nowrap;
 		}
 
-		.bohemcars-mobile-hero__all:hover,
 		.bohemcars-mobile-hero__all:focus-visible {
 			background: #ffffff;
 			color: #14210f !important;
@@ -1292,7 +1365,6 @@
 			outline-offset: 2px;
 		}
 
-		.bohemcars-mobile-hero__all:hover span,
 		.bohemcars-mobile-hero__all:focus-visible span {
 			color: var(--bohemcars-mobile-cta-ink, #ffffff);
 		}
@@ -1340,6 +1412,7 @@
 			padding: 10px 16px max(20px, env(safe-area-inset-bottom));
 			box-shadow: 0 -18px 34px rgba(17, 24, 39, 0.18);
 			color: #111111;
+			transform: translateY(var(--bohemcars-mobile-location-drag-y, 0px));
 		}
 
 		:global(.bohemcars-mobile-location-toggle:checked ~ .bohemcars-mobile-location-sheet) {
@@ -1353,6 +1426,7 @@
 			height: 4px;
 			border-radius: 999px;
 			background: var(--bc-border);
+			touch-action: none;
 		}
 
 		.bohemcars-mobile-location-sheet__panel header {
@@ -1360,6 +1434,7 @@
 			align-items: center;
 			justify-content: space-between;
 			gap: 14px;
+			touch-action: none;
 		}
 
 		.bohemcars-mobile-location-sheet__panel header p,
@@ -1578,7 +1653,6 @@
 			background: rgba(0, 0, 0, 0.34);
 			opacity: 0;
 			padding: 0;
-			transition: opacity 0.18s ease;
 		}
 
 		.bohemcars-mobile-search-sheet__panel {
@@ -1596,8 +1670,8 @@
 			padding: 10px 16px max(20px, env(safe-area-inset-bottom));
 			box-shadow: 0 -18px 34px rgba(17, 24, 39, 0.18);
 			color: #111111;
-			transform: translateY(100%);
-			transition: transform 0.22s ease;
+			transform: translateY(calc(100% + var(--bohemcars-mobile-search-drag-y, 0px)));
+			transition: none;
 			-webkit-overflow-scrolling: touch;
 		}
 
@@ -1611,7 +1685,7 @@
 		}
 
 		.bohemcars-mobile-search-sheet:global(.is-open) .bohemcars-mobile-search-sheet__panel {
-			transform: translateY(0) !important;
+			transform: translateY(var(--bohemcars-mobile-search-drag-y, 0px)) !important;
 		}
 
 		/* Lock background scroll while a hero drawer is open (search + location). */
@@ -1626,6 +1700,7 @@
 			height: 4px;
 			border-radius: 999px;
 			background: var(--bc-border);
+			touch-action: none;
 		}
 
 		.bohemcars-mobile-search-sheet__panel header {
@@ -1633,6 +1708,7 @@
 			align-items: center;
 			justify-content: space-between;
 			gap: 14px;
+			touch-action: none;
 		}
 
 		.bohemcars-mobile-search-sheet__panel header p,
@@ -1795,7 +1871,6 @@
 			white-space: nowrap;
 		}
 
-		.bohemcars-mobile-search-sheet__group a:hover,
 		.bohemcars-mobile-search-sheet__group a:focus-visible {
 			background: #d9f275;
 			color: #111111;
@@ -1895,9 +1970,7 @@
 			padding: 0;
 		}
 
-		.bohemcars-mobile-home-quick__scroller a:hover,
 		.bohemcars-mobile-home-quick__scroller a:focus-visible,
-		.bohemcars-mobile-home-quick__scroller button:hover,
 		.bohemcars-mobile-home-quick__scroller button:focus-visible {
 			background: #dfe9c7;
 			box-shadow: none;
@@ -1990,9 +2063,6 @@
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
-			transition:
-				background-color 0.18s ease,
-				box-shadow 0.18s ease;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
@@ -2012,11 +2082,9 @@
 			stroke: #20350f !important;
 		}
 
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover),
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:focus-visible
 		),
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:hover),
 		:global(
 			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
 		) {
@@ -2027,15 +2095,9 @@
 		}
 
 		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:hover::before
-		),
-		:global(
 			body.auxero-template-home-05-html
 				.header-wrapper-style-4
 				.bohemcars-mobile-call:focus-visible::before
-		),
-		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:hover::before
 		),
 		:global(
 			body.auxero-template-home-05-html

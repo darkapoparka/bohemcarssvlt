@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroServiceFormData } from '$lib/auxero/services';
-	import { importRequestMobileCopy } from '$lib/auxero/services';
+	import { importRequestMobileCopy, importRequestSteps } from '$lib/auxero/services';
 	import { bohemcarsAssets, bohemcarsContact } from '$lib/data/bohemcars';
 	import InquiryForm from '$lib/components/forms/InquiryForm.svelte';
 	import type { InquiryFormField } from '$lib/components/forms/types';
@@ -75,27 +75,43 @@
 			submitLabel={form.submitLabel}
 		/>
 	</section>
+
+	<section class="bohemcars-import-mobile__steps" aria-label={importRequestMobileCopy.processLabel}>
+		{#each importRequestSteps as step, index (step.title)}
+			<article>
+				<span>Стъпка 0{index + 1}</span>
+				<h2>{step.title}</h2>
+				<p>{step.text}</p>
+			</article>
+		{/each}
+	</section>
 </main>
 
 <style>
 	.bohemcars-import-mobile {
 		display: grid;
-		gap: 12px;
+		gap: 10px;
 		min-height: 100svh;
 		overflow-x: hidden;
-		background: #ffffff;
+		background: var(--bc-bg);
 		color: #111111;
 		padding: 0 14px 92px;
 	}
 
 	.bohemcars-import-mobile__appbar {
+		position: sticky;
+		top: 0;
+		z-index: 30;
 		display: flex;
-		min-height: 68px;
+		min-height: 64px;
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		background: #ffffff;
-		padding-top: max(10px, env(safe-area-inset-top));
+		margin: 0 -14px 2px;
+		border-bottom: 1px solid var(--bc-border);
+		background: rgba(251, 252, 250, 0.96);
+		padding: max(10px, env(safe-area-inset-top)) 14px 8px;
+		backdrop-filter: blur(12px);
 	}
 
 	.bohemcars-import-mobile__brand {
@@ -107,7 +123,7 @@
 
 	.bohemcars-import-mobile__brand img {
 		display: block;
-		width: 164px;
+		width: 148px;
 		max-width: calc(100vw - 118px);
 		height: auto;
 		object-fit: contain;
@@ -122,8 +138,8 @@
 
 	.bohemcars-import-mobile__icon-action {
 		display: flex;
-		width: 42px;
-		height: 42px;
+		width: 38px;
+		height: 38px;
 		align-items: center;
 		justify-content: center;
 		border: 0;
@@ -148,9 +164,19 @@
 	}
 
 	.bohemcars-import-mobile__intro {
+		position: relative;
 		display: grid;
-		gap: 4px;
+		min-height: 156px;
+		align-content: end;
+		gap: 6px;
 		min-width: 0;
+		overflow: hidden;
+		border-radius: 8px;
+		background:
+			linear-gradient(90deg, rgba(23, 31, 19, 0.94), rgba(23, 31, 19, 0.62)),
+			url('/assets/bohemcars/services/import-canada-banner-generated.webp') 62% center / cover;
+		color: #ffffff;
+		padding: 18px;
 	}
 
 	.bohemcars-import-mobile__intro h1,
@@ -160,14 +186,16 @@
 	}
 
 	.bohemcars-import-mobile__intro h1 {
-		color: #111111;
-		font-size: 31px;
+		max-width: 310px;
+		color: #ffffff;
+		font-size: 30px;
 		font-weight: 800;
-		line-height: 35px;
+		line-height: 34px;
 	}
 
 	.bohemcars-import-mobile__intro p {
-		color: #626d7c;
+		max-width: 300px;
+		color: rgba(255, 255, 255, 0.82);
 		font-size: 15px;
 		font-weight: 600;
 		line-height: 20px;
@@ -175,17 +203,18 @@
 
 	.bohemcars-import-mobile__form-section {
 		display: grid;
-		gap: 13px;
+		gap: 11px;
 		min-width: 0;
 		border-radius: 8px;
 		background: #ffffff;
-		padding: 0;
+		box-shadow: var(--bc-shadow-subtle);
+		padding: 14px;
 	}
 
 	.bohemcars-import-mobile__form-section h2 {
 		margin: 0;
 		color: #111111;
-		font-size: 22px;
+		font-size: 21px;
 		font-weight: 800;
 		letter-spacing: 0;
 		line-height: 27px;
@@ -193,13 +222,13 @@
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form) {
 		display: grid;
-		gap: 13px;
+		gap: 10px;
 		min-width: 0;
 	}
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__grid) {
 		display: grid;
-		gap: 10px;
+		gap: 8px;
 		min-width: 0;
 	}
 
@@ -208,7 +237,7 @@
 	}
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form p) {
-		margin: 0 0 6px;
+		margin: 0 0 5px;
 		color: #111111;
 		font-size: 14px;
 		font-weight: 700;
@@ -222,7 +251,7 @@
 		height: 48px !important;
 		border: 0 !important;
 		border-radius: 8px !important;
-		background: #f5f9ec !important;
+		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
 		color: #111111;
 		font-size: 16px !important;
@@ -243,8 +272,7 @@
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form input:focus),
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form select:focus) {
-		outline: 2px solid #d9f275;
-		outline-offset: 2px;
+		box-shadow: 0 0 0 2px rgba(217, 242, 117, 0.7) !important;
 	}
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__submit) {
@@ -255,8 +283,8 @@
 		justify-content: center;
 		border: 0;
 		border-radius: 8px;
-		background: #d9f275 !important;
-		color: #111111 !important;
+		background: #1c1c1c !important;
+		color: #ffffff !important;
 		cursor: pointer;
 		font-size: 16px;
 		font-weight: 800;
@@ -266,7 +294,7 @@
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__submit:hover),
 	.bohemcars-import-mobile__form-section
 		:global(.bohemcars-import-mobile-form__submit:focus-visible) {
-		background: #cfee50 !important;
+		background: #d9f275 !important;
 		color: #111111 !important;
 		outline: 0;
 	}
@@ -277,5 +305,55 @@
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 18px;
+	}
+
+	.bohemcars-import-mobile__steps {
+		display: grid;
+		gap: 8px;
+	}
+
+	.bohemcars-import-mobile__steps article {
+		display: grid;
+		gap: 5px;
+		min-width: 0;
+		border-radius: 8px;
+		background: #ffffff;
+		box-shadow: var(--bc-shadow-subtle);
+		padding: 13px 14px;
+	}
+
+	.bohemcars-import-mobile__steps span {
+		display: inline-flex;
+		width: fit-content;
+		min-height: 26px;
+		align-items: center;
+		border-radius: 999px;
+		background: var(--bc-surface);
+		color: #14210f;
+		font-size: 11px;
+		font-weight: 900;
+		line-height: 13px;
+		padding: 0 10px;
+		text-transform: uppercase;
+	}
+
+	.bohemcars-import-mobile__steps h2,
+	.bohemcars-import-mobile__steps p {
+		margin: 0;
+		letter-spacing: 0;
+	}
+
+	.bohemcars-import-mobile__steps h2 {
+		color: #111111;
+		font-size: 17px;
+		font-weight: 800;
+		line-height: 21px;
+	}
+
+	.bohemcars-import-mobile__steps p {
+		color: #626d7c;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 19px;
 	}
 </style>

@@ -9,6 +9,7 @@
 	import type { HomePageCopy } from '$lib/i18n/messages';
 	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import ContactFormCard from './ContactFormCard.svelte';
+	import ContactMobilePage from './ContactMobilePage.svelte';
 
 	let {
 		form,
@@ -33,72 +34,82 @@
 	const externalHref = (href: string) => ({ href });
 </script>
 
-<AuxeroPublicShell
-	copy={shellCopy}
-	footer={shellFooter}
-	header={shellHeader}
-	modals={shellModals}
-	{pageDocument}
-	runtimeHtml={shellRuntimeHtml}
-	title="Контакти — Bohemcars"
->
-	<section class="bg-white pb-84">
-		<div class="contact-page container">
-			<div class="grid grid-cols-2 gap-30">
-				<div class="contact-page-info radius-20 bg-white">
-					<p class="text-highlight font-weight-600 mb-8">{info.eyebrow}</p>
-					<h1 class="h2 mb-12">{info.title}</h1>
-					<p class="h7 line-height-28">{info.description}</p>
+<div class="bohemcars-contact-desktop-route">
+	<AuxeroPublicShell
+		copy={shellCopy}
+		footer={shellFooter}
+		header={shellHeader}
+		modals={shellModals}
+		{pageDocument}
+		runtimeHtml={shellRuntimeHtml}
+		title="Контакти — Bohemcars"
+	>
+		<section class="bg-white pb-84">
+			<div class="contact-page container">
+				<div class="grid grid-cols-2 gap-30">
+					<div class="contact-page-info radius-20 bg-white">
+						<p class="text-highlight font-weight-600 mb-8">{info.eyebrow}</p>
+						<h1 class="h2 mb-12">{info.title}</h1>
+						<p class="h7 line-height-28">{info.description}</p>
 
-					<div class="contact mb-22 flex items-start gap-12">
-						<div class="icon"><img src="/assets/icons/MapPin.svg" alt="office" /></div>
-						<div>
-							<p class="h5 mb-4">{info.officeLabel}</p>
-							<span>{info.workNote}</span>
+						<div class="contact mb-22 flex items-start gap-12">
+							<div class="icon"><img src="/assets/icons/MapPin.svg" alt="office" /></div>
+							<div>
+								<p class="h5 mb-4">{info.officeLabel}</p>
+								<span>{info.workNote}</span>
+							</div>
 						</div>
-					</div>
-					<div class="contact mb-22 flex items-start gap-12">
-						<div class="icon"><img src="/assets/icons/PhoneCall.svg" alt="phone" /></div>
-						<div class="flex flex-col gap-4">
-							<a {...externalHref(info.phoneHref)}>{info.phoneLabel}</a>
-							<a {...externalHref(info.secondaryPhoneHref)}>{info.secondaryPhoneLabel}</a>
+						<div class="contact mb-22 flex items-start gap-12">
+							<div class="icon"><img src="/assets/icons/PhoneCall.svg" alt="phone" /></div>
+							<div class="flex flex-col gap-4">
+								<a {...externalHref(info.phoneHref)}>{info.phoneLabel}</a>
+								<a {...externalHref(info.secondaryPhoneHref)}>{info.secondaryPhoneLabel}</a>
+							</div>
 						</div>
-					</div>
-					<div class="contact mb-22 flex items-start gap-12">
-						<div class="icon"><img src="/assets/icons/input-telegram.svg" alt="email" /></div>
-						<a {...externalHref(info.emailHref)}>{info.emailLabel}</a>
+						<div class="contact mb-22 flex items-start gap-12">
+							<div class="icon"><img src="/assets/icons/input-telegram.svg" alt="email" /></div>
+							<a {...externalHref(info.emailHref)}>{info.emailLabel}</a>
+						</div>
+
+						<ul class="contact-page-info-social flex items-center gap-10">
+							{#each info.socials as social (social.label)}
+								<li>
+									<a {...externalHref(social.href)} aria-label={social.label}>
+										<img src={`/assets/icons/${social.icon}`} alt={social.label} />
+									</a>
+								</li>
+							{/each}
+						</ul>
 					</div>
 
-					<ul class="contact-page-info-social flex items-center gap-10">
-						{#each info.socials as social (social.label)}
-							<li>
-								<a {...externalHref(social.href)} aria-label={social.label}>
-									<img src={`/assets/icons/${social.icon}`} alt={social.label} />
-								</a>
-							</li>
-						{/each}
-					</ul>
+					<ContactFormCard {form} />
 				</div>
 
-				<ContactFormCard {form} />
+				<div class="widget-gg-map bohemcars-contact-map radius-16 mt-30 flex overflow-hidden">
+					<iframe
+						title="Bohemcars appointment area"
+						src={info.mapSrc}
+						height="420"
+						style="border:0;width:100%;"
+						allowfullscreen
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+					></iframe>
+				</div>
 			</div>
+		</section>
+	</AuxeroPublicShell>
+</div>
 
-			<div class="widget-gg-map bohemcars-contact-map radius-16 mt-30 flex overflow-hidden">
-				<iframe
-					title="Bohemcars appointment area"
-					src={info.mapSrc}
-					height="420"
-					style="border:0;width:100%;"
-					allowfullscreen
-					loading="lazy"
-					referrerpolicy="no-referrer-when-downgrade"
-				></iframe>
-			</div>
-		</div>
-	</section>
-</AuxeroPublicShell>
+<div class="bohemcars-contact-mobile-route">
+	<ContactMobilePage {form} {info} />
+</div>
 
 <style>
+	.bohemcars-contact-mobile-route {
+		display: none;
+	}
+
 	:global(.bohemcars-contact-map) {
 		display: none !important;
 	}
@@ -213,7 +224,20 @@
 	}
 
 	@media (max-width: 767px) {
-		:global(body.auxero-template-contact-us-html #wrapper),
+		.bohemcars-contact-desktop-route {
+			display: none;
+		}
+
+		.bohemcars-contact-mobile-route {
+			display: block;
+		}
+
+		:global(body.auxero-template-contact-us-html),
+		:global(body.auxero-template-contact-us-html #wrapper) {
+			background: var(--bc-bg) !important;
+			background-color: var(--bc-bg) !important;
+		}
+
 		:global(body.auxero-template-contact-us-html section.bg-white.pb-84) {
 			background: #111111 !important;
 			background-color: #111111 !important;

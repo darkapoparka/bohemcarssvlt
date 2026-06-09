@@ -6,6 +6,7 @@
 		auxeroCalculatorInitial,
 		calculateAuxeroCalculatorTotals,
 		formatEur,
+		type AuxeroCalculatorBudgetLink,
 		type AuxeroCalculatorData,
 		type AuxeroCalculatorInputKey,
 		type AuxeroCalculatorSummaryRow
@@ -17,9 +18,11 @@
 	type CalculatorDrawer = 'breakdown' | 'faq';
 
 	let {
+		budgetLinks,
 		calculator,
 		faqs
 	}: {
+		budgetLinks: AuxeroCalculatorBudgetLink[];
 		calculator: AuxeroCalculatorData;
 		faqs: AuxeroFaq[];
 	} = $props();
@@ -52,10 +55,19 @@
 		vatRate: fieldValue('vatRate')
 	});
 	let activeDrawer = $state<CalculatorDrawer | null>(null);
+	let drawerOpen = $state(false);
 
-	const totals = $derived(calculateAuxeroCalculatorTotals(values));
-	const taxesTotal = $derived(totals.duty + totals.vat);
+	const totals = $derived.by(() =>
+		calculateAuxeroCalculatorTotals({
+			dutyRate: values.dutyRate,
+			prep: values.prep,
+			price: values.price,
+			transport: values.transport,
+			vatRate: values.vatRate
+		})
+	);
 	const totalLabel = $derived(formatEur(totals.total));
+	const budgetPreview = $derived(budgetLinks.slice(0, 4));
 	const summaryRows = $derived<AuxeroCalculatorSummaryRow[]>([
 		{ key: 'price', label: summaryLabel('price', 'Цена на автомобила'), value: values.price },
 		{ key: 'transport', label: summaryLabel('transport', 'Транспорт'), value: values.transport },
@@ -63,7 +75,6 @@
 		{ key: 'vat', label: summaryLabel('vat', 'ДДС'), value: totals.vat },
 		{ key: 'prep', label: summaryLabel('prep', 'Подготовка и регистрация'), value: values.prep }
 	]);
-	const drawerOpen = $derived(activeDrawer !== null);
 	const drawerTitle = $derived.by(() => {
 		if (activeDrawer === 'breakdown') return 'Разбивка на сумата';
 
@@ -85,8 +96,10 @@
 	};
 	const openDrawer = (drawer: CalculatorDrawer) => {
 		activeDrawer = drawer;
+		drawerOpen = true;
 	};
 	const closeDrawer = () => {
+		drawerOpen = false;
 		activeDrawer = null;
 	};
 </script>
@@ -177,8 +190,27 @@
 		</a>
 	</section>
 
+	<section class="bohemcars-calculator-mobile__budget" aria-labelledby="calculator-mobile-budget">
+		<header>
+			<div>
+				<p>Следваща стъпка</p>
+				<h2 id="calculator-mobile-budget">Разгледай по бюджет</h2>
+			</div>
+			<a href={resolve('/inventory')}>Всички</a>
+		</header>
+		<div>
+			{#each budgetPreview as link (`${link.href}-${link.label}-${link.price}`)}
+				<a href={resolve(link.href as '/inventory')}>
+					<span>{link.price}</span>
+					<strong>{link.label}</strong>
+					<ArrowRight size={17} strokeWidth={2.35} aria-hidden="true" />
+				</a>
+			{/each}
+		</div>
+	</section>
+
 	<Drawer.Root
-		open={drawerOpen}
+		bind:open={drawerOpen}
 		onOpenChange={(open) => !open && closeDrawer()}
 		direction="bottom"
 		fixed
@@ -239,10 +271,10 @@
 		max-width: 100vw;
 		min-height: 100svh;
 		align-content: start;
-		gap: 8px;
+		gap: 10px;
 		grid-auto-rows: max-content;
 		overflow-x: hidden;
-		background: #ffffff;
+		background: var(--bc-bg);
 		color: #111111;
 		padding: 0 14px 92px;
 	}
@@ -251,10 +283,10 @@
 		display: grid;
 		gap: 8px;
 		margin: 0 -14px;
-		padding: max(12px, env(safe-area-inset-top)) 14px 12px;
+		padding: max(12px, env(safe-area-inset-top)) 14px 14px;
 		background:
 			linear-gradient(135deg, rgba(21, 28, 17, 0.97), rgba(21, 28, 17, 0.78)),
-			url('/assets/bohemcars/cta/sell-car-banner-v2.webp') 62% 50% / cover;
+			url('/assets/bohemcars/cta/import-canada-banner-v2.webp') 62% 50% / cover;
 		color: #ffffff;
 	}
 
@@ -359,12 +391,13 @@
 
 	.bohemcars-calculator-mobile__form-card {
 		display: grid;
-		gap: 10px;
-		border: 1px solid #e0e8da;
+		gap: 11px;
+		border: 0;
 		border-radius: 8px;
-		background: #f6f8f3;
+		background: #ffffff;
+		box-shadow: var(--bc-shadow-subtle);
 		color: #111111;
-		padding: 12px;
+		padding: 14px;
 	}
 
 	.bohemcars-calculator-mobile__form-card header {
@@ -431,9 +464,9 @@
 		display: block;
 		width: 100%;
 		height: 46px !important;
-		border: 1px solid var(--bc-border) !important;
+		border: 0 !important;
 		border-radius: 8px !important;
-		background: #ffffff !important;
+		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
 		color: #111111;
 		font-size: 16px;
@@ -463,6 +496,7 @@
 		border-radius: 8px;
 		background: #ffffff;
 		color: #111111;
+		box-shadow: var(--bc-shadow-subtle);
 		font-size: 14px;
 		font-weight: 800;
 		line-height: 18px;
@@ -485,6 +519,111 @@
 	.bohemcars-calculator-mobile__actions a.bohemcars-calculator-mobile__offer :global(path) {
 		color: #ffffff;
 		stroke: currentColor;
+	}
+
+	.bohemcars-calculator-mobile__budget {
+		display: grid;
+		gap: 9px;
+		min-width: 0;
+	}
+
+	.bohemcars-calculator-mobile__budget header {
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.bohemcars-calculator-mobile__budget header div {
+		min-width: 0;
+	}
+
+	.bohemcars-calculator-mobile__budget p,
+	.bohemcars-calculator-mobile__budget h2 {
+		margin: 0;
+		letter-spacing: 0;
+	}
+
+	.bohemcars-calculator-mobile__budget p {
+		color: #5d7e16;
+		font-size: 11px;
+		font-weight: 900;
+		line-height: 14px;
+		text-transform: uppercase;
+	}
+
+	.bohemcars-calculator-mobile__budget h2 {
+		color: #111111;
+		font-size: 18px;
+		font-weight: 800;
+		line-height: 23px;
+	}
+
+	.bohemcars-calculator-mobile__budget header > a {
+		display: inline-flex;
+		min-height: 36px;
+		align-items: center;
+		border-radius: 999px;
+		background: var(--bc-surface);
+		color: #111111;
+		font-size: 13px;
+		font-weight: 800;
+		line-height: 16px;
+		padding: 0 12px;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.bohemcars-calculator-mobile__budget > div {
+		display: grid;
+		gap: 8px;
+	}
+
+	.bohemcars-calculator-mobile__budget > div > a {
+		display: grid;
+		min-height: 58px;
+		align-items: center;
+		grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr) 30px;
+		gap: 8px;
+		border-radius: 8px;
+		background: #ffffff;
+		box-shadow: var(--bc-shadow-subtle);
+		color: #111111;
+		padding: 10px 11px 10px 13px;
+		text-decoration: none;
+	}
+
+	.bohemcars-calculator-mobile__budget > div > a:hover,
+	.bohemcars-calculator-mobile__budget > div > a:focus-visible {
+		background: var(--bc-surface-hover);
+		color: #111111;
+	}
+
+	.bohemcars-calculator-mobile__budget span,
+	.bohemcars-calculator-mobile__budget strong {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.bohemcars-calculator-mobile__budget span {
+		color: #5d7e16;
+		font-size: 14px;
+		font-weight: 900;
+		line-height: 18px;
+	}
+
+	.bohemcars-calculator-mobile__budget strong {
+		color: #111111;
+		font-size: 14px;
+		font-weight: 800;
+		line-height: 18px;
+	}
+
+	.bohemcars-calculator-mobile__budget > div > a :global(svg) {
+		justify-self: center;
+		color: #111111;
 	}
 
 	:global(.bohemcars-calculator-mobile-drawer__backdrop) {

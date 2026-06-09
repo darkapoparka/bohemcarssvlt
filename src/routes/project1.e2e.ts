@@ -1098,7 +1098,7 @@ test('mobile primary routes do not expose desktop shells or fallback chrome', as
 
 	await bottomNav.getByRole('link', { name: 'Продай' }).click();
 	await expect(page).toHaveURL(/\/sell-your-car$/);
-	await expect(page.locator('.bohemcars-sell-mobile__form')).toBeVisible();
+	await expect(page.locator('.bohemcars-sell-mobile__inline-drawer')).toBeVisible();
 	await expectNoChromeLeaks();
 
 	await bottomNav.getByRole('link', { name: 'Любими' }).click();

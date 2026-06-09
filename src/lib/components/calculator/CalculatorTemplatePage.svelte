@@ -99,7 +99,7 @@
 </div>
 
 <div class="bohemcars-calculator-mobile-route">
-	<CalculatorMobilePage {calculator} {faqs} />
+	<CalculatorMobilePage {budgetLinks} {calculator} {faqs} />
 </div>
 
 <style>
