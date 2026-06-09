@@ -1200,6 +1200,7 @@ test('desktop client navigation resets Auxero shell state across route families'
 	] as const;
 
 	await page.goto('/');
+	await page.waitForLoadState('networkidle');
 	await page.evaluate(() => {
 		(window as Window & { __bcClientNavSequence?: string }).__bcClientNavSequence = 'alive';
 	});
@@ -1317,7 +1318,7 @@ test('header, garage, and inquiry flows keep Auxero behavior', async ({ page }) 
 		localStorage.removeItem('bohemcars:favorites');
 		localStorage.removeItem('bohemcars:compare');
 	});
-	await page.reload();
+	await page.reload({ waitUntil: 'networkidle' });
 
 	const firstCard = page.locator('.bohemcars-inventory-content [data-bohemcars-slug]').first();
 	await expect(firstCard).toBeVisible();
@@ -1446,6 +1447,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	).toHaveCount(0);
 
 	await page.goto('/inventory?layout=classic');
+	await page.waitForLoadState('networkidle');
 	await expect(page.locator('.bohemcars-inventory-layout-toggle.active')).toContainText('Grid');
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item')).toHaveCount(2);
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
@@ -1486,6 +1488,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await page.keyboard.press('Escape');
 
 	await page.goto('/inventory?layout=classic&filters=modal');
+	await page.waitForLoadState('networkidle');
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item')).toHaveCount(2);
 	await expect(page.locator('.bohemcars-inventory-filter-mode-toggle__item.active')).toContainText(
 		'Modal'
@@ -1976,6 +1979,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await expectDesktopInventorySurface(page);
 
 	await page.goto('/inventory');
+	await page.waitForLoadState('networkidle');
 	await refreshedFirstCard.locator('.bohemcars-favorite, .heart').click();
 	await expect
 		.poll(async () =>
@@ -2314,6 +2318,7 @@ test('planned public support routes render Bohemcars content and local forms', a
 	await expect(reviewsGrid.locator('.h5.title').first()).toHaveText('Aleksandar Vytev');
 
 	await page.goto('/calculator');
+	await page.waitForLoadState('networkidle');
 	const calculator = page.locator('[data-bohemcars-calculator]');
 	await expect(calculator).toBeVisible();
 	await expect(calculator).toHaveClass(/grid-cols-2/);
