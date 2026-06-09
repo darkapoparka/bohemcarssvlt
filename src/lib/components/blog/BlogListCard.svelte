@@ -14,7 +14,7 @@
 	</div>
 	<div class="content">
 		<div class="mb-12 flex justify-start gap-12">
-			<span class="text-sm">by Bohemcars</span>
+			<span class="text-sm">от Bohemcars</span>
 			<span class="text-sm">{post.date}</span>
 			<span class="text-highlight text-underline text-sm uppercase">{post.category}</span>
 		</div>

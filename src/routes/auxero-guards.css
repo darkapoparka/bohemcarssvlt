@@ -179,8 +179,14 @@ body[class*='auxero-template-'] {
 /* The Auxero `capitalize` utility title-cases every word, which mis-cases
    Bulgarian copy ("Основни данни" -> "Основни Данни", "Внос и покупка" ->
    "Внос И Покупка"). The source strings are already correctly cased, so disable
-   capitalize for the Bulgarian locale only — English mode keeps title-casing. */
-html[lang='bg'] .capitalize {
+   capitalize for the Bulgarian locale only — English mode keeps title-casing.
+   The theme also bakes capitalize into FAQ accordion titles, blog card titles
+   and the 404 title, so those selectors need the same guard. */
+html[lang='bg'] .capitalize,
+html[lang='bg'] .flat-accordion .flat-toggle .toggle-title,
+html[lang='bg'] .post-style-6 .title,
+html[lang='bg'] .post-style-7 .title,
+html[lang='bg'] .error-page .title {
 	text-transform: none;
 }
 
