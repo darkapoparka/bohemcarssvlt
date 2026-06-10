@@ -1232,9 +1232,9 @@
 		.bohemcars-mobile-hero__tabs::before {
 			position: absolute;
 			bottom: 0;
-			left: calc((var(--bohemcars-tab-index, 0) + 0.5) * 33.333% - 19px);
+			left: calc(var(--bohemcars-tab-index, 0) * 33.333% + 12px);
 			z-index: 1;
-			width: 38px;
+			width: calc(33.333% - 24px);
 			height: 3px;
 			border-radius: 999px;
 			background: #14210f;

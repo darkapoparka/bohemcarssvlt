@@ -1352,6 +1352,11 @@
 			top: 8px;
 		}
 
+		/* The wordmark's green "CARS" sinks into the green hero — force solid ink. */
+		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .logo img) {
+			filter: brightness(0);
+		}
+
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
 			position: relative;

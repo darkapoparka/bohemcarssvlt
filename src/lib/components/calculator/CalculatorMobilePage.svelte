@@ -279,15 +279,15 @@
 		padding: 0 14px 92px;
 	}
 
+	/* Green chrome: flat brand green with dark ink and a white result card,
+	   matching the homepage language instead of a dark photo banner. */
 	.bohemcars-calculator-mobile__header {
 		display: grid;
-		gap: 8px;
+		gap: 10px;
 		margin: 0 -14px;
 		padding: max(12px, env(safe-area-inset-top)) 14px 14px;
-		background:
-			linear-gradient(135deg, rgba(21, 28, 17, 0.97), rgba(21, 28, 17, 0.78)),
-			url('/assets/bohemcars/cta/import-canada-banner-v2.webp') 62% 50% / cover;
-		color: #ffffff;
+		background: #8fca1a;
+		color: #14210f;
 	}
 
 	.bohemcars-calculator-mobile__topbar {
@@ -304,7 +304,7 @@
 	}
 
 	.bohemcars-calculator-mobile__topbar p {
-		color: var(--bc-accent-bright-soft);
+		color: rgba(20, 33, 15, 0.66);
 		font-size: 11px;
 		font-weight: 700;
 		line-height: 14px;
@@ -313,7 +313,7 @@
 	}
 
 	.bohemcars-calculator-mobile__topbar h1 {
-		color: #ffffff;
+		color: #14210f;
 		font-size: 22px;
 		font-weight: 800;
 		line-height: 27px;
@@ -334,21 +334,23 @@
 		justify-content: center;
 		border: 0;
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.94);
-		color: #111111;
+		background: #ffffff;
+		box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
+		color: #20350f;
 		cursor: pointer;
 		padding: 0;
 	}
 
+	/* White result card on green — same pairing as the homepage search pill. */
 	.bohemcars-calculator-mobile__result {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: end;
 		gap: 8px;
-		border-radius: 10px;
-		background: rgba(255, 255, 255, 0.1);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-		padding: 10px;
+		border-radius: 12px;
+		background: #ffffff;
+		box-shadow: none;
+		padding: 12px;
 	}
 
 	.bohemcars-calculator-mobile__result div {
@@ -359,7 +361,7 @@
 
 	.bohemcars-calculator-mobile__result span,
 	.bohemcars-calculator-mobile__result small {
-		color: rgba(255, 255, 255, 0.76);
+		color: #56635a;
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 16px;
@@ -367,9 +369,9 @@
 
 	.bohemcars-calculator-mobile__result strong {
 		overflow-wrap: anywhere;
-		color: var(--bc-accent-bright-soft);
+		color: #14210f;
 		font-size: 28px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 32px;
 	}
 
@@ -380,13 +382,13 @@
 		gap: 7px;
 		border: 0;
 		border-radius: 999px;
-		background: #ffffff;
-		color: #111111;
+		background: #1c1c1c;
+		color: #ffffff;
 		cursor: pointer;
 		font-size: 12px;
 		font-weight: 800;
 		line-height: 16px;
-		padding: 0 12px;
+		padding: 0 13px;
 		white-space: nowrap;
 	}
 

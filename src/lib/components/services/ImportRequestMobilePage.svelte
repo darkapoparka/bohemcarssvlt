@@ -47,7 +47,7 @@
 	<header class="bohemcars-import-mobile__appbar" aria-label="Bohemcars">
 		<a class="bohemcars-import-mobile__brand" href={resolve('/')} aria-label="Bohemcars начало">
 			<img
-				src="/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean-header2x.webp"
+				src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
 				alt="Bohemcars"
 				width="180"
 				height="33"
@@ -77,13 +77,6 @@
 			<h1 id="import-mobile-title">{importRequestMobileCopy.title}</h1>
 			<span>{importRequestMobileCopy.intro}</span>
 		</div>
-	</section>
-
-	<section class="bohemcars-import-mobile__action-card" aria-label={form.title}>
-		<span class="bohemcars-import-mobile__action-copy">
-			<strong>Проверка от Bohemcars</strong>
-			<span>Изпрати линк или VIN. Връщаме история, разходи и следващ ход.</span>
-		</span>
 		<img
 			src="/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp"
 			alt=""
@@ -165,7 +158,7 @@
 		gap: 10px;
 		border: 0;
 		background: transparent;
-		padding: 12px 14px 0;
+		padding: max(12px, env(safe-area-inset-top)) 14px 0;
 	}
 
 	.bohemcars-import-mobile__brand {
@@ -181,6 +174,8 @@
 		max-width: calc(100vw - 118px);
 		height: auto;
 		object-fit: contain;
+		/* The wordmark's green "CARS" sinks into the green chrome — force solid ink. */
+		filter: brightness(0);
 	}
 
 	.bohemcars-import-mobile__app-actions {
@@ -198,7 +193,8 @@
 		justify-content: center;
 		border: 0;
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.94);
+		background: #ffffff;
+		box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
 		color: #20350f;
 		padding: 0;
 		text-decoration: none !important;
@@ -220,32 +216,32 @@
 		stroke: currentColor;
 	}
 
+	/* Green chrome: flat brand green hero with dark ink and the vehicle cutout,
+	   matching the homepage language instead of a dark photo banner. */
 	.bohemcars-import-mobile__intro {
 		position: relative;
 		display: grid;
-		min-height: 180px;
+		min-height: 196px;
 		align-content: end;
 		overflow: hidden;
 		margin: 0 -14px;
-		padding: 84px 14px 18px;
-		background:
-			linear-gradient(90deg, rgba(23, 31, 19, 0.97), rgba(23, 31, 19, 0.9)),
-			url('/assets/bohemcars/services/import-canada-banner-generated.webp') 62% center / cover;
-		box-shadow: inset 0 -1px 0 rgba(217, 242, 117, 0.36);
-		color: #ffffff;
+		padding: 84px 148px 18px 14px;
+		background: #8fca1a;
+		color: #14210f;
 	}
 
-	.bohemcars-import-mobile__intro::before {
+	.bohemcars-import-mobile__intro img {
 		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			90deg,
-			rgba(23, 31, 19, 0.98) 0%,
-			rgba(23, 31, 19, 0.88) 58%,
-			rgba(23, 31, 19, 0.72) 100%
-		);
-		content: '';
+		right: -50px;
+		bottom: -6px;
+		z-index: 1;
+		display: block;
+		width: 206px;
+		max-width: none;
+		height: auto;
+		object-fit: contain;
 		pointer-events: none;
+		user-select: none;
 	}
 
 	.bohemcars-import-mobile__intro-copy {
@@ -259,9 +255,9 @@
 
 	.bohemcars-import-mobile__intro h1 {
 		margin: 0;
-		color: #ffffff;
+		color: #14210f;
 		font-size: 27px;
-		font-weight: 700;
+		font-weight: 800;
 		letter-spacing: 0;
 		line-height: 31px;
 	}
@@ -269,66 +265,10 @@
 	.bohemcars-import-mobile__intro-copy span {
 		display: block;
 		max-width: 300px;
-		color: rgba(255, 255, 255, 0.82);
+		color: rgba(20, 33, 15, 0.78);
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 18px;
-	}
-
-	.bohemcars-import-mobile__action-card {
-		position: relative;
-		isolation: isolate;
-		display: block;
-		min-height: 132px;
-		overflow: hidden;
-		border-radius: 8px 8px 0 0;
-		background: #98bc2a;
-		color: #14210f;
-		padding: 17px 138px 16px 18px;
-	}
-
-	.bohemcars-import-mobile__action-copy {
-		position: relative;
-		z-index: 2;
-		display: grid;
-		gap: 6px;
-		max-width: 200px;
-		color: inherit;
-	}
-
-	.bohemcars-import-mobile__action-copy strong,
-	.bohemcars-import-mobile__action-copy span {
-		margin: 0;
-		color: inherit;
-		letter-spacing: 0;
-	}
-
-	.bohemcars-import-mobile__action-copy strong {
-		font-size: 22px;
-		font-weight: 800;
-		line-height: 25px;
-	}
-
-	.bohemcars-import-mobile__action-copy span {
-		max-width: 180px;
-		font-size: 13.5px;
-		font-weight: 600;
-		line-height: 18px;
-		opacity: 0.82;
-	}
-
-	.bohemcars-import-mobile__action-card img {
-		position: absolute;
-		right: -64px;
-		bottom: -14px;
-		z-index: 1;
-		display: block;
-		width: 236px;
-		max-width: none;
-		height: auto;
-		object-fit: contain;
-		pointer-events: none;
-		user-select: none;
 	}
 
 	.bohemcars-import-mobile__form-section {
@@ -576,12 +516,12 @@
 			height: 36px;
 		}
 
-		.bohemcars-import-mobile__action-card {
-			padding-right: 124px;
+		.bohemcars-import-mobile__intro {
+			padding-right: 118px;
 		}
 
-		.bohemcars-import-mobile__action-card img {
-			right: -82px;
+		.bohemcars-import-mobile__intro img {
+			right: -78px;
 		}
 	}
 

@@ -62,7 +62,7 @@
 	<header class="bohemcars-sell-mobile__appbar">
 		<a class="bohemcars-sell-mobile__brand" href={resolve('/')}>
 			<img
-				src="/assets/bohemcars/brand/bohemcars-logo-concept-dark-template-clean-header2x.webp"
+				src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
 				alt={copy.logoAlt}
 				width="180"
 				height="33"
@@ -108,15 +108,8 @@
 		<section class="bohemcars-sell-mobile__intro" aria-labelledby="sell-mobile-title">
 			<div class="bohemcars-sell-mobile__intro-copy">
 				<h1 id="sell-mobile-title">{copy.title}</h1>
-				<span>Оценка, разговор и реален следващ ход за автомобила.</span>
+				<span>Изпрати VIN, пробег и телефон — екипът връща реален следващ ход.</span>
 			</div>
-		</section>
-
-		<section class="bohemcars-sell-mobile__action-card" aria-label={copy.formTitle}>
-			<span class="bohemcars-sell-mobile__action-copy">
-				<strong>Оценка от Bohemcars</strong>
-				<span>Изпрати VIN, пробег и телефон. Екипът връща реален следващ ход.</span>
-			</span>
 			<img
 				src="/assets/bohemcars/home2/home2-action-sell.webp"
 				alt=""
@@ -362,6 +355,8 @@
 		width: 150px;
 		height: auto;
 		object-fit: contain;
+		/* The wordmark's green "CARS" sinks into the green chrome — force solid ink. */
+		filter: brightness(0);
 	}
 
 	.bohemcars-sell-mobile__app-actions {
@@ -379,7 +374,8 @@
 		justify-content: center;
 		border: 0;
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.94);
+		background: #ffffff;
+		box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
 		color: #20350f;
 		cursor: pointer;
 		padding: 0;
@@ -412,33 +408,33 @@
 		padding: 0 14px 92px;
 	}
 
+	/* Green chrome: the hero speaks the homepage language — flat brand green,
+	   dark ink, vehicle cutout — instead of a dark photo banner. */
 	.bohemcars-sell-mobile__intro {
 		position: relative;
 		display: grid;
-		min-height: 180px;
+		min-height: 196px;
 		align-content: end;
 		gap: 0;
 		overflow: hidden;
 		margin: 0 -14px;
-		padding: 84px 14px 18px;
-		background:
-			linear-gradient(90deg, rgba(23, 31, 19, 0.97), rgba(23, 31, 19, 0.9)),
-			url('/assets/bohemcars/cta/sell-car-banner-v2.webp') 67% 52% / cover;
-		box-shadow: inset 0 -1px 0 rgba(217, 242, 117, 0.36);
-		color: #ffffff;
+		padding: 84px 148px 18px 14px;
+		background: #8fca1a;
+		color: #14210f;
 	}
 
-	.bohemcars-sell-mobile__intro::before {
+	.bohemcars-sell-mobile__intro img {
 		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			90deg,
-			rgba(23, 31, 19, 0.98) 0%,
-			rgba(23, 31, 19, 0.88) 58%,
-			rgba(23, 31, 19, 0.72) 100%
-		);
-		content: '';
+		right: -52px;
+		bottom: -8px;
+		z-index: 1;
+		display: block;
+		width: 210px;
+		max-width: none;
+		height: auto;
+		object-fit: contain;
 		pointer-events: none;
+		user-select: none;
 	}
 
 	.bohemcars-sell-mobile__intro-copy {
@@ -462,9 +458,9 @@
 
 	.bohemcars-sell-mobile__intro h1 {
 		margin: 0;
-		color: #ffffff;
+		color: #14210f;
 		font-size: 27px;
-		font-weight: 700;
+		font-weight: 800;
 		letter-spacing: 0;
 		line-height: 31px;
 	}
@@ -472,66 +468,10 @@
 	.bohemcars-sell-mobile__intro-copy span {
 		display: block;
 		max-width: 300px;
-		color: rgba(255, 255, 255, 0.82);
+		color: rgba(20, 33, 15, 0.78);
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 18px;
-	}
-
-	.bohemcars-sell-mobile__action-card {
-		position: relative;
-		isolation: isolate;
-		display: block;
-		min-height: 132px;
-		overflow: hidden;
-		border-radius: 8px 8px 0 0;
-		background: #98bc2a;
-		color: #14210f;
-		padding: 17px 138px 16px 18px;
-	}
-
-	.bohemcars-sell-mobile__action-copy {
-		position: relative;
-		z-index: 2;
-		display: grid;
-		gap: 6px;
-		max-width: 190px;
-		color: inherit;
-	}
-
-	.bohemcars-sell-mobile__action-copy strong,
-	.bohemcars-sell-mobile__action-copy span {
-		margin: 0;
-		color: inherit;
-		letter-spacing: 0;
-	}
-
-	.bohemcars-sell-mobile__action-copy strong {
-		font-size: 22px;
-		font-weight: 800;
-		line-height: 25px;
-	}
-
-	.bohemcars-sell-mobile__action-copy span {
-		max-width: 166px;
-		font-size: 13.5px;
-		font-weight: 600;
-		line-height: 18px;
-		opacity: 0.82;
-	}
-
-	.bohemcars-sell-mobile__action-card img {
-		position: absolute;
-		right: -78px;
-		bottom: -35px;
-		z-index: 1;
-		display: block;
-		width: 248px;
-		max-width: none;
-		height: auto;
-		object-fit: contain;
-		pointer-events: none;
-		user-select: none;
 	}
 
 	.bohemcars-sell-mobile__inline-drawer {
@@ -1105,12 +1045,12 @@
 			height: 36px;
 		}
 
-		.bohemcars-sell-mobile__action-card {
-			padding-right: 124px;
+		.bohemcars-sell-mobile__intro {
+			padding-right: 118px;
 		}
 
-		.bohemcars-sell-mobile__action-card img {
-			right: -95px;
+		.bohemcars-sell-mobile__intro img {
+			right: -84px;
 		}
 	}
 
