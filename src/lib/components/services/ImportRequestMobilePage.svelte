@@ -103,32 +103,37 @@
 		/>
 	</section>
 
-	<nav class="bohemcars-import-mobile__contact" aria-label="Контакт">
-		<a {...hrefAttributes(bohemcarsContact.primaryPhoneHref)}>
-			<PhoneCall size={19} strokeWidth={2.25} aria-hidden="true" />
-			{bohemcarsContact.primaryPhoneLabel}
-		</a>
-		<a href={resolve('/calculator')}>
-			<Calculator size={19} strokeWidth={2.25} aria-hidden="true" />
-			Калкулатор
-		</a>
-		<a {...hrefAttributes(bohemcarsContact.viberHref)}>
-			<MessageCircle size={19} strokeWidth={2.25} aria-hidden="true" />
-			Пиши ни
-		</a>
-	</nav>
-
-	<section class="bohemcars-import-mobile__steps" aria-label={importRequestMobileCopy.processLabel}>
-		<p class="bohemcars-import-mobile__steps-title">{importRequestMobileCopy.processLabel}</p>
+	<section
+		class="bohemcars-import-mobile__process"
+		aria-label={importRequestMobileCopy.processLabel}
+	>
+		<header>
+			<h2>{importRequestMobileCopy.processLabel}</h2>
+			<span>Отговор до 24 ч</span>
+		</header>
 		{#each importRequestSteps as step, index (step.title)}
 			<article>
-				<span class="bohemcars-import-mobile__step-num" aria-hidden="true">{index + 1}</span>
+				<span class="bohemcars-import-mobile__process-num" aria-hidden="true">{index + 1}</span>
 				<div>
-					<h2>{step.title}</h2>
+					<h3>{step.title}</h3>
 					<p>{step.text}</p>
 				</div>
 			</article>
 		{/each}
+		<footer aria-label="Контакт">
+			<a {...hrefAttributes(bohemcarsContact.primaryPhoneHref)}>
+				<PhoneCall size={18} strokeWidth={2.25} aria-hidden="true" />
+				Обади се
+			</a>
+			<a href={resolve('/calculator')}>
+				<Calculator size={18} strokeWidth={2.25} aria-hidden="true" />
+				Калкулатор
+			</a>
+			<a {...hrefAttributes(bohemcarsContact.viberHref)}>
+				<MessageCircle size={18} strokeWidth={2.25} aria-hidden="true" />
+				Пиши ни
+			</a>
+		</footer>
 	</section>
 </main>
 
@@ -401,99 +406,124 @@
 		line-height: 18px;
 	}
 
-	.bohemcars-import-mobile__contact {
+	/* One substantial dark process card (home's consultation-card language)
+	   instead of three near-empty white strips and an orphan chip row. */
+	.bohemcars-import-mobile__process {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 0.78fr 0.7fr;
-		gap: 8px;
+		gap: 13px;
+		border-radius: 8px;
+		background: #171f13;
+		color: #ffffff;
+		padding: 16px;
 	}
 
-	.bohemcars-import-mobile__contact a {
+	.bohemcars-import-mobile__process header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.bohemcars-import-mobile__process h2 {
+		margin: 0;
+		color: #ffffff;
+		font-size: 18px;
+		font-weight: 800;
+		letter-spacing: 0;
+		line-height: 23px;
+	}
+
+	.bohemcars-import-mobile__process header span {
+		flex: 0 0 auto;
+		border-radius: 999px;
+		background: rgba(217, 242, 117, 0.16);
+		color: var(--bc-accent-bright-soft);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 16px;
+		padding: 5px 10px;
+		white-space: nowrap;
+	}
+
+	.bohemcars-import-mobile__process article {
+		display: grid;
+		grid-template-columns: 30px minmax(0, 1fr);
+		gap: 11px;
+		align-items: start;
+	}
+
+	.bohemcars-import-mobile__process-num {
+		display: flex;
+		width: 30px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		background: rgba(217, 242, 117, 0.14);
+		color: var(--bc-accent-bright-soft);
+		font-size: 14px;
+		font-weight: 800;
+		line-height: 1;
+	}
+
+	.bohemcars-import-mobile__process h3,
+	.bohemcars-import-mobile__process article p {
+		margin: 0;
+		letter-spacing: 0;
+	}
+
+	.bohemcars-import-mobile__process h3 {
+		color: #ffffff;
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 19px;
+	}
+
+	.bohemcars-import-mobile__process article p {
+		margin-top: 3px;
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 13.5px;
+		font-weight: 500;
+		line-height: 18px;
+	}
+
+	.bohemcars-import-mobile__process footer {
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) minmax(0, 1fr);
+		gap: 8px;
+		margin-top: 1px;
+	}
+
+	.bohemcars-import-mobile__process footer a {
 		display: flex;
 		min-height: 48px;
 		min-width: 0;
 		align-items: center;
 		justify-content: center;
-		gap: 7px;
+		gap: 6px;
 		overflow: hidden;
-		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
-		padding: 0 9px;
-		color: #111111;
-		font-size: 14px;
+		background: rgba(255, 255, 255, 0.08);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+		color: #ffffff;
+		font-size: 13.5px;
 		font-weight: 700;
-		line-height: 18px;
-		text-overflow: ellipsis;
+		line-height: 17px;
+		padding: 0 8px;
+		text-decoration: none !important;
 		white-space: nowrap;
 	}
 
-	.bohemcars-import-mobile__contact a:first-child {
+	.bohemcars-import-mobile__process footer a:first-child {
 		background: var(--bc-accent-bright-soft);
+		box-shadow: none;
+		color: #14210f;
 	}
 
-	.bohemcars-import-mobile__steps {
-		display: grid;
-		gap: 7px;
-	}
-
-	.bohemcars-import-mobile__steps-title {
-		margin: 3px 0 1px;
-		color: #111111;
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		line-height: 16px;
-		text-transform: uppercase;
-	}
-
-	.bohemcars-import-mobile__steps article {
-		display: grid;
-		grid-template-columns: 32px minmax(0, 1fr);
-		gap: 11px;
-		align-items: center;
-		min-height: 60px;
-		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
-		padding: 10px 14px;
-		color: #111111;
-	}
-
-	.bohemcars-import-mobile__step-num {
-		display: flex;
-		width: 32px;
-		height: 32px;
-		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		background: #1c1c1c;
-		color: var(--bc-accent-bright-soft);
-		font-size: 14px;
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.bohemcars-import-mobile__steps h2,
-	.bohemcars-import-mobile__steps p {
-		margin: 0;
-		letter-spacing: 0;
-	}
-
-	.bohemcars-import-mobile__steps h2 {
-		color: #111111;
-		font-size: 16px;
-		font-weight: 700;
-		line-height: 20px;
-	}
-
-	.bohemcars-import-mobile__steps p {
-		margin-top: 2px;
-		color: #56635a;
-		font-size: 14px;
-		font-weight: 500;
-		line-height: 18px;
+	.bohemcars-import-mobile__process footer a :global(svg),
+	.bohemcars-import-mobile__process footer a :global(svg *) {
+		color: currentColor;
+		stroke: currentColor;
 	}
 
 	@media (max-width: 374px) {

@@ -171,15 +171,15 @@ export const serviceFormData: AuxeroServiceFormData = {
 export const importRequestSteps = [
 	{
 		title: 'Линк/VIN',
-		text: 'Обява или VIN'
+		text: 'Изпращаш линк към обявата от Канада или директно VIN номера.'
 	},
 	{
 		title: 'Проверка',
-		text: 'История и разходи'
+		text: 'Преглеждаме историята, щетите и реалните разходи до България.'
 	},
 	{
 		title: 'Отговор',
-		text: 'Риск и следващ ход'
+		text: 'Връщаме риск, крайна цена и ясен следващ ход. Без ангажимент.'
 	}
 ] as const;
 

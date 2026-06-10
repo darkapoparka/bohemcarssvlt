@@ -85,9 +85,15 @@ export const sellCarMobileCopy: AuxeroSellCarMobileCopy = {
 };
 
 export const auxeroSellMobileSteps: AuxeroSellCarMobileStep[] = [
-	{ title: 'Данни', text: 'VIN, пробег, цена и телефон.' },
-	{ title: 'Преглед', text: 'Проверяваме историята и състоянието.' },
-	{ title: 'Следващ ход', text: 'Оферта, съдействие или публикуване.' }
+	{ title: 'Данни', text: 'Изпращаш VIN, пробег, очаквана цена и телефон — отнема минута.' },
+	{
+		title: 'Преглед',
+		text: 'Преглеждаме историята, сервизните записи и реалното състояние на пазара.'
+	},
+	{
+		title: 'Следващ ход',
+		text: 'Получаваш ясна оферта: изкупуване, съдействие или публикуване. Без ангажимент.'
+	}
 ];
 
 export const sellCarFormData: AuxeroSellCarFormData = {

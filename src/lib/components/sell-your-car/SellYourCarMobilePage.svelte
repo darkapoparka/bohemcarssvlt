@@ -172,38 +172,30 @@
 			{/if}
 		</form>
 
-		<nav class="bohemcars-sell-mobile__contact" aria-label={copy.contactLabel}>
-			<a {...hrefAttributes(bohemcarsContact.primaryPhoneHref)}>
-				<PhoneCall size={19} strokeWidth={2.25} aria-hidden="true" />
-				{bohemcarsContact.primaryPhoneLabel}
-			</a>
-			<label
-				for="sell-mobile-form-toggle"
-				class="bohemcars-sell-mobile__contact-form"
-				aria-label={copy.submitLabel}
-				aria-controls="sell-mobile-form-sheet"
-				aria-haspopup="dialog"
-			>
-				<Plus size={19} strokeWidth={2.4} aria-hidden="true" />
-				Форма
-			</label>
-			<a {...hrefAttributes(bohemcarsContact.viberHref)}>
-				<MessageCircle size={19} strokeWidth={2.25} aria-hidden="true" />
-				{copy.messageLabel}
-			</a>
-		</nav>
-
-		<section class="bohemcars-sell-mobile__steps" aria-label={copy.stepsTitle}>
-			<p class="bohemcars-sell-mobile__steps-title">{copy.stepsTitle}</p>
+		<section class="bohemcars-sell-mobile__process" aria-label={copy.stepsTitle}>
+			<header>
+				<h2>{copy.stepsTitle}</h2>
+				<span>Отговор до 24 ч</span>
+			</header>
 			{#each steps as step, index (step.title)}
 				<article>
-					<span class="bohemcars-sell-mobile__step-num" aria-hidden="true">{index + 1}</span>
+					<span class="bohemcars-sell-mobile__process-num" aria-hidden="true">{index + 1}</span>
 					<div>
-						<h2>{step.title}</h2>
+						<h3>{step.title}</h3>
 						<p>{step.text}</p>
 					</div>
 				</article>
 			{/each}
+			<footer aria-label={copy.contactLabel}>
+				<a {...hrefAttributes(bohemcarsContact.primaryPhoneHref)}>
+					<PhoneCall size={18} strokeWidth={2.25} aria-hidden="true" />
+					Обади се
+				</a>
+				<a {...hrefAttributes(bohemcarsContact.viberHref)}>
+					<MessageCircle size={18} strokeWidth={2.25} aria-hidden="true" />
+					{copy.messageLabel}
+				</a>
+			</footer>
 		</section>
 	</main>
 
@@ -927,104 +919,122 @@
 		background: var(--bc-accent-bright-soft);
 	}
 
-	.bohemcars-sell-mobile__contact {
+	/* One substantial dark process card (home's consultation-card language)
+	   instead of three near-empty white strips and an orphan chip row. */
+	.bohemcars-sell-mobile__process {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 0.7fr 0.78fr;
-		gap: 8px;
+		gap: 13px;
+		border-radius: 8px;
+		background: #171f13;
+		color: #ffffff;
+		padding: 16px;
 	}
 
-	.bohemcars-sell-mobile__contact a,
-	.bohemcars-sell-mobile__contact label {
+	.bohemcars-sell-mobile__process header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.bohemcars-sell-mobile__process h2 {
+		margin: 0;
+		color: #ffffff;
+		font-size: 18px;
+		font-weight: 800;
+		letter-spacing: 0;
+		line-height: 23px;
+	}
+
+	.bohemcars-sell-mobile__process header span {
+		flex: 0 0 auto;
+		border-radius: 999px;
+		background: rgba(217, 242, 117, 0.16);
+		color: var(--bc-accent-bright-soft);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 16px;
+		padding: 5px 10px;
+		white-space: nowrap;
+	}
+
+	.bohemcars-sell-mobile__process article {
+		display: grid;
+		grid-template-columns: 30px minmax(0, 1fr);
+		gap: 11px;
+		align-items: start;
+	}
+
+	.bohemcars-sell-mobile__process-num {
+		display: flex;
+		width: 30px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		background: rgba(217, 242, 117, 0.14);
+		color: var(--bc-accent-bright-soft);
+		font-size: 14px;
+		font-weight: 800;
+		line-height: 1;
+	}
+
+	.bohemcars-sell-mobile__process h3,
+	.bohemcars-sell-mobile__process article p {
+		margin: 0;
+		letter-spacing: 0;
+	}
+
+	.bohemcars-sell-mobile__process h3 {
+		color: #ffffff;
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 19px;
+	}
+
+	.bohemcars-sell-mobile__process article p {
+		margin-top: 3px;
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 13.5px;
+		font-weight: 500;
+		line-height: 18px;
+	}
+
+	.bohemcars-sell-mobile__process footer {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		margin-top: 1px;
+	}
+
+	.bohemcars-sell-mobile__process footer a {
 		display: flex;
 		min-height: 48px;
 		min-width: 0;
 		align-items: center;
 		justify-content: center;
 		gap: 7px;
-		overflow: hidden;
-		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
-		padding: 0 9px;
-		color: #111111;
+		background: rgba(255, 255, 255, 0.08);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+		color: #ffffff;
 		font-size: 14px;
 		font-weight: 700;
 		line-height: 18px;
-		text-overflow: ellipsis;
+		text-decoration: none !important;
 		white-space: nowrap;
 	}
 
-	.bohemcars-sell-mobile__contact a:first-child {
+	.bohemcars-sell-mobile__process footer a:first-child {
 		background: var(--bc-accent-bright-soft);
+		box-shadow: none;
+		color: #14210f;
 	}
 
-	.bohemcars-sell-mobile__contact label {
-		cursor: pointer;
-	}
-
-	.bohemcars-sell-mobile__steps {
-		display: grid;
-		gap: 7px;
-	}
-
-	.bohemcars-sell-mobile__steps-title {
-		margin: 3px 0 1px;
-		color: #111111;
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		line-height: 16px;
-		text-transform: uppercase;
-	}
-
-	.bohemcars-sell-mobile__steps article {
-		display: grid;
-		grid-template-columns: 32px minmax(0, 1fr);
-		gap: 11px;
-		align-items: center;
-		min-height: 60px;
-		border: 1px solid var(--bc-border);
-		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
-		padding: 10px 14px;
-		color: #111111;
-	}
-
-	.bohemcars-sell-mobile__step-num {
-		display: flex;
-		width: 32px;
-		height: 32px;
-		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		background: #1c1c1c;
-		color: var(--bc-accent-bright-soft);
-		font-size: 14px;
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.bohemcars-sell-mobile__steps h2,
-	.bohemcars-sell-mobile__steps p {
-		margin: 0;
-		letter-spacing: 0;
-	}
-
-	.bohemcars-sell-mobile__steps h2 {
-		color: #111111;
-		font-size: 16px;
-		font-weight: 700;
-		line-height: 20px;
-	}
-
-	.bohemcars-sell-mobile__steps p {
-		margin-top: 2px;
-		color: #56635a;
-		font-size: 14px;
-		font-weight: 500;
-		line-height: 18px;
+	.bohemcars-sell-mobile__process footer a :global(svg),
+	.bohemcars-sell-mobile__process footer a :global(svg *) {
+		color: currentColor;
+		stroke: currentColor;
 	}
 
 	@media (max-width: 374px) {
