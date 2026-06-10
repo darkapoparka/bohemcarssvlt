@@ -405,23 +405,24 @@
 	.bohemcars-sell-mobile__intro {
 		position: relative;
 		display: grid;
-		min-height: 196px;
-		align-content: end;
+		min-height: 230px;
+		align-content: start;
 		gap: 0;
 		overflow: hidden;
 		margin: 0 -14px;
-		padding: 84px 148px 18px 14px;
+		/* Extra bottom room — the form card docks into the green below. */
+		padding: 84px 148px 66px 14px;
 		background: #8fca1a;
 		color: #14210f;
 	}
 
 	.bohemcars-sell-mobile__intro img {
 		position: absolute;
-		right: -52px;
-		bottom: -8px;
+		right: -44px;
+		bottom: 50px;
 		z-index: 1;
 		display: block;
-		width: 210px;
+		width: 198px;
 		max-width: none;
 		height: auto;
 		object-fit: contain;
@@ -466,15 +467,18 @@
 		line-height: 18px;
 	}
 
+	/* Docked into the green hero — the primary control lives in the chrome,
+	   exactly like the homepage search pill. */
 	.bohemcars-sell-mobile__inline-drawer {
 		position: relative;
 		z-index: 3;
 		display: grid;
 		gap: 12px;
+		margin-top: -52px;
 		border: 0;
 		border-radius: 8px;
 		background: #ffffff;
-		box-shadow: var(--bc-shadow-subtle);
+		box-shadow: 0 14px 30px rgba(20, 33, 15, 0.12);
 		padding: 14px;
 	}
 
@@ -560,7 +564,7 @@
 		display: block;
 		width: 100%;
 		height: 46px !important;
-		border: 0 !important;
+		border: 1px solid var(--bc-border) !important;
 		border-radius: 8px !important;
 		background: var(--bc-surface-soft) !important;
 		box-shadow: none !important;
