@@ -285,7 +285,8 @@
 		display: grid;
 		gap: 10px;
 		margin: 0 -14px;
-		padding: max(12px, env(safe-area-inset-top)) 14px 14px;
+		/* Extra bottom room — the costs card docks into the green below. */
+		padding: max(12px, env(safe-area-inset-top)) 14px 64px;
 		background: #8fca1a;
 		color: #14210f;
 	}
@@ -305,18 +306,18 @@
 
 	.bohemcars-calculator-mobile__topbar p {
 		color: rgba(20, 33, 15, 0.66);
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 700;
-		line-height: 14px;
+		line-height: 16px;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
 	.bohemcars-calculator-mobile__topbar h1 {
 		color: #14210f;
-		font-size: 22px;
+		font-size: 24px;
 		font-weight: 800;
-		line-height: 27px;
+		line-height: 29px;
 	}
 
 	.bohemcars-calculator-mobile__topbar nav {
@@ -328,8 +329,8 @@
 	.bohemcars-calculator-mobile__topbar button,
 	.bohemcars-calculator-mobile__topbar a {
 		display: flex;
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		align-items: center;
 		justify-content: center;
 		border: 0;
@@ -364,20 +365,20 @@
 		color: #56635a;
 		font-size: 12px;
 		font-weight: 700;
-		line-height: 16px;
+		line-height: 17px;
 	}
 
 	.bohemcars-calculator-mobile__result strong {
 		overflow-wrap: anywhere;
 		color: #14210f;
-		font-size: 28px;
+		font-size: 30px;
 		font-weight: 800;
-		line-height: 32px;
+		line-height: 34px;
 	}
 
 	.bohemcars-calculator-mobile__result button {
 		display: inline-flex;
-		min-height: 38px;
+		min-height: 44px;
 		align-items: center;
 		gap: 7px;
 		border: 0;
@@ -385,20 +386,25 @@
 		background: #1c1c1c;
 		color: #ffffff;
 		cursor: pointer;
-		font-size: 12px;
+		font-size: 13px;
 		font-weight: 800;
-		line-height: 16px;
-		padding: 0 13px;
+		line-height: 17px;
+		padding: 0 14px;
 		white-space: nowrap;
 	}
 
+	/* Docked into the green hero — the primary control lives in the chrome,
+	   exactly like the homepage search pill. */
 	.bohemcars-calculator-mobile__form-card {
+		position: relative;
+		z-index: 3;
 		display: grid;
 		gap: 12px;
-		border: 1px solid var(--bc-border);
+		margin-top: -52px;
+		border: 0;
 		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
+		background: #ffffff;
+		box-shadow: 0 14px 30px rgba(20, 33, 15, 0.12);
 		color: #111111;
 		padding: 16px;
 	}
@@ -416,18 +422,18 @@
 
 	.bohemcars-calculator-mobile__form-card p {
 		color: #5d7e16;
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 700;
-		line-height: 14px;
+		line-height: 16px;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
 	.bohemcars-calculator-mobile__form-card h2 {
 		color: #111111;
-		font-size: 18px;
+		font-size: 19px;
 		font-weight: 800;
-		line-height: 23px;
+		line-height: 24px;
 	}
 
 	.bohemcars-calculator-mobile__fields {
@@ -452,9 +458,9 @@
 		justify-content: space-between;
 		gap: 8px;
 		color: #111111;
-		font-size: 13px;
-		font-weight: 650;
-		line-height: 17px;
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 18px;
 	}
 
 	.bohemcars-calculator-mobile__fields small {
@@ -493,7 +499,7 @@
 
 	.bohemcars-calculator-mobile__actions a {
 		display: flex;
-		min-height: 50px;
+		min-height: 52px;
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
@@ -501,9 +507,9 @@
 		background: #ffffff;
 		color: #111111;
 		box-shadow: var(--bc-shadow-subtle);
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 800;
-		line-height: 18px;
+		line-height: 19px;
 		text-align: center;
 		text-decoration: none;
 	}
@@ -550,18 +556,18 @@
 
 	.bohemcars-calculator-mobile__budget p {
 		color: #5d7e16;
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 700;
-		line-height: 14px;
+		line-height: 16px;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
 
 	.bohemcars-calculator-mobile__budget h2 {
 		color: #111111;
-		font-size: 18px;
+		font-size: 19px;
 		font-weight: 800;
-		line-height: 23px;
+		line-height: 24px;
 	}
 
 	.bohemcars-calculator-mobile__budget header > a {
@@ -787,7 +793,7 @@
 	.bohemcars-calculator-mobile-drawer__breakdown div {
 		padding-top: 2px;
 		font-size: 16px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 21px;
 	}
 

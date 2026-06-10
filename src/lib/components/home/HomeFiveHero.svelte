@@ -16,6 +16,7 @@
 		X
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { keyboardInset } from '$lib/utils/keyboard-inset';
 	import HeroFilterPopover from './HeroFilterPopover.svelte';
 
 	let { hero }: { hero?: HomeFiveHeroData } = $props();
@@ -520,6 +521,7 @@
 				aria-modal="true"
 				aria-label={mobileSearchDrawerTitle}
 				aria-hidden={!mobileSearchOpen}
+				{@attach keyboardInset}
 				onpointerdown={(event) => startDrawerDrag('search', event)}
 				onpointermove={(event) => moveDrawerDrag('search', event)}
 				onpointerup={(event) => finishDrawerDrag('search', event)}
@@ -1232,9 +1234,9 @@
 		.bohemcars-mobile-hero__tabs::before {
 			position: absolute;
 			bottom: 0;
-			left: calc(var(--bohemcars-tab-index, 0) * 33.333% + 12px);
+			left: calc(var(--bohemcars-tab-index, 0) * 33.333% + 18px);
 			z-index: 1;
-			width: calc(33.333% - 24px);
+			width: calc(33.333% - 36px);
 			height: 3px;
 			border-radius: 999px;
 			background: #14210f;
@@ -1674,10 +1676,11 @@
 		.bohemcars-mobile-search-sheet__panel {
 			position: absolute;
 			right: 0;
-			bottom: 0;
+			/* Lifted above the on-screen keyboard on iOS; --bc-kb-inset stays 0 elsewhere. */
+			bottom: var(--bc-kb-inset, 0px);
 			left: 0;
 			display: grid;
-			max-height: min(88dvh, 680px);
+			max-height: min(calc(88dvh - var(--bc-kb-inset, 0px)), 680px);
 			gap: 13px;
 			grid-template-rows: max-content minmax(0, 1fr);
 			overflow: hidden;

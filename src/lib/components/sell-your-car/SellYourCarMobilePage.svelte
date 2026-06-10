@@ -927,11 +927,11 @@
 	   instead of three near-empty white strips and an orphan chip row. */
 	.bohemcars-sell-mobile__process {
 		display: grid;
-		gap: 13px;
+		gap: 14px;
 		border-radius: 8px;
 		background: #171f13;
 		color: #ffffff;
-		padding: 16px;
+		padding: 18px 16px;
 	}
 
 	.bohemcars-sell-mobile__process header {
@@ -944,41 +944,41 @@
 	.bohemcars-sell-mobile__process h2 {
 		margin: 0;
 		color: #ffffff;
-		font-size: 18px;
+		font-size: 20px;
 		font-weight: 800;
 		letter-spacing: 0;
-		line-height: 23px;
+		line-height: 25px;
 	}
 
 	.bohemcars-sell-mobile__process header span {
 		flex: 0 0 auto;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.16);
+		background: rgba(217, 242, 117, 0.2);
 		color: var(--bc-accent-bright-soft);
 		font-size: 12px;
 		font-weight: 700;
-		line-height: 16px;
-		padding: 5px 10px;
+		line-height: 17px;
+		padding: 6px 11px;
 		white-space: nowrap;
 	}
 
 	.bohemcars-sell-mobile__process article {
 		display: grid;
-		grid-template-columns: 30px minmax(0, 1fr);
-		gap: 11px;
+		grid-template-columns: 34px minmax(0, 1fr);
+		gap: 12px;
 		align-items: start;
 	}
 
 	.bohemcars-sell-mobile__process-num {
 		display: flex;
-		width: 30px;
-		height: 30px;
+		width: 34px;
+		height: 34px;
 		align-items: center;
 		justify-content: center;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.14);
+		background: rgba(217, 242, 117, 0.18);
 		color: var(--bc-accent-bright-soft);
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 800;
 		line-height: 1;
 	}
@@ -991,40 +991,40 @@
 
 	.bohemcars-sell-mobile__process h3 {
 		color: #ffffff;
-		font-size: 15px;
+		font-size: 16px;
 		font-weight: 700;
-		line-height: 19px;
+		line-height: 21px;
 	}
 
 	.bohemcars-sell-mobile__process article p {
-		margin-top: 3px;
-		color: rgba(255, 255, 255, 0.72);
-		font-size: 13.5px;
+		margin-top: 4px;
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 14.5px;
 		font-weight: 500;
-		line-height: 18px;
+		line-height: 20px;
 	}
 
 	.bohemcars-sell-mobile__process footer {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 8px;
-		margin-top: 1px;
+		margin-top: 2px;
 	}
 
 	.bohemcars-sell-mobile__process footer a {
 		display: flex;
-		min-height: 48px;
+		min-height: 50px;
 		min-width: 0;
 		align-items: center;
 		justify-content: center;
-		gap: 7px;
+		gap: 8px;
 		border-radius: 8px;
 		background: rgba(255, 255, 255, 0.08);
 		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 		color: #ffffff;
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 700;
-		line-height: 18px;
+		line-height: 19px;
 		text-decoration: none !important;
 		white-space: nowrap;
 	}
