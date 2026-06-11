@@ -393,6 +393,15 @@
 		white-space: nowrap;
 	}
 
+	/* The global `* { color: #1c1c1c }` rule paints icons black-on-black here. */
+	.bohemcars-calculator-mobile__result button :global(svg),
+	.bohemcars-calculator-mobile__result button :global(svg *),
+	.bohemcars-calculator-mobile__topbar nav :global(svg),
+	.bohemcars-calculator-mobile__topbar nav :global(svg *) {
+		color: currentColor;
+		stroke: currentColor;
+	}
+
 	/* Docked into the green hero — the primary control lives in the chrome,
 	   exactly like the homepage search pill. */
 	.bohemcars-calculator-mobile__form-card {

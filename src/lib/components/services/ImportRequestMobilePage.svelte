@@ -4,6 +4,7 @@
 	import { importRequestMobileCopy, importRequestSteps } from '$lib/auxero/services';
 	import { bohemcarsContact } from '$lib/data/bohemcars';
 	import InquiryForm from '$lib/components/forms/InquiryForm.svelte';
+	import MobileAppbar from '$lib/components/layout/MobileAppbar.svelte';
 	import type { InquiryFormField } from '$lib/components/forms/types';
 	import { Calculator, MessageCircle, PhoneCall } from '@lucide/svelte';
 
@@ -44,33 +45,17 @@
 </script>
 
 <main class="bohemcars-import-mobile" data-bohemcars-import-mobile>
-	<header class="bohemcars-import-mobile__appbar" aria-label="Bohemcars">
-		<a class="bohemcars-import-mobile__brand" href={resolve('/')} aria-label="Bohemcars начало">
-			<img
-				src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
-				alt="Bohemcars"
-				width="180"
-				height="33"
-			/>
+	<MobileAppbar>
+		<a
+			{...hrefAttributes(bohemcarsContact.primaryPhoneHref)}
+			aria-label={bohemcarsContact.primaryPhoneLabel}
+		>
+			<PhoneCall size={18} strokeWidth={2.35} aria-hidden="true" />
 		</a>
-
-		<div class="bohemcars-import-mobile__app-actions" aria-label="Контакт">
-			<a
-				class="bohemcars-import-mobile__icon-action"
-				{...hrefAttributes(bohemcarsContact.primaryPhoneHref)}
-				aria-label={bohemcarsContact.primaryPhoneLabel}
-			>
-				<PhoneCall size={18} strokeWidth={2.35} aria-hidden="true" />
-			</a>
-			<a
-				class="bohemcars-import-mobile__icon-action"
-				{...hrefAttributes(bohemcarsContact.viberHref)}
-				aria-label="Пиши на Bohemcars"
-			>
-				<MessageCircle size={18} strokeWidth={2.35} aria-hidden="true" />
-			</a>
-		</div>
-	</header>
+		<a {...hrefAttributes(bohemcarsContact.viberHref)} aria-label="Пиши на Bohemcars">
+			<MessageCircle size={18} strokeWidth={2.35} aria-hidden="true" />
+		</a>
+	</MobileAppbar>
 
 	<section class="bohemcars-import-mobile__intro" aria-labelledby="import-mobile-title">
 		<div class="bohemcars-import-mobile__intro-copy">
@@ -148,77 +133,6 @@
 		background: var(--bc-surface);
 		color: #111111;
 		padding: 0 14px 92px;
-	}
-
-	.bohemcars-import-mobile__appbar {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 20;
-		display: flex;
-		height: 74px;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-		border: 0;
-		background: transparent;
-		padding: max(12px, env(safe-area-inset-top)) 14px 0;
-	}
-
-	.bohemcars-import-mobile__brand {
-		display: flex;
-		min-width: 0;
-		align-items: center;
-		text-decoration: none !important;
-	}
-
-	.bohemcars-import-mobile__brand img {
-		display: block;
-		width: 150px;
-		max-width: calc(100vw - 118px);
-		height: auto;
-		object-fit: contain;
-		/* The wordmark's green "CARS" sinks into the green chrome — force solid ink. */
-		filter: brightness(0);
-	}
-
-	.bohemcars-import-mobile__app-actions {
-		display: flex;
-		flex: 0 0 auto;
-		align-items: center;
-		gap: 7px;
-	}
-
-	.bohemcars-import-mobile__icon-action {
-		display: flex;
-		width: 38px;
-		height: 38px;
-		align-items: center;
-		justify-content: center;
-		border: 0;
-		border-radius: 999px;
-		background: #ffffff;
-		box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
-		color: #20350f;
-		padding: 0;
-		text-decoration: none !important;
-		transition:
-			background-color 0.18s ease,
-			color 0.18s ease;
-	}
-
-	.bohemcars-import-mobile__icon-action:hover,
-	.bohemcars-import-mobile__icon-action:focus-visible {
-		background: #ffffff;
-		color: #20350f;
-		outline: 0;
-	}
-
-	.bohemcars-import-mobile__icon-action :global(svg),
-	.bohemcars-import-mobile__icon-action :global(svg *) {
-		color: currentColor;
-		stroke: currentColor;
 	}
 
 	/* Green chrome: flat brand green hero with dark ink and the vehicle cutout,
@@ -532,26 +446,14 @@
 
 	@media (max-width: 374px) {
 		.bohemcars-import-mobile__intro {
-			min-height: 176px;
+			min-height: 222px;
+			padding-right: 118px;
 		}
 
 		.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form input),
 		.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form select) {
 			font-size: 15px !important;
 			padding: 0 10px !important;
-		}
-
-		.bohemcars-import-mobile__app-actions {
-			gap: 5px;
-		}
-
-		.bohemcars-import-mobile__icon-action {
-			width: 36px;
-			height: 36px;
-		}
-
-		.bohemcars-import-mobile__intro {
-			padding-right: 118px;
 		}
 
 		.bohemcars-import-mobile__intro img {
@@ -563,10 +465,6 @@
 		.bohemcars-import-mobile__intro h1 {
 			font-size: 25px;
 			line-height: 29px;
-		}
-
-		.bohemcars-import-mobile__brand img {
-			width: 128px;
 		}
 	}
 </style>

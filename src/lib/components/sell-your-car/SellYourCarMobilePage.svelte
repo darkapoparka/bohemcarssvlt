@@ -15,6 +15,7 @@
 		AuxeroSellCarMobileStep
 	} from '$lib/auxero/sell-your-car';
 	import { bohemcarsContact } from '$lib/data/bohemcars';
+	import MobileAppbar from '$lib/components/layout/MobileAppbar.svelte';
 
 	let {
 		copy,
@@ -59,50 +60,34 @@
 		aria-hidden="true"
 	/>
 
-	<header class="bohemcars-sell-mobile__appbar">
-		<a class="bohemcars-sell-mobile__brand" href={resolve('/')}>
-			<img
-				src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
-				alt={copy.logoAlt}
-				width="180"
-				height="33"
-			/>
+	<MobileAppbar actionsLabel={copy.contactLabel} logoAlt={copy.logoAlt}>
+		<label
+			for="sell-mobile-location-toggle"
+			aria-label={bohemcarsContact.addressLabel}
+			aria-controls="sell-mobile-location-sheet"
+			aria-haspopup="dialog"
+		>
+			<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
+		</label>
+		<a
+			{...hrefAttributes(bohemcarsContact.primaryPhoneHref)}
+			aria-label={bohemcarsContact.primaryPhoneLabel}
+		>
+			<PhoneCall size={18} strokeWidth={2.35} aria-hidden="true" />
 		</a>
-		<div class="bohemcars-sell-mobile__app-actions" aria-label={copy.contactLabel}>
-			<label
-				for="sell-mobile-location-toggle"
-				class="bohemcars-sell-mobile__icon-action"
-				aria-label={bohemcarsContact.addressLabel}
-				aria-controls="sell-mobile-location-sheet"
-				aria-haspopup="dialog"
-			>
-				<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
-			</label>
-			<a
-				class="bohemcars-sell-mobile__icon-action"
-				{...hrefAttributes(bohemcarsContact.primaryPhoneHref)}
-				aria-label={bohemcarsContact.primaryPhoneLabel}
-			>
-				<PhoneCall size={18} strokeWidth={2.35} aria-hidden="true" />
-			</a>
-			<a
-				class="bohemcars-sell-mobile__icon-action"
-				{...hrefAttributes(bohemcarsContact.viberHref)}
-				aria-label={copy.messageLabel}
-			>
-				<MessageCircle size={18} strokeWidth={2.35} aria-hidden="true" />
-			</a>
-			<label
-				for="sell-mobile-form-toggle"
-				class="bohemcars-sell-mobile__icon-action bohemcars-sell-mobile__icon-action--primary"
-				aria-label={copy.submitLabel}
-				aria-controls="sell-mobile-form-sheet"
-				aria-haspopup="dialog"
-			>
-				<Plus size={20} strokeWidth={2.5} aria-hidden="true" />
-			</label>
-		</div>
-	</header>
+		<a {...hrefAttributes(bohemcarsContact.viberHref)} aria-label={copy.messageLabel}>
+			<MessageCircle size={18} strokeWidth={2.35} aria-hidden="true" />
+		</a>
+		<label
+			for="sell-mobile-form-toggle"
+			class="bc-mobile-appbar__action--primary"
+			aria-label={copy.submitLabel}
+			aria-controls="sell-mobile-form-sheet"
+			aria-haspopup="dialog"
+		>
+			<Plus size={20} strokeWidth={2.5} aria-hidden="true" />
+		</label>
+	</MobileAppbar>
 
 	<main class="bohemcars-sell-mobile__main">
 		<section class="bohemcars-sell-mobile__intro" aria-labelledby="sell-mobile-title">
@@ -317,81 +302,6 @@
 		overflow: hidden;
 		opacity: 0;
 		pointer-events: none;
-	}
-
-	.bohemcars-sell-mobile__appbar {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 20;
-		display: flex;
-		height: 74px;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-		border: 0;
-		background: transparent;
-		padding: 12px 14px 0;
-	}
-
-	.bohemcars-sell-mobile__brand {
-		display: flex;
-		min-width: 0;
-		align-items: center;
-		text-decoration: none !important;
-	}
-
-	.bohemcars-sell-mobile__brand img {
-		display: block;
-		width: 150px;
-		height: auto;
-		object-fit: contain;
-		/* The wordmark's green "CARS" sinks into the green chrome — force solid ink. */
-		filter: brightness(0);
-	}
-
-	.bohemcars-sell-mobile__app-actions {
-		display: flex;
-		flex: 0 0 auto;
-		align-items: center;
-		gap: 7px;
-	}
-
-	.bohemcars-sell-mobile__icon-action {
-		display: flex;
-		width: 38px;
-		height: 38px;
-		align-items: center;
-		justify-content: center;
-		border: 0;
-		border-radius: 999px;
-		background: #ffffff;
-		box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
-		color: #20350f;
-		cursor: pointer;
-		padding: 0;
-		text-decoration: none !important;
-		transition:
-			background-color 0.18s ease,
-			color 0.18s ease;
-	}
-
-	.bohemcars-sell-mobile__icon-action--primary {
-		background: var(--bc-accent-bright-soft);
-		color: #111111;
-	}
-
-	.bohemcars-sell-mobile__icon-action:hover,
-	.bohemcars-sell-mobile__icon-action:focus-visible {
-		background: #ffffff;
-		color: #20350f;
-		outline: 0;
-	}
-
-	.bohemcars-sell-mobile__icon-action :global(svg) {
-		color: currentColor;
-		stroke: currentColor;
 	}
 
 	.bohemcars-sell-mobile__main {
@@ -1043,24 +953,12 @@
 
 	@media (max-width: 374px) {
 		.bohemcars-sell-mobile__intro {
-			min-height: 176px;
+			min-height: 222px;
+			padding-right: 118px;
 		}
 
 		.bohemcars-sell-mobile__intro-copy {
 			max-width: 300px;
-		}
-
-		.bohemcars-sell-mobile__app-actions {
-			gap: 5px;
-		}
-
-		.bohemcars-sell-mobile__icon-action {
-			width: 36px;
-			height: 36px;
-		}
-
-		.bohemcars-sell-mobile__intro {
-			padding-right: 118px;
 		}
 
 		.bohemcars-sell-mobile__intro img {
@@ -1072,10 +970,6 @@
 		.bohemcars-sell-mobile__intro h1 {
 			font-size: 25px;
 			line-height: 29px;
-		}
-
-		.bohemcars-sell-mobile__brand img {
-			width: 128px;
 		}
 	}
 </style>
