@@ -78,15 +78,6 @@
 		<a {...hrefAttributes(bohemcarsContact.viberHref)} aria-label={copy.messageLabel}>
 			<MessageCircle size={18} strokeWidth={2.35} aria-hidden="true" />
 		</a>
-		<label
-			for="sell-mobile-form-toggle"
-			class="bc-mobile-appbar__action--primary"
-			aria-label={copy.submitLabel}
-			aria-controls="sell-mobile-form-sheet"
-			aria-haspopup="dialog"
-		>
-			<Plus size={20} strokeWidth={2.5} aria-hidden="true" />
-		</label>
 	</MobileAppbar>
 
 	<main class="bohemcars-sell-mobile__main">
