@@ -430,7 +430,7 @@
 	}
 
 	.bohemcars-calculator-mobile__form-card p {
-		color: #5d7e16;
+		color: #4c6b12;
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 16px;
@@ -515,7 +515,7 @@
 		border-radius: 8px;
 		background: #ffffff;
 		color: #111111;
-		box-shadow: var(--bc-shadow-subtle);
+		box-shadow: none;
 		font-size: 15px;
 		font-weight: 800;
 		line-height: 19px;
@@ -564,7 +564,7 @@
 	}
 
 	.bohemcars-calculator-mobile__budget p {
-		color: #5d7e16;
+		color: #4c6b12;
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 16px;
@@ -581,15 +581,16 @@
 
 	.bohemcars-calculator-mobile__budget header > a {
 		display: inline-flex;
-		min-height: 36px;
+		min-height: 38px;
 		align-items: center;
+		border: 1px solid var(--bc-border);
 		border-radius: 999px;
-		background: var(--bc-surface);
+		background: #ffffff;
 		color: #111111;
 		font-size: 13px;
 		font-weight: 800;
 		line-height: 16px;
-		padding: 0 12px;
+		padding: 0 14px;
 		text-decoration: none;
 		white-space: nowrap;
 	}
@@ -601,16 +602,16 @@
 
 	.bohemcars-calculator-mobile__budget > div > a {
 		display: grid;
-		min-height: 58px;
+		min-height: 60px;
 		align-items: center;
-		grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr) 30px;
-		gap: 8px;
+		grid-template-columns: auto minmax(0, 1fr) 32px;
+		gap: 10px;
 		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: var(--bc-surface-raised);
-		box-shadow: var(--bc-shadow-subtle);
+		background: #ffffff;
+		box-shadow: none;
 		color: #111111;
-		padding: 10px 11px 10px 13px;
+		padding: 10px 10px 10px 11px;
 		text-decoration: none;
 	}
 
@@ -628,18 +629,37 @@
 		white-space: nowrap;
 	}
 
-	.bohemcars-calculator-mobile__budget span {
-		color: #5d7e16;
-		font-size: 14px;
-		font-weight: 700;
-		line-height: 18px;
+	/* Budget as a green accent pill — the brand language for price chips —
+	   instead of bare olive text. */
+	.bohemcars-calculator-mobile__budget > div > a span {
+		display: inline-flex;
+		min-height: 28px;
+		align-items: center;
+		justify-self: start;
+		border-radius: 999px;
+		background: rgba(143, 202, 26, 0.18);
+		color: #3a540e;
+		font-size: 13px;
+		font-weight: 800;
+		line-height: 16px;
+		padding: 0 11px;
 	}
 
 	.bohemcars-calculator-mobile__budget strong {
 		color: #111111;
-		font-size: 14px;
-		font-weight: 800;
-		line-height: 18px;
+		font-size: 14.5px;
+		font-weight: 700;
+		line-height: 19px;
+	}
+
+	.bohemcars-calculator-mobile__budget > div > a :global(svg) {
+		width: 32px;
+		height: 32px;
+		border-radius: 999px;
+		background: var(--bc-surface-soft);
+		color: #111111;
+		stroke: #111111;
+		padding: 7px;
 	}
 
 	.bohemcars-calculator-mobile__budget > div > a :global(svg) {
