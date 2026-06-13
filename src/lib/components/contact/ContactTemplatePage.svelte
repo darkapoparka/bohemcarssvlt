@@ -63,7 +63,9 @@
 							<div class="icon"><img src="/assets/icons/PhoneCall.svg" alt="phone" /></div>
 							<div class="flex flex-col gap-4">
 								<a {...externalHref(info.phoneHref)}>{info.phoneLabel}</a>
-								<a {...externalHref(info.secondaryPhoneHref)}>{info.secondaryPhoneLabel}</a>
+								{#if info.secondaryPhoneHref !== info.phoneHref || info.secondaryPhoneLabel !== info.phoneLabel}
+									<a {...externalHref(info.secondaryPhoneHref)}>{info.secondaryPhoneLabel}</a>
+								{/if}
 							</div>
 						</div>
 						<div class="contact mb-22 flex items-start gap-12">

@@ -318,7 +318,7 @@
 	.bohemcars-contact-mobile__hero p {
 		color: #d9f275;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 15px;
 		text-transform: uppercase;
 	}
@@ -424,7 +424,7 @@
 	.bohemcars-contact-mobile__info p {
 		color: #637184;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 16px;
 		text-transform: uppercase;
 	}
@@ -473,7 +473,7 @@
 	.bohemcars-contact-mobile__map-card p {
 		color: #5d7e16;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 16px;
 		text-transform: uppercase;
 	}
@@ -666,7 +666,7 @@
 		margin-bottom: 2px;
 		color: #5d7e16;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 16px;
 		text-transform: uppercase;
 	}

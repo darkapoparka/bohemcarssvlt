@@ -1130,6 +1130,7 @@ const stripInventoryMapScripts = (html: string) =>
 			''
 		)
 		.replace(/\s*<script src="\/assets\/js\/maps\.js"><\/script>/g, '')
+		.replace(/\s*<script src="\/assets\/js\/marker\.js"><\/script>/g, '')
 		.replace(/\s*<script src="\/assets\/js\/infobox\.min\.js"><\/script>/g, '');
 
 const replaceInventoryBreadcrumb = (html: string, state: InventoryState) => {

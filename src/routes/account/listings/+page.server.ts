@@ -1,7 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountListingsData } from '$lib/server/account-listings-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -14,7 +18,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: listingsSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawListingsSlot } = renderAuxeroPageSlot(
 		'my-listings.html',
 		renderOptions,
 		{
@@ -23,6 +27,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Account listings slot could not be located'
 		}
 	);
+	const listingsSlot = removeAuxeroSlotScriptTags(rawListingsSlot);
 
 	return {
 		afterListingsHtml: listingsSlot.afterHtml,
@@ -34,6 +39,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 		}),
 		listings: getAccountListingsData('my-listings.html', renderOptions),
 		listingsHtml: listingsSlot.sectionHtml,
-		pageDocument
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument)
 	};
 };

@@ -21,6 +21,15 @@
 	setGarageContext(garage);
 	onMount(() => {
 		garage.hydrateFromStorage();
+		const stopGarageSync = garage.watchExternalGarageState();
+		// Lets any route-owned Auxero runtime wait until Svelte has hydrated the DOM.
+		document.documentElement.setAttribute('data-bohemcars-hydrated', 'true');
+		window.dispatchEvent(new CustomEvent('bohemcars:hydrated'));
+
+		return () => {
+			stopGarageSync();
+			document.documentElement.removeAttribute('data-bohemcars-hydrated');
+		};
 	});
 	const auxeroStableStylesheetHrefs = [
 		'/assets/scss/swiper/swiper-bundle.min.css',

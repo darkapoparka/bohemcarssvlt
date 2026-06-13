@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type {
 		HomeFiveFooterData,
 		HomeFiveHeaderData,
@@ -39,6 +38,10 @@
 		shellRuntimeHtml?: string;
 		vehicles: AuxeroCompareVehicle[];
 	} = $props();
+
+	const openComparePicker = () => {
+		window.dispatchEvent(new CustomEvent('bohemcars:compare-open-picker'));
+	};
 </script>
 
 {#if dashboardShell}
@@ -80,28 +83,22 @@
 								? 'Прегледай цена, пробег, история, оборудване и наличност в една ясна таблица.'
 								: 'Review price, mileage, history, equipment, and availability in one clear table.'}
 						</p>
-						<a
-							href={resolve('/inventory')}
+						<button
+							type="button"
 							class="btn btn-primary-3 btn-large font-weight-600 bohemcars-compare-hero__cta"
+							onclick={openComparePicker}
 						>
 							<span>{locale === 'bg' ? 'Добави автомобили' : 'Add vehicles'}</span>
 							<span aria-hidden="true">→</span>
-						</a>
+						</button>
 					</div>
 					<div class="bohemcars-compare-hero__visual" aria-hidden="true">
 						<img
-							class="bohemcars-compare-hero__car bohemcars-compare-hero__car--left"
-							src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp"
+							class="bohemcars-compare-hero__art"
+							src="/assets/bohemcars/compare/compare-hero-faceoff-v2.webp"
 							alt=""
 							loading="lazy"
 						/>
-						<img
-							class="bohemcars-compare-hero__car bohemcars-compare-hero__car--right"
-							src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp"
-							alt=""
-							loading="lazy"
-						/>
-						<span class="bohemcars-compare-hero__vs">VS</span>
 					</div>
 				</div>
 				<div class="card-details">
@@ -133,9 +130,23 @@
 		overflow: hidden;
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 8px;
-		background: linear-gradient(135deg, #14210f 0%, #1f3318 58%, #0f190c 100%);
+		background: #14210f;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 		padding: 32px 36px;
+	}
+
+	.bohemcars-compare-hero::before {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: linear-gradient(
+			90deg,
+			rgb(14 24 12 / 0.96) 0%,
+			rgb(14 24 12 / 0.8) 34%,
+			rgb(14 24 12 / 0) 66%
+		);
+		content: '';
+		pointer-events: none;
 	}
 
 	.bohemcars-compare-hero__copy {
@@ -190,46 +201,19 @@
 	}
 
 	.bohemcars-compare-hero__visual {
-		position: relative;
-		min-height: 190px;
+		position: absolute;
+		inset: 0;
+		z-index: 0;
 	}
 
-	.bohemcars-compare-hero__car {
+	.bohemcars-compare-hero__art {
 		position: absolute;
-		bottom: -16px;
+		inset: 0;
 		display: block;
-		height: auto;
-		max-width: none;
-		filter: saturate(0.96) contrast(1.02);
-	}
-
-	.bohemcars-compare-hero__car--left {
-		left: -18px;
-		width: min(52vw, 460px);
-	}
-
-	.bohemcars-compare-hero__car--right {
-		right: -42px;
-		width: min(50vw, 440px);
-	}
-
-	.bohemcars-compare-hero__vs {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		z-index: 2;
-		display: inline-flex;
-		width: 54px;
-		height: 54px;
-		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		background: #d9f275;
-		color: #14210f;
-		font-size: 15px;
-		font-weight: 800;
-		line-height: 1;
-		transform: translate(-50%, -50%);
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	:global(body.auxero-template-compare-html .bohemcars-compare-hero h1),
@@ -278,13 +262,25 @@
 			background-color: var(--bc-bg) !important;
 		}
 
+		/* The theme's #wrapper overflow:hidden creates a clip scroll-container
+		   that silently kills the appbar's position:sticky; clip gives the same
+		   horizontal containment without breaking stickiness. */
+		:global(body.auxero-template-compare-html #wrapper) {
+			overflow: clip !important;
+		}
+
 		:global(body.auxero-template-compare-html .header-wrapper-style-4) {
 			display: none !important;
 		}
 
+		:global(body.auxero-template-compare-html .footer),
+		:global(body.auxero-template-compare-html .site-footer) {
+			display: none !important;
+		}
+
 		:global(body.auxero-template-compare-html section.pb-100) {
-			padding-top: max(10px, env(safe-area-inset-top)) !important;
-			padding-bottom: 92px !important;
+			padding-top: 0 !important;
+			padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important;
 		}
 
 		:global(body.auxero-template-compare-html section.pb-100 .tf-spacing-style3) {
@@ -294,8 +290,8 @@
 		:global(body.auxero-template-compare-html section.pb-100 > .container) {
 			width: 100% !important;
 			max-width: none !important;
-			padding-right: 14px !important;
-			padding-left: 14px !important;
+			padding-right: 0 !important;
+			padding-left: 0 !important;
 		}
 
 		:global(body.auxero-template-compare-html .title-section) {
@@ -351,7 +347,8 @@
 		}
 
 		:global(body.auxero-template-compare-html .card-details) {
-			overflow: hidden !important;
+			/* clip, not hidden — hidden would break the sticky appbar inside. */
+			overflow: clip !important;
 			border: 0 !important;
 			border-radius: 0 !important;
 			background: transparent !important;

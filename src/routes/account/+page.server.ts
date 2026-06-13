@@ -1,7 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -18,11 +22,16 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: recentSlot } = renderAuxeroPageSlot('dashboard.html', renderOptions, {
-		marker: 'dashboard-content--inner',
-		templateError: 'Account dashboard template could not be rendered',
-		slotError: 'Account dashboard content slot could not be located'
-	});
+	const { pageDocument, slot: rawRecentSlot } = renderAuxeroPageSlot(
+		'dashboard.html',
+		renderOptions,
+		{
+			marker: 'dashboard-content--inner',
+			templateError: 'Account dashboard template could not be rendered',
+			slotError: 'Account dashboard content slot could not be located'
+		}
+	);
+	const recentSlot = removeAuxeroSlotScriptTags(rawRecentSlot);
 
 	return {
 		afterRecentHtml: recentSlot.afterHtml,
@@ -32,6 +41,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 			subtitle: 'Запазени автомобили, подадени обяви и активни разговори с Bohemcars.',
 			title: 'Табло на акаунта'
 		}),
-		pageDocument
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument)
 	};
 };

@@ -1,32 +1,23 @@
 import { createContext } from 'svelte';
 import { browser } from '$app/environment';
+import {
+	compareSlugsWith,
+	favoriteSlugsWith,
+	garageCompareKey,
+	garageFavoriteKey,
+	normalizeGarageSlugs,
+	readGarageCompare,
+	readGarageFavorites,
+	readGarageSession,
+	writeGarageCompare,
+	writeGarageFavorites
+} from './garage-storage';
 
-const favoriteKey = 'bohemcars:favorites';
-const compareKey = 'bohemcars:compare';
-const sessionKey = 'bohemcars:session';
-const compareLimit = 4;
-
-const readStoredList = (key: string) => {
-	if (!browser) return [];
-
-	try {
-		const value = JSON.parse(localStorage.getItem(key) || '[]');
-
-		return Array.isArray(value) ? value.filter((item) => typeof item === 'string') : [];
-	} catch {
-		return [];
-	}
-};
-
-const writeStoredList = (key: string, value: string[]) => {
-	if (!browser) return;
-
-	localStorage.setItem(key, JSON.stringify(value));
-};
+const garageStorage = () => (browser ? window.localStorage : undefined);
 
 const syncGarageDom = (
-	favorites = readStoredList(favoriteKey),
-	compare = readStoredList(compareKey)
+	favorites = readGarageFavorites(garageStorage()),
+	compare = normalizeGarageSlugs(readGarageCompare(garageStorage()))
 ) => {
 	if (!browser) return;
 
@@ -59,22 +50,28 @@ const shouldSyncGarageApi = () => {
 
 	return (
 		Boolean(new URLSearchParams(window.location.search).get('role')) ||
-		readStoredList(sessionKey).length > 0
+		readGarageSession(garageStorage()).length > 0
 	);
 };
+
+const hasStoredGarageState = (storage: Storage | undefined) =>
+	storage?.getItem(garageFavoriteKey) !== null || storage?.getItem(garageCompareKey) !== null;
 
 const syncGarageApi = async () => {
 	if (!shouldSyncGarageApi()) return;
 
 	try {
+		const storage = garageStorage();
+		if (!hasStoredGarageState(storage)) return;
+
 		const role = new URLSearchParams(window.location.search).get('role');
 		const headers: Record<string, string> = { 'content-type': 'application/json' };
 		if (role) headers['x-bohemcars-prototype-role'] = role;
 
 		await fetch('/api/account/garage', {
 			body: JSON.stringify({
-				compare: readStoredList(compareKey),
-				favorites: readStoredList(favoriteKey),
+				compare: normalizeGarageSlugs(readGarageCompare(garageStorage())),
+				favorites: readGarageFavorites(garageStorage()),
 				...(role ? { role } : {})
 			}),
 			credentials: 'same-origin',
@@ -86,17 +83,13 @@ const syncGarageApi = async () => {
 	}
 };
 
-const favoriteSlugsWith = (slug: string) => {
-	const current = readStoredList(favoriteKey);
-
-	return current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug];
+type GarageUpdatedDetail = {
+	compare?: unknown;
+	favorites?: unknown;
 };
 
-const compareSlugsWith = (slug: string) =>
-	[slug, ...readStoredList(compareKey).filter((item) => item !== slug)].slice(0, compareLimit);
-
-const normalizedCompareSlugs = (slugs: string[]) =>
-	Array.from(new Set(slugs.filter(Boolean))).slice(0, compareLimit);
+const favoriteSlugsFrom = (value: unknown) =>
+	Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
 
 export class GarageState {
 	favorites = $state<string[]>([]);
@@ -104,22 +97,50 @@ export class GarageState {
 	formMessage = $state('');
 
 	hydrateFromStorage() {
-		this.favorites = readStoredList(favoriteKey);
-		this.compare = readStoredList(compareKey).slice(0, compareLimit);
-		syncGarageDom(this.favorites, this.compare);
+		const storage = garageStorage();
+		const hasStoredGarage = hasStoredGarageState(storage);
+
+		this.favorites = readGarageFavorites(storage);
+		this.compare = normalizeGarageSlugs(readGarageCompare(storage));
+		if (hasStoredGarage) {
+			syncGarageDom(this.favorites, this.compare);
+		}
 		void syncGarageApi();
 	}
 
+	applyExternalGarageState(detail: GarageUpdatedDetail = {}) {
+		const storage = garageStorage();
+		this.favorites = detail.favorites
+			? favoriteSlugsFrom(detail.favorites)
+			: readGarageFavorites(storage);
+		this.compare = normalizeGarageSlugs(
+			detail.compare ? favoriteSlugsFrom(detail.compare) : readGarageCompare(storage)
+		);
+		syncGarageDom(this.favorites, this.compare);
+	}
+
+	watchExternalGarageState() {
+		if (!browser) return () => {};
+
+		const listener = (event: Event) => {
+			this.applyExternalGarageState((event as CustomEvent<GarageUpdatedDetail>).detail);
+		};
+
+		window.addEventListener('bohemcars:garage-updated', listener);
+
+		return () => window.removeEventListener('bohemcars:garage-updated', listener);
+	}
+
 	toggleFavorite(slug: string) {
-		this.favorites = favoriteSlugsWith(slug);
-		writeStoredList(favoriteKey, this.favorites);
+		this.favorites = favoriteSlugsWith(readGarageFavorites(garageStorage()), slug);
+		writeGarageFavorites(garageStorage(), this.favorites);
 		syncGarageDom();
 		void syncGarageApi();
 	}
 
 	addCompare(slug: string) {
-		this.compare = compareSlugsWith(slug);
-		writeStoredList(compareKey, this.compare);
+		this.compare = compareSlugsWith(readGarageCompare(garageStorage()), slug);
+		writeGarageCompare(garageStorage(), this.compare);
 		syncGarageDom();
 		void syncGarageApi();
 	}
@@ -129,15 +150,15 @@ export class GarageState {
 	}
 
 	removeCompare(slug: string) {
-		this.compare = readStoredList(compareKey).filter((item) => item !== slug);
-		writeStoredList(compareKey, this.compare);
+		this.compare = readGarageCompare(garageStorage()).filter((item) => item !== slug);
+		writeGarageCompare(garageStorage(), this.compare);
 		syncGarageDom();
 		void syncGarageApi();
 	}
 
 	setCompare(slugs: string[]) {
-		this.compare = normalizedCompareSlugs(slugs);
-		writeStoredList(compareKey, this.compare);
+		this.compare = normalizeGarageSlugs(slugs);
+		writeGarageCompare(garageStorage(), this.compare);
 		syncGarageDom(this.favorites, this.compare);
 		void syncGarageApi();
 	}
@@ -152,7 +173,7 @@ export class GarageState {
 
 	clearCompare() {
 		this.compare = [];
-		writeStoredList(compareKey, this.compare);
+		writeGarageCompare(garageStorage(), this.compare);
 		syncGarageDom();
 		void syncGarageApi();
 	}

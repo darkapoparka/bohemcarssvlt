@@ -86,7 +86,15 @@
 								class="bohemcars-favorites-mobile-card__image"
 								href={resolve('/inventory/[slug]', { slug: card.slug })}
 							>
-								<img src={mobileImage(card)} alt={card.title} onerror={useFallbackImage} />
+								<img
+									src={mobileImage(card)}
+									alt={card.title}
+									width="264"
+									height="336"
+									loading="lazy"
+									decoding="async"
+									onerror={useFallbackImage}
+								/>
 								<span>{card.tag}</span>
 							</a>
 							<div class="bohemcars-favorites-mobile-card__body">
@@ -391,7 +399,7 @@
 		justify-content: center;
 		gap: 4px;
 		overflow: hidden;
-		border-radius: 7px;
+		border-radius: 8px;
 		background: #ffffff;
 		padding: 0 5px;
 		color: #4b5563;

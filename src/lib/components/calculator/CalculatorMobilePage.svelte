@@ -316,7 +316,7 @@
 	.bohemcars-calculator-mobile__topbar h1 {
 		color: #14210f;
 		font-size: 24px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 29px;
 	}
 
@@ -372,7 +372,7 @@
 		overflow-wrap: anywhere;
 		color: #14210f;
 		font-size: 30px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 34px;
 	}
 
@@ -387,7 +387,7 @@
 		color: #ffffff;
 		cursor: pointer;
 		font-size: 13px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 17px;
 		padding: 0 14px;
 		white-space: nowrap;
@@ -441,7 +441,7 @@
 	.bohemcars-calculator-mobile__form-card h2 {
 		color: #111111;
 		font-size: 19px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 24px;
 	}
 
@@ -517,7 +517,7 @@
 		color: #111111;
 		box-shadow: none;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 19px;
 		text-align: center;
 		text-decoration: none;
@@ -575,7 +575,7 @@
 	.bohemcars-calculator-mobile__budget h2 {
 		color: #111111;
 		font-size: 19px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 24px;
 	}
 
@@ -588,7 +588,7 @@
 		background: #ffffff;
 		color: #111111;
 		font-size: 13px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 16px;
 		padding: 0 14px;
 		text-decoration: none;
@@ -640,7 +640,7 @@
 		background: rgba(143, 202, 26, 0.18);
 		color: #3a540e;
 		font-size: 13px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 16px;
 		padding: 0 11px;
 	}
@@ -753,7 +753,7 @@
 		display: block;
 		color: #111111;
 		font-size: 21px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 26px;
 	}
 
@@ -822,7 +822,7 @@
 	.bohemcars-calculator-mobile-drawer__breakdown div {
 		padding-top: 2px;
 		font-size: 16px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 21px;
 	}
 
@@ -847,7 +847,7 @@
 		cursor: pointer;
 		color: #111111;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 20px;
 		list-style: none;
 		padding: 12px;

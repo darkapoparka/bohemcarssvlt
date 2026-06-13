@@ -1936,7 +1936,13 @@ body.bohemcars-inventory-template
    to green/white, quieter controls get a soft green-grey fill, and controls do
    not lift, zoom, glow, or animate pseudo-elements. */
 @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			a[href],
 			a.btn,
@@ -2021,7 +2027,13 @@ body.bohemcars-inventory-template
 		transition-timing-function: ease !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.btn,
 			.btn-line,
@@ -2046,7 +2058,13 @@ body.bohemcars-inventory-template
 			.hover-stroke-hover,
 			.compare-details
 		)::before,
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.btn,
 			.btn-line,
@@ -2081,7 +2099,13 @@ body.bohemcars-inventory-template
 		transition: none !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			a[href],
 			a.btn,
@@ -2154,7 +2178,13 @@ body.bohemcars-inventory-template
 		transform: none !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.btn-primary,
 			.btn-primary-2,
@@ -2206,7 +2236,13 @@ body.bohemcars-inventory-template
 		opacity: 1 !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.btn-line,
 			.btn-line-1,
@@ -2241,7 +2277,13 @@ body.bohemcars-inventory-template
 		opacity: 1 !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.btn-icon-circle,
 			.hover-fill-primary,
@@ -2257,7 +2299,13 @@ body.bohemcars-inventory-template
 		opacity: 1 !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			a.btn,
 			button,
@@ -2290,7 +2338,13 @@ body.bohemcars-inventory-template
 		stroke: currentColor !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(.bohemcars-favorite, .heart, .hover-stroke-white, .hover-stroke-hover)
 		:where(:hover, :focus-visible, :active)
 		:where(svg path) {
@@ -2298,7 +2352,13 @@ body.bohemcars-inventory-template
 		stroke: currentColor !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(.hover-fill-primary, .hover-fill-white, .hover-fill-hover)
 		:where(:hover, :focus-visible, :active)
 		:where(svg path) {
@@ -2306,15 +2366,35 @@ body.bohemcars-inventory-template
 		stroke: none !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(.bohemcars-favorite.is-active, .heart.is-active):where(:hover, :focus-visible, :active)
 		:where(svg path) {
 		fill: currentColor !important;
 		stroke: currentColor !important;
 	}
 
-	body :where(.header-action-btn.header-action-icon)::before,
-	body :where(.header-action-btn.header-action-icon)::after {
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(.header-action-btn.header-action-icon)::before,
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(.header-action-btn.header-action-icon)::after {
 		box-shadow: none !important;
 		transform: none !important;
 		transition:
@@ -2327,20 +2407,39 @@ body.bohemcars-inventory-template
 		transition-timing-function: ease !important;
 	}
 
-	body :where(.header-action-btn.header-action-icon):where(:hover, :focus-visible, :active)::after {
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
+		:where(.header-action-btn.header-action-icon):where(:hover, :focus-visible, :active)::after {
 		border-color: var(--bc-hover-accent-ink) !important;
 		background: var(--bc-hover-accent-soft) !important;
 		color: var(--bc-hover-quiet-ink) !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(.header-action-btn.header-action-icon):where(:hover, :focus-visible, :active)
 		:where(svg, svg *, path) {
 		color: var(--bc-hover-accent-ink) !important;
 		stroke: var(--bc-hover-accent-ink) !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(
 			.view-details,
 			.card-box__title a,
@@ -2354,7 +2453,13 @@ body.bohemcars-inventory-template
 		text-decoration: none !important;
 	}
 
-	body
+	:where(
+			body[class*='auxero-template-'],
+			body.dashboard,
+			.site-header,
+			.search-modal,
+			.bohemcars-home-two-shell
+		)
 		:where(.view-details, .bohemcars-card-price__finance-link):where(:hover, :focus-visible)
 		img {
 		filter: brightness(0) saturate(100%) invert(45%) sepia(45%) saturate(962%) hue-rotate(38deg)

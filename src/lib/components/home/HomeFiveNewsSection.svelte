@@ -31,7 +31,14 @@
 						{#if brandFirstNewsTitle}
 							<picture class="bohemcars-news-banner__brand">
 								<source media="(max-width: 767px)" srcset={bohemcarsAssets.logoLight} />
-								<img src={bohemcarsAssets.logoDark} alt="Bohemcars" loading="lazy" />
+								<img
+									src={bohemcarsAssets.logoDark}
+									alt="Bohemcars"
+									width="220"
+									height="58"
+									loading="lazy"
+									decoding="async"
+								/>
 							</picture>
 							{#if newsTitleWithoutBrand}
 								<span>{newsTitleWithoutBrand}</span>
@@ -42,7 +49,14 @@
 							{/if}
 							<picture class="bohemcars-news-banner__brand">
 								<source media="(max-width: 767px)" srcset={bohemcarsAssets.logoLight} />
-								<img src={bohemcarsAssets.logoDark} alt="Bohemcars" loading="lazy" />
+								<img
+									src={bohemcarsAssets.logoDark}
+									alt="Bohemcars"
+									width="220"
+									height="58"
+									loading="lazy"
+									decoding="async"
+								/>
 							</picture>
 						{/if}
 					{:else}
@@ -58,7 +72,10 @@
 							class="bohemcars-news-card__img"
 							src={post.image}
 							alt={post.title}
+							width="760"
+							height="500"
 							loading="lazy"
+							decoding="async"
 						/>
 						<span class="bohemcars-news-card__category">{post.category}</span>
 						<span class="bohemcars-news-card__content">
@@ -83,7 +100,10 @@
 							class="bohemcars-news-all-card__brand"
 							src={bohemcarsAssets.logoLight}
 							alt="Bohemcars"
+							width="220"
+							height="58"
 							loading="lazy"
+							decoding="async"
 						/>
 					</span>
 					<span class="bohemcars-news-all-card__title">{readAllBlogTitle}</span>

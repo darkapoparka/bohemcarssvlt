@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Camera } from '@lucide/svelte';
 	import type {
 		HomeFiveFooterData,
 		HomeFiveHeaderData,
@@ -16,6 +17,7 @@
 	import PageBanner from '$lib/components/common/PageBanner.svelte';
 	import AuxeroPublicShell from '$lib/components/layout/AuxeroPublicShell.svelte';
 	import SellCarForm from './SellCarForm.svelte';
+	import SellCarWizard from './SellCarWizard.svelte';
 	import SellYourCarMobilePage from './SellYourCarMobilePage.svelte';
 
 	let {
@@ -43,6 +45,8 @@
 		shellRuntimeHtml: string;
 		steps: AuxeroSellCarStep[];
 	} = $props();
+
+	let wizardOpen = $state(false);
 </script>
 
 <div class="bohemcars-sell-desktop-route">
@@ -80,11 +84,23 @@
 						</div>
 					</div>
 					<div class="bohemcars-sell-page__form radius-20 bg-white">
-						<p class="h3 mb-8">Заяви преглед</p>
-						<p class="text-secondary mb-24">
-							Данните остават локално в прототипа и подготвят разговор с екипа.
-						</p>
-						<SellCarForm {form} />
+						{#if wizardOpen}
+							<SellCarWizard onclose={() => (wizardOpen = false)} />
+						{:else}
+							<p class="h3 mb-8">Заяви преглед</p>
+							<p class="text-secondary mb-24">
+								Данните остават локално в прототипа и подготвят разговор с екипа.
+							</p>
+							<SellCarForm {form} />
+							<button
+								class="bohemcars-sell-page__wizard-cta"
+								type="button"
+								onclick={() => (wizardOpen = true)}
+							>
+								<Camera size={17} strokeWidth={2.2} aria-hidden="true" />
+								Добави снимки и детайли — по-точна оферта
+							</button>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -111,6 +127,22 @@
 		padding: 28px;
 	}
 
+	@media (min-width: 768px) {
+		/* The theme's #wrapper overflow:hidden kills position:sticky;
+		   clip contains identically without creating a scroll container. */
+		:global(body.auxero-template-sell-your-car-html #wrapper) {
+			overflow: clip !important;
+		}
+
+		/* The form is shorter than the four step cards — sticky keeps it
+		   beside them instead of leaving a void next to steps 3-4. */
+		.bohemcars-sell-page__form {
+			position: sticky;
+			/* Clears the 94px fixed scroll-header with breathing room. */
+			top: 110px;
+		}
+	}
+
 	.bohemcars-sell-step {
 		display: grid;
 		grid-template-columns: 44px 1fr;
@@ -128,6 +160,38 @@
 		background: #d9f275;
 		color: #14210f;
 		font-weight: 700;
+	}
+
+	/* Quiet "add" affordance — dashed border signals the optional deep path. */
+	.bohemcars-sell-page__wizard-cta {
+		display: flex;
+		width: 100%;
+		min-height: 46px;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		margin-top: 14px;
+		border: 1px dashed #c9d3c2;
+		border-radius: 8px;
+		background: transparent;
+		color: #3a540e;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 18px;
+		padding: 0 12px;
+	}
+
+	.bohemcars-sell-page__wizard-cta:hover,
+	.bohemcars-sell-page__wizard-cta:focus-visible {
+		background: rgba(143, 202, 26, 0.1);
+		outline: 0;
+	}
+
+	.bohemcars-sell-page__wizard-cta :global(svg),
+	.bohemcars-sell-page__wizard-cta :global(svg *) {
+		color: currentColor;
+		stroke: currentColor;
 	}
 
 	@media (max-width: 767.98px) {

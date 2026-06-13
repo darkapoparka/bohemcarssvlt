@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { vehicles } from '$lib/data/vehicles';
 import {
 	homeFiveBrandCardsForLocale,
 	homeFiveHeaderData,
@@ -10,7 +11,7 @@ describe('homeFiveVehiclePills', () => {
 	it('keeps the Home 05 quick-search pills as shared typed route data', () => {
 		expect(homeFiveVehiclePills).toEqual([
 			{
-				active: true,
+				active: false,
 				href: '/inventory?bodyType=SUV',
 				icon: 'suv',
 				kind: 'body',
@@ -27,15 +28,15 @@ describe('homeFiveVehiclePills', () => {
 			},
 			{
 				active: false,
-				href: '/inventory?bodyType=Coupe',
+				href: '/inventory?bodyType=Cabriolet',
 				icon: 'coupe',
 				kind: 'body',
-				label: 'Coupe',
+				label: 'Cabriolet',
 				termGroup: 'bodyTypes'
 			},
 			{
 				active: false,
-				href: '/inventory?bodyType=Luxury',
+				href: '/inventory?minPrice=50000',
 				icon: 'luxury',
 				kind: 'body',
 				label: 'Luxury',
@@ -48,13 +49,6 @@ describe('homeFiveVehiclePills', () => {
 				kind: 'spec',
 				label: 'Automatic',
 				termGroup: 'transmissions'
-			},
-			{
-				active: false,
-				href: '/inventory?q=4x4',
-				image: '/assets/icons/transmission.svg',
-				kind: 'spec',
-				label: '4x4'
 			},
 			{
 				active: false,
@@ -113,22 +107,29 @@ describe('homeFiveBrandCardsForLocale', () => {
 			'BMW',
 			'Mercedes',
 			'Audi',
+			'Porsche',
+			'Mazda',
 			'Honda',
 			'Toyota',
 			'Volvo',
 			'Ford',
 			'Hyundai',
-			'Kia',
-			'Mazda',
-			'Ferrari',
-			'Tesla'
+			'Tesla',
+			'Всички марки'
 		]);
-		expect(cards.find((card) => card.query === 'BMW')?.count).toBe('18 автомобила');
-		expect(cards.find((card) => card.query === 'Audi')?.count).toBe('38 автомобила');
-		expect(cards.find((card) => card.query === 'Kia')?.image).toBe(
-			'/assets/bohemcars/brands/kia-transparent.webp'
-		);
-		expect(cards.find((card) => card.query === 'Tesla')?.count).toBe('27 автомобила');
+		// Stocked brands surface live inventory counts so the cards never lie.
+		expect(cards.find((card) => card.query === 'BMW')?.count).toBe('15 автомобила');
+		expect(cards.find((card) => card.query === 'Mercedes-Benz')?.count).toBe('15 автомобила');
+		expect(cards.find((card) => card.query === 'Audi')?.count).toBe('9 автомобила');
+		expect(cards.find((card) => card.query === 'BMW')?.href).toBeUndefined();
+		// Unstocked brands route to the import flow instead of an empty inventory.
+		expect(cards.find((card) => card.query === 'Tesla')?.count).toBe('Внос по заявка');
+		expect(cards.find((card) => card.query === 'Tesla')?.href).toBe('/import');
+		// The closing tile links to the full inventory with the live total.
+		const allTile = cards.at(-1);
+		expect(allTile?.allTile).toBe(true);
+		expect(allTile?.href).toBe('/inventory');
+		expect(allTile?.count).toBe(`${vehicles.length} автомобила`);
 	});
 });
 

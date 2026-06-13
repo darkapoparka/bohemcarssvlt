@@ -32,7 +32,15 @@
 	</div>
 	<div class="image">
 		<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-			<img class="card--img" src={card.image} alt={card.title} />
+			<img
+				class="card--img"
+				src={card.image}
+				alt={card.title}
+				width="660"
+				height="440"
+				loading="lazy"
+				decoding="async"
+			/>
 		</a>
 	</div>
 	<div class="content border-light border-top-none">

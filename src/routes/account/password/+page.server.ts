@@ -1,7 +1,11 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountPasswordFormData } from '$lib/server/account-profile-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -14,7 +18,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: passwordSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawPasswordSlot } = renderAuxeroPageSlot(
 		'change-password.html',
 		renderOptions,
 		{
@@ -24,6 +28,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Account password form slot could not be located'
 		}
 	);
+	const passwordSlot = removeAuxeroSlotScriptTags(rawPasswordSlot);
 
 	return {
 		afterPasswordHtml: passwordSlot.afterHtml,
@@ -33,8 +38,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 			subtitle: 'Update account credentials for this Bohemcars workspace.',
 			title: 'Profile Security'
 		}),
-		pageDocument,
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument),
 		password: getAccountPasswordFormData('change-password.html', renderOptions),
 		passwordHtml: passwordSlot.sectionHtml
 	};
+};
+
+export const actions: Actions = {
+	default: async () => ({ passwordSaved: true })
 };

@@ -196,7 +196,7 @@ const text = (locale: Locale) =>
 					'Няма автомобили по тези филтри. Изчисти филтрите или се свържи с Bohemcars за входящи автомобили.',
 				extras: 'Екстри',
 				filterButton: 'Филтри',
-				filterPresentation: 'Филтри',
+				filterPresentation: 'Тип филтри',
 				filterPresentationTitles: {
 					modal: 'Отваря филтрите като централен modal',
 					popover: 'Отваря филтрите като компактни popover менюта'
@@ -275,7 +275,7 @@ const text = (locale: Locale) =>
 					'No cars match these filters. Clear filters or contact Bohemcars for incoming vehicles.',
 				extras: 'Extras',
 				filterButton: 'Filters',
-				filterPresentation: 'Filters',
+				filterPresentation: 'Filter style',
 				filterPresentationTitles: {
 					modal: 'Open filters as a centered modal',
 					popover: 'Open filters as compact popover menus'

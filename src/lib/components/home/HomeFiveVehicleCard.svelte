@@ -46,7 +46,15 @@
 	</div>
 	<div class="image">
 		<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}>
-			<img class="card--img" src={vehicle.image} alt={vehicle.title} />
+			<img
+				class="card--img"
+				src={vehicle.image}
+				alt={vehicle.title}
+				width="660"
+				height="440"
+				loading="lazy"
+				decoding="async"
+			/>
 		</a>
 	</div>
 	<div class="content border-light border-top-none">
@@ -91,6 +99,23 @@
 				</a>
 			</span>
 		</p>
+		<div class="divider mb-15"></div>
+		<div class="bohemcars-card-actions flex justify-between">
+			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
+			<p
+				class="compare-details btn btn-small open-modal"
+				data-modal-id="#CompareModal"
+				data-bohemcars-compare={vehicle.slug}
+				role="button"
+				tabindex="0"
+			>
+				{copy.compare}
+			</p>
+			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)} class="view-details">
+				<span>{copy.viewDetails}</span>
+				<span class="view-details__arrow" aria-hidden="true">→</span>
+			</a>
+		</div>
 	</div>
 </div>
 
@@ -191,6 +216,47 @@
 		line-height: 16px;
 		margin-left: 0;
 		white-space: nowrap;
+	}
+
+	/* Keep the home vehicle card action in Auxero's quieter detail-link language. */
+	.bohemcars-card-actions .view-details {
+		display: inline-flex !important;
+		width: auto;
+		min-height: 36px;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 8px;
+		border-radius: 999px;
+		background: transparent;
+		color: #1c1c1c !important;
+		font-size: 15px !important;
+		font-weight: 600 !important;
+		line-height: 20px;
+		padding: 0 12px;
+		text-decoration: none !important;
+		white-space: nowrap;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	/* The global `* { color: #1c1c1c }` rule paints the inner spans directly;
+	   force them back to the button's own ink. */
+	.bohemcars-card-actions .view-details span {
+		color: inherit !important;
+	}
+
+	.bohemcars-card-actions .view-details:hover,
+	.bohemcars-card-actions .view-details:focus-visible {
+		background: #eef4e7;
+		color: #14210f !important;
+	}
+
+	.view-details__arrow {
+		flex: 0 0 auto;
+		font-size: 19px;
+		font-weight: 700;
+		line-height: 1;
 	}
 
 	.bohemcars-card-soft-hover {
@@ -379,6 +445,13 @@
 			box-shadow: none !important;
 		}
 
+		/* Mobile card is finalized as title → chips → price; the details-arrow
+		   row is a desktop-only affordance (the whole card is tappable). */
+		.card-box-style-1 .divider,
+		.bohemcars-card-actions {
+			display: none;
+		}
+
 		.bohemcars-card-soft-hover .content,
 		.bohemcars-card-soft-hover:hover .content {
 			background: var(--bc-surface);
@@ -401,7 +474,7 @@
 			left: 8px;
 			min-height: 24px;
 			padding: 0 9px;
-			border-radius: 7px;
+			border-radius: 8px;
 			font-size: 12px;
 			font-weight: 700;
 			letter-spacing: -0.1px;

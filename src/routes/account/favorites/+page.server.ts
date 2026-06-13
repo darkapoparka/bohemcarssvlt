@@ -3,7 +3,11 @@ import { favoriteCardsFromVehicles } from '$lib/auxero/favorites';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 import { getBohemcarsFavoriteVehicles } from '$lib/server/garage';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 
 export const load: PageServerLoad = ({ request, url }) => {
 	const routePath = 'account/favorites';
@@ -15,7 +19,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: favoritesSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawFavoritesSlot } = renderAuxeroPageSlot(
 		'my-favorites.html',
 		renderOptions,
 		{
@@ -24,6 +28,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Favorites grid slot could not be located'
 		}
 	);
+	const favoritesSlot = removeAuxeroSlotScriptTags(rawFavoritesSlot);
 
 	return {
 		afterFavoritesHtml: favoritesSlot.afterHtml,
@@ -34,6 +39,6 @@ export const load: PageServerLoad = ({ request, url }) => {
 			subtitle: 'Saved Bohemcars vehicles stay in one quick review list.',
 			title: 'My Favorites'
 		}),
-		pageDocument
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument)
 	};
 };

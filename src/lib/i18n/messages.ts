@@ -479,6 +479,7 @@ export const messages: Record<Locale, PublicMessages> = {
 				'Pickup Truck': 'Пикап',
 				Sedan: 'Седан',
 				SUV: 'SUV',
+				'View all': 'Виж всички',
 				Wagon: 'Комби'
 			},
 			fuels: {

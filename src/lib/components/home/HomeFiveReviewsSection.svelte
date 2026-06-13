@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { HomeFiveReview } from '$lib/auxero/home-five';
+	import { loadAuxeroSwiper, type AuxeroSwiperInstance } from '$lib/auxero/swiper-loader';
 	import { bohemcarsAssets } from '$lib/data/bohemcars';
 	import type { HomePageCopy } from '$lib/i18n/messages';
 	import { ArrowRight } from '@lucide/svelte';
+	import { onMount, tick } from 'svelte';
 	import HomeSectionCta from './HomeSectionCta.svelte';
 
 	let { copy, reviews }: { copy: HomePageCopy; reviews: HomeFiveReview[] } = $props();
@@ -17,6 +19,69 @@
 	let moreReviewsHint = $derived(
 		isEnglish ? 'Read more client stories' : 'Прочети още реални истории'
 	);
+
+	const initReviewsSwiper = async () => {
+		const carousel = document.querySelector('[data-bohemcars-home-reviews-carousel]');
+
+		if (!carousel) return undefined;
+
+		if (window.matchMedia('(max-width: 767px)').matches) {
+			carousel.classList.add('bohemcars-native-scroll');
+			return undefined;
+		}
+
+		const Swiper = await loadAuxeroSwiper();
+
+		return new Swiper(carousel, {
+			freeMode: true,
+			pagination: {
+				clickable: true,
+				el: '.pagination-swiper-testimonior'
+			},
+			slidesPerGroup: 1,
+			slidesPerView: 1,
+			spaceBetween: 30,
+			speed: 800,
+			breakpoints: {
+				0: {
+					slidesPerGroup: 1,
+					slidesPerView: 1
+				},
+				400: {
+					slidesPerGroup: 1,
+					slidesPerView: 1
+				},
+				767: {
+					slidesPerGroup: 2,
+					slidesPerView: 2
+				},
+				991: {
+					slidesPerGroup: 3,
+					slidesPerView: 3
+				}
+			}
+		});
+	};
+
+	onMount(() => {
+		let cancelled = false;
+		let reviewsSwiper: AuxeroSwiperInstance | undefined;
+
+		tick().then(async () => {
+			if (cancelled) return;
+
+			try {
+				reviewsSwiper = await initReviewsSwiper();
+			} catch {
+				reviewsSwiper = undefined;
+			}
+		});
+
+		return () => {
+			cancelled = true;
+			reviewsSwiper?.destroy?.(true, true);
+		};
+	});
 </script>
 
 {#if reviews.length}
@@ -30,7 +95,11 @@
 					<h2>{copy.reviewsTitle}</h2>
 					<HomeSectionCta href="/reviews" label={copy.commonCta} />
 				</div>
-				<div class="swiper-container swiper-testimonior wow fadeIn" data-wow-delay="0.1s">
+				<div
+					class="swiper-container swiper-testimonior wow fadeIn"
+					data-bohemcars-home-reviews-carousel
+					data-wow-delay="0.1s"
+				>
 					<div class="swiper-wrapper">
 						{#each duplicatedReviews as review, index (`${review.name}-${index}`)}
 							<div class="swiper-slide" class:bohemcars-review-extra={index >= reviews.length}>
@@ -46,7 +115,10 @@
 											class="testimonior--img"
 											src={review.avatar}
 											alt={review.name}
+											width="64"
+											height="64"
 											loading="lazy"
+											decoding="async"
 										/>
 										<div class="testimonior-box--user-content">
 											<p class="h5 title">{review.name}</p>
@@ -63,14 +135,24 @@
 										class="bohemcars-review-more-card__brand"
 										src={bohemcarsAssets.logoLight}
 										alt="Bohemcars"
+										width="220"
+										height="58"
 										loading="lazy"
+										decoding="async"
 									/>
 								</span>
 								<span class="bohemcars-review-more-card__eyebrow">{copy.reviewsTitle}</span>
 								<span class="bohemcars-review-more-card__proof" aria-hidden="true">
 									<span class="bohemcars-review-more-card__avatars">
 										{#each moreCardReviews as review (review.name)}
-											<img src={review.avatar} alt="" loading="lazy" />
+											<img
+												src={review.avatar}
+												alt=""
+												width="48"
+												height="48"
+												loading="lazy"
+												decoding="async"
+											/>
 										{/each}
 									</span>
 									<span class="bohemcars-review-more-card__stars">★★★★★</span>
@@ -499,5 +581,24 @@
 		.bohemcars-home-reviews :global(.pagination-swiper-testimonior) {
 			display: none !important;
 		}
+	}
+
+	.bohemcars-home-reviews :global(.pagination-swiper-testimonior .swiper-pagination-bullet) {
+		width: 10px;
+		height: 10px;
+		margin: 0 5px;
+		background: #1c1c1c;
+		opacity: 0.25;
+		transition:
+			width 0.2s ease,
+			opacity 0.2s ease,
+			background-color 0.2s ease;
+	}
+
+	.bohemcars-home-reviews :global(.pagination-swiper-testimonior .swiper-pagination-bullet-active) {
+		width: 22px;
+		border-radius: 999px;
+		background: #98bc2a;
+		opacity: 1;
 	}
 </style>

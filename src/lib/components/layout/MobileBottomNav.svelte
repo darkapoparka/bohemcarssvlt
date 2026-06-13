@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 	import {
 		ArrowRight,
 		Calculator,
@@ -71,9 +73,14 @@
 
 	const isActive = (href: string, exact = false) =>
 		exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
-	const usesDocumentNavigation = (href: string) => href !== '/inventory';
-	const handleNavigationClick = (event: MouseEvent, href: string) => {
-		if (!usesDocumentNavigation(href)) return;
+	let menuOpen = $state(false);
+	let navigationReady = $state(false);
+
+	onMount(() => {
+		navigationReady = true;
+	});
+
+	const handleNavigationClick = async (event: MouseEvent, href: string) => {
 		if (event.defaultPrevented || event.button !== 0) return;
 		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
 
@@ -86,11 +93,13 @@
 			nextUrl.search === window.location.search
 		) {
 			event.preventDefault();
+			menuOpen = false;
 			return;
 		}
 
 		event.preventDefault();
-		window.location.assign(link.href);
+		menuOpen = false;
+		await goto(resolve(href as '/'));
 	};
 
 	const itemClass = (item: (typeof mainItems)[number]) =>
@@ -107,11 +116,16 @@
 	id="mobile-bottom-menu-toggle"
 	class="mobile-menu-toggle"
 	type="checkbox"
+	bind:checked={menuOpen}
 	aria-label="Отвори меню"
 	aria-controls="mobile-bottom-menu"
 />
 
-<nav class="mobile-bottom-nav" aria-label="Мобилна навигация">
+<nav
+	class="mobile-bottom-nav"
+	aria-label="Мобилна навигация"
+	data-bohemcars-sveltekit-nav-ready={navigationReady ? 'true' : undefined}
+>
 	<div class="mobile-bottom-nav__inner">
 		{#each mainItems as item (item.href)}
 			{@const Icon = item.icon}
@@ -119,7 +133,6 @@
 				class={itemClass(item)}
 				href={resolve(item.href as '/')}
 				aria-current={isActive(item.href, item.exact) ? 'page' : undefined}
-				data-sveltekit-reload={usesDocumentNavigation(item.href) ? '' : undefined}
 				onclick={(event) => handleNavigationClick(event, item.href)}
 			>
 				<span class="mobile-bottom-nav__icon" aria-hidden="true">
@@ -132,6 +145,7 @@
 			for="mobile-bottom-menu-toggle"
 			class="mobile-bottom-nav__menu-trigger"
 			aria-controls="mobile-bottom-menu"
+			aria-expanded={menuOpen}
 			aria-haspopup="dialog"
 		>
 			<span class="mobile-bottom-nav__icon mobile-bottom-nav__icon--menu" aria-hidden="true">
@@ -174,7 +188,6 @@
 		<a
 			class="mobile-menu-sheet__sell"
 			href={resolve('/sell-your-car')}
-			data-sveltekit-reload=""
 			onclick={(event) => handleNavigationClick(event, '/sell-your-car')}
 		>
 			<div class="mobile-menu-sheet__sell-copy">
@@ -194,19 +207,11 @@
 		</a>
 
 		<div class="mobile-menu-sheet__actions">
-			<a
-				href={resolve('/contact')}
-				data-sveltekit-reload=""
-				onclick={(event) => handleNavigationClick(event, '/contact')}
-			>
+			<a href={resolve('/contact')} onclick={(event) => handleNavigationClick(event, '/contact')}>
 				<PhoneCall size={18} strokeWidth={2.1} />
 				Обади се
 			</a>
-			<a
-				href={resolve('/contact')}
-				data-sveltekit-reload=""
-				onclick={(event) => handleNavigationClick(event, '/contact')}
-			>
+			<a href={resolve('/contact')} onclick={(event) => handleNavigationClick(event, '/contact')}>
 				<MessageCircle size={18} strokeWidth={2.1} />
 				Пиши ни
 			</a>
@@ -223,7 +228,6 @@
 								class:active={isActive(link.href)}
 								href={resolve(link.href as '/')}
 								aria-current={isActive(link.href) ? 'page' : undefined}
-								data-sveltekit-reload={usesDocumentNavigation(link.href) ? '' : undefined}
 								onclick={(event) => handleNavigationClick(event, link.href)}
 							>
 								<Icon size={19} strokeWidth={2} />

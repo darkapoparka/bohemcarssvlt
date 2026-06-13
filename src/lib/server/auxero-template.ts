@@ -211,9 +211,14 @@ for (const file of duplicateDetailFiles) {
 
 const rawTemplateRouteFiles = new Set(Object.keys(canonicalTemplateRoutes));
 
+const stripAuxeroTemplateScriptTags = (html: string) =>
+	html.replace(
+		/\s*<script\b[^>]*\bsrc=(["'])(?:\.?\/assets\/js\/[^"']+|https:\/\/code\.jquery\.com\/ui\/[^"']+)\1[^>]*><\/script>\s*/gi,
+		'\n'
+	);
+
 function normalizeAssetUrls(html: string) {
-	return html
-		.replace(/\s*<script src="\.?\/assets\/js\/switcher\.js"><\/script>\s*/g, '\n')
+	return stripAuxeroTemplateScriptTags(html)
 		.replaceAll('./assets/', '/assets/')
 		.replaceAll('href="assets/', 'href="/assets/')
 		.replaceAll("href='assets/", "href='/assets/")
@@ -2565,6 +2570,17 @@ function injectLocalBehavior(
 	const favoriteKey = 'bohemcars:favorites';
 	const compareKey = 'bohemcars:compare';
 	const sessionKey = 'bohemcars:session';
+	const previousRuntimeController = window.__BOHEMCARS_RUNTIME_ABORT_CONTROLLER__;
+	if (previousRuntimeController) previousRuntimeController.abort();
+	const runtimeAbortController = typeof AbortController !== 'undefined' ? new AbortController() : undefined;
+	window.__BOHEMCARS_RUNTIME_ABORT_CONTROLLER__ = runtimeAbortController;
+	const runtimeListenerOptions = runtimeAbortController ? { signal: runtimeAbortController.signal } : undefined;
+	const runtimeCaptureListenerOptions = runtimeAbortController
+		? { capture: true, signal: runtimeAbortController.signal }
+		: true;
+	const runtimeOnceListenerOptions = runtimeAbortController
+		? { once: true, signal: runtimeAbortController.signal }
+		: { once: true };
 	const roleFromUrl = new URLSearchParams(window.location.search).get('role');
 	const prototypeRole = roleFromUrl || (
 		(window.location.pathname.startsWith('/account') || window.location.pathname.startsWith('/admin'))
@@ -2659,7 +2675,9 @@ function injectLocalBehavior(
 	const buildCompareRows = (selected) => '<tr><td></td>' + selected.map(compareTopCell).join('') + '</tr>' +
 		compareRows.map((row) => compareRowHtml(row, selected)).join('');
 	const renderCompareTables = (compareList) => {
-		const tables = document.querySelectorAll('[data-bohemcars-compare-table]');
+		const tables = Array.from(document.querySelectorAll('[data-bohemcars-compare-table]')).filter(
+			(table) => !table.hasAttribute('data-bohemcars-svelte-compare-table')
+		);
 		if (!tables.length) return;
 
 		const stored = (Array.isArray(compareList) ? compareList : readList(compareKey)).filter(
@@ -2879,7 +2897,7 @@ function injectLocalBehavior(
 		document.querySelectorAll('img').forEach((img) => {
 			if (!isVehicleImage(img)) return;
 
-			img.addEventListener('error', () => applyVehicleImageFallback(img), { once: true });
+			img.addEventListener('error', () => applyVehicleImageFallback(img), runtimeOnceListenerOptions);
 			if (img.complete && img.naturalWidth === 0) {
 				applyVehicleImageFallback(img);
 			}
@@ -2907,7 +2925,7 @@ function injectLocalBehavior(
 		if (document.readyState === 'complete') {
 			afterHydrationFrame();
 		} else {
-			window.addEventListener('load', afterHydrationFrame, { once: true });
+			window.addEventListener('load', afterHydrationFrame, runtimeOnceListenerOptions);
 		}
 	};
 	const updateGarageState = (garage) => {
@@ -2930,6 +2948,9 @@ function injectLocalBehavior(
 		renderCompareTables(compare);
 		renderAccountFavorites(favorites);
 		scheduleVehicleImagePreparation();
+		window.dispatchEvent(new CustomEvent('bohemcars:garage-updated', {
+			detail: { favorites, compare }
+		}));
 	};
 	const mainNav = document.getElementById('menu-primary-menu');
 	if (mainNav && !mainNav.hasAttribute('data-bohemcars-dashboard-context-nav') && !mainNav.querySelector('.sub-menu')) {
@@ -2971,6 +2992,7 @@ function injectLocalBehavior(
 	document.addEventListener('click', (event) => {
 		const removeCompare = event.target.closest('[data-bohemcars-compare-remove], .bohemcars-compare-table .compare-item-remove-table');
 		if (!removeCompare) return;
+		if (removeCompare.hasAttribute('data-bohemcars-svelte-compare-remove')) return;
 
 		const slug = removeCompare.getAttribute('data-bohemcars-compare-remove') || removeCompare.closest('[data-bohemcars-compare-column]')?.getAttribute('data-bohemcars-compare-column');
 		if (!slug) return;
@@ -2981,7 +3003,7 @@ function injectLocalBehavior(
 		writeList(compareKey, current);
 		updateGarageState();
 		syncGarageState();
-	}, true);
+	}, runtimeCaptureListenerOptions);
 	document.addEventListener('click', async (event) => {
 		const logout = event.target.closest('[data-bohemcars-menu-item="logout"], [data-bohemcars-user-menu-item="logout"]');
 		if (logout) {
@@ -3065,7 +3087,7 @@ function injectLocalBehavior(
 				);
 			}
 		}
-	});
+	}, runtimeListenerOptions);
 	document.addEventListener('submit', async (event) => {
 		const form = event.target;
 		if (form.matches('[data-bohemcars-search-form="inventory"]')) {
@@ -3169,7 +3191,7 @@ function injectLocalBehavior(
 					: 'Inquiry sent to Bohemcars locally'
 			);
 		}
-	});
+	}, runtimeListenerOptions);
 	const readCalcNumber = (calculator, key) => {
 		const input = calculator.querySelector('[data-bohemcars-calc-input="' + key + '"]');
 		const value = Number(String(input?.value || '0').replace(/[^0-9.-]/g, ''));
@@ -3196,7 +3218,7 @@ function injectLocalBehavior(
 	document.addEventListener('input', (event) => {
 		const calculator = event.target.closest('[data-bohemcars-calculator]');
 		if (calculator) updateCalculator(calculator);
-	});
+	}, runtimeListenerOptions);
 	updateGarageState();
 	hydrateGarageState();
 	window.__BOHEMCARS_RUNTIME__ = runtimeData;

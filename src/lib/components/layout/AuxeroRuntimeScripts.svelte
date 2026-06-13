@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 
 	type Props = {
 		html: string;
@@ -10,12 +10,14 @@
 		__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__?: number;
 		__BOHEMCARS_AUXERO_RUNTIME_MOUNTS__?: number;
 		__BOHEMCARS_BODY_SCRIPTS_LOADED__?: boolean;
+		__BOHEMCARS_RUNTIME__?: unknown;
 	};
 
 	let { html, pageKey = '' }: Props = $props();
 
 	const replayAttribute = 'data-bohemcars-runtime-replay';
 	const scriptTagPattern = /<script\b/i;
+	let runVersion = 0;
 
 	const wait = (milliseconds: number) =>
 		new Promise((resolve) => {
@@ -28,15 +30,6 @@
 				'.swiper-container:not(.swiper-container-initialized):not(.bohemcars-native-scroll)'
 			)
 		);
-
-	const hasLoadedAuxeroGlobals = () => {
-		const auxeroWindow = window as Window & {
-			jQuery?: unknown;
-			Swiper?: unknown;
-		};
-
-		return typeof auxeroWindow.jQuery === 'function' || typeof auxeroWindow.Swiper === 'function';
-	};
 
 	const parseScriptTags = (source: string) => {
 		const template = document.createElement('template');
@@ -85,7 +78,10 @@
 		}
 	};
 
-	const waitForServerRenderedScripts = async (isFirstAuxeroRuntimeMount: boolean) => {
+	const waitForServerRenderedScripts = async (
+		isFirstAuxeroRuntimeMount: boolean,
+		sourceIncludesRuntime: boolean
+	) => {
 		if (!isFirstAuxeroRuntimeMount) return false;
 
 		let sawServerManagedScripts = false;
@@ -94,16 +90,23 @@
 		for (let attempt = 0; attempt < 30; attempt += 1) {
 			const auxeroWindow = window as AuxeroWindow;
 			const bodyScriptsLoaded = Boolean(auxeroWindow.__BOHEMCARS_BODY_SCRIPTS_LOADED__);
+			const runtimeReady = Boolean(auxeroWindow.__BOHEMCARS_RUNTIME__);
 			const widgetsNeedReplay = hasUninitializedAuxeroWidgets();
 			sawServerManagedScripts =
 				sawServerManagedScripts ||
+				runtimeReady ||
 				Boolean(auxeroWindow.__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__) ||
-				hasLoadedAuxeroGlobals();
+				bodyScriptsLoaded;
+
+			if (sourceIncludesRuntime && runtimeReady) {
+				return true;
+			}
 
 			if (
+				!sourceIncludesRuntime &&
 				sawServerManagedScripts &&
 				!widgetsNeedReplay &&
-				(bodyScriptsLoaded || hasLoadedAuxeroGlobals())
+				bodyScriptsLoaded
 			) {
 				return true;
 			}
@@ -126,33 +129,32 @@
 		return false;
 	};
 
-	const runScriptsWhenNeeded = async () => {
-		if (!scriptTagPattern.test(html)) return;
+	const runScriptsWhenNeeded = async (source: string, version: number) => {
+		if (!scriptTagPattern.test(source)) return;
 
 		await tick();
+		if (version !== runVersion) return;
 
 		const auxeroWindow = window as AuxeroWindow;
 		const mountCount = auxeroWindow.__BOHEMCARS_AUXERO_RUNTIME_MOUNTS__ ?? 0;
 		const isFirstAuxeroRuntimeMount = mountCount === 0;
+		const sourceIncludesRuntime = source.includes('__BOHEMCARS_RUNTIME__');
 		auxeroWindow.__BOHEMCARS_AUXERO_RUNTIME_MOUNTS__ = mountCount + 1;
 
-		const serverScriptsHandledThisMount =
-			await waitForServerRenderedScripts(isFirstAuxeroRuntimeMount);
+		const serverScriptsHandledThisMount = await waitForServerRenderedScripts(
+			isFirstAuxeroRuntimeMount,
+			sourceIncludesRuntime
+		);
 
 		if (serverScriptsHandledThisMount && !hasUninitializedAuxeroWidgets()) return;
-		if (
-			!isFirstAuxeroRuntimeMount &&
-			!hasUninitializedAuxeroWidgets() &&
-			hasLoadedAuxeroGlobals()
-		) {
-			return;
-		}
 
-		await executeScriptTags(html);
+		await executeScriptTags(source);
 	};
 
-	onMount(() => {
+	$effect(() => {
+		const source = html;
 		void pageKey;
-		void runScriptsWhenNeeded();
+		const version = ++runVersion;
+		void runScriptsWhenNeeded(source, version);
 	});
 </script>

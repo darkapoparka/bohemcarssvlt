@@ -23,17 +23,15 @@
 		copy.featuredTitle === 'Newest Vehicles' ? 'Newest' : 'Нови коли'
 	);
 
-	const displayedPills = $derived(
-		pills.filter((pill) => pill.kind !== 'spec' || pill.label === '4x4')
-	);
+	const displayedPills = $derived(pills.filter((pill) => pill.kind !== 'spec'));
 
 	const budgetQuickPills = $derived.by(() => {
 		const isEnglish = copy.featuredTitle === 'Newest Vehicles';
 
 		return [
-			{ href: '/inventory?maxPrice=10000', label: isEnglish ? 'Up to 10,000' : '≤10 000' },
-			{ href: '/inventory?maxPrice=20000', label: isEnglish ? 'Up to 20,000' : '≤20 000' },
-			{ href: '/inventory?maxPrice=30000', label: isEnglish ? 'Up to 30,000' : '≤30 000' }
+			{ href: '/inventory?maxPrice=30000', label: isEnglish ? 'Up to 30,000' : '≤30 000' },
+			{ href: '/inventory?maxPrice=40000', label: isEnglish ? 'Up to 40,000' : '≤40 000' },
+			{ href: '/inventory?maxPrice=50000', label: isEnglish ? 'Up to 50,000' : '≤50 000' }
 		];
 	});
 
@@ -74,6 +72,10 @@
 																class={`bohemcars-pill-image bohemcars-pill-image--${pill.kind}`}
 																src={pill.image}
 																alt=""
+																width="96"
+																height="48"
+																loading="lazy"
+																decoding="async"
 															/>
 														{/if}
 														<span>{pill.label}</span>
@@ -113,13 +115,23 @@
 							<img
 								src="/assets/bohemcars/brand/bohemcars-logo-concept-light-template-clean.webp"
 								loading="lazy"
+								decoding="async"
+								width="220"
+								height="58"
 								alt=""
 							/>
 						</span>
 						<span class="bohemcars-mobile-view-all-card__fleet" aria-hidden="true">
 							{#each mobileCtaVehicles as ctaVehicle (ctaVehicle.slug)}
 								<span class="bohemcars-mobile-view-all-card__thumb">
-									<img src={ctaVehicle.image} alt="" />
+									<img
+										src={ctaVehicle.image}
+										alt=""
+										width="160"
+										height="107"
+										loading="lazy"
+										decoding="async"
+									/>
 								</span>
 							{/each}
 						</span>

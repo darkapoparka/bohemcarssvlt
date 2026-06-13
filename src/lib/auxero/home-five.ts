@@ -9,7 +9,6 @@ import { vehicles as inventoryVehicles } from '$lib/data/vehicles';
 import type { Vehicle } from '$lib/data/vehicles';
 import {
 	getMessages,
-	localizeCount,
 	localizeVehicleTermsInText,
 	translateVehicleTerm,
 	type Locale,
@@ -17,7 +16,9 @@ import {
 } from '$lib/i18n/messages';
 
 export type HomeFiveBrandCard = {
+	allTile?: boolean;
 	count: string;
+	href?: string;
 	image: string;
 	name: string;
 	query: string;
@@ -195,7 +196,7 @@ export type HomeFiveModalsData = {
 
 export type HomeFiveTypeCard = {
 	bodyType: string;
-	href: `/inventory${string}`;
+	href: `/inventory${string}` | '/import';
 	image: string;
 	label: string;
 };
@@ -580,39 +581,71 @@ const countBy = (items: string[]) =>
 		return counts;
 	}, new Map<string, number>());
 
+const brandInventoryCounts = countBy(inventoryVehicles.map((vehicle) => vehicle.brand));
+
+// Stocked brands lead with real inventory counts; the rest are honest
+// "import on request" cards that route to the import flow instead of an
+// empty inventory result.
 const homeFiveBrandShowcase = [
-	{ count: 18, image: '/assets/images/brand/brand-1.webp', name: 'BMW', query: 'BMW' },
+	{ image: '/assets/images/brand/brand-1.webp', name: 'BMW', query: 'BMW' },
 	{
-		count: 22,
 		image: '/assets/images/brand/brand-2.webp',
 		name: 'Mercedes',
 		query: 'Mercedes-Benz'
 	},
-	{ count: 38, image: '/assets/images/brand/brand-3.webp', name: 'Audi', query: 'Audi' },
-	{ count: 29, image: '/assets/images/brand/brand-4.webp', name: 'Honda', query: 'Honda' },
-	{ count: 23, image: '/assets/images/brand/brand-5.webp', name: 'Toyota', query: 'Toyota' },
-	{ count: 32, image: '/assets/images/brand/brand-6.webp', name: 'Volvo', query: 'Volvo' },
-	{ count: 24, image: '/assets/images/brand/brand-7.webp', name: 'Ford', query: 'Ford' },
-	{ count: 22, image: '/assets/images/brand/brand-8.webp', name: 'Hyundai', query: 'Hyundai' },
-	{ count: 14, image: '/assets/bohemcars/brands/kia-transparent.webp', name: 'Kia', query: 'Kia' },
-	{ count: 32, image: '/assets/images/brand/brand-10.webp', name: 'Mazda', query: 'Mazda' },
-	{ count: 24, image: '/assets/images/brand/brand-11.webp', name: 'Ferrari', query: 'Ferrari' },
-	{ count: 27, image: '/assets/images/brand/brand-12.webp', name: 'Tesla', query: 'Tesla' }
+	{ image: '/assets/images/brand/brand-3.webp', name: 'Audi', query: 'Audi' },
+	{ image: '/assets/bohemcars/brands/porsche.webp', name: 'Porsche', query: 'Porsche' },
+	{ image: '/assets/images/brand/brand-10.webp', name: 'Mazda', query: 'Mazda' },
+	{ image: '/assets/images/brand/brand-4.webp', name: 'Honda', query: 'Honda' },
+	{ image: '/assets/images/brand/brand-5.webp', name: 'Toyota', query: 'Toyota' },
+	{ image: '/assets/images/brand/brand-6.webp', name: 'Volvo', query: 'Volvo' },
+	{ image: '/assets/images/brand/brand-7.webp', name: 'Ford', query: 'Ford' },
+	{ image: '/assets/images/brand/brand-8.webp', name: 'Hyundai', query: 'Hyundai' },
+	{ image: '/assets/images/brand/brand-12.webp', name: 'Tesla', query: 'Tesla' }
 ] as const;
 
-const showcaseBrandCountLabel = (locale: Locale, count: number) =>
-	localizeCount(locale, `${count} Vehicles`);
+const showcaseBrandCountLabel = (locale: Locale, count: number) => {
+	if (locale === 'bg') return count === 1 ? '1 автомобил' : `${count} автомобила`;
 
-export const homeFiveBrandCards: HomeFiveBrandCard[] = homeFiveBrandShowcase.map((brand) => ({
-	...brand,
-	count: showcaseBrandCountLabel('en', brand.count)
-}));
+	return count === 1 ? '1 Vehicle' : `${count} Vehicles`;
+};
 
-export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] =>
-	homeFiveBrandShowcase.map((brand) => ({
-		...brand,
-		count: showcaseBrandCountLabel(locale, brand.count)
-	}));
+const showcaseBrandCard = (
+	locale: Locale,
+	brand: (typeof homeFiveBrandShowcase)[number]
+): HomeFiveBrandCard => {
+	const stockCount = brandInventoryCounts.get(brand.query) ?? 0;
+
+	if (stockCount === 0) {
+		return {
+			...brand,
+			count: locale === 'bg' ? 'Внос по заявка' : 'Import on request',
+			href: '/import'
+		};
+	}
+
+	return { ...brand, count: showcaseBrandCountLabel(locale, stockCount) };
+};
+
+// Closing tile: links to the full inventory with the live total, keeping the wall at 12 cards.
+const allBrandsCard = (locale: Locale): HomeFiveBrandCard => ({
+	allTile: true,
+	count: showcaseBrandCountLabel(locale, inventoryVehicles.length),
+	href: '/inventory',
+	image: '',
+	name: locale === 'bg' ? 'Всички марки' : 'All brands',
+	query: 'all'
+});
+
+export const homeFiveBrandCards: HomeFiveBrandCard[] = [
+	...homeFiveBrandShowcase.map((brand) => showcaseBrandCard('en', brand)),
+	allBrandsCard('en')
+];
+
+export const homeFiveBrandCardsForLocale = (locale: Locale): HomeFiveBrandCard[] => [
+	...homeFiveBrandShowcase.map((brand) => showcaseBrandCard(locale, brand)),
+	allBrandsCard(locale)
+];
 
 const isHeaderNavActive = (activePath: string, href: string) => {
 	if (href === '/') return activePath === '/';
@@ -808,12 +841,13 @@ export const homeFiveFooterDataForLocale = (locale: Locale): HomeFiveFooterData 
 	};
 };
 
+// Types without stock route to the import flow instead of an empty inventory result.
 export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 	{
 		label: 'Electric',
 		image: '/assets/images/card/card-27.webp',
 		bodyType: 'Electric',
-		href: '/inventory?fuel=EV'
+		href: '/import'
 	},
 	{
 		label: 'Sedan',
@@ -831,31 +865,31 @@ export const homeFiveTypeCards: HomeFiveTypeCard[] = [
 		label: 'Pickup Truck',
 		image: '/assets/images/card/card-30.webp',
 		bodyType: 'Pickup Truck',
-		href: '/inventory?bodyType=Pickup%20Truck'
+		href: '/import'
 	},
 	{
 		label: 'Hatchback',
 		image: '/assets/images/card/card-31.webp',
 		bodyType: 'Hatchback',
-		href: '/inventory?bodyType=Hatchback'
+		href: '/import'
 	},
 	{
 		label: 'Crossover',
 		image: '/assets/images/card/card-32.webp',
 		bodyType: 'Crossover',
-		href: '/inventory?bodyType=Crossover'
-	},
-	{
-		label: 'Coupe',
-		image: '/assets/images/card/card-33.webp',
-		bodyType: 'Coupe',
-		href: '/inventory?bodyType=Coupe'
+		href: '/import'
 	},
 	{
 		label: 'Cabriolet',
 		image: '/assets/images/card/card-34.webp',
 		bodyType: 'Cabriolet',
 		href: '/inventory?bodyType=Cabriolet'
+	},
+	{
+		label: 'View all',
+		image: '/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp',
+		bodyType: 'View all',
+		href: '/inventory'
 	}
 ];
 
@@ -867,7 +901,7 @@ export const homeFiveTypeCardsForLocale = (locale: Locale): HomeFiveTypeCard[] =
 
 export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
 	{
-		active: true,
+		active: false,
 		href: '/inventory?bodyType=SUV',
 		icon: 'suv',
 		kind: 'body',
@@ -884,15 +918,15 @@ export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
 	},
 	{
 		active: false,
-		href: '/inventory?bodyType=Coupe',
+		href: '/inventory?bodyType=Cabriolet',
 		icon: 'coupe',
 		kind: 'body',
-		label: 'Coupe',
+		label: 'Cabriolet',
 		termGroup: 'bodyTypes'
 	},
 	{
 		active: false,
-		href: '/inventory?bodyType=Luxury',
+		href: '/inventory?minPrice=50000',
 		icon: 'luxury',
 		kind: 'body',
 		label: 'Luxury',
@@ -905,13 +939,6 @@ export const homeFiveVehiclePills: HomeFiveVehiclePill[] = [
 		kind: 'spec',
 		label: 'Automatic',
 		termGroup: 'transmissions'
-	},
-	{
-		active: false,
-		href: '/inventory?q=4x4',
-		image: '/assets/icons/transmission.svg',
-		kind: 'spec',
-		label: '4x4'
 	},
 	{
 		active: false,
@@ -1362,9 +1389,15 @@ export function homeFiveHeroDataFromVehicles(
 	};
 }
 
+// The compare strip shows three curated cutouts; the A7's listing photo broke
+// the row, so pin its cutout here WITHOUT touching the photo-first card grids.
+const compareStripImageOverrides: Record<string, string> = {
+	'11774283016080050': '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp'
+};
+
 const compareVehicleFrom = (vehicle: Vehicle): HomeFiveCompareVehicle => ({
 	brand: vehicle.brand,
-	image: imageForHomeFiveVehicle(vehicle),
+	image: compareStripImageOverrides[vehicle.slug] ?? imageForHomeFiveVehicle(vehicle),
 	priceLabel: vehicle.priceLabel,
 	slug: vehicle.slug,
 	title: vehicle.title

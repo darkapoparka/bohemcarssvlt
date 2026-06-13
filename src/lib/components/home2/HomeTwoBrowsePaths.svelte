@@ -137,7 +137,7 @@
 		color: #121214;
 		display: inline-flex;
 		font-size: 16px;
-		font-weight: 850;
+		font-weight: 800;
 		gap: 8px;
 		min-height: 45px;
 		padding: 0 17px;
@@ -241,7 +241,7 @@
 		display: inline-flex;
 		font-size: 14px;
 		font-style: normal;
-		font-weight: 850;
+		font-weight: 800;
 		gap: 8px;
 		height: 40px;
 		justify-content: center;

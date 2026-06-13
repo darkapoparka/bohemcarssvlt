@@ -401,7 +401,7 @@
 			margin: 0 0 2px;
 			color: #6f971d;
 			font-size: 11px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 14px;
 			text-transform: uppercase;
 		}
@@ -410,7 +410,7 @@
 			margin: 0;
 			color: #111111;
 			font-size: 22px;
-			font-weight: 850;
+			font-weight: 800;
 			letter-spacing: 0;
 			line-height: 28px;
 		}

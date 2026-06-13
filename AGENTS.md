@@ -19,6 +19,9 @@ visually faithful before adding any product-specific refinements.
 - Preserve Auxero vehicle-card actions exactly: `compare-details btn btn-small open-modal` should
   keep the template fill animation, and `view-details` should remain the quiet text/icon link.
   Do not replace them with custom lifted, glowing, bordered, or oversized buttons.
+- Mobile headers have two approved patterns documented in `docs/bohemcars-mobile-header-patterns.md`:
+  brand appbars for identity/intake pages, and utility appbars for top-level tools. Do not add
+  back buttons to top-level mobile routes reachable from the bottom nav or menu.
 - Add Svelte components under `src/lib/components` and keep data shaping in `src/lib/auxero` or
   `src/lib/server`, not inside visual components.
 - Run `npx @sveltejs/mcp svelte-autofixer <file>` after editing Svelte files, then verify with

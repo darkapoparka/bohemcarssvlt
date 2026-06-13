@@ -383,28 +383,26 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(featuredCta).toHaveCSS('background-color', 'rgb(255, 255, 255)');
 	await expect(featuredCta).toHaveCSS('color', 'rgb(20, 33, 15)');
 	await expect(featuredCta).toHaveCSS('transform', 'none');
-	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(8);
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill')).toHaveCount(7);
 	await expect(homeFeaturedSection.locator('.bohemcars-price-pill')).toHaveCount(3);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-type-pill')
 	).toHaveCount(4);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-spec-pill')
-	).toHaveCount(1);
+	).toHaveCount(0);
 	await expect(
 		homeFeaturedSection.locator('.bohemcars-quick-pill.bohemcars-brand-pill')
 	).toHaveCount(3);
-	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toContainText('SUV');
-	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toHaveCSS(
-		'background-color',
-		'rgb(217, 242, 117)'
-	);
+	// Pills are navigational links: none carries a fake pre-selected state.
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pill.active')).toHaveCount(0);
 	const sedanQuickPill = homeFeaturedSection.locator('.bohemcars-vehicle-pill', {
 		hasText: 'Седан'
 	});
 	await sedanQuickPill.hover();
 	await expect(sedanQuickPill).toHaveCSS('background-color', 'rgb(217, 242, 117)');
-	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).toContainText('4x4');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).toContainText('Кабрио');
+	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText('4x4');
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText(
 		'Автомат'
 	);
@@ -413,12 +411,12 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeFeaturedSection.locator('.bohemcars-vehicle-pills')).not.toContainText(
 		'до 120k'
 	);
-	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤10 000');
-	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤20 000');
 	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤30 000');
+	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤40 000');
+	await expect(homeFeaturedSection.locator('.bohemcars-budget-pills')).toContainText('≤50 000');
 	await expect(homeFeaturedSection.locator('.bohemcars-price-pill a').first()).toHaveAttribute(
 		'href',
-		/^\.?\/inventory\?maxPrice=10000$/
+		/^\.?\/inventory\?maxPrice=30000$/
 	);
 	const clippedFeaturedPills = await homeFeaturedSection
 		.locator('.bohemcars-filter-pill a')
@@ -440,7 +438,7 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--sedan')).toHaveCount(1);
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--coupe')).toHaveCount(1);
 	await expect(homeFeaturedSection.locator('.bohemcars-type-icon--luxury')).toHaveCount(1);
-	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--spec')).toHaveCount(1);
+	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--spec')).toHaveCount(0);
 	await expect(homeFeaturedSection.locator('.bohemcars-pill-image--brand')).toHaveCount(3);
 	const featuredPillRows = await homeFeaturedSection
 		.locator('.bohemcars-vehicle-pill')
@@ -456,6 +454,8 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 	).toBeVisible();
 	await expect(featuredGrid).toHaveClass(/grid-cols-4/);
 	await expect(featuredGrid.locator('.card-box-style-1')).toHaveCount(8);
+	await expect(featuredGrid.locator('.compare-details.btn.btn-small.open-modal')).toHaveCount(8);
+	await expect(featuredGrid.locator('.view-details')).toHaveCount(8);
 	await expect(homeFeaturedSection.locator('ul.tag.style2')).toHaveCount(0);
 	await expect(homeFeaturedSection.locator('.pagination-swiper-card-5')).toHaveCount(0);
 	const featuredCard = homeFeaturedSection.locator('.card-box-style-1').first();
@@ -504,9 +504,9 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		.boundingBox();
 	expect(featuredFinanceBox?.y ?? 0).toBeGreaterThan(featuredMonthlyBox?.y ?? 0);
 	await page.mouse.move(0, 0);
-	await expect(featuredGrid.locator('.compare-details')).toHaveCount(0);
-	await expect(featuredGrid.locator('.view-details')).toHaveCount(0);
-	await expect(featuredGrid.locator('.bohemcars-card-actions')).toHaveCount(0);
+	await expect(featuredGrid.locator('.compare-details')).toHaveCount(8);
+	await expect(featuredGrid.locator('.view-details')).toHaveCount(8);
+	await expect(featuredGrid.locator('.bohemcars-card-actions')).toHaveCount(8);
 	const hybridFeaturedCard = featuredGrid
 		.locator('[data-bohemcars-slug]')
 		.filter({ hasText: 'BMW X3 30e xDrive' })
@@ -688,7 +688,17 @@ test('homepage preserves Home 05 and routes hero search to inventory', async ({ 
 		.poll(() =>
 			page.evaluate(() => typeof (window as Window & { jQuery?: unknown; $?: unknown }).jQuery)
 		)
-		.toBe('function');
+		.toBe('undefined');
+	const homeScriptSources = await page.evaluate(() =>
+		Array.from(document.scripts)
+			.map((script) => script.src)
+			.filter(Boolean)
+	);
+	expect(
+		homeScriptSources.some((source) =>
+			/(?:jquery(?:\.min)?|app|plugin|filterCar|jquery\.fancybox|shop|switcher)\.js/i.test(source)
+		)
+	).toBe(false);
 	await expect
 		.poll(() => page.evaluate(() => document.scripts[0]?.textContent ?? ''))
 		.not.toContain('</script>');
@@ -795,7 +805,7 @@ test('homepage hero intent routes keep desktop tab, title, and form in sync', as
 	}
 });
 
-test('mobile bottom navigation returns home without leaving the Auxero preloader visible', async ({
+test('mobile bottom navigation uses SvelteKit navigation without leaving the Auxero preloader visible', async ({
 	page
 }) => {
 	const hydrationWarnings: string[] = [];
@@ -815,14 +825,33 @@ test('mobile bottom navigation returns home without leaving the Auxero preloader
 
 	const bottomNav = page.locator('.mobile-bottom-nav');
 	await expect(bottomNav).toBeVisible();
+	await expect(bottomNav).toHaveAttribute('data-bohemcars-sveltekit-nav-ready', 'true');
 	await expect(page.locator('body')).toHaveClass(/auxero-template-home-05-html/);
-	await expect(bottomNav.getByRole('link', { name: 'Начало' })).toHaveAttribute(
-		'data-sveltekit-reload',
-		''
-	);
+	await expect(bottomNav.locator('[data-sveltekit-reload]')).toHaveCount(0);
+	await page.evaluate(() => {
+		(
+			window as Window & {
+				__bohemcarsMobileBottomNavProbe?: string;
+			}
+		).__bohemcarsMobileBottomNavProbe = 'alive';
+	});
+	const expectProbeAlive = async () =>
+		expect
+			.poll(() =>
+				page.evaluate(
+					() =>
+						(
+							window as Window & {
+								__bohemcarsMobileBottomNavProbe?: string;
+							}
+						).__bohemcarsMobileBottomNavProbe
+				)
+			)
+			.toBe('alive');
 
 	await bottomNav.getByRole('link', { name: 'Коли' }).click();
 	await expect(page).toHaveURL(/\/inventory$/);
+	await expectProbeAlive();
 	const mobileInventoryCard = page.locator('.bohemcars-inventory-mobile-card').first();
 	await expect(mobileInventoryCard).toBeVisible();
 	await expect(page.locator('.bohemcars-inventory-mobile__search-field')).toHaveCSS(
@@ -855,12 +884,57 @@ test('mobile bottom navigation returns home without leaving the Auxero preloader
 
 	await bottomNav.getByRole('link', { name: 'Начало' }).click();
 	await expect(page).toHaveURL(/\/$/);
+	await expectProbeAlive();
 	await expect(page.locator('body')).toHaveClass(/auxero-template-home-05-html/);
 	await expect(page.locator('.header-wrapper-style-4 .logo img')).toBeVisible();
 	await expect(page.locator('.header-wrapper-style-4 .logo-mobile')).toBeHidden();
 	await expect(page.locator('.bohemcars-mobile-hero__copy h1')).toBeVisible();
 	await expect(page.locator('.preload')).toBeHidden();
 	expect(hydrationWarnings).toEqual([]);
+
+	await bottomNav.getByRole('link', { name: 'Продай' }).click();
+	await expect(page).toHaveURL(/\/sell-your-car$/);
+	await expectProbeAlive();
+	await expect(page.locator('body')).toHaveClass(/auxero-template-sell-your-car-html/);
+	await expect(page.locator('.bohemcars-sell-mobile')).toBeVisible();
+	await expect(page.locator('.preload')).toBeHidden();
+	expect(hydrationWarnings).toEqual([]);
+});
+
+test('mobile inventory filter navigation keeps the SvelteKit document alive', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/inventory');
+	await expect(page.locator('.bohemcars-inventory-mobile-card').first()).toBeVisible();
+
+	await page.evaluate(() => {
+		(
+			window as Window & {
+				__bohemcarsMobileInventoryNavigationProbe?: string;
+			}
+		).__bohemcarsMobileInventoryNavigationProbe = 'alive';
+	});
+
+	await page.locator('.bohemcars-inventory-mobile__tool-choice', { hasText: 'Марка' }).click();
+	const brandDrawer = page.locator('#bohemcars-inventory-mobile-brand-drawer');
+	await expect(brandDrawer).toBeVisible();
+	await brandDrawer.getByRole('button', { name: /Audi/ }).click();
+	await brandDrawer.locator('.bohemcars-inventory-mobile-drawer__done').click();
+
+	await expect(page).toHaveURL(/\/inventory\?brand=Audi$/);
+	await expect(page.locator('.bohemcars-inventory-mobile-card').first()).toContainText('Audi');
+	await expect
+		.poll(() =>
+			page.evaluate(
+				() =>
+					(
+						window as Window & {
+							__bohemcarsMobileInventoryNavigationProbe?: string;
+						}
+					).__bohemcarsMobileInventoryNavigationProbe
+			)
+		)
+		.toBe('alive');
+	await expect(page.locator('.preload')).toBeHidden();
 });
 
 test('mobile homepage intent tabs keep form, quick links, and drawer in sync', async ({ page }) => {
@@ -892,7 +966,8 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 		headerShell: 'rgb(143, 202, 26)',
 		hero: 'rgb(143, 202, 26)',
 		themeColor: '#8fca1a',
-		viewport: 'width=device-width, initial-scale=1, viewport-fit=cover'
+		viewport:
+			'width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content'
 	});
 
 	const mobileHeaderAction = await page
@@ -1912,7 +1987,7 @@ test('inventory supports branded cards, saved favorites, compare, and view toggl
 	await sidebarModelField.locator('.ifp__field').click();
 	await expect(sidebarModelField).toHaveClass(/ifp--open/);
 	await expect(sidebarModelField.locator('.ifp__panel')).toBeVisible();
-	await expect(sidebarModelField.locator('.ifp__panel')).toHaveCSS('position', 'absolute');
+	await expect(sidebarModelField.locator('.ifp__panel')).toHaveCSS('position', 'static');
 	const sidebarModelOverflow = await sidebarRail.evaluate((rail) => ({
 		clientWidth: rail.clientWidth,
 		scrollWidth: rail.scrollWidth
@@ -2068,6 +2143,20 @@ test('vehicle detail uses Listing Details 3 data and local inquiry flow', async 
 	);
 });
 
+test('vehicle detail resets mobile PDP state when navigating between slugs', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/inventory/21764342419542174');
+	await expect(page.locator('.bohemcars-pdp-mobile')).toContainText(
+		'BMW X5 40i M Sport Shadow Line'
+	);
+
+	await page.goto('/inventory/21778068579001193');
+	await expect(page.locator('.bohemcars-pdp-mobile')).toContainText('BMW X4 M Competition');
+	await expect(page.locator('.bohemcars-pdp-mobile')).not.toContainText(
+		'BMW X5 40i M Sport Shadow Line'
+	);
+});
+
 test('mobile vehicle detail keeps actions above scrollable information', async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/inventory');
@@ -2190,6 +2279,7 @@ test('compare and consultants render branded buyer flows without login', async (
 	await expect(compareTable).toBeVisible();
 	await expect(compareTable).toHaveClass(/card-details--table/);
 	await expect(compareTable).toHaveClass(/bohemcars-compare-table/);
+	await expect(compareTable).toHaveAttribute('data-bohemcars-svelte-compare-table', '');
 	await expect(compareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(4);
 	await expect(compareTable.locator('tr')).toHaveCount(12);
 	await expect(compareTable.locator('tr').first().locator('.h4.text-center').first()).toBeVisible();
@@ -2270,6 +2360,77 @@ test('compare and consultants render branded buyer flows without login', async (
 	const missingAgentResponse = await page.goto('/agents/missing-consultant');
 	expect(missingAgentResponse?.status()).toBe(404);
 	await expect(page.locator('body')).toContainText('Agent not found');
+});
+
+test('desktop compare removal keeps Svelte garage state and Auxero table in sync', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await page.goto('/compare');
+
+	const compareTable = page
+		.locator('[data-bohemcars-compare-table]')
+		.filter({ visible: true })
+		.first();
+	await expect(page.locator('.bohemcars-compare-scroll')).toHaveAttribute(
+		'data-bohemcars-compare-ready',
+		'true'
+	);
+	await expect(compareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(4);
+	const seededSlugs = await compareTable
+		.locator('[data-bohemcars-compare-column]')
+		.evaluateAll((columns) =>
+			columns
+				.map((column) => column.getAttribute('data-bohemcars-compare-column'))
+				.filter((slug): slug is string => Boolean(slug))
+				.slice(0, 3)
+		);
+	expect(seededSlugs).toHaveLength(3);
+
+	await page.evaluate((slugs) => {
+		localStorage.setItem('bohemcars:compare', JSON.stringify(slugs));
+	}, seededSlugs);
+	await page.reload();
+
+	await expect(page.locator('.bohemcars-compare-scroll')).toHaveAttribute(
+		'data-bohemcars-compare-ready',
+		'true'
+	);
+	await expect(compareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(3);
+	const removedSlug = seededSlugs[0];
+	await page.evaluate(() => {
+		(
+			window as Window & {
+				__bohemcarsDesktopCompareProbe?: string;
+			}
+		).__bohemcarsDesktopCompareProbe = 'alive';
+	});
+	await compareTable.locator(`[data-bohemcars-compare-remove="${removedSlug}"]`).click();
+
+	await expect(compareTable.locator('[data-bohemcars-compare-column]')).toHaveCount(2);
+	await expect(
+		compareTable.locator(`[data-bohemcars-compare-column="${removedSlug}"]`)
+	).toHaveCount(0);
+	await expect
+		.poll(() =>
+			page.evaluate(
+				(slug) => ({
+					compare: JSON.parse(localStorage.getItem('bohemcars:compare') ?? '[]') as string[],
+					probe: (
+						window as Window & {
+							__bohemcarsDesktopCompareProbe?: string;
+						}
+					).__bohemcarsDesktopCompareProbe,
+					removed: slug
+				}),
+				removedSlug
+			)
+		)
+		.toEqual({
+			compare: seededSlugs.slice(1),
+			probe: 'alive',
+			removed: removedSlug
+		});
 });
 
 test('planned public support routes render Bohemcars content and local forms', async ({ page }) => {
@@ -2528,7 +2689,9 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 		.toBeGreaterThan(1);
 	await expect(accountMessages.locator('.message__action')).toBeVisible();
 	await expect(accountMessages).toContainText('Bohemcars Sales');
-	await expect(accountMessages).toContainText('Please send appointment options');
+	await expect(accountMessages).toContainText(
+		/Please send appointment options|Thanks\. Bohemcars can review/
+	);
 	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
@@ -2680,7 +2843,9 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 		.poll(async () => adminMessages.locator('[data-bohemcars-admin-message]').count())
 		.toBeGreaterThan(0);
 	await expect(adminMessages).toContainText('Bohemcars Customer');
-	await expect(adminMessages).toContainText('Please send appointment options');
+	await expect(adminMessages).toContainText(
+		/Please send appointment options|Thanks\. Bohemcars can review/
+	);
 	await expect(page.locator('[data-contact="john"]')).toHaveCount(0);
 	await expect(page.locator('body')).not.toContainText('Bohemcars follow-up is ready');
 
@@ -2719,6 +2884,17 @@ test('account and admin routes are role-aware and branded', async ({ page }) => 
 	await expect(page.locator('body')).toContainText(
 		'Bohemcars account role cannot access this route'
 	);
+});
+
+test('admin listing editor resets fields when navigating between edit records', async ({
+	page
+}) => {
+	await page.goto('/admin/inventory/edit/21764342419542174?role=admin');
+	await expect(page.locator('#title')).toHaveValue(/BMW X5/);
+
+	await page.goto('/admin/inventory/edit/21778068579001193?role=admin');
+	await expect(page.locator('#title')).toHaveValue(/BMW X4/);
+	await expect(page.locator('#title')).not.toHaveValue(/BMW X5/);
 });
 
 test('blocked ecommerce and coming-soon routes are not exposed', async ({ page }) => {

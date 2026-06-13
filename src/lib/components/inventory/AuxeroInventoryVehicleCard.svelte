@@ -86,15 +86,26 @@
 					<img src="/assets/icons/picture.svg" alt={copy.photosAlt} />
 					{card.imagesCount}
 				</p>
-				<p class="category text-white uppercase">
-					<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
-					{card.videoCount}
-				</p>
+				{#if card.videoCount > 0}
+					<p class="category text-white uppercase">
+						<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
+						{card.videoCount}
+					</p>
+				{/if}
 			</div>
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
+				<img
+					class="card--img"
+					src={card.image}
+					alt={card.title}
+					width="660"
+					height="440"
+					loading="lazy"
+					decoding="async"
+					onerror={handleCardImageError}
+				/>
 			</a>
 		</div>
 		<div class="content">
@@ -152,7 +163,16 @@
 		</div>
 		<div class="image">
 			<a href={resolve('/inventory/[slug]', { slug: card.slug })}>
-				<img class="card--img" src={card.image} alt={card.title} onerror={handleCardImageError} />
+				<img
+					class="card--img"
+					src={card.image}
+					alt={card.title}
+					width="660"
+					height="440"
+					loading="lazy"
+					decoding="async"
+					onerror={handleCardImageError}
+				/>
 			</a>
 		</div>
 		<div class="content border-light border-top-none">
@@ -168,10 +188,12 @@
 						<img src="/assets/icons/picture.svg" alt={copy.photosAlt} />
 						{card.imagesCount}
 					</p>
-					<p class="category text-white uppercase">
-						<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
-						{card.videoCount}
-					</p>
+					{#if card.videoCount > 0}
+						<p class="category text-white uppercase">
+							<img src="/assets/icons/play.svg" alt={copy.videoAlt} />
+							{card.videoCount}
+						</p>
+					{/if}
 				</div>
 			</div>
 			<p class="h6 card-box__title mb-8">
@@ -443,6 +465,16 @@
 		span {
 		overflow: visible !important;
 		text-overflow: clip !important;
+	}
+
+	/* Same density problem for the brand pill on the photo: "MERCEDES-BENZ"
+	   wraps to two lines inside ~220px cards and pokes past the image edge.
+	   Keep it a single compact line at grid4 only. */
+	:global(body.auxero-template-listing-grid4-columns-html) .card-box-style-1 .bottom .category,
+	:global(body.auxero-template-listing-grid4-columns-html) .card-box-style-1 .bottom .category a {
+		font-size: 11px !important;
+		letter-spacing: 0 !important;
+		white-space: nowrap !important;
 	}
 
 	.bohemcars-card-price {

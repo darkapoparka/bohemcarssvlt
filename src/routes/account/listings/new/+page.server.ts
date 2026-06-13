@@ -1,7 +1,11 @@
 import type { Actions, PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountListingFormData } from '$lib/server/account-listing-form-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 import { readInventoryListingFields } from '$lib/server/cms-listing-form';
 import { saveCmsUploadFiles } from '$lib/server/cms-persistence';
@@ -17,7 +21,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: formSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawFormSlot } = renderAuxeroPageSlot(
 		'add-listings-2.html',
 		renderOptions,
 		{
@@ -27,6 +31,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Account vehicle submission form slot could not be located'
 		}
 	);
+	const formSlot = removeAuxeroSlotScriptTags(rawFormSlot);
 
 	return {
 		afterFormHtml: formSlot.afterHtml,
@@ -38,7 +43,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		}),
 		form: getAccountListingFormData('add-listings-2.html', renderOptions),
 		formHtml: formSlot.sectionHtml,
-		pageDocument
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument)
 	};
 };
 

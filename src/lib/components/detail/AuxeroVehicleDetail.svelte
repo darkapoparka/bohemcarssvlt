@@ -115,3 +115,75 @@
 
 	<AuxeroVehicleDetailSidebar {detail} />
 </div>
+
+<!-- Closing CTA lives outside the two-column row so it spans the full
+     container instead of leaving a dead right column under the sidebar. -->
+<section class="bohemcars-pdp-closing" aria-label="Искаш оглед?">
+	<div class="bohemcars-pdp-closing__copy">
+		<p class="bohemcars-pdp-closing__title">Искаш оглед?</p>
+		<p class="bohemcars-pdp-closing__text">
+			Изпрати запитване и Bohemcars ще върне конкретен отговор за {detail.title}.
+		</p>
+	</div>
+	<a href={contactHref} class="bohemcars-pdp-closing__btn">Попитай за автомобила</a>
+</section>
+
+<style>
+	.bohemcars-pdp-closing {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		flex-wrap: wrap;
+		margin-top: 40px;
+		border-radius: 8px;
+		background: linear-gradient(135deg, #14210f 0%, #1f3318 58%, #0f190c 100%);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+		padding: 30px 32px;
+	}
+
+	.bohemcars-pdp-closing__copy {
+		min-width: 0;
+	}
+
+	/* Explicit ink on every text node: the global `* { color: #1c1c1c }` rule
+	   would otherwise paint them invisible on the dark band. */
+	.bohemcars-pdp-closing__title {
+		margin: 0 0 6px;
+		color: #ffffff !important;
+		font-size: 28px;
+		font-weight: 700;
+		line-height: 36px;
+	}
+
+	.bohemcars-pdp-closing__text {
+		margin: 0;
+		color: rgba(255, 255, 255, 0.78) !important;
+		font-size: 16px;
+		line-height: 24px;
+	}
+
+	.bohemcars-pdp-closing__btn {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		min-height: 52px;
+		border-radius: 8px;
+		background: #98bc2a;
+		color: #14210f !important;
+		font-size: 16px;
+		font-weight: 600;
+		padding: 0 28px;
+		white-space: nowrap;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.bohemcars-pdp-closing__btn:hover,
+	.bohemcars-pdp-closing__btn:focus-visible {
+		background: #ffffff;
+		color: #14210f !important;
+	}
+</style>

@@ -4,7 +4,11 @@ import { vehicles } from '$lib/data/vehicles';
 import { resolveLocale } from '$lib/i18n/messages';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getCompareVehicles } from '$lib/server/compare-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -18,7 +22,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: compareSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawCompareSlot } = renderAuxeroPageSlot(
 		'dashboard.html',
 		renderOptions,
 		{
@@ -27,6 +31,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Account compare dashboard slot could not be located'
 		}
 	);
+	const compareSlot = removeAuxeroSlotScriptTags(rawCompareSlot);
 
 	return {
 		afterCompareHtml: compareSlot.afterHtml,
@@ -39,7 +44,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			title: 'My Compare'
 		}),
 		locale,
-		pageDocument,
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument),
 		vehicles: compareVehiclesFromVehicles(getCompareVehicles(renderOptions), locale)
 	};
 };

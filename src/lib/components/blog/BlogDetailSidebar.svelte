@@ -15,7 +15,14 @@
 	</form>
 	<div class="mb-32">
 		<div class="listing-details--contact-dealer style-3 mb-20">
-			<img src={sidebar.consultantImage} alt="Bohemcars consultant" />
+			<img
+				src={sidebar.consultantImage}
+				alt="Bohemcars consultant"
+				width="96"
+				height="96"
+				loading="lazy"
+				decoding="async"
+			/>
 			<div class="content">
 				<a
 					href={resolve(sidebar.consultantHref as '/agents/bohemcars-import')}
@@ -33,7 +40,17 @@
 	<div class="mb-32">
 		{#each posts as post (post.slug)}
 			<a href={resolve(`/blog/${post.slug}`)} class="recent-post mb-16 overflow-hidden">
-				<div class="image"><img class="post--img flex" src={post.image} alt={post.title} /></div>
+				<div class="image">
+					<img
+						class="post--img flex"
+						src={post.image}
+						alt={post.title}
+						width="280"
+						height="190"
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
 				<div class="content">
 					<div class="md-gap-6 mb-6 flex justify-start gap-12">
 						<span class="text-xs">от Bohemcars</span><span class="text-xs">{post.date}</span>

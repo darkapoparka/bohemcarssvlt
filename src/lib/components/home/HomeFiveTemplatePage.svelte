@@ -61,6 +61,7 @@
 <AuxeroPublicShell
 	{copy}
 	{footer}
+	hasLocationSheet
 	{header}
 	hideMobileLogo
 	mainId="main-content"

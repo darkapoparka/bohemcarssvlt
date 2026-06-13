@@ -1,7 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountMessageThreadData } from '$lib/server/account-message-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -14,11 +18,16 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: messageSlot } = renderAuxeroPageSlot('message.html', renderOptions, {
-		marker: 'data-bohemcars-message-container',
-		templateError: 'Account messages template could not be rendered',
-		slotError: 'Account messages slot could not be located'
-	});
+	const { pageDocument, slot: rawMessageSlot } = renderAuxeroPageSlot(
+		'message.html',
+		renderOptions,
+		{
+			marker: 'data-bohemcars-message-container',
+			templateError: 'Account messages template could not be rendered',
+			slotError: 'Account messages slot could not be located'
+		}
+	);
+	const messageSlot = removeAuxeroSlotScriptTags(rawMessageSlot);
 
 	return {
 		afterMessageHtml: messageSlot.afterHtml,
@@ -29,7 +38,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			title: 'Messages'
 		}),
 		messageHtml: messageSlot.sectionHtml,
-		pageDocument,
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument),
 		thread: getAccountMessageThreadData('message.html', renderOptions)
 	};
 };

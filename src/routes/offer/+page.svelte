@@ -442,7 +442,7 @@
 		margin: 0 0 12px;
 		color: var(--offer-lime);
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		letter-spacing: 0;
 		text-transform: uppercase;
 	}
@@ -457,7 +457,7 @@
 	.offer-hero h1 {
 		max-width: 660px;
 		font-size: clamp(46px, 7vw, 82px);
-		font-weight: 850;
+		font-weight: 800;
 		line-height: 0.98;
 	}
 
@@ -489,7 +489,7 @@
 		border-radius: 8px;
 		padding: 0 20px;
 		font-size: 15px;
-		font-weight: 850;
+		font-weight: 800;
 		line-height: 20px;
 	}
 
@@ -571,7 +571,7 @@
 		margin-bottom: 9px;
 		color: var(--offer-ink);
 		font-size: clamp(34px, 4vw, 48px);
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 1;
 	}
 
@@ -613,7 +613,7 @@
 	.offer-section h2,
 	.offer-closing h2 {
 		font-size: clamp(34px, 5vw, 56px);
-		font-weight: 850;
+		font-weight: 800;
 		line-height: 1.04;
 	}
 
@@ -661,7 +661,7 @@
 		margin: 0 0 8px;
 		color: var(--offer-lime-dark);
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		text-transform: uppercase;
 	}
 
@@ -671,7 +671,7 @@
 		margin: 0;
 		color: var(--offer-ink);
 		font-size: 20px;
-		font-weight: 850;
+		font-weight: 800;
 		line-height: 1.22;
 	}
 

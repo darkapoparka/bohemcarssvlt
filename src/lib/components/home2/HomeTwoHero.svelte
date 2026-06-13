@@ -243,7 +243,7 @@
 		color: #ffffff;
 		display: flex;
 		font-size: 14px;
-		font-weight: 850;
+		font-weight: 800;
 		gap: 8px;
 		justify-content: center;
 		line-height: 1;

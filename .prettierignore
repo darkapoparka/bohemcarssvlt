@@ -11,10 +11,19 @@ bun.lockb
 PROJECT_PLAN.md
 
 # Local audit artifacts
+*.log
+*.tmp
 /.audit/
+/.audit-ba/
+/.audit-desktop/
+/.codex-audit/
+/.codex-artifacts/
+/codex-screenshots/
 /.codex-review-screens/
 /.codex-screenshots/
 /.playwright-mcp/
+/outputs/
+/test-results/
 /tmp/
 *.audit.png
 tmp-vite*.log

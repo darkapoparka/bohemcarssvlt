@@ -50,8 +50,8 @@
 				</ul>
 
 				<div class="swiper-listing-details-navigation">
-					<p class="swiper-listing-details-prev cursor-pointer">Prev</p>
-					<p class="swiper-listing-details-next cursor-pointer">Next</p>
+					<p class="swiper-listing-details-prev cursor-pointer">Предишна</p>
+					<p class="swiper-listing-details-next cursor-pointer">Следваща</p>
 				</div>
 			</div>
 		</div>
@@ -60,7 +60,9 @@
 	<section class="bohemcars-pdp-desktop pb-100">
 		<div class="tf-spacing-style4"></div>
 		<div class="container">
-			<AuxeroVehicleDetail {detail} />
+			{#key detail.slug}
+				<AuxeroVehicleDetail {detail} />
+			{/key}
 		</div>
 	</section>
 
@@ -73,7 +75,7 @@
 	}
 
 	:global(.bohemcars-pdp-desktop .tf-spacing-style4) {
-		height: 58px;
+		height: 32px;
 	}
 
 	:global(.bohemcars-pdp-desktop-breadcrumb) {
@@ -83,8 +85,8 @@
 	}
 
 	:global(.bohemcars-pdp-desktop-breadcrumb .container) {
-		padding-bottom: 17px;
-		padding-top: 17px;
+		padding-bottom: 12px;
+		padding-top: 12px;
 	}
 
 	:global(.bohemcars-pdp-desktop-breadcrumb .swiper-listing-details-navigation p) {

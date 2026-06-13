@@ -393,7 +393,7 @@
 		background: var(--bc-popover-mono-bg);
 		color: var(--bc-white);
 		font-size: 15px;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	.hfp__chiplabel {
@@ -469,19 +469,23 @@
 
 	.hfp__foot {
 		display: flex;
+		align-items: center;
 		justify-content: space-between;
-		gap: 10px;
-		margin-top: 12px;
+		gap: 8px;
+		margin-top: 10px;
 		border-top: 1px solid var(--bc-popover-footer-line);
-		padding-top: 11px;
+		padding-top: 10px;
 	}
 
 	.hfp__foot button {
 		border: 0;
-		border-radius: 9px;
-		padding: 10px 16px;
+		border-radius: 8px;
+		min-height: 40px;
+		padding: 0 14px;
 		font: inherit;
-		font-weight: 800;
+		font-size: 14px;
+		font-weight: 750;
+		line-height: 1;
 		cursor: pointer;
 	}
 

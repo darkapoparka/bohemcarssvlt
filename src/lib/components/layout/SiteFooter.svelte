@@ -118,7 +118,7 @@
 	.footer-title {
 		margin: 0 0 18px;
 		color: #ffffff !important;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	.site-footer ul {

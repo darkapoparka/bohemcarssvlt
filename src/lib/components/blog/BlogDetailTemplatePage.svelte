@@ -49,6 +49,10 @@
 				class="overlay-image"
 				src="/assets/images/blog/overlay-blogdetails.webp"
 				alt="blog-details-banner"
+				width="1920"
+				height="420"
+				loading="eager"
+				decoding="async"
 			/>
 			<div class="breadcrumb-wrapper">
 				<div class="container">
@@ -61,7 +65,17 @@
 					</ul>
 				</div>
 			</div>
-			<div class="image flex"><img src={post.image} alt={post.title} /></div>
+			<div class="image flex">
+				<img
+					src={post.image}
+					alt={post.title}
+					width="1280"
+					height="760"
+					loading="eager"
+					decoding="async"
+					fetchpriority="high"
+				/>
+			</div>
 			<div class="content">
 				<div class="container">
 					<h1 class="letter-spacing-1 mb-20 text-white">{post.title}</h1>

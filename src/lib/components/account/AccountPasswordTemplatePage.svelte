@@ -9,14 +9,39 @@
 		beforePasswordHtml,
 		pageDocument,
 		password,
-		passwordHtml
+		passwordHtml,
+		statusMessage
 	}: {
 		afterPasswordHtml: string;
 		beforePasswordHtml: string;
 		pageDocument: AuxeroPageDocument;
 		password: AuxeroAccountPasswordFormData;
 		passwordHtml?: string;
+		statusMessage?: string;
 	} = $props();
+
+	const escapeHtml = (value: string) =>
+		value
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#39;');
+
+	const withFormStatus = (html: string, message?: string) => {
+		if (!message) return html;
+
+		return html.replace(
+			'</form>',
+			`<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite">${escapeHtml(
+				message
+			)}</p></form>`
+		);
+	};
+
+	let passwordHtmlWithStatus = $derived(
+		passwordHtml ? withFormStatus(passwordHtml, statusMessage) : ''
+	);
 </script>
 
 <AuxeroDashboardSlotShell
@@ -24,9 +49,9 @@
 	beforeHtml={beforePasswordHtml}
 	afterHtml={afterPasswordHtml}
 >
-	{#if passwordHtml}
+	{#if passwordHtmlWithStatus}
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html passwordHtml}
+		{@html passwordHtmlWithStatus}
 	{:else}
 		<AccountPasswordForm {password} />
 	{/if}

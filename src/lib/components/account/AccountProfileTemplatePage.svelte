@@ -9,14 +9,39 @@
 		beforeProfileHtml,
 		pageDocument,
 		profile,
-		profileHtml
+		profileHtml,
+		statusMessage
 	}: {
 		afterProfileHtml: string;
 		beforeProfileHtml: string;
 		pageDocument: AuxeroPageDocument;
 		profile: AuxeroAccountProfileFormData;
 		profileHtml?: string;
+		statusMessage?: string;
 	} = $props();
+
+	const escapeHtml = (value: string) =>
+		value
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#39;');
+
+	const withFormStatus = (html: string, message?: string) => {
+		if (!message) return html;
+
+		return html.replace(
+			'</form>',
+			`<p class="auxero-form-status text-highlight font-weight-600 mt-12" aria-live="polite">${escapeHtml(
+				message
+			)}</p></form>`
+		);
+	};
+
+	let profileHtmlWithStatus = $derived(
+		profileHtml ? withFormStatus(profileHtml, statusMessage) : ''
+	);
 </script>
 
 <AuxeroDashboardSlotShell
@@ -24,9 +49,9 @@
 	beforeHtml={beforeProfileHtml}
 	afterHtml={afterProfileHtml}
 >
-	{#if profileHtml}
+	{#if profileHtmlWithStatus}
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html profileHtml}
+		{@html profileHtmlWithStatus}
 	{:else}
 		<AccountProfileForm {profile} />
 	{/if}

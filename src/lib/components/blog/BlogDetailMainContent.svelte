@@ -13,7 +13,16 @@
 </script>
 
 <div class="innerpage__content md-mb-30">
-	<img class="post--img radius-20 mb-40 flex" src={post.image} alt={post.title} />
+	<img
+		class="post--img radius-20 mb-40 flex"
+		src={post.image}
+		alt={post.title}
+		width="1040"
+		height="620"
+		loading="eager"
+		decoding="async"
+		fetchpriority="high"
+	/>
 	{#each paragraphs as paragraph (paragraph.id)}
 		{#if paragraph.quoteBefore}
 			<div class="quote mb-28">

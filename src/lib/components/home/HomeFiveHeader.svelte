@@ -9,9 +9,15 @@
 
 	let {
 		header,
+		hasLocationSheet = false,
 		hideMobileLogo = false,
 		showAddListing = false
-	}: { header?: HomeFiveHeaderData; hideMobileLogo?: boolean; showAddListing?: boolean } = $props();
+	}: {
+		header?: HomeFiveHeaderData;
+		hasLocationSheet?: boolean;
+		hideMobileLogo?: boolean;
+		showAddListing?: boolean;
+	} = $props();
 
 	const addListingHref = '/admin/inventory/new';
 	const logoIntrinsicWidth = 1285;
@@ -153,6 +159,7 @@
 								alt={header.logo.alt}
 								width={logoIntrinsicWidth}
 								height={logoIntrinsicHeight}
+								decoding="async"
 							/>
 						</a>
 					</div>
@@ -168,6 +175,7 @@
 								alt={header.logo.alt}
 								width={logoIntrinsicWidth}
 								height={logoIntrinsicHeight}
+								decoding="async"
 							/>
 						</a>
 					</div>
@@ -213,7 +221,10 @@
 																				class="bohemcars-mega-car__image"
 																				src={vehicle.image}
 																				alt={vehicle.label}
+																				width="280"
+																				height="170"
 																				loading="lazy"
+																				decoding="async"
 																			/>
 																		</span>
 																		<span class="bohemcars-mega-car__title">{vehicle.label}</span>
@@ -312,16 +323,27 @@
 						</div>
 
 						<div class="header-actions ml-20">
-							<label
-								for="bohemcars-mobile-location-toggle"
-								class="bohemcars-mobile-map"
-								aria-label={header.contact.addressLabel}
-								aria-controls="bohemcars-mobile-location-panel"
-								aria-haspopup="dialog"
-								title={header.contact.addressLabel}
-							>
-								<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
-							</label>
+							{#if hasLocationSheet}
+								<label
+									for="bohemcars-mobile-location-toggle"
+									class="bohemcars-mobile-map"
+									aria-label={header.contact.addressLabel}
+									aria-controls="bohemcars-mobile-location-panel"
+									aria-haspopup="dialog"
+									title={header.contact.addressLabel}
+								>
+									<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
+								</label>
+							{:else}
+								<a
+									{...hrefAttributes(header.contact.addressHref)}
+									class="bohemcars-mobile-map"
+									aria-label={header.contact.addressLabel}
+									title={header.contact.addressLabel}
+								>
+									<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
+								</a>
+							{/if}
 							<a
 								{...hrefAttributes(header.contact.phoneHref)}
 								class="bohemcars-mobile-call"
@@ -653,6 +675,32 @@
 {/snippet}
 
 <style>
+	/* WCAG 2.2 target size: the 20px topbar icons and mega-menu links get a
+	   bigger hit box via padding pulled back with negative margins, so the
+	   visual layout does not move. */
+	.header-top-bar--socical a,
+	.bohemcars-topbar-right > a,
+	.bohemcars-top-contact-link {
+		height: auto;
+		min-height: 28px;
+		align-items: center;
+		padding-block: 4px;
+		margin-block: -4px;
+	}
+
+	.header-top-bar--socical a {
+		display: inline-flex;
+	}
+
+	.sub-menu-item-inner li a {
+		display: inline-flex;
+		height: auto;
+		min-height: 28px;
+		align-items: center;
+		padding-block: 4px;
+		margin-block: -4px;
+	}
+
 	.bohemcars-top-contact-link {
 		transition:
 			color 180ms ease,
@@ -743,6 +791,17 @@
 		:global(.header-wrapper-style-4 .header-top-bar) {
 			height: 50px;
 			min-height: 50px;
+		}
+
+		/* Sticky state: the theme only visibility-hides the top bar, so its 50px
+		   kept inflating the fixed header. Collapse it and shrink to the nav row. */
+		:global(.header-wrapper-style-4 .header.header-style-4.is-fixed) {
+			height: 94px;
+			min-height: 94px;
+		}
+
+		:global(.header-wrapper-style-4 .header.header-style-4.is-fixed .header-top-bar) {
+			display: none;
 		}
 
 		:global(.header-wrapper-style-4 .header-container-fluid),
@@ -977,7 +1036,7 @@
 			> li.menu-item--static
 			.sub-menu.bohemcars-mega--vehicles
 	) {
-		top: 58px !important;
+		top: 94px !important;
 	}
 
 	:global(

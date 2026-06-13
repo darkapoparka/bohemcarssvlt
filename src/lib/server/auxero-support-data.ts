@@ -700,10 +700,6 @@ const applyBlogListData = (html: string) => {
 		<div class="grid grid-cols-3 md-grid-cols-1 gap-y-40 gap-x-30 mb-40" data-bohemcars-blog-grid>
 			${posts.map(blogCard).join('\n')}
 		</div>
-		<ul class="pagination justify-center">
-			<li><a href="/blog" class="pagination__link active">1</a></li>
-			<li><a href="/contact" class="pagination__link">Попитай</a></li>
-		</ul>
 	</div>
 </section>`;
 

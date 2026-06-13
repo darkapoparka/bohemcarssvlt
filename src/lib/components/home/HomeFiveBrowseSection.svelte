@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import type { HomeFiveBrandCard, HomeFiveTypeCard } from '$lib/auxero/home-five';
 	import type { HomePageCopy } from '$lib/i18n/messages';
+	import { ArrowRight } from '@lucide/svelte';
 	import HomeSectionCta from './HomeSectionCta.svelte';
 
 	let {
@@ -41,11 +42,27 @@
 						{#each brandCards as brand, index (brand.name)}
 							<div class="swiper-slide">
 								<a
-									href={resolve(`/inventory?brand=${encodeURIComponent(brand.query)}`)}
+									href={resolve(
+										(brand.href ?? `/inventory?brand=${encodeURIComponent(brand.query)}`) as '/'
+									)}
 									class={index === 0 ? 'out-brand-2 ' : 'out-brand-2'}
 								>
 									<span class="bohemcars-brand-logo-frame">
-										<img class="out-brand--img" src={brand.image} alt="" loading="lazy" />
+										{#if brand.allTile}
+											<span class="bohemcars-brand-all-glyph" aria-hidden="true">
+												<ArrowRight size={20} strokeWidth={2} />
+											</span>
+										{:else}
+											<img
+												class="out-brand--img"
+												src={brand.image}
+												alt=""
+												width="120"
+												height="80"
+												loading="lazy"
+												decoding="async"
+											/>
+										{/if}
 									</span>
 									<p class="h5">{brand.name}</p>
 									<p class="text-muted text-sm">{brand.count}</p>
@@ -91,9 +108,22 @@
 				</div>
 				<div class="bohemcars-type-gallery__grid">
 					{#each typeCards as typeCard (typeCard.image)}
-						<a class="bohemcars-type-card" href={resolve(typeCard.href)}>
+						<a
+							class={[
+								'bohemcars-type-card',
+								typeCard.href === '/inventory' && 'bohemcars-type-card--all'
+							]}
+							href={resolve(typeCard.href)}
+						>
 							<span class="bohemcars-type-card__image">
-								<img src={typeCard.image} alt={typeCard.label} loading="lazy" />
+								<img
+									src={typeCard.image}
+									alt={typeCard.label}
+									width="360"
+									height="220"
+									loading="lazy"
+									decoding="async"
+								/>
 							</span>
 							<span class="bohemcars-type-card__label">{typeCard.label}</span>
 						</a>
@@ -223,6 +253,23 @@
 		width: 112px !important;
 	}
 
+	/* Same monochrome line-art register as the brand logos around it. */
+	.bohemcars-brand-all-glyph {
+		display: grid;
+		height: 46px;
+		width: 46px;
+		border: 1.5px solid #1c1c1c;
+		border-radius: 999px;
+		background: transparent;
+		place-items: center;
+	}
+
+	/* Global ink rule would dim the stroke; pin it (see icon-color footgun). */
+	.bohemcars-brand-all-glyph :global(svg) {
+		color: #1c1c1c !important;
+		stroke: #1c1c1c;
+	}
+
 	/* Contrast: darken the brand count (text-muted was 2.5:1) */
 	.bohemcars-browse-section :global(.out-brand-2 .text-muted) {
 		color: #5a6356 !important;
@@ -347,12 +394,21 @@
 
 	.bohemcars-type-card__image img {
 		display: block;
-		max-height: 142px;
-		max-width: 100%;
+		width: 94%;
+		max-height: 146px;
+		max-width: 94%;
 		object-fit: contain;
 		position: relative;
 		transform: none !important;
 		z-index: 1;
+	}
+
+	/* The view-all cutout is a 3/4 view (taller aspect): fill the image box
+	   height so it carries the same visual weight as the side-view cutouts. */
+	.bohemcars-type-card--all .bohemcars-type-card__image img {
+		width: auto;
+		height: 100%;
+		max-height: 146px;
 	}
 
 	.bohemcars-type-card__label {

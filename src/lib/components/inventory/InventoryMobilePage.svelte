@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import {
 		ArrowUpDown,
 		Calendar,
@@ -269,7 +271,7 @@
 		filterDraft[key] = filterDraft[key] === value ? '' : value;
 	};
 	const filterDraftHref = () => {
-		const params = new SvelteURLSearchParams(window.location.search);
+		const params = new SvelteURLSearchParams(page.url.search);
 		const setParam = (key: string, value: string, defaultValue = '') => {
 			if (!value || value === defaultValue) {
 				params.delete(key);
@@ -320,7 +322,7 @@
 	};
 	const clearFilterDraft = () => {
 		if (filterDrawerMode === 'all') {
-			navigateToFilterDraft(mobile.clearHref);
+			void navigateToFilterDraft(mobile.clearHref);
 			return;
 		}
 
@@ -337,13 +339,13 @@
 			modelDrawerQuery = '';
 		}
 	};
-	const navigateToFilterDraft = (href = filterDraftHref()) => {
+	const navigateToFilterDraft = async (href = filterDraftHref()) => {
 		const queryStart = href.indexOf('?');
 		filterDrawerOpen = false;
 
-		window.location.assign(
-			`${resolve('/inventory')}${queryStart === -1 ? '' : href.slice(queryStart)}`
-		);
+		await goto(resolve(`/inventory${queryStart === -1 ? '' : href.slice(queryStart)}`), {
+			noScroll: true
+		});
 	};
 	const applyFilterDraft = () => {
 		if (!filterDraftChanged) {
@@ -351,7 +353,7 @@
 			return;
 		}
 
-		navigateToFilterDraft();
+		void navigateToFilterDraft();
 	};
 	const selectFilterOption = (key: keyof FilterDraft, value: string) => {
 		const previousHref = filterDraftHref();
@@ -371,7 +373,7 @@
 			return;
 		}
 
-		navigateToFilterDraft(nextHref);
+		void navigateToFilterDraft(nextHref);
 	};
 
 	const openSearchDrawer = () => {
@@ -593,7 +595,15 @@
 						class="bohemcars-inventory-mobile-card__image"
 						href={resolve('/inventory/[slug]', { slug: card.slug })}
 					>
-						<img src={mobileImage(card)} alt={card.title} onerror={useFallbackImage} />
+						<img
+							src={mobileImage(card)}
+							alt={card.title}
+							width="660"
+							height="440"
+							loading="lazy"
+							decoding="async"
+							onerror={useFallbackImage}
+						/>
 						<span>{card.tag}</span>
 					</a>
 					<div class="bohemcars-inventory-mobile-card__body">
@@ -695,6 +705,8 @@
 										src={option.image}
 										alt=""
 										aria-hidden="true"
+										width="96"
+										height="64"
 										loading="lazy"
 										decoding="async"
 									/>
@@ -790,6 +802,8 @@
 												src={option.image}
 												alt=""
 												aria-hidden="true"
+												width="96"
+												height="64"
 												loading="lazy"
 												decoding="async"
 											/>
@@ -1103,11 +1117,11 @@
 
 	.bohemcars-inventory-mobile__search-action {
 		display: flex;
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 40px;
+		flex: 0 0 44px;
 		border: 0 !important;
 		border-radius: 999px;
 		background: #1c1c1c;
@@ -1196,7 +1210,7 @@
 	.bohemcars-inventory-mobile__tool-choice.active span {
 		color: #5d7e16;
 		font-size: 10px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 12px;
 		text-transform: uppercase;
 	}
@@ -1208,7 +1222,7 @@
 		overflow: hidden;
 		color: #111111;
 		font-size: 14px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 18px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -1354,7 +1368,7 @@
 		justify-content: flex-start;
 		gap: 5px;
 		overflow: hidden;
-		border-radius: 7px;
+		border-radius: 8px;
 		background: #f8faf8;
 		padding: 0 8px;
 		color: #4b5563;
@@ -1389,7 +1403,7 @@
 
 	.bohemcars-inventory-mobile__empty a {
 		color: #8fbd24;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__backdrop) {
@@ -1502,7 +1516,7 @@
 		margin: 0 0 2px;
 		color: #8fbd24;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 14px;
 		text-transform: uppercase;
 	}
@@ -1511,7 +1525,7 @@
 		display: block;
 		color: #111111;
 		font-size: 22px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 28px;
 	}
 
@@ -1643,7 +1657,7 @@
 		margin: 0;
 		color: #728093;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 16px;
 		text-transform: uppercase;
 	}
@@ -1674,7 +1688,7 @@
 		align-items: center;
 		gap: 7px;
 		border: 0;
-		border-radius: 9px;
+		border-radius: 8px;
 		background: var(--bc-surface);
 		padding: 0 12px;
 		appearance: none;
@@ -1743,7 +1757,7 @@
 		background: #ffffff;
 		color: #67717d;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 21px;
 	}
 
@@ -1751,7 +1765,7 @@
 		display: inline-flex;
 		min-height: 44px;
 		align-items: center;
-		border-radius: 9px;
+		border-radius: 8px;
 		background: var(--bc-surface-soft);
 		color: #728093;
 		font-size: 14px;
@@ -1786,7 +1800,7 @@
 		gap: 8px;
 		background: #b9ee39;
 		color: #14210a;
-		font-weight: 900;
+		font-weight: 800;
 		text-align: center;
 		white-space: nowrap;
 	}
@@ -1801,7 +1815,7 @@
 		background: rgba(255, 255, 255, 0.72);
 		color: #14210a;
 		font-size: 11px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 23px;
 	}
 
@@ -1817,7 +1831,7 @@
 		color: #14210a;
 		cursor: pointer;
 		font-size: 15px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 19px;
 	}
 

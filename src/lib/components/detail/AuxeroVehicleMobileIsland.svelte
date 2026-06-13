@@ -24,7 +24,9 @@
 
 {#if showMobilePdp}
 	<div class="bohemcars-pdp-mobile">
-		<AuxeroVehicleMobilePdp {detail} />
+		{#key detail.slug}
+			<AuxeroVehicleMobilePdp {detail} />
+		{/key}
 	</div>
 {/if}
 

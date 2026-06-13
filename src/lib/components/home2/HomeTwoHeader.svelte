@@ -123,7 +123,7 @@
 	.home2-header__nav a {
 		color: #ffffff;
 		font-size: 15px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 1;
 		text-shadow: 0 3px 14px rgb(0 0 0 / 0.75);
 		white-space: nowrap;

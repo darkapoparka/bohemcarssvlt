@@ -191,6 +191,11 @@
 				class="bohemcars-mobile-pdp__image"
 				src={heroImage}
 				alt={detail.title}
+				width="900"
+				height="1200"
+				loading="eager"
+				decoding="async"
+				fetchpriority="high"
 				onerror={useFallbackImage}
 			/>
 		</button>
@@ -234,7 +239,15 @@
 							selectedImageIndex = index;
 						}}
 					>
-						<img src={image} alt="" onerror={useFallbackImage} />
+						<img
+							src={image}
+							alt=""
+							width="96"
+							height="72"
+							loading="lazy"
+							decoding="async"
+							onerror={useFallbackImage}
+						/>
 					</button>
 				{/each}
 			</div>
@@ -471,7 +484,15 @@
 			</p>
 
 			<div class="bohemcars-mobile-pdp__viewer-stage">
-				<img src={heroImage} alt={detail.title} onerror={useFallbackImage} />
+				<img
+					src={heroImage}
+					alt={detail.title}
+					width="900"
+					height="1200"
+					loading="lazy"
+					decoding="async"
+					onerror={useFallbackImage}
+				/>
 			</div>
 
 			<div class="bohemcars-mobile-pdp__viewer-thumbs" aria-label={detail.mobileDrawer.photoLabel}>
@@ -485,7 +506,15 @@
 							selectedImageIndex = index;
 						}}
 					>
-						<img src={image} alt="" onerror={useFallbackImage} />
+						<img
+							src={image}
+							alt=""
+							width="96"
+							height="72"
+							loading="lazy"
+							decoding="async"
+							onerror={useFallbackImage}
+						/>
 					</button>
 				{/each}
 			</div>
@@ -672,8 +701,8 @@
 			min-width: 0;
 			max-width: 100%;
 			overflow: hidden;
-			font-size: 12.5px;
-			font-weight: 850;
+			font-size: 12px;
+			font-weight: 800;
 			line-height: 15px;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -691,7 +720,7 @@
 			color: #1c1c1c;
 			padding: 8px 11px;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 16px;
 		}
 
@@ -773,7 +802,7 @@
 			margin-bottom: 3px;
 			color: #98bc2a;
 			font-size: 16px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 20px;
 		}
 
@@ -782,7 +811,7 @@
 			color: #1c1c1c;
 			overflow: hidden;
 			font-size: 20px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 24px;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 2;
@@ -799,7 +828,7 @@
 			color: #1c1c1c;
 			padding: 0 10px;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 15px;
 			white-space: nowrap;
 		}
@@ -839,7 +868,7 @@
 			cursor: pointer;
 			padding: 0 4px 8px;
 			font-size: 16px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 18px;
 			white-space: nowrap;
 		}
@@ -894,7 +923,7 @@
 			margin: 0;
 			color: #728093;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 16px;
 			text-transform: uppercase;
 		}
@@ -929,14 +958,14 @@
 		.bohemcars-mobile-pdp__finance span {
 			color: #728093;
 			font-size: 12px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 16px;
 		}
 
 		.bohemcars-mobile-pdp__finance strong {
 			margin: 3px 0 5px;
 			font-size: 18px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 22px;
 		}
 
@@ -987,7 +1016,7 @@
 			overflow-wrap: anywhere;
 			text-align: right;
 			font-size: 14px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 18px;
 		}
 
@@ -995,7 +1024,7 @@
 			margin: 0 0 9px;
 			color: #1c1c1c;
 			font-size: 15px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 19px;
 		}
 
@@ -1032,7 +1061,7 @@
 			border: 0;
 			border-radius: 8px;
 			font-size: 14px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 16px;
 			text-align: center;
 			text-decoration: none;
@@ -1187,7 +1216,7 @@
 			display: block;
 			color: #1c1c1c;
 			font-size: 19px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 23px;
 		}
 
@@ -1227,7 +1256,7 @@
 
 		.bohemcars-mobile-pdp__inquiry-form label span {
 			color: #1c1c1c;
-			font-size: 12.5px;
+			font-size: 12px;
 			font-weight: 800;
 			line-height: 16px;
 		}
@@ -1273,7 +1302,7 @@
 			color: #14210a;
 			cursor: pointer;
 			font-size: 15px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 19px;
 			transition: background-color 0.18s ease;
 		}
@@ -1316,7 +1345,7 @@
 			background: #ffffff;
 			color: #1c1c1c;
 			font-size: 15px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 19px;
 			text-decoration: none;
 		}
@@ -1364,7 +1393,7 @@
 			color: #ffffff;
 			padding: 10px 13px;
 			font-size: 13px;
-			font-weight: 900;
+			font-weight: 800;
 			line-height: 16px;
 		}
 

@@ -1,7 +1,11 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { getAccountDashboardPageData } from '$lib/server/account-dashboard-state';
 import { getAccountProfileFormData } from '$lib/server/account-profile-state';
-import { renderAuxeroPageSlot } from '$lib/server/auxero-page';
+import {
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
+	renderAuxeroPageSlot
+} from '$lib/server/auxero-page';
 import { requireBohemcarsPageSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = ({ request, url }) => {
@@ -14,7 +18,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 		searchParams: url.searchParams,
 		session
 	};
-	const { pageDocument, slot: profileSlot } = renderAuxeroPageSlot(
+	const { pageDocument, slot: rawProfileSlot } = renderAuxeroPageSlot(
 		'my-profile.html',
 		renderOptions,
 		{
@@ -24,6 +28,7 @@ export const load: PageServerLoad = ({ request, url }) => {
 			slotError: 'Account profile form slot could not be located'
 		}
 	);
+	const profileSlot = removeAuxeroSlotScriptTags(rawProfileSlot);
 
 	return {
 		afterProfileHtml: profileSlot.afterHtml,
@@ -33,8 +38,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 			subtitle: 'Update contact details, marketplace profile, and location.',
 			title: 'My Profile'
 		}),
-		pageDocument,
+		pageDocument: removeAuxeroPageDocumentBodyHtml(pageDocument),
 		profile: getAccountProfileFormData('my-profile.html', renderOptions),
 		profileHtml: profileSlot.sectionHtml
 	};
+};
+
+export const actions: Actions = {
+	default: async () => ({ profileSaved: true })
 };

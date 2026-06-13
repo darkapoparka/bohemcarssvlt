@@ -666,13 +666,21 @@
 					class="bohemcars-hero-car bohemcars-hero-car--left"
 					src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp"
 					alt=""
-					loading="lazy"
+					width="820"
+					height="420"
+					loading="eager"
+					decoding="async"
+					fetchpriority="high"
 				/>
 				<img
 					class="bohemcars-hero-car bohemcars-hero-car--right"
 					src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp"
 					alt=""
-					loading="lazy"
+					width="820"
+					height="420"
+					loading="eager"
+					decoding="async"
+					fetchpriority="high"
 				/>
 			</div>
 
@@ -729,7 +737,7 @@
 								select={modelFilter}
 								options={modelOptions}
 								bind:selected={() => modelSelection, updateModelSelection}
-								mode="single"
+								mode="multi"
 								variant="list"
 								searchable
 								{isEnglish}
@@ -1845,7 +1853,7 @@
 			display: inline-flex;
 			min-height: 44px;
 			align-items: center;
-			border-radius: 9px;
+			border-radius: 8px;
 			background: var(--bc-surface);
 			padding: 0 12px;
 			color: #111111;

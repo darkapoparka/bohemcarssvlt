@@ -1,30 +1,27 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { loadAuxeroSwiper, type AuxeroSwiperInstance } from '$lib/auxero/swiper-loader';
 	import type { DetailCopy } from '$lib/i18n/messages';
 	import { onMount, tick } from 'svelte';
 
-	let { copy, images, title }: { copy: DetailCopy; images: string[]; title: string } = $props();
+	let {
+		copy,
+		hasVideo = false,
+		images,
+		title
+	}: { copy: DetailCopy; hasVideo?: boolean; images: string[]; title: string } = $props();
 	const contactHref = resolve('/contact');
 	const denseInventoryHref = resolve('/inventory?view=4');
 	const initialSlide = $derived(images.length > 1 ? 1 : 0);
 
-	type SwiperInstance = {
-		destroy?: (deleteInstance?: boolean, cleanStyles?: boolean) => void;
-	};
-
-	type SwiperConstructor = new (
-		element: Element,
-		options: Record<string, unknown>
-	) => SwiperInstance;
-
 	let galleryHydrated = $state(false);
 
-	const initGallerySwiper = () => {
-		const Swiper = (window as typeof window & { Swiper?: SwiperConstructor }).Swiper;
+	const initGallerySwiper = async () => {
+		const Swiper = await loadAuxeroSwiper();
 		const main = document.querySelector('[data-bohemcars-pdp-gallery-main]');
 		const thumbs = document.querySelector('[data-bohemcars-pdp-gallery-thumbs]');
 
-		if (!Swiper || !main || !thumbs) return {};
+		if (!main || !thumbs) return {};
 
 		const thumbsSwiper = new Swiper(thumbs, {
 			freeMode: false,
@@ -53,18 +50,32 @@
 
 	onMount(() => {
 		let cancelled = false;
-		let mainSwiper: SwiperInstance | undefined;
-		let thumbsSwiper: SwiperInstance | undefined;
+		let initialized = false;
+		let mainSwiper: AuxeroSwiperInstance | undefined;
+		let thumbsSwiper: AuxeroSwiperInstance | undefined;
+		const desktopMedia = window.matchMedia('(min-width: 768px)');
 
-		galleryHydrated = true;
+		const setupGallery = async () => {
+			if (cancelled || initialized || !desktopMedia.matches) return;
 
-		tick().then(() => {
+			initialized = true;
+			galleryHydrated = true;
+			await tick();
+
 			if (cancelled) return;
-			({ mainSwiper, thumbsSwiper } = initGallerySwiper());
-		});
+			try {
+				({ mainSwiper, thumbsSwiper } = await initGallerySwiper());
+			} catch {
+				if (!cancelled) galleryHydrated = false;
+			}
+		};
+
+		desktopMedia.addEventListener('change', setupGallery);
+		void setupGallery();
 
 		return () => {
 			cancelled = true;
+			desktopMedia.removeEventListener('change', setupGallery);
 			mainSwiper?.destroy?.(true, true);
 			thumbsSwiper?.destroy?.(true, true);
 		};
@@ -73,10 +84,12 @@
 
 {#snippet galleryButtons()}
 	<div class="listing-details-item--content">
-		<a class="listing-details-item--button" href={contactHref}>
-			<img src="/assets/icons/playcircle.svg" alt="play" />
-			{copy.playVideo}
-		</a>
+		{#if hasVideo}
+			<a class="listing-details-item--button" href={contactHref}>
+				<img src="/assets/icons/playcircle.svg" alt="play" />
+				{copy.playVideo}
+			</a>
+		{/if}
 		<a class="listing-details-item--button" href={denseInventoryHref}>
 			<img src="/assets/icons/view-all-photo.svg" alt="view" />
 			{copy.viewAllPhoto}
@@ -110,7 +123,16 @@
 		{#each images as image, index (index)}
 			<div class="swiper-slide">
 				<div class="listing-details-item main-item relative">
-					<img class="img-main" src={image} alt={title} />
+					<img
+						class="img-main"
+						src={image}
+						alt={title}
+						width="900"
+						height="600"
+						loading={index === initialSlide ? 'eager' : 'lazy'}
+						decoding="async"
+						fetchpriority={index === initialSlide ? 'high' : 'auto'}
+					/>
 					{@render galleryButtons()}
 				</div>
 			</div>
@@ -137,7 +159,14 @@
 		{#each images as image, index (index)}
 			<div class="swiper-slide">
 				<div class="listing-details-thumb">
-					<img src={image} alt={`${title} снимка ${index + 1}`} />
+					<img
+						src={image}
+						alt={`${title} снимка ${index + 1}`}
+						width="180"
+						height="120"
+						loading="lazy"
+						decoding="async"
+					/>
 				</div>
 			</div>
 		{/each}

@@ -164,13 +164,21 @@
 
 {#snippet closeButton()}
 	<button class="close-modal" type="button" aria-label="Затвори">
-		<img src={closeIcon} alt="" />
+		<img src={closeIcon} alt="" width="16" height="16" decoding="async" />
 	</button>
 {/snippet}
 
 {#snippet cardModalVehicle(vehicle: HomeFiveModalVehicle)}
 	<div>
-		<img class="radius-16 mb-10" src={vehicle.image} alt={vehicle.title} />
+		<img
+			class="radius-16 mb-10"
+			src={vehicle.image}
+			alt={vehicle.title}
+			width="660"
+			height="440"
+			loading="lazy"
+			decoding="async"
+		/>
 		<p class="h4 text-center">{vehicle.title}</p>
 	</div>
 {/snippet}
@@ -178,10 +186,18 @@
 {#snippet comparePreviewItem(vehicle: HomeFiveModalVehicle)}
 	<div class="compare-item flex items-center gap-12">
 		<button class="compare-item-remove" type="button" aria-label={copy.vehicleCard.compare}>
-			<img src={closeIcon} alt="car" class="radius-50" />
+			<img src={closeIcon} alt="car" class="radius-50" width="16" height="16" decoding="async" />
 		</button>
 		<div class="compare-item-image">
-			<img src={vehicle.image} alt={vehicle.title} class="radius-50" />
+			<img
+				src={vehicle.image}
+				alt={vehicle.title}
+				class="radius-50"
+				width="64"
+				height="64"
+				loading="lazy"
+				decoding="async"
+			/>
 		</div>
 		<div class="compare-item-info">
 			<p class="h7 font-weight-500 mb-8">{vehicle.title}</p>

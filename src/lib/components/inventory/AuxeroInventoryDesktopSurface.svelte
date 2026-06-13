@@ -196,6 +196,25 @@
 	const handleModalClose = (name: string) => {
 		if (focusedModalFilterName === name) focusedModalFilterName = null;
 	};
+
+	let sortOpen = $state(false);
+
+	const activateSortDropdown = (element: HTMLDivElement) => {
+		const onPointerDown = (event: PointerEvent) => {
+			if (!element.contains(event.target as Node)) sortOpen = false;
+		};
+		const onKey = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') sortOpen = false;
+		};
+
+		document.addEventListener('pointerdown', onPointerDown);
+		document.addEventListener('keydown', onKey);
+
+		return () => {
+			document.removeEventListener('pointerdown', onPointerDown);
+			document.removeEventListener('keydown', onKey);
+		};
+	};
 </script>
 
 {#snippet utilityToolbar(showFilterButton = true)}
@@ -221,13 +240,21 @@
 		</div>
 		<div class="bohemcars-inventory-sort">
 			<span class="bohemcars-inventory-sort__label">{desktop.sortLabel}</span>
-			<div class="core-dropdown">
-				<button type="button" class="core-dropdown__button">
+			<div class={['core-dropdown', sortOpen && 'active']} {@attach activateSortDropdown}>
+				<button
+					type="button"
+					class="core-dropdown__button"
+					aria-haspopup="menu"
+					aria-expanded={sortOpen}
+					onclick={() => {
+						sortOpen = !sortOpen;
+					}}
+				>
 					<span class="core-dropdown__selected">{desktop.selectedSort}</span>
 					<img src="/assets/icons/chevron-down-black.svg" alt="" />
 				</button>
 				<div class="core-dropdown__menu">
-					<ul class="core-dropdown__list">
+					<ul class="core-dropdown__list" role="menu">
 						{#each desktop.sortOptions as option (option.value)}
 							<li class="core-dropdown__item">
 								<a
@@ -235,6 +262,8 @@
 									class={['core-dropdown__option', option.active && 'active']}
 									data-sort={option.value}
 									data-value={option.value}
+									role="menuitem"
+									aria-current={option.active ? 'true' : undefined}
 								>
 									{option.label}
 								</a>
@@ -439,15 +468,21 @@
 				class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--x5"
 				src="/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp"
 				alt=""
+				width="820"
+				height="420"
 				loading="eager"
 				decoding="async"
+				fetchpriority="high"
 			/>
 			<img
 				class="bohemcars-inventory-banner__car bohemcars-inventory-banner__car--sq5"
 				src="/assets/bohemcars/megamenu/inventory-audi-sq5-cutout.webp"
 				alt=""
+				width="820"
+				height="420"
 				loading="eager"
 				decoding="async"
+				fetchpriority="high"
 			/>
 		</div>
 		{@render demoControls()}
@@ -712,6 +747,14 @@
 		justify-self: end;
 		opacity: 0.98;
 		transform: translate(18%, 20px) scaleX(-1);
+	}
+
+	/* Below 1680px there is no side room next to the 1220px control cards:
+	   the cutouts collapse to clipped slivers behind the white bars, so hide them. */
+	@media (max-width: 1679.98px) {
+		.bohemcars-inventory-banner__cars {
+			display: none;
+		}
 	}
 
 	.bohemcars-inventory-banner__buybox {
@@ -1211,6 +1254,11 @@
 		color: #141f10;
 	}
 
+	.bohemcars-inventory-sort :global(.core-dropdown__menu) {
+		z-index: 180;
+		min-width: 100%;
+	}
+
 	.bohemcars-inventory-sort :global(.core-dropdown__option) {
 		transition:
 			background-color 0.14s ease,
@@ -1515,66 +1563,65 @@
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__field) {
-		min-height: 64px;
+		min-height: 56px;
 		align-content: center;
 		gap: 0;
-		border-color: #789f1b;
-		border-radius: 12px;
-		background: #789f1b;
-		color: #ffffff;
-		padding: 0 48px 0 18px;
+		border-color: #e1e5d9;
+		border-radius: 10px;
+		background: #f6f7f3;
+		color: #1c1c1c;
+		padding: 0 44px 0 16px;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__field:hover),
-	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__field),
+	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__field) {
+		border-color: #98bc2a;
+		background: #ffffff;
+	}
+
 	.bohemcars-inventory-filter-panel :global(.ifp__field--selected) {
-		border-color: #6d9416;
-		background: #6d9416;
-		color: #ffffff;
+		border-color: #98bc2a;
+		background: #f0f7d8;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__field) {
-		box-shadow: none;
+		box-shadow: 0 0 0 2px rgba(217, 242, 117, 0.38);
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__label) {
-		color: #ffffff;
-		font-size: 18px;
-		font-weight: 800;
-		line-height: 22px;
-		letter-spacing: 0;
-		text-transform: uppercase;
+		color: #1c1c1c;
+		font-size: 15px;
+		font-weight: 650;
+		line-height: 20px;
+		letter-spacing: 0.01em;
+		text-transform: none;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__value) {
-		color: #ffffff;
+		color: #1c1c1c;
 		font-size: 13px;
-		font-weight: 650;
+		font-weight: 600;
 		line-height: 16px;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__value--placeholder) {
-		color: #ffffff;
-		font-weight: 650;
+		color: #5f6657;
+		font-weight: 550;
 	}
 
-	.bohemcars-inventory-filter-panel :global(.ifp__field:hover .ifp__label),
-	.bohemcars-inventory-filter-panel :global(.ifp__field:hover .ifp__value),
-	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__label),
-	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__value),
 	.bohemcars-inventory-filter-panel :global(.ifp__field--selected .ifp__label),
 	.bohemcars-inventory-filter-panel :global(.ifp__field--selected .ifp__value) {
-		color: #ffffff;
+		color: #14210f;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__chev) {
-		color: #ffffff;
+		color: #6b7361;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__field:hover .ifp__chev),
 	.bohemcars-inventory-filter-panel :global(.ifp--open .ifp__chev),
 	.bohemcars-inventory-filter-panel :global(.ifp__field--selected .ifp__chev) {
-		color: #ffffff;
+		color: #5d7a16;
 	}
 
 	.bohemcars-inventory-filter-panel :global(.ifp__panel) {
@@ -1812,13 +1859,11 @@
 	}
 
 	.bohemcars-inventory-dashboard-sidebar .bohemcars-inventory-sidebar-fields :global(.ifp__panel) {
-		position: absolute;
-		top: calc(100% + 6px);
-		left: 0;
-		z-index: 30;
+		position: static;
+		z-index: auto;
 		width: 100%;
-		margin-top: 0;
-		box-shadow: 0 16px 34px rgba(18, 24, 14, 0.13);
+		margin-top: 8px;
+		box-shadow: none;
 	}
 
 	.bohemcars-inventory-sidebar-actions {

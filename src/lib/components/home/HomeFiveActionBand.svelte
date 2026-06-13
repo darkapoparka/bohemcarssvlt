@@ -22,7 +22,10 @@
 					class="bohemcars-action-card__img"
 					src="/assets/bohemcars/home2/home2-action-import.webp"
 					alt=""
+					width="560"
+					height="360"
 					loading="lazy"
+					decoding="async"
 				/>
 			</a>
 
@@ -42,7 +45,10 @@
 					class="bohemcars-action-card__img bohemcars-action-card__img--consultant"
 					src="/assets/bohemcars/home2/home2-action-consultant.webp"
 					alt=""
+					width="560"
+					height="360"
 					loading="lazy"
+					decoding="async"
 				/>
 			</a>
 		</div>
@@ -297,13 +303,13 @@
 
 		.bohemcars-action-card__body {
 			max-width: 52%;
-			font-size: 13.5px;
+			font-size: 14px;
 		}
 
 		.bohemcars-action-card__cta {
 			width: 164px;
-			height: 40px;
-			min-height: 40px;
+			height: 44px;
+			min-height: 44px;
 			margin-top: 14px;
 			padding: 0 16px;
 			font-size: 14px;

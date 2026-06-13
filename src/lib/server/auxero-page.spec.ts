@@ -5,6 +5,8 @@ import {
 	extractAuxeroRuntimeHtml,
 	renderAuxeroPageDocument,
 	renderAuxeroPageSlot,
+	removeAuxeroPageDocumentBodyHtml,
+	removeAuxeroSlotScriptTags,
 	splitAuxeroBodySection,
 	splitAuxeroDivBlockByMarker,
 	splitAuxeroDocument,
@@ -29,13 +31,49 @@ describe('splitAuxeroDocument', () => {
 		const bodyScriptsHtml = extractAuxeroBodyScriptsHtml(document.bodyHtml);
 		const runtimeHtml = extractAuxeroRuntimeHtml(document.bodyHtml);
 
-		expect(bodyScriptsHtml).toContain('/assets/js/jquery.min.js');
+		expect(bodyScriptsHtml).toBe('');
 		expect(bodyScriptsHtml).not.toContain('window.__BOHEMCARS_RUNTIME__');
 		expect(runtimeHtml).toContain("window.addEventListener('bohemcars:svelte-mounted'");
 		expect(runtimeHtml).toContain("window.addEventListener('load'");
 		expect(runtimeHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(runtimeHtml).toContain("form.matches('.bohemcars-blog-comment-form')");
+		expect(runtimeHtml).toContain("url: '/api/messages'");
+		expect(runtimeHtml).toContain('Comment saved locally for Bohemcars review');
+		expect(runtimeHtml).toContain("form.matches('.bohemcars-sell-form')");
+		expect(runtimeHtml).toContain("url: '/api/inventory/submissions'");
+		expect(runtimeHtml).toContain('Заявката е подготвена. Bohemcars ще се свърже с вас.');
+		expect(runtimeHtml).toContain("form.matches('.bohemcars-service-form')");
+		expect(runtimeHtml).toContain('Service request queued locally for Bohemcars');
 		expect(runtimeHtml).not.toContain('/assets/js/jquery.min.js');
 		expect(runtimeHtml).not.toContain('<script src=');
+	});
+
+	it('extracts native public runtime without replaying template body scripts', () => {
+		const home = splitAuxeroDocument(renderAuxeroTemplate('home-05.html')!);
+		const homeRuntime = extractAuxeroRuntimeHtml(home.bodyHtml, {
+			waitForBodyScripts: false
+		});
+		const detail = splitAuxeroDocument(renderAuxeroTemplate('listing-details-3.html')!);
+		const detailRuntime = extractAuxeroRuntimeHtml(detail.bodyHtml, {
+			waitForBodyScripts: false
+		});
+
+		expect(homeRuntime).toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(homeRuntime).toContain('bohemcarsRuntimeWaitsForBodyScripts = false');
+		expect(homeRuntime).not.toContain('/assets/js/jquery.min.js');
+		expect(homeRuntime).not.toContain('/assets/js/app.js');
+		expect(homeRuntime).not.toContain('/assets/js/swiper-bundle.min.js');
+		expect(homeRuntime).not.toContain('code.jquery.com/ui');
+		expect(homeRuntime).not.toContain('__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__');
+
+		expect(detailRuntime).toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(detailRuntime).toContain('bohemcarsRuntimeWaitsForBodyScripts = false');
+		expect(detailRuntime).not.toContain('/assets/js/swiper-bundle.min.js');
+		expect(detailRuntime).not.toContain('/assets/js/jquery.min.js');
+		expect(detailRuntime).not.toContain('/assets/js/app.js');
+		expect(detailRuntime).not.toContain('/assets/js/swiper.js');
+		expect(detailRuntime).not.toContain('/assets/js/gear-slider.js');
+		expect(detailRuntime).not.toContain('code.jquery.com/ui');
 	});
 
 	it('renders a template document and extracts a marked page slot through the shared helper', () => {
@@ -89,7 +127,9 @@ describe('splitAuxeroDocument', () => {
 
 		expect(split?.beforeHtml).toContain('Browse, Compare, Drive');
 		expect(split?.sectionHtml).toContain('Bohemcars Vehicles');
-		expect(split?.sectionHtml).toContain('bohemcars-vehicle-pill car-box active');
+		expect(split?.sectionHtml).toContain('bohemcars-vehicle-pill car-box');
+		// Quick pills are navigational links; none carries a fake pre-selected state.
+		expect(split?.sectionHtml).not.toContain('bohemcars-vehicle-pill car-box active');
 		expect(split?.sectionHtml).toContain('swiper-card-5');
 		expect(split?.sectionHtml).toContain('pagination-swiper-card-5');
 		expect(split?.afterHtml).toContain('<!-- Explore Our Brands -->');
@@ -344,7 +384,7 @@ describe('splitAuxeroDocument', () => {
 		expect(modalSplit?.beforeHtml).toContain('</div>');
 		expect(modalSplit?.beforeHtml).not.toContain('<div id="LoginModal"');
 		expect(modalSplit?.afterHtml).toContain('progress-wrap');
-		expect(modalSplit?.afterHtml).toContain('/assets/js/jquery.min.js');
+		expect(modalSplit?.afterHtml).not.toContain('<script src=');
 		expect(modalSplit?.afterHtml).not.toContain('<div id="LoginModal"');
 	});
 
@@ -482,6 +522,31 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.afterHtml).toContain('pagination justify-center');
 		expect(split?.afterHtml).toContain('CardModal');
 		expect(split?.afterHtml).toContain('renderAccountFavorites');
+	});
+
+	it('removes template scripts from native account slot tails', () => {
+		const html = renderAuxeroTemplate('my-favorites.html', { routePath: 'account/favorites' });
+		const document = splitAuxeroDocument(html!);
+		const split = splitAuxeroDivBlockByMarker(document.bodyHtml, 'data-bohemcars-favorites-grid');
+		const sanitized = removeAuxeroSlotScriptTags(split!);
+
+		expect(split?.afterHtml).toContain('renderAccountFavorites');
+		expect(sanitized.afterHtml).toContain('CardModal');
+		expect(sanitized.afterHtml).not.toContain('<script');
+		expect(sanitized.afterHtml).not.toContain('/assets/js/jquery.min.js');
+		expect(sanitized.afterHtml).not.toContain('/assets/js/app.js');
+		expect(sanitized.afterHtml).not.toContain('gear-slider.js');
+		expect(sanitized.afterHtml).not.toContain('renderAccountFavorites');
+	});
+
+	it('can drop unused template body HTML before serializing native slot shells', () => {
+		const document = splitAuxeroDocument(renderAuxeroTemplate('my-favorites.html')!);
+		const shellDocument = removeAuxeroPageDocumentBodyHtml(document);
+
+		expect(document.bodyHtml).toContain('window.__BOHEMCARS_RUNTIME__');
+		expect(shellDocument.bodyClass).toBe(document.bodyClass);
+		expect(shellDocument.headHtml).toBe(document.headHtml);
+		expect(shellDocument.bodyHtml).toBe('');
 	});
 
 	it('can split the customer listings table without dropping dashboard chrome', () => {
@@ -791,7 +856,8 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.sectionHtml).toContain(
 			'Какво проверява Bohemcars преди внос на автомобил от Канада'
 		);
-		expect(split?.sectionHtml).toContain('pagination__link active');
+		// Single page of posts: the fake "1 / Попитай" pagination row was removed.
+		expect(split?.sectionHtml).not.toContain('pagination__link');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});

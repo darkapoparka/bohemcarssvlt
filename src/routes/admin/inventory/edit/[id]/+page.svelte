@@ -15,12 +15,14 @@
 <AdminShell title={listing?.title ?? 'Listing not found'} activePath="/admin/inventory">
 	{#if listing}
 		<span class="sr-only">Edit Listing</span>
-		<AdminListingEditor
-			{listing}
-			{form}
-			notice={data.notice}
-			submitLabel={listing.source === 'admin-listing' ? 'Save changes' : 'Save draft copy'}
-		/>
+		{#key listing.id}
+			<AdminListingEditor
+				{listing}
+				{form}
+				notice={data.notice}
+				submitLabel={listing.source === 'admin-listing' ? 'Save changes' : 'Save draft copy'}
+			/>
+		{/key}
 	{:else}
 		<section class="grid gap-4 px-4 lg:px-6">
 			<Card.Root>

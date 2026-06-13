@@ -17,6 +17,24 @@ describe('vehicle data helpers', () => {
 		expect(getVehicleBySlug('21778068579001193')?.image).toBe('/assets/images/card/card-55.jpg');
 	});
 
+	it('uses a local fallback for the BMW X5 Black Vermilion blocked hotlink', () => {
+		const vehicle = getVehicleBySlug('21779118142363481');
+
+		expect(vehicle?.title).toBe('BMW X5 40i Black Vermilion');
+		expect(vehicle?.image).toBe('/assets/images/card/card-48.jpg');
+		expect(vehicle?.images).toEqual(['/assets/images/card/card-48.jpg']);
+		expect(vehicle?.gallery[0]).toBe('/assets/images/card/card-48.jpg');
+	});
+
+	it('uses a local fallback for the Mercedes GLS blocked hotlink', () => {
+		const vehicle = getVehicleBySlug('11777282776427940');
+
+		expect(vehicle?.title).toBe('Mercedes-Benz GLS 450 4M AMG Package');
+		expect(vehicle?.image).toBe('/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp');
+		expect(vehicle?.images).toEqual(['/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp']);
+		expect(vehicle?.gallery[0]).toBe('/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp');
+	});
+
 	it('keeps model facets focused on series names instead of trim text', () => {
 		expect(getVehicleBySlug('21764342419542174')?.model).toBe('X5');
 		expect(getVehicleBySlug('11778678187411931')?.title).toBe('BMW 740 Завиващ заден мост');

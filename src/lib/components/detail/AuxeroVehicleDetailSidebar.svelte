@@ -9,6 +9,7 @@
 		detail.contact.marketplacePhoneHref !== detail.contact.primaryPhoneHref ||
 			detail.contact.marketplacePhoneLabel !== detail.contact.primaryPhoneLabel
 	);
+	const directHref = (href: string) => ({ href });
 
 	const handleInquirySubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -30,7 +31,8 @@
 			// The prototype still confirms local capture if the API is unavailable.
 		}
 
-		inquiryStatus = 'Inquiry sent to Bohemcars locally';
+		inquiryStatus = detail.copy.inquirySuccess;
+		form.reset();
 	};
 </script>
 
@@ -39,13 +41,13 @@
 		<div class="flat-tabs">
 			<div class="mb-15 overflow-x-auto">
 				<ul class="menu-tab menu-tab-style5 grid-cols-2">
-					<li>{detail.copy.cash}</li>
-					<li class="active">{detail.copy.finance}</li>
+					<li class="active">{detail.copy.cash}</li>
+					<li>{detail.copy.finance}</li>
 				</ul>
 			</div>
 
 			<div class="content-tab visible">
-				<div class="content-inner">
+				<div class="content-inner active">
 					<p class="h5 mb-4">{detail.copy.price}</p>
 					<p class="h4 mb-4">{detail.priceLabel}</p>
 					<p class="text-secondary mb-16">
@@ -57,9 +59,24 @@
 						<a href={resolve('/contact')} class="text-underline text-highlight">{detail.priceBgn}</a
 						>
 					</p>
+
+					<div class="bohemcars-buybox-actions">
+						<a
+							href={resolve('/contact')}
+							class="btn btn-primary btn-medium font-weight-600 bohemcars-buybox-action"
+						>
+							{detail.copy.subjectViewing}
+						</a>
+						<a
+							{...directHref(detail.contact.primaryPhoneHref)}
+							class="btn btn-primary btn-medium font-weight-600 bohemcars-buybox-action"
+						>
+							{detail.copy.callCta}
+						</a>
+					</div>
 				</div>
 
-				<div class="content-inner active">
+				<div class="content-inner">
 					<p class="h5 mb-4">{detail.copy.price}</p>
 					<p class="h4 mb-4">{detail.monthlyLabel}</p>
 					<p class="text-secondary mb-4">
@@ -79,15 +96,15 @@
 						<div class="core-dropdown__menu" id="coreDropdownMenu">
 							<ul class="core-dropdown__list">
 								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Price:</p>
+									<p class="text-secondary text-sm">Цена:</p>
 									<p class="font-weight-600">$23.577</p>
 								</li>
 								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Special tax on motor vehicles:</p>
+									<p class="text-secondary text-sm">Специален данък върху МПС:</p>
 									<p class="font-weight-600">$1.322</p>
 								</li>
 								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Price with special tax:</p>
+									<p class="text-secondary text-sm">Цена със специален данък:</p>
 									<p class="font-weight-600">$24.900</p>
 								</li>
 							</ul>
@@ -106,7 +123,14 @@
 	<div class="listing-details--sidebar-box mb-40">
 		<div class="listing-details--contact">
 			<div class="listing-details--contact-dealer mb-28">
-				<img src={detail.consultant.image} alt="dealer" />
+				<img
+					src={detail.consultant.image}
+					alt="dealer"
+					width="96"
+					height="96"
+					loading="lazy"
+					decoding="async"
+				/>
 
 				<div class="content">
 					<a href={resolve('/contact')} class="h4 font-weight-600 mb-8">{detail.consultant.name}</a>
@@ -148,14 +172,18 @@
 			</ul>
 
 			<a
-				href={resolve('/agents/[slug]', { slug: detail.consultant.slug })}
+				{...directHref(detail.contact.primaryPhoneHref)}
 				class="btn btn-medium btn-primary-3 font-weight-600 mb-12 gap-5"
 			>
 				<img src="/assets/icons/PhoneCall-2.svg" alt="phone" />
 				{detail.copy.callBohemcars}
 			</a>
 
-			<a href={resolve('/contact')} class="btn btn-medium btn-primary-4 font-weight-600 gap-5">
+			<a
+				{...directHref(detail.contact.viberHref)}
+				class="btn btn-medium btn-primary-4 font-weight-600 gap-5"
+				rel="noreferrer"
+			>
 				<img src="/assets/icons/ChatCircleDots.svg" alt="phone" />
 				{detail.copy.chatOnViber}
 			</a>
@@ -254,3 +282,23 @@
 		</form>
 	</div>
 </div>
+
+<style>
+	.bohemcars-buybox-actions {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 10px;
+		margin-top: 18px;
+	}
+
+	.bohemcars-buybox-action {
+		min-height: 44px;
+		padding-inline: 18px;
+	}
+
+	@media (max-width: 1199px) {
+		.bohemcars-buybox-actions {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

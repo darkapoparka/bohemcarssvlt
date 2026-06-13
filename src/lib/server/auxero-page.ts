@@ -44,11 +44,19 @@ const injectedBodyClass = (bodyHtml: string) =>
 		.filter(Boolean)
 		.join(' ');
 
-const bodyScriptTags = (bodyHtml: string) =>
+type AuxeroBodyScriptTag = {
+	attributes: string;
+	content: string;
+	html: string;
+	src: string;
+};
+
+const bodyScriptTags = (bodyHtml: string): AuxeroBodyScriptTag[] =>
 	Array.from(bodyHtml.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi), (match) => ({
 		attributes: match[1] ?? '',
 		content: match[2] ?? '',
-		html: match[0] ?? ''
+		html: match[0] ?? '',
+		src: attributeValue(match[1] ?? '', 'src')
 	}));
 
 const serializedScriptPayload = (scripts: { attributes: string; content: string }[]) =>
@@ -65,13 +73,17 @@ export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
 
 	if (!scripts.length) return '';
 
+	const optionalBodyScriptSources = scripts
+		.map(({ attributes }) => attributeValue(attributes, 'src'))
+		.filter((src) => src.includes('code.jquery.com/ui/1.13.2/jquery-ui.min.js'));
+
 	return `<script>{
 	window.__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__ = (window.__BOHEMCARS_AUXERO_BODY_LOADER_EXECUTED__ || 0) + 1;
 	try {
 		window.localStorage.setItem('suggest_subscribe', window.localStorage.getItem('suggest_subscribe') || 'false');
 	} catch (error) {}
 	const bohemcarsBodyScripts = ${serializedScriptPayload(scripts)};
-	const bohemcarsOptionalBodyScriptSources = ['code.jquery.com/ui/1.13.2/jquery-ui.min.js'];
+	const bohemcarsOptionalBodyScriptSources = ${JSON.stringify(optionalBodyScriptSources).replace(/</g, '\\u003c')};
 	let bohemcarsBodyScriptsStarted = false;
 
 	const loadBohemcarsBodyScript = (definition) =>
@@ -126,7 +138,17 @@ export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
 	};
 
 	const startBohemcarsBodyScriptsAfterLoad = () => {
-		requestAnimationFrame(() => requestAnimationFrame(startBohemcarsBodyScripts));
+		// The load event can fire before SvelteKit finishes hydrating, and body
+		// scripts mutate Svelte-rendered DOM (menu, carousels, image fallbacks).
+		// Wait for the layout's hydration signal; the timeout keeps scripts
+		// loading if the Svelte runtime never hydrates.
+		if (document.documentElement.hasAttribute('data-bohemcars-hydrated')) {
+			requestAnimationFrame(() => requestAnimationFrame(startBohemcarsBodyScripts));
+			return;
+		}
+
+		window.addEventListener('bohemcars:hydrated', () => startBohemcarsBodyScripts(), { once: true });
+		window.setTimeout(startBohemcarsBodyScripts, 2500);
 	};
 	window.addEventListener('bohemcars:svelte-mounted', startBohemcarsBodyScripts, { once: true });
 	if (document.readyState === 'complete') {
@@ -137,7 +159,10 @@ export const extractAuxeroBodyScriptsHtml = (bodyHtml: string) => {
 }</script>`;
 };
 
-export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
+export const extractAuxeroRuntimeHtml = (
+	bodyHtml: string,
+	options: { waitForBodyScripts?: boolean } = {}
+) => {
 	const runtimeScript = bodyScriptTags(bodyHtml)
 		.filter(
 			(script) =>
@@ -146,6 +171,8 @@ export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
 		.at(-1);
 
 	if (!runtimeScript) return '';
+
+	const waitForBodyScripts = options.waitForBodyScripts ?? true;
 
 	return `<script${runtimeScript.attributes}>{
 	const setBohemcarsEarlyFormStatus = (form, message) => {
@@ -158,9 +185,47 @@ export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
 		}
 		status.textContent = message;
 	};
+	const bohemcarsEarlyFormConfig = (form) => {
+		if (form.matches('.bohemcars-contact-form')) {
+			return {
+				source: 'bohemcars-contact-form',
+				status: 'Съобщението е подготвено локално за Bohemcars',
+				url: '/api/inquiries'
+			};
+		}
+
+		if (form.matches('.bohemcars-blog-comment-form')) {
+			return {
+				source: 'bohemcars-blog-comment-form',
+				status: 'Comment saved locally for Bohemcars review',
+				url: '/api/messages'
+			};
+		}
+
+		if (form.matches('.bohemcars-sell-form')) {
+			return {
+				source: 'sell-your-car',
+				status: 'Заявката е подготвена. Bohemcars ще се свърже с вас.',
+				url: '/api/inventory/submissions'
+			};
+		}
+
+		if (form.matches('.bohemcars-service-form')) {
+			return {
+				source: 'bohemcars-service-form',
+				status: 'Service request queued locally for Bohemcars',
+				url: '/api/inquiries'
+			};
+		}
+
+		return undefined;
+	};
 	document.addEventListener('submit', (event) => {
 		const form = event.target;
-		if (!(form instanceof HTMLFormElement) || !form.matches('.bohemcars-contact-form')) return;
+		if (!(form instanceof HTMLFormElement)) return;
+
+		const config = bohemcarsEarlyFormConfig(form);
+		if (!config) return;
 
 		event.preventDefault();
 		event.stopImmediatePropagation();
@@ -169,22 +234,32 @@ export const extractAuxeroRuntimeHtml = (bodyHtml: string) => {
 				key,
 				typeof value === 'string' ? value : value.name
 			]));
-			fetch('/api/inquiries', {
-				body: JSON.stringify(payload),
+			fetch(config.url, {
+				body: JSON.stringify({
+					...payload,
+					routePath: window.location.pathname,
+					source: config.source
+				}),
 				credentials: 'same-origin',
 				headers: { 'content-type': 'application/json' },
 				method: 'POST'
 			}).catch(() => undefined);
 		} catch (_error) {}
-		setBohemcarsEarlyFormStatus(form, 'Съобщението е подготвено локално за Bohemcars');
+		setBohemcarsEarlyFormStatus(form, config.status);
 	}, true);
 	let bohemcarsRuntimeStarted = false;
+	const bohemcarsRuntimeWaitsForBodyScripts = ${JSON.stringify(waitForBodyScripts)};
 	const startBohemcarsRuntime = () => {
 		if (bohemcarsRuntimeStarted) return;
 		bohemcarsRuntimeStarted = true;
 ${runtimeScript.content}
 	};
 	const startBohemcarsRuntimeWhenScriptsLoad = () => {
+		if (!bohemcarsRuntimeWaitsForBodyScripts) {
+			startBohemcarsRuntime();
+			return;
+		}
+
 		if (window.__BOHEMCARS_BODY_SCRIPTS_LOADED__) {
 			startBohemcarsRuntime();
 			return;
@@ -192,11 +267,22 @@ ${runtimeScript.content}
 
 		window.addEventListener('bohemcars:scripts-loaded', startBohemcarsRuntime, { once: true });
 	};
+	const startBohemcarsRuntimeWhenSafe = () => {
+		// Same hydration guard as the body-script loader: the runtime swaps
+		// vehicle image sources and garage state inside Svelte-rendered DOM.
+		if (document.documentElement.hasAttribute('data-bohemcars-hydrated')) {
+			startBohemcarsRuntimeWhenScriptsLoad();
+			return;
+		}
+
+		window.addEventListener('bohemcars:hydrated', startBohemcarsRuntimeWhenScriptsLoad, { once: true });
+		window.setTimeout(startBohemcarsRuntimeWhenScriptsLoad, 2500);
+	};
 	window.addEventListener('bohemcars:svelte-mounted', startBohemcarsRuntimeWhenScriptsLoad, { once: true });
 	if (document.readyState === 'complete') {
-		startBohemcarsRuntimeWhenScriptsLoad();
+		startBohemcarsRuntimeWhenSafe();
 	} else {
-		window.addEventListener('load', startBohemcarsRuntimeWhenScriptsLoad, { once: true });
+		window.addEventListener('load', startBohemcarsRuntimeWhenSafe, { once: true });
 	}
 }</script>`;
 };
@@ -249,6 +335,24 @@ export function splitAuxeroBodySection(bodyHtml: string, startComment: string, e
 		sectionHtml: bodyHtml.slice(start, afterStart)
 	};
 }
+
+export const removeAuxeroScriptTags = (html: string) =>
+	html
+		.replace(/<script\b[\s\S]*?<\/script>\s*/gi, '')
+		.replace(/<!--(?:(?!-->)[\s\S])*?\.js(?:(?!-->)[\s\S])*?-->\s*/gi, '');
+
+export const removeAuxeroSlotScriptTags = (slot: AuxeroBodySlot): AuxeroBodySlot => ({
+	afterHtml: removeAuxeroScriptTags(slot.afterHtml),
+	beforeHtml: removeAuxeroScriptTags(slot.beforeHtml),
+	sectionHtml: removeAuxeroScriptTags(slot.sectionHtml)
+});
+
+export const removeAuxeroPageDocumentBodyHtml = (
+	pageDocument: AuxeroPageDocument
+): AuxeroPageDocument => ({
+	...pageDocument,
+	bodyHtml: ''
+});
 
 export function removeAuxeroBreadcrumb(html: string) {
 	return html.replace(

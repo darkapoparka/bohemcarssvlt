@@ -192,7 +192,9 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain(vehicles[0].title);
 		expect(html).toContain(vehicles[0].priceLabel);
 		expect(html).toContain('Bohemcars Vehicles');
-		expect(html).toContain('bohemcars-vehicle-pill car-box active');
+		expect(html).toContain('bohemcars-vehicle-pill car-box');
+		// Quick pills are navigational links; none carries a fake pre-selected state.
+		expect(html).not.toContain('bohemcars-vehicle-pill car-box active');
 		expect(html).toContain('Bohemcars by Budget');
 		expect(html).toContain('Bohemcars notes');
 		expect(html).toContain(bohemcarsContact.addressLabel);
@@ -288,6 +290,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(map).toContain('Точната локация за оглед се потвърждава по телефона');
 		expect(map).not.toContain('maps.googleapis.com/maps/api/js');
 		expect(map).not.toContain('/assets/js/maps.js');
+		expect(map).not.toContain('/assets/js/marker.js');
 		expect(map).not.toContain('/assets/js/infobox.min.js');
 	});
 
@@ -675,6 +678,19 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(html).toContain("headers['x-bohemcars-prototype-role'] = prototypeRole");
 		expect(html).toContain('...(prototypeRole ? { role: prototypeRole } : {})');
 		expect(html).toContain("prototypeRole ? '?role=' + encodeURIComponent(prototypeRole) : ''");
+	});
+
+	it('scopes generated runtime listeners so route replays replace previous handlers', () => {
+		const html = renderAuxeroTemplate('listing-grid3-columns.html');
+
+		expect(html).toContain('window.__BOHEMCARS_RUNTIME_ABORT_CONTROLLER__');
+		expect(html).toContain('previousRuntimeController.abort()');
+		expect(html).toContain('runtimeCaptureListenerOptions');
+		expect(html).toContain('runtimeListenerOptions');
+		expect(html).toContain("!table.hasAttribute('data-bohemcars-svelte-compare-table')");
+		expect(html).toContain("document.addEventListener('click', (event) => {");
+		expect(html).toContain('}, runtimeCaptureListenerOptions);');
+		expect(html).toContain('}, runtimeListenerOptions);');
 	});
 
 	it('wires preserved global search forms to Bohemcars inventory search', () => {

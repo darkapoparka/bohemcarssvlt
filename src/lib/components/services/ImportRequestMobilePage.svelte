@@ -62,12 +62,6 @@
 			<h1 id="import-mobile-title">{importRequestMobileCopy.title}</h1>
 			<span>{importRequestMobileCopy.intro}</span>
 		</div>
-		<img
-			src="/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp"
-			alt=""
-			aria-hidden="true"
-			loading="lazy"
-		/>
 	</section>
 
 	<section class="bohemcars-import-mobile__form-section" aria-labelledby="import-mobile-form-title">
@@ -110,13 +104,13 @@
 				<PhoneCall size={18} strokeWidth={2.25} aria-hidden="true" />
 				Обади се
 			</a>
-			<a href={resolve('/calculator')}>
-				<Calculator size={18} strokeWidth={2.25} aria-hidden="true" />
-				Калкулатор
-			</a>
 			<a {...hrefAttributes(bohemcarsContact.viberHref)}>
 				<MessageCircle size={18} strokeWidth={2.25} aria-hidden="true" />
 				Пиши ни
+			</a>
+			<a class="bohemcars-import-mobile__process-calc" href={resolve('/calculator')}>
+				<Calculator size={18} strokeWidth={2.25} aria-hidden="true" />
+				Изчисли разходите в калкулатора
 			</a>
 		</footer>
 	</section>
@@ -135,33 +129,18 @@
 		padding: 0 14px 92px;
 	}
 
-	/* Green chrome: flat brand green hero with dark ink and the vehicle cutout,
-	   matching the homepage language instead of a dark photo banner. */
+	/* Green chrome: flat brand green hero with dark ink, matching the homepage
+	   language; typography carries it, no cropped cutout. */
 	.bohemcars-import-mobile__intro {
 		position: relative;
 		display: grid;
-		min-height: 230px;
 		align-content: start;
 		overflow: hidden;
 		margin: 0 -14px;
 		/* Extra bottom room — the form card docks into the green below. */
-		padding: 84px 148px 66px 14px;
+		padding: 84px 14px 66px;
 		background: #8fca1a;
 		color: #14210f;
-	}
-
-	.bohemcars-import-mobile__intro img {
-		position: absolute;
-		right: -42px;
-		bottom: 52px;
-		z-index: 1;
-		display: block;
-		width: 194px;
-		max-width: none;
-		height: auto;
-		object-fit: contain;
-		pointer-events: none;
-		user-select: none;
 	}
 
 	.bohemcars-import-mobile__intro-copy {
@@ -177,7 +156,7 @@
 		margin: 0;
 		color: #14210f;
 		font-size: 27px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 31px;
 	}
@@ -187,7 +166,7 @@
 		max-width: 300px;
 		color: rgba(20, 33, 15, 0.78);
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 18px;
 	}
 
@@ -217,7 +196,7 @@
 		margin: 0;
 		color: #111111;
 		font-size: 19px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 23px;
 	}
@@ -304,7 +283,7 @@
 		color: #ffffff !important;
 		cursor: pointer;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 19px;
 	}
 
@@ -324,14 +303,15 @@
 		line-height: 18px;
 	}
 
-	/* One substantial dark process card (home's consultation-card language)
-	   instead of three near-empty white strips and an orphan chip row. */
+	/* One substantial process card in the site's white flat-card language —
+	   green accent pills carry the brand, same as the calculator budget rows. */
 	.bohemcars-import-mobile__process {
 		display: grid;
 		gap: 14px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #171f13;
-		color: #ffffff;
+		background: #ffffff;
+		color: #111111;
 		padding: 18px 16px;
 	}
 
@@ -344,9 +324,9 @@
 
 	.bohemcars-import-mobile__process h2 {
 		margin: 0;
-		color: #ffffff;
+		color: #111111;
 		font-size: 20px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 25px;
 	}
@@ -354,8 +334,8 @@
 	.bohemcars-import-mobile__process header span {
 		flex: 0 0 auto;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.2);
-		color: var(--bc-accent-bright-soft);
+		background: rgba(143, 202, 26, 0.18);
+		color: #3a540e;
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 17px;
@@ -377,10 +357,10 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.18);
-		color: var(--bc-accent-bright-soft);
+		background: rgba(143, 202, 26, 0.18);
+		color: #3a540e;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 1;
 	}
 
@@ -391,7 +371,7 @@
 	}
 
 	.bohemcars-import-mobile__process h3 {
-		color: #ffffff;
+		color: #111111;
 		font-size: 16px;
 		font-weight: 700;
 		line-height: 21px;
@@ -399,15 +379,17 @@
 
 	.bohemcars-import-mobile__process article p {
 		margin-top: 4px;
-		color: rgba(255, 255, 255, 0.8);
+		color: #56635a;
 		font-size: 14.5px;
 		font-weight: 500;
 		line-height: 20px;
 	}
 
+	/* Two contact actions max; the calculator is a quiet full-width next step
+	   underneath instead of a third squeezed button. */
 	.bohemcars-import-mobile__process footer {
 		display: grid;
-		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) minmax(0, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 8px;
 		margin-top: 2px;
 	}
@@ -418,12 +400,12 @@
 		min-width: 0;
 		align-items: center;
 		justify-content: center;
-		gap: 6px;
+		gap: 8px;
 		overflow: hidden;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: rgba(255, 255, 255, 0.08);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-		color: #ffffff;
+		background: var(--bc-surface-soft);
+		color: #111111;
 		font-size: 14px;
 		font-weight: 700;
 		line-height: 18px;
@@ -433,9 +415,17 @@
 	}
 
 	.bohemcars-import-mobile__process footer a:first-child {
+		border-color: transparent;
 		background: var(--bc-accent-bright-soft);
-		box-shadow: none;
 		color: #14210f;
+	}
+
+	.bohemcars-import-mobile__process-calc {
+		grid-column: 1 / -1;
+		min-height: 44px !important;
+		border: 0 !important;
+		background: transparent !important;
+		color: #3a540e !important;
 	}
 
 	.bohemcars-import-mobile__process footer a :global(svg),
@@ -445,19 +435,10 @@
 	}
 
 	@media (max-width: 374px) {
-		.bohemcars-import-mobile__intro {
-			min-height: 222px;
-			padding-right: 118px;
-		}
-
 		.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form input),
 		.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form select) {
 			font-size: 15px !important;
 			padding: 0 10px !important;
-		}
-
-		.bohemcars-import-mobile__intro img {
-			right: -78px;
 		}
 	}
 

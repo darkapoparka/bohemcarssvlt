@@ -18,6 +18,7 @@
 		children: Snippet;
 		copy: HomePageCopy;
 		footer?: HomeFiveFooterData;
+		hasLocationSheet?: boolean;
 		header?: HomeFiveHeaderData;
 		hideMobileLogo?: boolean;
 		mainClass?: string;
@@ -32,6 +33,7 @@
 		children,
 		copy,
 		footer,
+		hasLocationSheet = false,
 		header,
 		hideMobileLogo = false,
 		mainClass = '',
@@ -67,7 +69,7 @@
 </svelte:element>
 
 <div id="wrapper" class="bohemcars-public-shell">
-	<HomeFiveHeader {header} {hideMobileLogo} />
+	<HomeFiveHeader {header} {hasLocationSheet} {hideMobileLogo} />
 	<main id={mainId} class={mainClass}>
 		{@render children()}
 	</main>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { GitCompare, Heart, Menu, Plus, Search, User, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { bohemcarsAssets, isPrimaryNavActive, mainNavigation } from '$lib/data/bohemcars';
@@ -18,14 +19,12 @@
 
 	const navItems = mainNavigation;
 
-	function submitSearch(event: SubmitEvent) {
+	async function submitSearch(event: SubmitEvent) {
 		event.preventDefault();
 		const query = searchQuery.trim();
-		const inventoryHref = resolve('/inventory');
+		const target = query ? `/inventory?q=${encodeURIComponent(query)}` : '/inventory';
 		searchOpen = false;
-		window.location.assign(
-			query ? `${inventoryHref}?q=${encodeURIComponent(query)}` : inventoryHref
-		);
+		await goto(resolve(target as `/inventory${string}`));
 	}
 </script>
 
@@ -292,7 +291,7 @@
 		background: #b9ee39;
 		color: #1c1c1c;
 		font-size: 0.68rem;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	.site-header__menu {

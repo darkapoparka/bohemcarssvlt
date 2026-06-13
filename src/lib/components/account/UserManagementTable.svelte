@@ -400,7 +400,7 @@
 	.cart-header.bohemcars-users-table-grid p {
 		color: #53613a;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		line-height: 15px;
 		text-transform: uppercase;
 	}
@@ -479,7 +479,7 @@
 		border-radius: 999px;
 		padding: 0 10px;
 		font-size: 12px;
-		font-weight: 850;
+		font-weight: 800;
 		line-height: 15px;
 		white-space: nowrap;
 	}

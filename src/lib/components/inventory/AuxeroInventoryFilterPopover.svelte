@@ -24,6 +24,7 @@
 		presentation?: AuxeroInventoryDesktopData['filterPresentation'];
 	} = $props();
 
+	const uid = $props.id();
 	const inputType = $derived(filter.mode === 'single' ? 'radio' : 'checkbox');
 	const allSelected = $derived(filter.selectedValues.length === 0);
 	const hasImages = $derived(filter.options.some((option) => option.image));
@@ -267,7 +268,9 @@
 				<Search size={17} strokeWidth={2.1} aria-hidden="true" />
 				<input
 					type="search"
+					id={`${uid}-filter-search`}
 					autocomplete="off"
+					aria-label={`Търси ${filter.label.toLowerCase()}`}
 					placeholder={`Търси ${filter.label.toLowerCase()}...`}
 					bind:value={query}
 					onkeydown={onSearchKeydown}
@@ -655,7 +658,7 @@
 		background: var(--bc-popover-mono-bg);
 		color: var(--bc-white);
 		font-size: 15px;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	.ifp__chiplabel {

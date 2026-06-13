@@ -243,7 +243,7 @@
 		color: #343840;
 		display: inline-flex;
 		font-size: 12px;
-		font-weight: 900;
+		font-weight: 800;
 		gap: 5px;
 		line-height: 1.1;
 		margin-top: 8px;
@@ -338,7 +338,7 @@
 
 	.home2-deal-card__monthly {
 		font-size: 13px;
-		font-weight: 900;
+		font-weight: 800;
 	}
 
 	.home2-deal-card__arrow {

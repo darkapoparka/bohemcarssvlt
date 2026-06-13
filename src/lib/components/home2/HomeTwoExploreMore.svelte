@@ -372,7 +372,7 @@
 	.home2-body-grid small {
 		color: #626067;
 		font-size: 12px;
-		font-weight: 850;
+		font-weight: 800;
 	}
 
 	.home2-type-head {

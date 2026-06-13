@@ -185,23 +185,20 @@
 	--bc-motion-drawer: 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Restore the design-system display font for headings.
-   app.css sets `* { font-family: Manrope }`, which silently overrides the intended
-   --bc-font-heading (Albert Sans) on every heading. Element/class selectors below
-   beat the universal selector by specificity (no !important needed), giving headings
-   the intended display font and proper display/body contrast. */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
+/* Restore the Bohemcars display font only on non-Auxero surfaces.
+   Auxero template pages keep the template typography contract. */
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h1,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h2,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h3,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h4,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h5,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) h6,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h1,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h2,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h3,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h4,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h5,
+body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h6 {
 	font-family: var(--bc-font-heading);
 }
 

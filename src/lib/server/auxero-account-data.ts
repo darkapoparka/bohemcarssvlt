@@ -1032,7 +1032,7 @@ const applyProfileData = (
 		next,
 		'My profile',
 		'bohemcars-profile-form',
-		' data-bohemcars-profile-form'
+		' method="POST" data-bohemcars-profile-form'
 	);
 	next = next.replace(
 		'</form>',
@@ -1061,7 +1061,7 @@ const applyPasswordData = (
 		next,
 		'Change Password',
 		'bohemcars-password-form',
-		' data-bohemcars-password-form'
+		' method="POST" data-bohemcars-password-form'
 	);
 
 	return replaceDashboardDemoText(next);

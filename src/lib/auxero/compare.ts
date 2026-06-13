@@ -28,9 +28,34 @@ export type AuxeroCompareRow = {
 	values: string[];
 };
 
+export type AuxeroCompareRowGroup = {
+	open: boolean;
+	rows: AuxeroCompareRow[];
+	title: string;
+};
+
+export type AuxeroCompareBrandOption = {
+	brand: string;
+	count: number;
+};
+
+export type CompareDrawerFilterOptions = {
+	brand: string;
+	locale: Locale;
+	query: string;
+	selectedSlugs: string[];
+	vehicles: AuxeroCompareVehicle[];
+};
+
 const compareFallback = (locale: Locale) => (locale === 'bg' ? 'По запитване' : 'On request');
 
+// Listing data stores the literal English placeholder; treat it as missing so
+// the Bulgarian table shows "По запитване" instead of a stray "On request".
+const compareValue = (value: string | undefined | null, locale: Locale) =>
+	!value || value === 'On request' ? compareFallback(locale) : value;
+
 const compareImageOverrides: Record<string, string> = {
+	'11774283016080050': '/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp',
 	'21764342419542174': '/assets/bohemcars/megamenu/inventory-bmw-x5-cutout.webp',
 	'21778068579001193': '/assets/bohemcars/megamenu/inventory-bmw-x4m-cutout-v2.webp'
 };
@@ -41,11 +66,11 @@ export const compareVehiclesFromVehicles = (
 ): AuxeroCompareVehicle[] =>
 	vehicles.map((vehicle) => ({
 		brand: vehicle.brand,
-		engine: vehicle.engine || compareFallback(locale),
-		exterior: vehicle.exterior || compareFallback(locale),
+		engine: compareValue(vehicle.engine, locale),
+		exterior: compareValue(vehicle.exterior, locale),
 		fuel: translateVehicleTerm(locale, 'fuels', vehicle.fuel),
 		image: compareImageOverrides[vehicle.slug] ?? vehicle.image,
-		interior: vehicle.interior || compareFallback(locale),
+		interior: compareValue(vehicle.interior, locale),
 		location: vehicle.location,
 		mileageLabel: formatInventoryKm(vehicle.mileage),
 		model: vehicle.model,
@@ -111,7 +136,7 @@ export const compareRowsFromVehicles = (
 		values: vehicles.map((vehicle) => vehicle.transmission)
 	},
 	{
-		alt: locale === 'bg' ? 'id от източника' : 'source id',
+		alt: locale === 'bg' ? 'ID от източника' : 'source id',
 		icon: 'VIN.svg',
 		label: locale === 'bg' ? 'ID от източника' : 'Source ID',
 		values: vehicles.map((vehicle) => vehicle.vin)
@@ -129,3 +154,93 @@ export const compareRowsFromVehicles = (
 		values: vehicles.map((vehicle) => vehicle.priceLabel)
 	}
 ];
+
+export const compareRowGroups = (
+	sourceRows: AuxeroCompareRow[],
+	locale: Locale,
+	firstGroupOpen = true
+): AuxeroCompareRowGroup[] => {
+	const pickRows = (indexes: number[]) =>
+		indexes
+			.map((index) => sourceRows[index])
+			.filter((row): row is AuxeroCompareRow => Boolean(row));
+
+	return [
+		{
+			open: firstGroupOpen,
+			rows: pickRows([10, 0, 1, 2]),
+			title: locale === 'bg' ? 'Основни' : 'Core'
+		},
+		{
+			open: false,
+			rows: pickRows([6, 7, 3, 5]),
+			title: locale === 'bg' ? 'Техника' : 'Technical'
+		},
+		{
+			open: false,
+			rows: pickRows([4, 8, 9]),
+			title: locale === 'bg' ? 'Произход' : 'Source'
+		}
+	].filter((group) => group.rows.length > 0);
+};
+
+export const compareBrandOptions = (
+	vehicles: AuxeroCompareVehicle[],
+	locale: Locale
+): AuxeroCompareBrandOption[] => {
+	const brandCounts: Record<string, number> = {};
+
+	for (const vehicle of vehicles) {
+		brandCounts[vehicle.brand] = (brandCounts[vehicle.brand] ?? 0) + 1;
+	}
+
+	return Object.entries(brandCounts)
+		.map(([brand, count]) => ({ brand, count }))
+		.sort((left, right) => left.brand.localeCompare(right.brand, locale));
+};
+
+export const filterCompareDrawerVehicles = ({
+	brand,
+	locale,
+	query,
+	selectedSlugs,
+	vehicles
+}: CompareDrawerFilterOptions) => {
+	const normalizedQuery = query.trim().toLocaleLowerCase();
+
+	return vehicles
+		.filter((vehicle) => {
+			const matchesBrand = !brand || vehicle.brand === brand;
+			const matchesQuery =
+				!normalizedQuery ||
+				[vehicle.title, vehicle.brand, vehicle.model, vehicle.year, vehicle.priceLabel]
+					.join(' ')
+					.toLocaleLowerCase()
+					.includes(normalizedQuery);
+
+			return matchesBrand && matchesQuery;
+		})
+		.sort((left, right) => {
+			const leftSelected = selectedSlugs.includes(left.slug) ? 0 : 1;
+			const rightSelected = selectedSlugs.includes(right.slug) ? 0 : 1;
+
+			return leftSelected - rightSelected || left.title.localeCompare(right.title, locale);
+		});
+};
+
+export const compareRowValuesForSlots = (
+	row: AuxeroCompareRow,
+	slotSlugs: (string | null | undefined)[],
+	emptyValue: string
+) => {
+	let valueIndex = 0;
+
+	return slotSlugs.map((slug) => {
+		if (!slug) return emptyValue;
+
+		const value = row.values[valueIndex] ?? emptyValue;
+		valueIndex += 1;
+
+		return value;
+	});
+};

@@ -17,11 +17,7 @@ import { parseAuxeroHeadAssets } from '$lib/auxero/page-document';
 import { posts } from '$lib/data/blog';
 import { vehicles } from '$lib/data/vehicles';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
-import {
-	extractAuxeroBodyScriptsHtml,
-	extractAuxeroRuntimeHtml,
-	renderAuxeroPageDocument
-} from '$lib/server/auxero-page';
+import { extractAuxeroRuntimeHtml, renderAuxeroPageDocument } from '$lib/server/auxero-page';
 
 const escapeHeadAttribute = (value: string) =>
 	value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -30,8 +26,9 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 	const locale = resolveLocale(url.searchParams.get('lang'));
 	const activeHeroMode = resolveHomeFiveHeroActionMode(url.searchParams.get('intent'));
 	const messages = getMessages(locale);
+	const templateFile = 'home-05.html';
 	const pageDocument = renderAuxeroPageDocument(
-		'home-05.html',
+		templateFile,
 		{
 			request,
 			routePath: '',
@@ -39,12 +36,9 @@ export const buildHomeFivePageData = ({ request, url }: { request: Request; url:
 		},
 		'Home 05 template could not be rendered'
 	);
-	const runtimeHtml = [
-		extractAuxeroBodyScriptsHtml(pageDocument.bodyHtml),
-		extractAuxeroRuntimeHtml(pageDocument.bodyHtml)
-	]
-		.filter(Boolean)
-		.join('\n');
+	const runtimeHtml = extractAuxeroRuntimeHtml(pageDocument.bodyHtml, {
+		waitForBodyScripts: false
+	});
 
 	// Feature only cars that carry a genuine remote listing photo so the homepage
 	// card grid reads as one consistent set of real photos. Cars whose source photo

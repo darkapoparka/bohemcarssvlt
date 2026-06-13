@@ -2,11 +2,11 @@
 	import { resolve } from '$app/paths';
 	import {
 		ArrowRight,
+		Camera,
 		MapPin,
 		MessageCircle,
 		Navigation,
 		PhoneCall,
-		Plus,
 		X
 	} from '@lucide/svelte';
 	import type {
@@ -15,7 +15,9 @@
 		AuxeroSellCarMobileStep
 	} from '$lib/auxero/sell-your-car';
 	import { bohemcarsContact } from '$lib/data/bohemcars';
+	import { Drawer } from 'vaul-svelte';
 	import MobileAppbar from '$lib/components/layout/MobileAppbar.svelte';
+	import SellCarWizard from './SellCarWizard.svelte';
 
 	let {
 		copy,
@@ -28,6 +30,16 @@
 	} = $props();
 
 	let submitted = $state(false);
+	let wizardOpen = $state(false);
+	/* Editable copies of the fast-form values so the wizard can prefill
+	   from whatever the visitor already typed. */
+	// svelte-ignore state_referenced_locally
+	let fieldValues = $state(
+		Object.fromEntries(form.fields.map((field) => [field.name, field.value ?? ''])) as Record<
+			string,
+			string
+		>
+	);
 
 	const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
 		bohemcarsContact.addressLabel
@@ -43,14 +55,6 @@
 </script>
 
 <div class="bohemcars-sell-mobile">
-	<input
-		id="sell-mobile-form-toggle"
-		class="bohemcars-sell-mobile__sheet-toggle"
-		type="checkbox"
-		autocomplete="off"
-		tabindex="-1"
-		aria-hidden="true"
-	/>
 	<input
 		id="sell-mobile-location-toggle"
 		class="bohemcars-sell-mobile__sheet-toggle"
@@ -86,12 +90,6 @@
 				<h1 id="sell-mobile-title">{copy.title}</h1>
 				<span>Изпрати VIN, пробег и телефон — екипът връща реален следващ ход.</span>
 			</div>
-			<img
-				src="/assets/bohemcars/home2/home2-action-sell.webp"
-				alt=""
-				aria-hidden="true"
-				loading="lazy"
-			/>
 		</section>
 
 		<form
@@ -104,14 +102,6 @@
 					<strong>{copy.submitLabel}</strong>
 					<span>VIN, пробег, цена и телефон</span>
 				</div>
-				<label
-					for="sell-mobile-form-toggle"
-					aria-label="Отвори голяма форма"
-					aria-controls="sell-mobile-form-sheet"
-					aria-haspopup="dialog"
-				>
-					<Plus size={18} strokeWidth={2.5} aria-hidden="true" />
-				</label>
 			</header>
 
 			<div class="bohemcars-sell-mobile__inline-fields">
@@ -130,7 +120,7 @@
 							required={field.required}
 							autocomplete={field.autocomplete}
 							inputmode={field.inputMode}
-							value={field.value ?? ''}
+							bind:value={fieldValues[field.name]}
 						/>
 					</label>
 				{/each}
@@ -139,6 +129,15 @@
 			<button class="bohemcars-sell-mobile__inline-submit" type="submit">
 				{copy.submitLabel}
 				<ArrowRight size={18} strokeWidth={2.3} aria-hidden="true" />
+			</button>
+
+			<button
+				class="bohemcars-sell-mobile__wizard-cta"
+				type="button"
+				onclick={() => (wizardOpen = true)}
+			>
+				<Camera size={17} strokeWidth={2.2} aria-hidden="true" />
+				Добави снимки и детайли — по-точна оферта
 			</button>
 
 			{#if submitted}
@@ -223,59 +222,24 @@
 		</div>
 	</div>
 
-	<div
-		id="sell-mobile-form-sheet"
-		class="bohemcars-sell-mobile-sheet"
-		role="dialog"
-		aria-modal="true"
-		aria-labelledby="sell-mobile-form-title"
-	>
-		<label
-			for="sell-mobile-form-toggle"
-			class="bohemcars-sell-mobile-sheet__backdrop"
-			aria-label="Затвори заявката"
-		></label>
-		<form class="bohemcars-sell-mobile-sheet__panel" onsubmit={handleSubmit}>
-			<span class="bohemcars-sell-mobile-sheet__handle" aria-hidden="true"></span>
-			<header class="bohemcars-sell-mobile-sheet__header">
-				<div>
-					<h2 id="sell-mobile-form-title">{copy.formTitle}</h2>
-				</div>
-				<label for="sell-mobile-form-toggle" aria-label="Затвори">
-					<X size={20} strokeWidth={2.3} aria-hidden="true" />
-				</label>
-			</header>
-
-			<div class="bohemcars-sell-mobile__fields">
-				{#each form.fields as field (field.id)}
-					<label for={`mobile-${field.id}`}>
-						<span>{field.mobileLabel}</span>
-						<input
-							id={`mobile-${field.id}`}
-							name={field.name}
-							type={field.type}
-							placeholder={field.mobilePlaceholder}
-							required={field.required}
-							autocomplete={field.autocomplete}
-							inputmode={field.inputMode}
-							value={field.value ?? ''}
-						/>
-					</label>
-				{/each}
-			</div>
-
-			<button class="bohemcars-sell-mobile__submit" type="submit">
-				{copy.submitLabel}
-				<ArrowRight size={19} strokeWidth={2.25} aria-hidden="true" />
-			</button>
-
-			{#if submitted}
-				<p class="bohemcars-sell-mobile__status">
-					{copy.statusMessage}
-				</p>
-			{/if}
-		</form>
-	</div>
+	<Drawer.Root bind:open={wizardOpen} direction="bottom" fixed={true}>
+		<Drawer.Overlay class="bohemcars-sell-wizard-drawer__backdrop">
+			<span>Затвори</span>
+		</Drawer.Overlay>
+		<Drawer.Content class="bohemcars-sell-wizard-drawer__sheet">
+			<Drawer.Handle class="bohemcars-sell-wizard-drawer__handle" />
+			<Drawer.Title class="bohemcars-sell-wizard-drawer__title">Снимки и детайли</Drawer.Title>
+			<SellCarWizard
+				initial={{
+					mileage: fieldValues.mileage,
+					phone: fieldValues.phone,
+					price: fieldValues.price,
+					vin: fieldValues.vin
+				}}
+				onclose={() => (wizardOpen = false)}
+			/>
+		</Drawer.Content>
+	</Drawer.Root>
 </div>
 
 <style>
@@ -301,34 +265,19 @@
 		padding: 0 14px 92px;
 	}
 
-	/* Green chrome: the hero speaks the homepage language — flat brand green,
-	   dark ink, vehicle cutout — instead of a dark photo banner. */
+	/* Green chrome: the hero speaks the homepage language — flat brand green
+	   with dark ink; typography carries it, no cropped cutout. */
 	.bohemcars-sell-mobile__intro {
 		position: relative;
 		display: grid;
-		min-height: 230px;
 		align-content: start;
 		gap: 0;
 		overflow: hidden;
 		margin: 0 -14px;
 		/* Extra bottom room — the form card docks into the green below. */
-		padding: 84px 148px 66px 14px;
+		padding: 84px 14px 66px;
 		background: #8fca1a;
 		color: #14210f;
-	}
-
-	.bohemcars-sell-mobile__intro img {
-		position: absolute;
-		right: -44px;
-		bottom: 50px;
-		z-index: 1;
-		display: block;
-		width: 198px;
-		max-width: none;
-		height: auto;
-		object-fit: contain;
-		pointer-events: none;
-		user-select: none;
 	}
 
 	.bohemcars-sell-mobile__intro-copy {
@@ -354,7 +303,7 @@
 		margin: 0;
 		color: #14210f;
 		font-size: 27px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 31px;
 	}
@@ -364,7 +313,7 @@
 		max-width: 300px;
 		color: rgba(20, 33, 15, 0.78);
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 18px;
 	}
 
@@ -414,7 +363,7 @@
 	.bohemcars-sell-mobile__inline-header strong {
 		color: #111111;
 		font-size: 19px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 23px;
 	}
 
@@ -423,19 +372,6 @@
 		font-size: 13px;
 		font-weight: 600;
 		line-height: 17px;
-	}
-
-	.bohemcars-sell-mobile__inline-header label {
-		display: flex;
-		width: 42px;
-		height: 42px;
-		flex: 0 0 42px;
-		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		background: #eff3f0;
-		color: #111111;
-		cursor: pointer;
 	}
 
 	.bohemcars-sell-mobile__inline-fields {
@@ -499,67 +435,106 @@
 		background: #1c1c1c;
 		color: #ffffff;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 19px;
 	}
 
-	.bohemcars-sell-mobile__fields {
-		display: grid;
-		gap: 9px;
-	}
-
-	.bohemcars-sell-mobile__fields label {
-		display: grid;
-		gap: 6px;
-		margin: 0;
-	}
-
-	.bohemcars-sell-mobile__fields span {
-		color: #111111;
-		font-size: 14px;
-		font-weight: 600;
-		line-height: 18px;
-	}
-
-	.bohemcars-sell-mobile__fields input {
-		display: block;
-		width: 100%;
-		height: 48px !important;
-		border: 1px solid var(--bc-border) !important;
-		border-radius: 8px !important;
-		background: #ffffff !important;
-		box-shadow: none !important;
-		color: #111111;
-		font-size: 16px;
-		font-weight: 500;
-		line-height: 22px;
-		outline: 0;
-		padding: 0 13px !important;
-	}
-
-	.bohemcars-sell-mobile__fields input::placeholder {
-		color: #9ba0a5;
-		opacity: 1;
-	}
-
-	.bohemcars-sell-mobile__fields input:focus-visible {
-		border-color: #8fbd24 !important;
-	}
-
-	.bohemcars-sell-mobile__submit {
+	/* Quiet "add" affordance — dashed border signals the optional deep path. */
+	.bohemcars-sell-mobile__wizard-cta {
 		display: flex;
 		width: 100%;
-		min-height: 50px;
+		min-height: 46px;
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
-		border: 0;
+		margin-top: -2px;
+		border: 1px dashed #c9d3c2;
 		border-radius: 8px;
-		background: #1c1c1c;
-		color: #ffffff;
-		font-size: 16px;
+		background: transparent;
+		color: #3a540e;
+		cursor: pointer;
+		font-size: 14px;
 		font-weight: 700;
-		line-height: 20px;
+		line-height: 18px;
+		padding: 0 12px;
+	}
+
+	.bohemcars-sell-mobile__wizard-cta :global(svg),
+	.bohemcars-sell-mobile__wizard-cta :global(svg *) {
+		color: currentColor;
+		stroke: currentColor;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__backdrop) {
+		position: fixed;
+		inset: 0;
+		z-index: 1200;
+		border: 0;
+		background: rgba(17, 17, 17, 0.38);
+		cursor: pointer;
+		padding: 0;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__backdrop span),
+	:global(.bohemcars-sell-wizard-drawer__title) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__sheet) {
+		position: fixed;
+		right: 0;
+		/* vaul repositions the sheet itself when the mobile keyboard opens. */
+		bottom: 0;
+		left: 0;
+		z-index: 1201;
+		display: grid;
+		grid-template-rows: max-content minmax(0, 1fr);
+		gap: 6px;
+		height: min(92dvh, 760px);
+		overflow: hidden;
+		border-radius: 20px 20px 0 0;
+		background: var(--bc-bg);
+		outline: 0;
+		padding: 10px 14px max(16px, env(safe-area-inset-bottom));
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__sheet .bc-sell-wizard) {
+		min-height: 0;
+		overflow-y: auto;
+		padding-bottom: 4px;
+		scrollbar-width: none;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__sheet .bc-sell-wizard)::-webkit-scrollbar {
+		display: none;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__handle) {
+		position: relative;
+		display: block;
+		width: 56px;
+		height: 22px;
+		justify-self: center;
+		border-radius: 0;
+		background: transparent;
+		opacity: 1;
+	}
+
+	:global(.bohemcars-sell-wizard-drawer__handle)::after {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 42px;
+		height: 4px;
+		transform: translate(-50%, -50%);
+		border-radius: 999px;
+		background: var(--bc-border);
+		content: '';
 	}
 
 	.bohemcars-sell-mobile__status {
@@ -578,7 +553,6 @@
 		pointer-events: none;
 	}
 
-	#sell-mobile-form-toggle:checked ~ #sell-mobile-form-sheet,
 	#sell-mobile-location-toggle:checked ~ #sell-mobile-location-sheet {
 		visibility: visible;
 		pointer-events: auto;
@@ -595,7 +569,6 @@
 		transition: opacity 180ms ease;
 	}
 
-	#sell-mobile-form-toggle:checked ~ #sell-mobile-form-sheet .bohemcars-sell-mobile-sheet__backdrop,
 	#sell-mobile-location-toggle:checked
 		~ #sell-mobile-location-sheet
 		.bohemcars-sell-mobile-sheet__backdrop {
@@ -605,11 +578,12 @@
 	.bohemcars-sell-mobile-sheet__panel {
 		position: absolute;
 		right: 0;
-		bottom: 0;
+		/* Lifted above the on-screen keyboard on iOS; --bc-kb-inset stays 0 elsewhere. */
+		bottom: var(--bc-kb-inset, 0px);
 		left: 0;
 		display: grid;
 		gap: 12px;
-		max-height: min(88dvh, 720px);
+		max-height: min(calc(88dvh - var(--bc-kb-inset, 0px)), 720px);
 		overflow-y: auto;
 		border: 0;
 		border-top: 1px solid var(--bc-border);
@@ -621,7 +595,6 @@
 		transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	#sell-mobile-form-toggle:checked ~ #sell-mobile-form-sheet .bohemcars-sell-mobile-sheet__panel,
 	#sell-mobile-location-toggle:checked
 		~ #sell-mobile-location-sheet
 		.bohemcars-sell-mobile-sheet__panel {
@@ -758,7 +731,7 @@
 		background: #1c1c1c;
 		color: #ffffff;
 		font-size: 12px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 16px;
 		padding: 7px 10px;
 	}
@@ -789,7 +762,7 @@
 	.bohemcars-sell-mobile__location-copy strong {
 		color: #111111;
 		font-size: 17px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 22px;
 	}
 
@@ -824,14 +797,15 @@
 		background: var(--bc-accent-bright-soft);
 	}
 
-	/* One substantial dark process card (home's consultation-card language)
-	   instead of three near-empty white strips and an orphan chip row. */
+	/* One substantial process card in the site's white flat-card language —
+	   green accent pills carry the brand, same as the calculator budget rows. */
 	.bohemcars-sell-mobile__process {
 		display: grid;
 		gap: 14px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: #171f13;
-		color: #ffffff;
+		background: #ffffff;
+		color: #111111;
 		padding: 18px 16px;
 	}
 
@@ -844,9 +818,9 @@
 
 	.bohemcars-sell-mobile__process h2 {
 		margin: 0;
-		color: #ffffff;
+		color: #111111;
 		font-size: 20px;
-		font-weight: 800;
+		font-weight: 700;
 		letter-spacing: 0;
 		line-height: 25px;
 	}
@@ -854,8 +828,8 @@
 	.bohemcars-sell-mobile__process header span {
 		flex: 0 0 auto;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.2);
-		color: var(--bc-accent-bright-soft);
+		background: rgba(143, 202, 26, 0.18);
+		color: #3a540e;
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 17px;
@@ -877,10 +851,10 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 999px;
-		background: rgba(217, 242, 117, 0.18);
-		color: var(--bc-accent-bright-soft);
+		background: rgba(143, 202, 26, 0.18);
+		color: #3a540e;
 		font-size: 15px;
-		font-weight: 800;
+		font-weight: 700;
 		line-height: 1;
 	}
 
@@ -891,7 +865,7 @@
 	}
 
 	.bohemcars-sell-mobile__process h3 {
-		color: #ffffff;
+		color: #111111;
 		font-size: 16px;
 		font-weight: 700;
 		line-height: 21px;
@@ -899,7 +873,7 @@
 
 	.bohemcars-sell-mobile__process article p {
 		margin-top: 4px;
-		color: rgba(255, 255, 255, 0.8);
+		color: #56635a;
 		font-size: 14.5px;
 		font-weight: 500;
 		line-height: 20px;
@@ -919,10 +893,10 @@
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
+		border: 1px solid var(--bc-border);
 		border-radius: 8px;
-		background: rgba(255, 255, 255, 0.08);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-		color: #ffffff;
+		background: var(--bc-surface-soft);
+		color: #111111;
 		font-size: 15px;
 		font-weight: 700;
 		line-height: 19px;
@@ -931,8 +905,8 @@
 	}
 
 	.bohemcars-sell-mobile__process footer a:first-child {
+		border-color: transparent;
 		background: var(--bc-accent-bright-soft);
-		box-shadow: none;
 		color: #14210f;
 	}
 
@@ -940,21 +914,6 @@
 	.bohemcars-sell-mobile__process footer a :global(svg *) {
 		color: currentColor;
 		stroke: currentColor;
-	}
-
-	@media (max-width: 374px) {
-		.bohemcars-sell-mobile__intro {
-			min-height: 222px;
-			padding-right: 118px;
-		}
-
-		.bohemcars-sell-mobile__intro-copy {
-			max-width: 300px;
-		}
-
-		.bohemcars-sell-mobile__intro img {
-			right: -84px;
-		}
 	}
 
 	@media (max-width: 359px) {

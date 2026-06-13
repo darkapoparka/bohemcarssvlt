@@ -49,6 +49,7 @@ export type AuxeroVehicleDetailContact = {
 	marketplacePhoneLabel: string;
 	primaryPhoneHref: string;
 	primaryPhoneLabel: string;
+	viberHref: string;
 };
 
 export type AuxeroVehicleDetailData = {
@@ -198,7 +199,12 @@ const overviewItems = (
 	{
 		icon: 'Seatbelt.svg',
 		label: locale === 'bg' ? 'Интериор' : 'Interior',
-		value: vehicle.interior
+		value:
+			vehicle.interior === 'On request'
+				? locale === 'bg'
+					? 'По запитване'
+					: 'On request'
+				: vehicle.interior
 	},
 	{
 		icon: 'Frame.svg',
@@ -248,7 +254,8 @@ export const vehicleDetailFromVehicle = (
 			marketplacePhoneHref: bohemcarsContact.marketplacePhoneHref,
 			marketplacePhoneLabel: bohemcarsContact.marketplacePhoneLabel,
 			primaryPhoneHref: bohemcarsContact.primaryPhoneHref,
-			primaryPhoneLabel: bohemcarsContact.primaryPhoneLabel
+			primaryPhoneLabel: bohemcarsContact.primaryPhoneLabel,
+			viberHref: bohemcarsContact.viberHref
 		},
 		copy,
 		description:

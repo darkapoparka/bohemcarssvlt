@@ -40,7 +40,14 @@
 					<span class="bohemcars-home-compare__more-fleet" aria-hidden="true">
 						{#each compareThumbs as thumb (thumb.slug)}
 							<span class="bohemcars-home-compare__more-thumb">
-								<img src={thumb.image} alt="" loading="lazy" />
+								<img
+									src={thumb.image}
+									alt=""
+									width="160"
+									height="107"
+									loading="lazy"
+									decoding="async"
+								/>
 							</span>
 						{/each}
 					</span>
@@ -60,7 +67,14 @@
 		href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)}
 	>
 		<span class="bohemcars-home-compare__image">
-			<img src={vehicle.image} alt={vehicle.title} loading="lazy" />
+			<img
+				src={vehicle.image}
+				alt={vehicle.title}
+				width="320"
+				height="200"
+				loading="lazy"
+				decoding="async"
+			/>
 		</span>
 		<span class="bohemcars-home-compare__content">
 			<span class="bohemcars-home-compare__brand">{vehicle.brand}</span>
