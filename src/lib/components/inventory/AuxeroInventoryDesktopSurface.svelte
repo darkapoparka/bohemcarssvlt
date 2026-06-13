@@ -276,7 +276,7 @@
 	</div>
 {/snippet}
 
-{#snippet viewControls(showFilterModes = false)}
+{#snippet viewControls(showAdvancedControls = false)}
 	<div class="bohemcars-inventory-view-controls" aria-label={desktop.controlsLabel}>
 		<div class="bohemcars-inventory-view-controls__group">
 			<span class="bohemcars-inventory-view-controls__label">{desktop.viewLabel}</span>
@@ -295,7 +295,7 @@
 			</div>
 		</div>
 
-		{#if showFilterModes === true}
+		{#if showAdvancedControls === true}
 			<div class="bohemcars-inventory-view-controls__group">
 				<span class="bohemcars-inventory-view-controls__label"
 					>{desktop.filterPresentationLabel}</span
@@ -318,25 +318,29 @@
 					{/each}
 				</div>
 			</div>
-		{/if}
 
-		<div class="bohemcars-inventory-view-controls__group">
-			<span class="bohemcars-inventory-view-controls__label">{desktop.layoutLabel}</span>
-			<div class="bohemcars-inventory-layout-switch" role="group" aria-label={desktop.layoutLabel}>
-				{#each desktop.layoutOptions as option (option.layout)}
-					<a
-						class={['bohemcars-inventory-layout-toggle', option.active && 'active']}
-						{...linkHref(option.href)}
-						data-bohemcars-layout-toggle
-						aria-label={option.ariaLabel}
-						title={option.title}
-						aria-current={option.active ? 'true' : undefined}
-					>
-						<span>{option.label}</span>
-					</a>
-				{/each}
+			<div class="bohemcars-inventory-view-controls__group">
+				<span class="bohemcars-inventory-view-controls__label">{desktop.layoutLabel}</span>
+				<div
+					class="bohemcars-inventory-layout-switch"
+					role="group"
+					aria-label={desktop.layoutLabel}
+				>
+					{#each desktop.layoutOptions as option (option.layout)}
+						<a
+							class={['bohemcars-inventory-layout-toggle', option.active && 'active']}
+							{...linkHref(option.href)}
+							data-bohemcars-layout-toggle
+							aria-label={option.ariaLabel}
+							title={option.title}
+							aria-current={option.active ? 'true' : undefined}
+						>
+							<span>{option.label}</span>
+						</a>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 {/snippet}
 
@@ -375,7 +379,7 @@
 			</div>
 		{:else}
 			{@render utilityToolbar(desktop.layout !== 'dashboard')}
-			{@render viewControls(true)}
+			{@render viewControls()}
 		{/if}
 	</div>
 {/snippet}

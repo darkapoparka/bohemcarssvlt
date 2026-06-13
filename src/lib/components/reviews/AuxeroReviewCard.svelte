@@ -7,9 +7,9 @@
 </script>
 
 <div class="testimonior-box">
-	<div class="mb-16 flex items-center gap-4">
+	<div class="mb-16 flex items-center gap-4" role="img" aria-label={`${card.stars} от 5 звезди`}>
 		{#each starIcons.slice(0, card.stars) as star (star)}
-			<img src="/assets/icons/star-6.svg" alt="star" />
+			<img src="/assets/icons/star-6.svg" alt="" />
 		{/each}
 	</div>
 	<p class="testimonior-box--desc mb-16">{card.text}</p>

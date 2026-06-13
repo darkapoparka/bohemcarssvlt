@@ -181,11 +181,11 @@
 	}
 
 	.bohemcars-home-compare__title {
-		color: #1c1c1c;
+		color: #303a2b;
 		display: -webkit-box;
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 24px;
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 21px;
 		overflow: hidden;
 		line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -193,10 +193,11 @@
 	}
 
 	.bohemcars-home-compare__price {
-		color: #1c1c1c;
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 24px;
+		margin-top: 2px;
+		color: #14210f;
+		font-size: 20px;
+		font-weight: 800;
+		line-height: 26px;
 	}
 
 	.bohemcars-home-compare__divider {
@@ -215,6 +216,63 @@
 
 	.bohemcars-home-compare__more {
 		display: none;
+	}
+
+	/* Two-row pair grid: images in row 1, info in row 2, so the VS badge centers
+	   on the image band instead of the whole card (which dropped it too low). */
+	@media (min-width: 768px) {
+		.bohemcars-home-compare__pair {
+			grid-template-rows: auto auto;
+			align-items: stretch;
+		}
+
+		.bohemcars-home-compare__vehicle {
+			display: contents;
+		}
+
+		.bohemcars-home-compare__pair
+			> .bohemcars-home-compare__vehicle:first-child
+			> .bohemcars-home-compare__image {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.bohemcars-home-compare__pair
+			> .bohemcars-home-compare__vehicle:first-child
+			> .bohemcars-home-compare__content {
+			grid-column: 1;
+			grid-row: 2;
+		}
+
+		.bohemcars-home-compare__pair
+			> .bohemcars-home-compare__vehicle:last-child
+			> .bohemcars-home-compare__image {
+			grid-column: 3;
+			grid-row: 1;
+		}
+
+		.bohemcars-home-compare__pair
+			> .bohemcars-home-compare__vehicle:last-child
+			> .bohemcars-home-compare__content {
+			grid-column: 3;
+			grid-row: 2;
+		}
+
+		.bohemcars-home-compare__image {
+			min-width: 0;
+			margin-bottom: 0;
+		}
+
+		.bohemcars-home-compare__content {
+			text-align: center;
+		}
+
+		.bohemcars-home-compare__divider {
+			grid-column: 2;
+			grid-row: 1;
+			align-self: center;
+			margin: 0;
+		}
 	}
 
 	@media (max-width: 991px) {

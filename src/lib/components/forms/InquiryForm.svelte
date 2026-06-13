@@ -21,7 +21,7 @@
 		novalidate = false,
 		showEmptyStatus = true,
 		statusClass = 'auxero-form-status text-highlight font-weight-600 mt-12',
-		statusMessage = 'Request captured. Bohemcars will follow up shortly.',
+		statusMessage = 'Заявката е получена. Bohemcars ще се свърже с вас скоро.',
 		submitLabel
 	}: Props = $props();
 

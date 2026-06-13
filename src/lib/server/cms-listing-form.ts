@@ -59,7 +59,10 @@ export const readInventoryListingFields = (formData: FormData): InventoryListing
 		slug: stringValue(formData, 'slug'),
 		sourceUrl: stringValue(formData, 'sourceUrl', 'Yoururl'),
 		status: inventoryStatusFromValue(stringValue(formData, 'status', 'listingStatus')),
-		stockNumber: stringValue(formData, 'stockNumber', 'Enternumber'),
+		// NOTE: do NOT fall back to 'Enternumber' here — that key carries the price label
+		// (see account-listing-form-state.ts), so reading it corrupts stockNumber (and the
+		// VIN derived from it in db.ts). The form has no dedicated stock-number input today.
+		stockNumber: stringValue(formData, 'stockNumber'),
 		title,
 		transmission: stringValue(formData, 'transmission', 'Transmission'),
 		vin: stringValue(formData, 'vin', 'VIN', 'EnterVIN'),

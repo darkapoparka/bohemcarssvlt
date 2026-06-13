@@ -1,8 +1,36 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { AuxeroFavoriteVehicleCard } from '$lib/auxero/favorites';
+	import { getGarageContext } from '$lib/state/garage.svelte';
 
 	let { card }: { card: AuxeroFavoriteVehicleCard } = $props();
+
+	const garage = getGarageContext();
+	const buttonActivationKeys = new Set(['Enter', ' ']);
+	let isSaved = $derived(garage.isFavorite(card.slug));
+
+	const handleFavoriteActivation = (event: MouseEvent | KeyboardEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		garage.toggleFavorite(card.slug);
+	};
+
+	const handleFavoriteKeydown = (event: KeyboardEvent) => {
+		if (!buttonActivationKeys.has(event.key)) return;
+
+		handleFavoriteActivation(event);
+	};
+
+	const handleCompareActivation = () => {
+		garage.addCompare(card.slug);
+	};
+
+	const handleCompareKeydown = (event: KeyboardEvent) => {
+		if (!buttonActivationKeys.has(event.key)) return;
+
+		event.preventDefault();
+		handleCompareActivation();
+	};
 </script>
 
 <div class="card-box card-box-style-1 bohemcars-no-image-zoom" data-bohemcars-slug={card.slug}>
@@ -10,10 +38,13 @@
 		<p class={`${card.highlightClass} highlight text-white`}>{card.tag}</p>
 		<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 		<p
-			class="heart bohemcars-favorite is-active"
+			class={['heart bohemcars-favorite', isSaved && 'is-active']}
 			role="button"
 			tabindex="0"
 			aria-label={`Remove ${card.title}`}
+			aria-pressed={isSaved}
+			onclick={handleFavoriteActivation}
+			onkeydown={handleFavoriteKeydown}
 		>
 			<svg
 				width="16"
@@ -91,6 +122,9 @@
 				data-bohemcars-compare={card.slug}
 				role="button"
 				tabindex="0"
+				aria-label={`Compare ${card.title}`}
+				onclick={handleCompareActivation}
+				onkeydown={handleCompareKeydown}
 			>
 				Compare
 			</p>

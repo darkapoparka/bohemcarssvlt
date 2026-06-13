@@ -9,50 +9,50 @@ export const auxeroTermsPageTitle = 'Условия за използване н
 export const auxeroTermsSections: AuxeroTermsSection[] = [
 	{
 		id: 'section1',
-		title: '1. Vehicle Information',
+		title: '1. Информация за автомобилите',
 		body: [
-			'Bohemcars presents vehicle information from available listings, client submissions, supplier details, photos, reports, and internal review notes.',
-			'Availability, mileage, equipment, condition, pricing, and documents must be confirmed for the exact vehicle before purchase or reservation.'
+			'Bohemcars представя информация за автомобилите на база налични обяви, клиентски заявки, данни от доставчици, снимки, доклади и вътрешни бележки от проверка.',
+			'Наличност, пробег, оборудване, състояние, цена и документи се потвърждават за конкретния автомобил преди покупка или резервация.'
 		]
 	},
 	{
 		id: 'section2',
-		title: '2. Import Process',
+		title: '2. Процес на внос',
 		body: [
-			'Import timing depends on vehicle selection, transport, customs steps, document readiness, technical preparation, and external partners.',
-			'Estimated timelines are guidance only until a specific vehicle and transport path are confirmed.'
+			'Сроковете за внос зависят от избора на автомобил, транспорта, митническите стъпки, готовността на документите, техническата подготовка и външни партньори.',
+			'Ориентировъчните срокове са насока, докато не бъдат потвърдени конкретен автомобил и конкретен маршрут за транспорт.'
 		]
 	},
 	{
 		id: 'section3',
-		title: '3. Costs And Calculator',
+		title: '3. Разходи и калкулатор',
 		body: [
-			'Calculator results are estimates for orientation. Final landed cost can change with exchange rates, duty, VAT, transport, port handling, registration steps, and vehicle-specific preparation.',
-			'A written breakdown for the exact vehicle should be reviewed before any payment decision.'
+			'Резултатите от калкулатора са ориентировъчни. Крайната цена може да се промени според валутен курс, мито, ДДС, транспорт, пристанищни такси, регистрационни стъпки и подготовка за конкретния автомобил.',
+			'Преди решение за плащане трябва да бъде прегледана писмена разбивка за конкретния автомобил.'
 		]
 	},
 	{
 		id: 'section4',
-		title: '4. Appointments And Test Drives',
+		title: '4. Огледи и тестови шофирания',
 		body: [
-			'Vehicle viewings are arranged by appointment so Bohemcars can prepare the car, documents, and relevant context.',
-			'Any test drive or inspection must respect local rules, vehicle status, insurance conditions, and team availability.'
+			'Огледите се уговарят предварително, за да може Bohemcars да подготви автомобила, документите и важния контекст за клиента.',
+			'Всяко тестово шофиране или проверка се съобразява с местните правила, статуса на автомобила, застрахователните условия и наличността на екипа.'
 		]
 	},
 	{
 		id: 'section5',
-		title: '5. Client Vehicles',
+		title: '5. Клиентски автомобили',
 		body: [
-			'Client vehicles are reviewed from information supplied by the owner, including VIN, photos, mileage, service history, condition, and documents.',
-			'Bohemcars may request additional information before advising on price, publication, direct offer, or sale assistance.'
+			'Клиентските автомобили се преглеждат по информация, предоставена от собственика, включително VIN, снимки, пробег, сервизна история, състояние и документи.',
+			'Bohemcars може да поиска допълнителна информация преди препоръка за цена, публикуване, директна оферта или съдействие при продажба.'
 		]
 	},
 	{
 		id: 'section6',
-		title: '6. Contact And Data',
+		title: '6. Контакт и данни',
 		body: [
-			'Messages submitted through the website are used to respond to vehicle, import, appointment, and sale requests.',
-			'Do not submit sensitive payment details through public website forms. Confirm official payment instructions directly with Bohemcars before sending funds.'
+			'Съобщенията, изпратени през сайта, се използват за отговор на запитвания за автомобили, внос, огледи и продажба.',
+			'Не изпращайте чувствителни платежни данни през публичните форми на сайта. Потвърждавайте официалните инструкции за плащане директно с Bohemcars преди превод.'
 		]
 	}
 ];

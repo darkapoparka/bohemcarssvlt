@@ -79,6 +79,30 @@ const hashHeadValue = (value: string) => {
 	return (hash >>> 0).toString(36);
 };
 
+/**
+ * Add a `<meta name="description">` to the head assets when the page does not already
+ * declare one. Additive and idempotent — never overwrites a template-provided description,
+ * so it is safe to call for every route. Fixes the missing meta-description on the
+ * dynamic/secondary pages (only the homepage shipped one previously).
+ */
+export const ensureDescriptionMeta = (
+	assets: AuxeroHeadAssets,
+	description: string | undefined
+): AuxeroHeadAssets => {
+	const trimmed = description?.trim();
+
+	if (!trimmed) return assets;
+	if (assets.meta.some((item) => item.name?.toLowerCase() === 'description')) return assets;
+
+	return {
+		...assets,
+		meta: [
+			...assets.meta,
+			{ content: trimmed, id: `meta:description:${hashHeadValue(trimmed)}`, name: 'description' }
+		]
+	};
+};
+
 export const parseAuxeroHeadAssets = (headHtml: string): AuxeroHeadAssets => {
 	const meta: AuxeroHeadMeta[] = [];
 	const links: AuxeroHeadLink[] = [];

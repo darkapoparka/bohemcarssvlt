@@ -197,7 +197,7 @@ export const extractAuxeroRuntimeHtml = (
 		if (form.matches('.bohemcars-blog-comment-form')) {
 			return {
 				source: 'bohemcars-blog-comment-form',
-				status: 'Comment saved locally for Bohemcars review',
+				status: 'Коментарът е запазен локално за преглед от Bohemcars',
 				url: '/api/messages'
 			};
 		}
@@ -213,7 +213,7 @@ export const extractAuxeroRuntimeHtml = (
 		if (form.matches('.bohemcars-service-form')) {
 			return {
 				source: 'bohemcars-service-form',
-				status: 'Service request queued locally for Bohemcars',
+				status: 'Заявката за услуга е подготвена локално за Bohemcars',
 				url: '/api/inquiries'
 			};
 		}

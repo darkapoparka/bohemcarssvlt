@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
-	import { Check, Plus, Search, X } from '@lucide/svelte';
+	import { Check, Plus, Repeat2, Search, X } from '@lucide/svelte';
 	import type { AuxeroCompareRow, AuxeroCompareVehicle } from '$lib/auxero/compare';
 	import {
 		compareBrandOptions,
@@ -110,7 +110,22 @@
 	const selectedRows = $derived(compareRowsFromVehicles(selectedVehicles, locale));
 	const detailsLabel = $derived(locale === 'bg' ? 'Виж детайли' : 'View details');
 	const priceRowLabel = $derived(locale === 'bg' ? 'Цена' : 'Price');
-	const labelWithColon = (label: string) => `${label}:`;
+	const desktopSpecRows = $derived(
+		selectedRows.filter(
+			(row) => row.icon !== 'Payment.png' && row.icon !== 'VIN.svg' && row.icon !== 'QrCode.svg'
+		)
+	);
+	const priceRow = $derived(selectedRows.find((row) => row.icon === 'Payment.png'));
+	const priceBestIndexes = $derived(priceRow?.bestIndexes ?? []);
+	const bestPriceBadge = $derived(priceRow?.badge ?? '');
+	const emptyTitle = $derived(
+		locale === 'bg' ? 'Все още няма избрани автомобили' : 'No vehicles selected yet'
+	);
+	const emptyHint = $derived(
+		locale === 'bg'
+			? `Добави до ${compareLimit} автомобила, за да ги сравниш един до друг.`
+			: `Add up to ${compareLimit} vehicles to compare side by side.`
+	);
 	const compareCountLabel = $derived(
 		locale === 'bg'
 			? `${selectedVehicles.length} ${selectedVehicles.length === 1 ? 'автомобил' : 'автомобила'}`
@@ -630,7 +645,8 @@
 		<button
 			type="button"
 			class="bohemcars-compare-manager__secondary"
-			onclick={clearDesktopSelection}
+			disabled={selectedVehicles.length === 0}
+				onclick={clearDesktopSelection}
 		>
 			{clearLabel}
 		</button>
@@ -649,6 +665,19 @@
 	class="bohemcars-compare-scroll"
 	data-bohemcars-compare-ready={compareReady ? 'true' : undefined}
 >
+	{#if selectedVehicles.length === 0}
+		<div class="bohemcars-compare-empty">
+			<span class="bohemcars-compare-empty__icon" aria-hidden="true">
+				<Plus size={26} strokeWidth={2.2} />
+			</span>
+			<strong>{emptyTitle}</strong>
+			<span class="bohemcars-compare-empty__hint">{emptyHint}</span>
+			<button type="button" class="bohemcars-compare-empty__cta" onclick={() => openDesktopPicker()}>
+				<Plus size={17} strokeWidth={2.4} aria-hidden="true" />
+				{addLabel}
+			</button>
+		</div>
+	{:else}
 	<table
 		class="card-details--table bohemcars-compare-table"
 		data-bohemcars-compare-table
@@ -682,15 +711,24 @@
 							>
 								<img src="/assets/icons/close-modal.svg" alt="" aria-hidden="true" />
 							</button>
-							<a
+							<button
 								class={[
 									'bohemcars-compare-car__media',
 									vehicle.image.includes('cutout') && 'bohemcars-compare-car__media--cutout'
 								]}
-								href={resolve('/inventory/[slug]', { slug: vehicle.slug })}
+								type="button"
+								aria-label={`${changeLabel} ${vehicle.title}`}
+								title={`${changeLabel} ${vehicle.title}`}
+								onclick={() => openDesktopPicker(vehicle.slug)}
 							>
 								<AuxeroCompareVehicleImage src={vehicle.image} title={vehicle.title} />
-							</a>
+								<span class="bohemcars-compare-car__swap-overlay" aria-hidden="true">
+									<span class="bohemcars-compare-car__swap-icon">
+										<Repeat2 size={22} strokeWidth={2.4} />
+									</span>
+									<span class="bohemcars-compare-car__swap-text">{changeLabel}</span>
+								</span>
+							</button>
 							<p class="bohemcars-compare-car__brand text-center">{vehicle.brand}</p>
 							<p class="h4 bohemcars-compare-car__title text-center">
 								<a href={resolve('/inventory/[slug]', { slug: vehicle.slug })}>{vehicle.title}</a>
@@ -701,37 +739,48 @@
 								aria-label={`${changeLabel} ${vehicle.title}`}
 								onclick={() => openDesktopPicker(vehicle.slug)}
 							>
-								{changeLabel}
+								<Repeat2 size={14} strokeWidth={2.5} aria-hidden="true" />
+								<span>{changeLabel}</span>
 							</button>
 						</div>
 					</td>
 				{/each}
 			</tr>
-			{#each selectedRows as row (row.label)}
-				{#if row.icon !== 'Payment.png'}
-					{@const allSame = selectedVehicles.length > 1 && new Set(row.values).size === 1}
-					<tr class:bohemcars-compare-row--uniform={allSame}>
-						<td>
-							<div class="bohemcars-compare-rowlabel flex items-center gap-8">
-								<img src={`/assets/icons/${row.icon}`} alt={row.alt} />
-								<span>{labelWithColon(row.label)}</span>
+			{#each desktopSpecRows as row (row.label)}
+				{@const allSame = selectedVehicles.length > 1 && new Set(row.values).size === 1}
+				<tr class:bohemcars-compare-row--uniform={allSame}>
+					<td>
+						<div class="bohemcars-compare-rowlabel flex items-center gap-8">
+							<img src={`/assets/icons/${row.icon}`} alt={row.alt} />
+							<span>{row.label}</span>
+						</div>
+					</td>
+					{#each row.values as value, index (`${row.label}-${selectedVehicles[index]?.slug ?? index}`)}
+						{@const isBest = (row.bestIndexes ?? []).includes(index)}
+						<td class:bohemcars-compare-cell--best={isBest}>
+							<div class="bohemcars-compare-cell">
+								<span class="bohemcars-compare-cell__value">{value}</span>
+								{#if isBest && row.badge}
+									<span class="bohemcars-compare-cell__badge">{row.badge}</span>
+								{/if}
 							</div>
 						</td>
-						{#each row.values as value, index (`${row.label}-${selectedVehicles[index]?.slug ?? index}`)}
-							<td>{value}</td>
-						{/each}
-					</tr>
-				{/if}
+					{/each}
+				</tr>
 			{/each}
 			<tr class="bohemcars-compare-row--price">
 				<td>
 					<div class="bohemcars-compare-rowlabel flex items-center gap-8">
-						<span>{labelWithColon(priceRowLabel)}</span>
+						<span>{priceRowLabel}</span>
 					</div>
 				</td>
-				{#each selectedVehicles as vehicle (`price-${vehicle.slug}`)}
-					<td>
+				{#each selectedVehicles as vehicle, index (`price-${vehicle.slug}`)}
+					{@const isBestPrice = priceBestIndexes.includes(index)}
+					<td class:bohemcars-compare-cell--best={isBestPrice}>
 						<div class="bohemcars-compare-verdict">
+							{#if isBestPrice && bestPriceBadge}
+								<span class="bohemcars-compare-verdict__chip">{bestPriceBadge}</span>
+							{/if}
 							<strong>{vehicle.priceLabel}</strong>
 							<a
 								class="bohemcars-compare-verdict__btn"
@@ -746,6 +795,7 @@
 			</tr>
 		</tbody>
 	</table>
+	{/if}
 </div>
 
 {#if desktopPickerOpen}
@@ -948,9 +998,9 @@
 		}
 
 		.bohemcars-compare-manager__primary {
-			border: 1px solid #1c1c1c;
-			background: #1c1c1c;
-			color: #ffffff;
+			border: 1px solid #98bc2a;
+			background: #98bc2a;
+			color: #14210f;
 		}
 
 		.bohemcars-compare-manager__primary :global(svg),
@@ -961,10 +1011,15 @@
 
 		.bohemcars-compare-manager__primary:hover,
 		.bohemcars-compare-manager__primary:focus-visible {
-			border-color: #98bc2a;
-			background: #98bc2a;
-			color: #14210f;
+			border-color: #14210f !important;
+			background: #14210f !important;
+			color: #ffffff !important;
 			outline: 0;
+		}
+
+		.bohemcars-compare-manager__secondary:disabled {
+			cursor: default;
+			opacity: 0.45;
 		}
 
 		.bohemcars-compare-manager__secondary {
@@ -1388,11 +1443,11 @@
 
 		.bohemcars-compare-verdict {
 			display: flex;
+			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			gap: 14px;
+			gap: 9px;
 			min-height: 44px;
-			flex-wrap: wrap;
 		}
 
 		.bohemcars-compare-verdict strong {
@@ -1405,18 +1460,18 @@
 
 		.bohemcars-compare-verdict__btn {
 			display: inline-flex;
-			min-height: 36px;
+			min-height: 40px;
 			align-items: center;
 			justify-content: center;
 			gap: 6px;
-			border: 1px solid #1c1c1c;
-			border-radius: 6px;
-			background: #1c1c1c;
-			color: #ffffff !important;
-			font-size: 13px;
-			font-weight: 600;
+			border: 1px solid #98bc2a !important;
+			border-radius: 8px;
+			background: #98bc2a !important;
+			color: #14210f !important;
+			font-size: 14px;
+			font-weight: 700;
 			line-height: 18px;
-			padding: 0 14px;
+			padding: 0 18px;
 			text-decoration: none !important;
 			white-space: nowrap;
 			transition:
@@ -1425,22 +1480,141 @@
 				color 0.2s ease;
 		}
 
-		/* The global `* { color: #1c1c1c }` rule paints the inner spans directly. */
+		/* The global `* { color: #1c1c1c }` paints the spans, and a theme rule pins
+		   the link bg — force both states with !important so the label never goes
+		   invisible (white-on-green) on hover. */
 		.bohemcars-compare-verdict__btn span {
-			color: inherit !important;
+			color: #14210f !important;
 		}
 
 		.bohemcars-compare-verdict__btn:hover,
 		.bohemcars-compare-verdict__btn:focus-visible {
-			border-color: #98bc2a;
-			background: #98bc2a;
-			color: #14210f !important;
+			border-color: #14210f !important;
+			background: #14210f !important;
+			color: #ffffff !important;
+		}
+
+		.bohemcars-compare-verdict__btn:hover span,
+		.bohemcars-compare-verdict__btn:focus-visible span {
+			color: #ffffff !important;
 		}
 
 		.bohemcars-compare-verdict__arrow {
 			font-size: 17px;
 			font-weight: 700;
 			line-height: 1;
+		}
+
+		/* Winner highlighting: the cell holding the best value for a comparable
+		   row (lowest price/km, newest year) gets a soft green tint + pill so the
+		   table answers "which is the better buy?" at a glance. */
+		.bohemcars-compare-cell {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 3px;
+		}
+
+		.bohemcars-compare-cell__value {
+			display: block;
+		}
+
+		.bohemcars-compare-cell__badge,
+		.bohemcars-compare-verdict__chip {
+			display: inline-block;
+			border-radius: 999px;
+			background: #98bc2a;
+			color: #14210f;
+			font-size: 10px;
+			font-weight: 800;
+			letter-spacing: 0.04em;
+			line-height: 14px;
+			padding: 2px 9px;
+			text-transform: uppercase;
+		}
+
+		.bohemcars-compare-table td.bohemcars-compare-cell--best,
+		.bohemcars-compare-row--price td.bohemcars-compare-cell--best {
+			background: #f4f8e9 !important;
+		}
+
+		.bohemcars-compare-empty {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			min-height: 280px;
+			padding: 48px 24px;
+			text-align: center;
+		}
+
+		.bohemcars-compare-empty__icon {
+			display: inline-flex;
+			width: 56px;
+			height: 56px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			background: #f4f8e9;
+			color: #3a540e;
+		}
+
+		.bohemcars-compare-empty__icon :global(svg),
+		.bohemcars-compare-empty__icon :global(svg *) {
+			color: inherit;
+			stroke: currentcolor;
+		}
+
+		.bohemcars-compare-empty strong {
+			color: #14210f;
+			font-size: 19px;
+			font-weight: 700;
+			line-height: 26px;
+		}
+
+		.bohemcars-compare-empty__hint {
+			max-width: 360px;
+			color: #79836f;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 20px;
+		}
+
+		.bohemcars-compare-empty__cta {
+			display: inline-flex;
+			min-height: 44px;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			margin-top: 6px;
+			border: 1px solid #98bc2a;
+			border-radius: 8px;
+			background: #98bc2a;
+			color: #14210f;
+			cursor: pointer;
+			padding: 0 18px;
+			font-size: 14px;
+			font-weight: 700;
+			line-height: 18px;
+			transition:
+				background-color 0.18s ease,
+				border-color 0.18s ease,
+				color 0.18s ease;
+		}
+
+		.bohemcars-compare-empty__cta :global(svg),
+		.bohemcars-compare-empty__cta :global(svg *) {
+			color: inherit;
+			stroke: currentcolor;
+		}
+
+		.bohemcars-compare-empty__cta:hover,
+		.bohemcars-compare-empty__cta:focus-visible {
+			border-color: #14210f;
+			background: #14210f;
+			color: #ffffff;
+			outline: 0;
 		}
 
 		/* Car header cells: framed media boxes so cutouts and photos present
@@ -1452,6 +1626,7 @@
 		}
 
 		.bohemcars-compare-car__media {
+			position: relative;
 			display: flex;
 			width: 100%;
 			align-items: center;
@@ -1460,8 +1635,65 @@
 			border: 1px solid var(--bc-border);
 			border-radius: 8px;
 			background: var(--bc-card-media, #f4f5f2);
+			cursor: pointer;
 			overflow: hidden;
-			transition: background-color 0.2s ease;
+			padding: 0;
+			transition:
+				background-color 0.2s ease,
+				border-color 0.18s ease;
+		}
+
+		.bohemcars-compare-car__media:hover,
+		.bohemcars-compare-car__media:focus-visible {
+			border-color: #98bc2a;
+			outline: 0;
+		}
+
+		/* Hover/focus the image to swap the car for another from the picker. */
+		.bohemcars-compare-car__swap-overlay {
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			background: rgb(20 33 15 / 0.58);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.18s ease;
+		}
+
+		.bohemcars-compare-car__media:hover .bohemcars-compare-car__swap-overlay,
+		.bohemcars-compare-car__media:focus-visible .bohemcars-compare-car__swap-overlay {
+			opacity: 1;
+		}
+
+		.bohemcars-compare-car__swap-icon {
+			display: inline-flex;
+			width: 46px;
+			height: 46px;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			background: #98bc2a;
+			color: #14210f;
+		}
+
+		.bohemcars-compare-car__swap-icon :global(svg),
+		.bohemcars-compare-car__swap-icon :global(svg *) {
+			color: inherit;
+			stroke: currentcolor;
+		}
+
+		.bohemcars-compare-car__swap-text {
+			color: #ffffff !important;
+			font-size: 12px;
+			font-weight: 800;
+			letter-spacing: 0.06em;
+			line-height: 16px;
+			text-transform: uppercase;
 		}
 
 		/* Listing photos fill the frame edge-to-edge; curated cutouts float on
@@ -1506,12 +1738,17 @@
 		}
 
 		.bohemcars-compare-car__brand {
-			margin: 12px 0 0;
-			color: #79836f;
-			font-size: 12px;
-			font-weight: 700;
-			letter-spacing: 0.05em;
+			display: block;
+			width: fit-content;
+			margin: 14px auto 0;
+			border-radius: 999px;
+			background: #f4f8e9;
+			color: #3a540e;
+			font-size: 11px;
+			font-weight: 800;
+			letter-spacing: 0.07em;
 			line-height: 16px;
+			padding: 3px 11px;
 			text-transform: uppercase;
 		}
 
@@ -1535,6 +1772,46 @@
 		.bohemcars-compare-car__title a:hover,
 		.bohemcars-compare-car__title a:focus-visible {
 			color: #3a540e;
+		}
+
+		.bohemcars-compare-car__swap {
+			display: flex;
+			width: fit-content;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			margin: 12px auto 0;
+			border: 1px solid #dfe6d8;
+			border-radius: 999px;
+			background: #ffffff;
+			color: #303a2b;
+			cursor: pointer;
+			padding: 6px 14px;
+			font-size: 12px;
+			font-weight: 700;
+			line-height: 16px;
+			transition:
+				background-color 0.18s ease,
+				border-color 0.18s ease,
+				color 0.18s ease;
+		}
+
+		.bohemcars-compare-car__swap span {
+			color: inherit;
+		}
+
+		.bohemcars-compare-car__swap :global(svg),
+		.bohemcars-compare-car__swap :global(svg *) {
+			color: inherit;
+			stroke: currentcolor;
+		}
+
+		.bohemcars-compare-car__swap:hover,
+		.bohemcars-compare-car__swap:focus-visible {
+			border-color: #98bc2a;
+			background: #eef3e9;
+			color: #14210f;
+			outline: 0;
 		}
 
 		.bohemcars-compare-car__remove {

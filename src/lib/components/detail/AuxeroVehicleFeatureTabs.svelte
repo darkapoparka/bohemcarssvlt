@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import type { AuxeroVehicleDetailFeatureTab } from '$lib/auxero/detail';
 
 	let {
@@ -18,6 +19,7 @@
 	};
 
 	let selectedTabLabel = $state<string>();
+	let tablistEl = $state<HTMLUListElement>();
 
 	const tabPanels: DetailTabPanel[] = $derived([{ description, label: descriptionLabel }, ...tabs]);
 	const activeTabIndex = $derived.by(() => {
@@ -28,11 +30,38 @@
 	});
 	const tabId = (index: number) => `bohemcars-pdp-feature-tab-${index}`;
 	const panelId = (index: number) => `bohemcars-pdp-feature-panel-${index}`;
+
+	// WAI-ARIA tabs pattern: roving focus + automatic activation via arrow/Home/End keys.
+	const focusTab = async (index: number) => {
+		selectedTabLabel = tabPanels[index].label;
+		await tick();
+		tablistEl?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[index]?.focus();
+	};
+
+	const handleTablistKeydown = (event: KeyboardEvent) => {
+		const last = tabPanels.length - 1;
+		let next: number;
+
+		if (event.key === 'ArrowRight') next = activeTabIndex >= last ? 0 : activeTabIndex + 1;
+		else if (event.key === 'ArrowLeft') next = activeTabIndex <= 0 ? last : activeTabIndex - 1;
+		else if (event.key === 'Home') next = 0;
+		else if (event.key === 'End') next = last;
+		else return;
+
+		event.preventDefault();
+		focusTab(next);
+	};
 </script>
 
 <div class="flat-tabs mb-40">
 	<div class="mb-16 overflow-x-auto">
-		<ul class="menu-tab menu-tab-style4" aria-label="Vehicle detail sections" role="tablist">
+		<ul
+			class="menu-tab menu-tab-style4"
+			aria-label="Vehicle detail sections"
+			role="tablist"
+			bind:this={tablistEl}
+			onkeydown={handleTablistKeydown}
+		>
 			{#each tabPanels as tab, index (tab.label)}
 				<li class={[activeTabIndex === index && 'active']} role="presentation">
 					<button

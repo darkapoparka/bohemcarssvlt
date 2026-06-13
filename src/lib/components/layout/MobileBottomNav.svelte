@@ -119,6 +119,7 @@
 	bind:checked={menuOpen}
 	aria-label="Отвори меню"
 	aria-controls="mobile-bottom-menu"
+	aria-expanded={menuOpen}
 />
 
 <nav
@@ -141,13 +142,9 @@
 				<span class="mobile-bottom-nav__label">{item.label}</span>
 			</a>
 		{/each}
-		<label
-			for="mobile-bottom-menu-toggle"
-			class="mobile-bottom-nav__menu-trigger"
-			aria-controls="mobile-bottom-menu"
-			aria-expanded={menuOpen}
-			aria-haspopup="dialog"
-		>
+		<!-- The checkbox input above is the real control and carries the
+		     aria-controls/expanded/haspopup state; a <label> must not (invalid ARIA). -->
+		<label for="mobile-bottom-menu-toggle" class="mobile-bottom-nav__menu-trigger">
 			<span class="mobile-bottom-nav__icon mobile-bottom-nav__icon--menu" aria-hidden="true">
 				<Menu2 size={27} color="currentColor" stroke={2.6} />
 			</span>

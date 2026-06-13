@@ -814,7 +814,7 @@ describe('Auxero template Bohemcars adapter', () => {
 		expect(faqs).toContain('Може ли Bohemcars да помогне при продажба на моя автомобил?');
 		expect(faqs).not.toContain('Required documents for financing or leasing?');
 		expect(terms).toContain('Условия за използване на Bohemcars');
-		expect(terms).toContain('Vehicle Information');
+		expect(terms).toContain('Информация за автомобилите');
 		expect(terms).not.toContain('Lorem ipsum');
 		expect(calculator).toContain('Калкулатор за внос');
 		expect(calculator).toContain('data-bohemcars-calculator');

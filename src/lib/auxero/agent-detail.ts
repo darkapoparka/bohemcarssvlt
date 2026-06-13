@@ -31,7 +31,7 @@ export type AuxeroAgentDetailSidebar = {
 };
 
 const agentDetailSummary =
-	'Bohemcars keeps every conversation practical: source details, inspection context, import or registration steps, and viewing appointments are confirmed before the next commitment.';
+	'Bohemcars води всеки разговор практично: детайли за източника, оглед и състояние, стъпки по внос или регистрация и записване на огледи се потвърждават преди следващата стъпка.';
 
 export const agentDetailFromAgent = (agent: Agent): AuxeroAgentDetailContent => {
 	const matchingVehicles = vehicles.filter((vehicle) => vehicle.agentSlug === agent.slug);
@@ -43,29 +43,29 @@ export const agentDetailFromAgent = (agent: Agent): AuxeroAgentDetailContent => 
 		bio: agent.bio,
 		image: agent.image,
 		inventoryCards: inventoryCardsFromVehicles(inventoryVehicles),
-		inventoryHeading: `Bohemcars Inventory (${inventoryCount})`,
+		inventoryHeading: `Автомобили в Bohemcars (${inventoryCount})`,
 		name: agent.name,
 		sidebar: {
 			address: bohemcarsContact.addressLabel,
 			callHref: bohemcarsContact.primaryPhoneHref,
 			callLabel: 'Обади се на Bohemcars',
 			consentLabel:
-				'Yes, I would like to receive price alerts on this vehicle and helpful shopping information.',
-			formTitle: `Изпрати запитване to ${agent.name}`,
+				'Да, искам да получавам известия за цени и полезна информация при избор на автомобил.',
+			formTitle: `Изпрати запитване до ${agent.name}`,
 			mapSrc: bohemcarsContact.mapEmbedUrl,
-			messagePlaceholder: 'Comment',
+			messagePlaceholder: 'Напишете запитването си тук',
 			phone: bohemcarsContact.primaryPhoneLabel,
 			subjectOptions: [
 				'Наличност на автомобила',
-				'Наличност на автомобила 2',
-				'Наличност на автомобила 3'
+				'Запазване на оглед',
+				'Внос и финансиране'
 			],
 			submitLabel: 'Изпрати запитване',
-			termsLabel: 'Visitor Agreement.',
+			termsLabel: 'Общи условия.',
 			viberHref: bohemcarsContact.viberHref,
 			viberLabel: 'Пиши във Viber'
 		},
 		summary: agentDetailSummary,
-		verifiedLabel: 'Verified Bohemcars Consultant'
+		verifiedLabel: 'Потвърден консултант на Bohemcars'
 	};
 };

@@ -20,6 +20,18 @@ const priceNumber = (value: unknown, fallback = 0) => {
 	return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+// Fixed BNB peg (1 EUR = 1.95583 BGN). Matches the static feed format "71 387.80 лв."
+// (space-grouped thousands, dot decimal) so CMS listings render a real BGN price in the
+// PDP "Price in BGN" slot instead of the literal placeholder phrase.
+const BGN_PER_EUR = 1.95583;
+
+const formatBgnFromEur = (eur: number) => {
+	const [whole, fraction] = (eur * BGN_PER_EUR).toFixed(2).split('.');
+	const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+	return `${grouped}.${fraction} лв.`;
+};
+
 const listingVehicleImageSet = (previewImage: string, galleryImages: string[]) =>
 	Array.from(new Set([previewImage, ...galleryImages].filter(Boolean)));
 
@@ -51,7 +63,7 @@ export const vehicleFromCmsListing = (
 		model: listing.model,
 		monthly: price > 0 ? Math.round(price / 72) : 0,
 		price,
-		priceBgn: listing.status === 'published' ? 'Vehicle in the VAT system' : 'On request',
+		priceBgn: price > 0 ? formatBgnFromEur(price) : 'On request',
 		priceLabel: listing.priceLabel,
 		rating: 4.9,
 		slug: listing.slug,

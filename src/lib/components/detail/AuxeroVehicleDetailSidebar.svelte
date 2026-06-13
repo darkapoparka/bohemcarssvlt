@@ -1,10 +1,32 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { resolve } from '$app/paths';
 	import type { AuxeroVehicleDetailData } from '$lib/auxero/detail';
 	import AuxeroVehicleOverview from './AuxeroVehicleOverview.svelte';
 
 	let { detail }: { detail: AuxeroVehicleDetailData } = $props();
 	let inquiryStatus = $state('');
+	let paymentMode = $state<'cash' | 'finance'>('cash');
+	let buyboxTablistEl = $state<HTMLUListElement>();
+
+	const buyboxModes = ['cash', 'finance'] as const;
+
+	// WAI-ARIA tabs pattern: roving focus + activation via arrow/Home/End keys.
+	const handleBuyboxKeydown = async (event: KeyboardEvent) => {
+		const current = paymentMode === 'cash' ? 0 : 1;
+		let next = current;
+
+		if (event.key === 'ArrowRight') next = current >= 1 ? 0 : current + 1;
+		else if (event.key === 'ArrowLeft') next = current <= 0 ? 1 : current - 1;
+		else if (event.key === 'Home') next = 0;
+		else if (event.key === 'End') next = 1;
+		else return;
+
+		event.preventDefault();
+		paymentMode = buyboxModes[next];
+		await tick();
+		buyboxTablistEl?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
+	};
 	const showMarketplacePhone = $derived(
 		detail.contact.marketplacePhoneHref !== detail.contact.primaryPhoneHref ||
 			detail.contact.marketplacePhoneLabel !== detail.contact.primaryPhoneLabel
@@ -36,29 +58,81 @@
 	};
 </script>
 
+{#snippet priceInfo(popId: string)}
+	<span class="bohemcars-price-info">
+		<button
+			type="button"
+			class="bohemcars-price-info__trigger"
+			aria-label={detail.copy.priceInBgnAria}
+			aria-describedby={popId}
+		>
+			<img src="/assets/icons/Info.svg" alt="" aria-hidden="true" />
+			<span class="text-underline text-highlight">{detail.priceBgn}</span>
+		</button>
+		<span class="bohemcars-price-info__pop" id={popId} role="tooltip">
+			<span class="bohemcars-price-info__label">{detail.copy.priceInBgn}</span>
+			<span class="bohemcars-price-info__amount">{detail.priceBgn}</span>
+			<span class="bohemcars-price-info__note">{detail.copy.bgnRateNote}</span>
+		</span>
+	</span>
+{/snippet}
+
 <div class="listing-details--sidebar">
 	<div class="listing-details--sidebar-box mb-40">
 		<div class="flat-tabs">
 			<div class="mb-15 overflow-x-auto">
-				<ul class="menu-tab menu-tab-style5 grid-cols-2">
-					<li class="active">{detail.copy.cash}</li>
-					<li>{detail.copy.finance}</li>
+				<ul
+					class="menu-tab menu-tab-style5 grid-cols-2"
+					role="tablist"
+					aria-label={detail.copy.price}
+					bind:this={buyboxTablistEl}
+					onkeydown={handleBuyboxKeydown}
+				>
+					<li class={[paymentMode === 'cash' && 'active']} role="presentation">
+						<button
+							type="button"
+							class="bohemcars-buybox-mode"
+							role="tab"
+							id="bohemcars-buybox-cash-tab"
+							aria-controls="bohemcars-buybox-cash-panel"
+							aria-selected={paymentMode === 'cash'}
+							tabindex={paymentMode === 'cash' ? 0 : -1}
+							onclick={() => (paymentMode = 'cash')}
+						>
+							{detail.copy.cash}
+						</button>
+					</li>
+					<li class={[paymentMode === 'finance' && 'active']} role="presentation">
+						<button
+							type="button"
+							class="bohemcars-buybox-mode"
+							role="tab"
+							id="bohemcars-buybox-finance-tab"
+							aria-controls="bohemcars-buybox-finance-panel"
+							aria-selected={paymentMode === 'finance'}
+							tabindex={paymentMode === 'finance' ? 0 : -1}
+							onclick={() => (paymentMode = 'finance')}
+						>
+							{detail.copy.finance}
+						</button>
+					</li>
 				</ul>
 			</div>
 
 			<div class="content-tab visible">
-				<div class="content-inner active">
+				<div
+					class={['content-inner', paymentMode === 'cash' && 'active']}
+					id="bohemcars-buybox-cash-panel"
+					role="tabpanel"
+					aria-labelledby="bohemcars-buybox-cash-tab"
+				>
 					<p class="h5 mb-4">{detail.copy.price}</p>
 					<p class="h4 mb-4">{detail.priceLabel}</p>
 					<p class="text-secondary mb-16">
 						{detail.copy.priceIntro}
 					</p>
 
-					<p class="flex items-center gap-8">
-						<img src="/assets/icons/Info.svg" alt="info" />
-						<a href={resolve('/contact')} class="text-underline text-highlight">{detail.priceBgn}</a
-						>
-					</p>
+					{@render priceInfo('bohemcars-buybox-bgn-cash')}
 
 					<div class="bohemcars-buybox-actions">
 						<a
@@ -76,40 +150,20 @@
 					</div>
 				</div>
 
-				<div class="content-inner">
-					<p class="h5 mb-4">{detail.copy.price}</p>
+				<div
+					class={['content-inner', paymentMode === 'finance' && 'active']}
+					id="bohemcars-buybox-finance-panel"
+					role="tabpanel"
+					aria-labelledby="bohemcars-buybox-finance-tab"
+				>
+					<p class="h5 mb-4">{detail.copy.monthlyTitle}</p>
 					<p class="h4 mb-4">{detail.monthlyLabel}</p>
 					<p class="text-secondary mb-4">
 						{detail.copy.financeIntro}
 					</p>
 					<p class="text-secondary mb-16">{detail.copy.financeTerms}</p>
 
-					<div class="core-dropdown flex items-center gap-8">
-						<img src="/assets/icons/Info.svg" alt="info" />
-						<a
-							href={resolve('/contact')}
-							class="text-underline text-highlight"
-							id="coreDropdownBtn"
-						>
-							{detail.priceBgn}
-						</a>
-						<div class="core-dropdown__menu" id="coreDropdownMenu">
-							<ul class="core-dropdown__list">
-								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Цена:</p>
-									<p class="font-weight-600">$23.577</p>
-								</li>
-								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Специален данък върху МПС:</p>
-									<p class="font-weight-600">$1.322</p>
-								</li>
-								<li class="core-dropdown__item">
-									<p class="text-secondary text-sm">Цена със специален данък:</p>
-									<p class="font-weight-600">$24.900</p>
-								</li>
-							</ul>
-						</div>
-					</div>
+					{@render priceInfo('bohemcars-buybox-bgn-finance')}
 				</div>
 			</div>
 		</div>
@@ -125,7 +179,7 @@
 			<div class="listing-details--contact-dealer mb-28">
 				<img
 					src={detail.consultant.image}
-					alt="dealer"
+					alt=""
 					width="96"
 					height="96"
 					loading="lazy"
@@ -135,16 +189,16 @@
 				<div class="content">
 					<a href={resolve('/contact')} class="h4 font-weight-600 mb-8">{detail.consultant.name}</a>
 
-					<div class="verify">
-						<img src="/assets/icons/SealCheck.svg" alt="verified" />
-						<p class="text-highlight text-sm">{detail.copy.consultantLabel}</p>
-					</div>
+					<p class="verify">
+						<img src="/assets/icons/SealCheck.svg" alt="" aria-hidden="true" />
+						<span class="text-highlight text-sm">{detail.copy.consultantLabel}</span>
+					</p>
 				</div>
 			</div>
 
 			<ul class="contact-info mb-20">
 				<li>
-					<p class="icon"><img src="/assets/icons/MapPin.svg" alt="phone" /></p>
+					<p class="icon"><img src="/assets/icons/MapPin.svg" alt="" aria-hidden="true" /></p>
 					<div class="flex flex-col gap-4">
 						<a href={resolve('/contact')}>
 							{detail.contact.address}
@@ -157,7 +211,7 @@
 			</ul>
 			<ul class="contact-info mb-28">
 				<li class="items-center">
-					<p class="icon"><img src="/assets/icons/PhoneCall.svg" alt="phone" /></p>
+					<p class="icon"><img src="/assets/icons/PhoneCall.svg" alt="" aria-hidden="true" /></p>
 					<div class="flex flex-col">
 						<a href={resolve('/contact')}>
 							{detail.contact.primaryPhoneLabel}
@@ -175,7 +229,7 @@
 				{...directHref(detail.contact.primaryPhoneHref)}
 				class="btn btn-medium btn-primary-3 font-weight-600 mb-12 gap-5"
 			>
-				<img src="/assets/icons/PhoneCall-2.svg" alt="phone" />
+				<img src="/assets/icons/PhoneCall-2.svg" alt="" aria-hidden="true" />
 				{detail.copy.callBohemcars}
 			</a>
 
@@ -184,7 +238,7 @@
 				class="btn btn-medium btn-primary-4 font-weight-600 gap-5"
 				rel="noreferrer"
 			>
-				<img src="/assets/icons/ChatCircleDots.svg" alt="phone" />
+				<img src="/assets/icons/ChatCircleDots.svg" alt="" aria-hidden="true" />
 				{detail.copy.chatOnViber}
 			</a>
 		</div>
@@ -229,7 +283,9 @@
 						class="input-large"
 						name="SendInquiryphone"
 						id="SendInquiryphone"
-						type="number"
+						type="tel"
+						inputmode="tel"
+						autocomplete="tel"
 						value=""
 						required
 					/>
@@ -299,6 +355,99 @@
 	@media (max-width: 1199px) {
 		.bohemcars-buybox-actions {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Accessible price-in-BGN tooltip. CSS-only (hover + focus-within) so it works
+	   for mouse, keyboard and touch, and needs no JS / hydration to function. */
+	.bohemcars-price-info {
+		position: relative;
+		display: inline-flex;
+	}
+
+	.bohemcars-price-info__trigger {
+		all: unset;
+		box-sizing: border-box;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.bohemcars-price-info__trigger:focus-visible {
+		outline: 2px solid #98bc2a;
+		outline-offset: 3px;
+		border-radius: 6px;
+	}
+
+	.bohemcars-price-info__pop {
+		position: absolute;
+		bottom: calc(100% + 10px);
+		left: 0;
+		z-index: 30;
+		width: max-content;
+		max-width: 280px;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 12px 14px;
+		border-radius: 8px;
+		background: #14210f;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		box-shadow: 0 12px 30px rgba(20, 33, 15, 0.28);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(4px);
+		transition:
+			opacity 140ms ease,
+			transform 140ms ease,
+			visibility 140ms;
+		pointer-events: none;
+	}
+
+	.bohemcars-price-info:hover .bohemcars-price-info__pop,
+	.bohemcars-price-info:focus-within .bohemcars-price-info__pop {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+		pointer-events: auto;
+	}
+
+	.bohemcars-price-info__pop::after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 18px;
+		border: 6px solid transparent;
+		border-top-color: #14210f;
+	}
+
+	/* The global `* { color: #1c1c1c }` reset would paint these invisible on the
+	   dark popover, so set ink explicitly (matches the pattern used elsewhere). */
+	.bohemcars-price-info__label {
+		color: rgba(255, 255, 255, 0.66) !important;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.bohemcars-price-info__amount {
+		color: #ffffff !important;
+		font-size: 18px;
+		font-weight: 700;
+	}
+
+	.bohemcars-price-info__note {
+		color: rgba(255, 255, 255, 0.74) !important;
+		font-size: 12px;
+		line-height: 1.5;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.bohemcars-price-info__pop {
+			transition: none;
+			transform: none;
 		}
 	}
 </style>

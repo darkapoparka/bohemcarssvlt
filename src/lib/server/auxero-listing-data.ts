@@ -1906,7 +1906,7 @@ export const applyDetailData = (html: string, options: AuxeroRenderOptions = {})
 			'Finance payment w/o taxes, fees, and accessories',
 			'Estimated payment before final taxes, registration, and transport costs.'
 		)
-		.replaceAll('Vehicle in the VAT system', escapeHtml(vehicle.priceBgn || vehicle.condition))
+		.replaceAll('Vehicle in the VAT system', escapeHtml(vehicle.priceBgn || 'On request'))
 		.replaceAll(
 			'6205 Peachtree Dunwoody Rd, Atlanta, GA 30328',
 			escapeHtml(bohemcarsContact.addressLabel)

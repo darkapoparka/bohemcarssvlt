@@ -25,10 +25,15 @@ export const load: PageServerLoad = ({ params, request, url }) => {
 		'Vehicle detail template could not be rendered'
 	);
 
+	const metaDescription =
+		locale === 'bg'
+			? `${vehicle.title} — ${vehicle.year}, ${vehicle.mileage}, ${vehicle.fuel}. Цена ${vehicle.priceLabel}. Провери история, оборудване и снимки в Bohemcars.`
+			: `${vehicle.title} — ${vehicle.year}, ${vehicle.mileage}, ${vehicle.fuel}. Price ${vehicle.priceLabel}. Check history, equipment and photos at Bohemcars.`;
+
 	return {
 		auxeroFullPage: true,
 		detail: vehicleDetailFromVehicle(vehicle, locale),
 		pageDocument,
-		...auxeroPublicShellData(pageDocument, locale, '/inventory')
+		...auxeroPublicShellData(pageDocument, locale, '/inventory', metaDescription)
 	};
 };

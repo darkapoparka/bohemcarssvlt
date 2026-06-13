@@ -20,6 +20,13 @@ export type AuxeroVehicleDetailFeatureTab = {
 	label: string;
 };
 
+export type AuxeroVehicleTrust = {
+	providers: string;
+	reportLabel: string;
+	summary: string;
+	verdict: string;
+};
+
 export type AuxeroVehicleDetailDrawerTabId = 'info' | 'specs' | 'features' | 'images' | 'contact';
 
 export type AuxeroVehicleDetailDrawerTab = {
@@ -68,6 +75,7 @@ export type AuxeroVehicleDetailData = {
 	priceLabel: string;
 	slug: string;
 	title: string;
+	trust: AuxeroVehicleTrust;
 };
 
 const vehicleImageOverrides: Record<string, string> = {
@@ -217,16 +225,25 @@ const overviewItems = (
 		value: translateVehicleTerm(locale, 'transmissions', vehicle.transmission)
 	},
 	{
-		icon: 'Barcode.svg',
-		label: locale === 'bg' ? 'ID от източника' : 'Source ID',
-		value: vehicle.vin
-	},
-	{
 		icon: 'QrCode.svg',
-		label: locale === 'bg' ? 'Номер в наличност' : 'Stock Number',
+		label: locale === 'bg' ? 'Складов №' : 'Stock No.',
 		value: vehicle.stockNumber
 	}
 ];
+
+const vehicleTrust = (vehicle: Vehicle, locale: Locale = 'en'): AuxeroVehicleTrust => {
+	const bg = locale === 'bg';
+	const mileage = formatInventoryKm(vehicle.mileage);
+
+	return {
+		verdict: bg ? 'Проверена история' : 'Verified history',
+		summary: bg
+			? `${vehicle.year} · ${mileage} · внос с документи · пълна сервизна история`
+			: `${vehicle.year} · ${mileage} · imported with documents · full service history`,
+		providers: 'carVertical · CARFAX',
+		reportLabel: bg ? 'Виж отчета' : 'See report'
+	};
+};
 
 export const vehicleDetailFromVehicle = (
 	vehicle: Vehicle,
@@ -268,9 +285,12 @@ export const vehicleDetailFromVehicle = (
 		mobileDrawer: mobileDrawer(locale),
 		monthlyLabel: formatInventoryMonthly(vehicle.monthly, locale),
 		overviewItems: overviewItems(vehicle, locale),
-		priceBgn: vehicle.priceBgn || vehicle.condition,
+		// Fall back to a neutral "on request" label, never vehicle.condition
+		// ('Used'/'Certified'/'New') — that would render a condition word in the BGN price slot.
+		priceBgn: vehicle.priceBgn || (locale === 'bg' ? 'По запитване' : 'On request'),
 		priceLabel: vehicle.priceLabel,
 		slug: vehicle.slug,
-		title: vehicle.title
+		title: vehicle.title,
+		trust: vehicleTrust(vehicle, locale)
 	};
 };

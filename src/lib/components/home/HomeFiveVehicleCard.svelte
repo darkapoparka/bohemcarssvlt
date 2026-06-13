@@ -3,6 +3,7 @@
 	import { Calendar, Cog, Fuel } from '@lucide/svelte';
 	import type { HomeFiveVehicleCardData } from '$lib/auxero/home-five';
 	import type { VehicleCardCopy } from '$lib/i18n/messages';
+	import { getGarageContext } from '$lib/state/garage.svelte';
 
 	let {
 		copy,
@@ -13,6 +14,22 @@
 		style2?: boolean;
 		vehicle: HomeFiveVehicleCardData;
 	} = $props();
+
+	const garage = getGarageContext();
+	const buttonActivationKeys = new Set(['Enter', ' ']);
+	let isSaved = $derived(garage.isFavorite(vehicle.slug));
+
+	const handleFavoriteActivation = (event: MouseEvent | KeyboardEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		garage.toggleFavorite(vehicle.slug);
+	};
+
+	const handleFavoriteKeydown = (event: KeyboardEvent) => {
+		if (!buttonActivationKeys.has(event.key)) return;
+
+		handleFavoriteActivation(event);
+	};
 </script>
 
 <div
@@ -23,10 +40,13 @@
 		<p class={`${vehicle.highlightClass} highlight text-white`}>{vehicle.mileageLabel}</p>
 		<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 		<p
-			class="heart bohemcars-favorite"
+			class={['heart bohemcars-favorite', isSaved && 'is-active']}
 			role="button"
 			tabindex="0"
 			aria-label={`${copy.savePrefix} ${vehicle.title}`}
+			aria-pressed={isSaved}
+			onclick={handleFavoriteActivation}
+			onkeydown={handleFavoriteKeydown}
 		>
 			<svg
 				width="16"
@@ -100,17 +120,7 @@
 			</span>
 		</p>
 		<div class="divider mb-15"></div>
-		<div class="bohemcars-card-actions flex justify-between">
-			<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
-			<p
-				class="compare-details btn btn-small open-modal"
-				data-modal-id="#CompareModal"
-				data-bohemcars-compare={vehicle.slug}
-				role="button"
-				tabindex="0"
-			>
-				{copy.compare}
-			</p>
+		<div class="bohemcars-card-actions">
 			<a href={resolve(`/inventory/${encodeURIComponent(vehicle.slug)}`)} class="view-details">
 				<span>{copy.viewDetails}</span>
 				<span class="view-details__arrow" aria-hidden="true">→</span>
@@ -218,25 +228,33 @@
 		white-space: nowrap;
 	}
 
-	/* Keep the home vehicle card action in Auxero's quieter detail-link language. */
+	/* Home vehicle card CTA: a clean outlined button (clear, but lets the car
+	   photo stay the hero) that fills brand-green on hover — cohesive with the
+	   hero/compare CTAs. A solid bar read as heavy and off-language. */
+	.bohemcars-card-actions {
+		margin-top: 2px;
+	}
+
 	.bohemcars-card-actions .view-details {
-		display: inline-flex !important;
-		width: auto;
-		min-height: 36px;
+		display: flex !important;
+		width: 100%;
+		min-height: 42px;
 		align-items: center;
-		justify-content: flex-start;
+		justify-content: center;
 		gap: 8px;
-		border-radius: 999px;
-		background: transparent;
-		color: #1c1c1c !important;
+		border: 1px solid var(--bc-border);
+		border-radius: 8px;
+		background: #ffffff;
+		color: #14210f !important;
 		font-size: 15px !important;
-		font-weight: 600 !important;
+		font-weight: 700 !important;
 		line-height: 20px;
-		padding: 0 12px;
+		padding: 0 16px;
 		text-decoration: none !important;
 		white-space: nowrap;
 		transition:
 			background-color 0.2s ease,
+			border-color 0.2s ease,
 			color 0.2s ease;
 	}
 
@@ -248,7 +266,8 @@
 
 	.bohemcars-card-actions .view-details:hover,
 	.bohemcars-card-actions .view-details:focus-visible {
-		background: #eef4e7;
+		border-color: #98bc2a !important;
+		background: #98bc2a !important;
 		color: #14210f !important;
 	}
 

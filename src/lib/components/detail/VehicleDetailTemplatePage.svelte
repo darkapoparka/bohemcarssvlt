@@ -276,6 +276,110 @@
 		min-width: 0;
 	}
 
+	/* The shared template animates tab panels with `transition: all 0.5s` from
+	   `scale(0.9)`, so a click looks sluggish/half-rendered for half a second and
+	   reads as "didn't register" — prompting a second click. Snap the swap to a
+	   fast opacity fade with no transform, scoped to the PDP tab panels only
+	   (the feature tabs and the cash/finance buy-box toggle). */
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .content-inner),
+	:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .content-inner.active),
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .content-inner),
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .content-inner.active) {
+		transform: none;
+		transition: opacity 120ms ease;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .content-inner),
+		:global(.bohemcars-pdp-desktop .bohemcars-pdp-info-panel .content-inner.active),
+		:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .content-inner),
+		:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .content-inner.active) {
+			transition: none;
+		}
+	}
+
+	/* Cash/finance toggle: the pill markup is a <li> styled by the template, so
+	   the click target is a <button> filling it. Move the pill padding onto the
+	   button so the whole pill is clickable, and keep the active label white
+	   despite the global ink reset. */
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .menu-tab-style5 li:not(.item)) {
+		padding: 0;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .bohemcars-buybox-mode) {
+		all: unset;
+		box-sizing: border-box;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 40px;
+		padding: 8px 16px;
+		color: #4b4b4b;
+		font-weight: 600;
+	}
+
+	:global(
+		.bohemcars-pdp-desktop .listing-details--sidebar-box .menu-tab-style5 li.active .bohemcars-buybox-mode
+	) {
+		color: #ffffff;
+	}
+
+	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box .bohemcars-buybox-mode:focus-visible) {
+		outline: 2px solid #98bc2a;
+		outline-offset: 2px;
+		border-radius: 999px;
+	}
+
+	/* Buy-box CTAs: the template's default is heavy black full-pills that clash
+	   with the flat 8px card language. Primary = brand green, secondary = clean
+	   outline, with a clear hierarchy. */
+	:global(.bohemcars-pdp-desktop .bohemcars-buybox-action) {
+		min-height: 48px;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		font-weight: 600;
+		transition:
+			background-color 0.18s ease,
+			border-color 0.18s ease,
+			color 0.18s ease;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child) {
+		background: #98bc2a;
+		border-color: #98bc2a;
+		color: #14210f;
+	}
+
+	:global(
+		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child:hover
+	),
+	:global(
+		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child:focus-visible
+	) {
+		background: #14210f;
+		border-color: #14210f;
+		color: #ffffff;
+	}
+
+	:global(.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child) {
+		background: #ffffff;
+		border-color: #d2dac9;
+		color: #1c1c1c;
+	}
+
+	:global(
+		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child:hover
+	),
+	:global(
+		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child:focus-visible
+	) {
+		background: #14210f;
+		border-color: #14210f;
+		color: #ffffff;
+	}
+
 	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box),
 	:global(.bohemcars-pdp-desktop .financing-calculator),
 	:global(.bohemcars-pdp-desktop .rating-box),
@@ -314,6 +418,26 @@
 
 	:global(.bohemcars-pdp-desktop .car-overview-list-style2 li) {
 		border-color: #dde3d6;
+		grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+	}
+
+	/* Tabular figures keep specs and the stock reference reading as clean data
+	   rather than raw scraped text; min-width:0 lets the value ellipsize instead
+	   of forcing the label to wrap. */
+	:global(.bohemcars-pdp-desktop .car-overview-list-style2 li > span) {
+		font-variant-numeric: tabular-nums;
+		min-width: 0;
+		overflow-wrap: anywhere;
+		padding-left: 12px;
+	}
+
+	/* The stock reference is the last row and a long identifier — de-emphasise it
+	   (smaller, muted) so it reads like a reference code and fits on one line
+	   instead of wrapping or bleeding past the card. */
+	:global(.bohemcars-pdp-desktop .car-overview-list-style2 li:last-child > span) {
+		font-size: 14px;
+		color: #5b5b5b;
+		align-self: center;
 	}
 
 	:global(.bohemcars-pdp-desktop .listing-details--contact .verify) {

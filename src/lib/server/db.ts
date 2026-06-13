@@ -378,10 +378,18 @@ const persistedVehicleSubmissions = () => readCmsCollection('vehicle-submissions
 const writePersistedVehicleSubmissions = (records: BohemcarsVehicleSubmissionRecord[]) =>
 	writeCmsCollection('vehicle-submissions', records);
 
-export const listBohemcarsVehicleSubmissions = () => [
-	...persistedVehicleSubmissions(),
-	...seededVehicleSubmissions
-];
+export const listBohemcarsVehicleSubmissions = () => {
+	const persisted = persistedVehicleSubmissions();
+	const persistedIds = new Set(persisted.map((submission) => submission.id));
+
+	// Persisted records take precedence: when a seeded submission has been edited it is
+	// promoted into the persisted collection (see updateBohemcarsVehicleSubmissionRecord),
+	// so filter the original seed out here to avoid a duplicate id.
+	return [
+		...persisted,
+		...seededVehicleSubmissions.filter((submission) => !persistedIds.has(submission.id))
+	];
+};
 
 export const listBohemcarsInventoryListings = ({
 	includeArchived = false
@@ -592,12 +600,16 @@ export const updateBohemcarsVehicleSubmissionRecord = (
 ) => {
 	const records = persistedVehicleSubmissions();
 	const index = records.findIndex((submission) => submission.id === id);
-	const record =
+	const existing =
 		index >= 0
 			? records[index]
 			: seededVehicleSubmissions.find((submission) => submission.id === id);
 
-	if (!record) return undefined;
+	if (!existing) return undefined;
+
+	// Work on a copy so we never mutate a shared module-level seed object in place
+	// (that previously corrupted the canonical seed for every session and was lost on restart).
+	const record = { ...existing };
 
 	const expectedPrice = patch.expectedPrice?.trim();
 	const message = patch.message?.trim();
@@ -614,10 +626,15 @@ export const updateBohemcarsVehicleSubmissionRecord = (
 	if (patch.previewImage) record.previewImage = patch.previewImage;
 	if (patch.galleryImages) record.galleryImages = patch.galleryImages;
 	if (patch.documents) record.documents = patch.documents;
+
 	if (index >= 0) {
 		records[index] = record;
-		writePersistedVehicleSubmissions(records);
+	} else {
+		// Promote a seeded submission into the persisted collection on first edit so the
+		// change actually persists (listBohemcarsVehicleSubmissions dedupes the seed away).
+		records.unshift(record);
 	}
+	writePersistedVehicleSubmissions(records);
 
 	return { ...record };
 };

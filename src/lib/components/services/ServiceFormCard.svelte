@@ -31,7 +31,7 @@
 		formClass="send-inquiry bohemcars-service-form"
 		gridClass="lg-grid-cols-1 mb-22 grid grid-cols-2 gap-x-12 gap-y-24"
 		novalidate
-		statusMessage="Service request queued locally for Bohemcars"
+		statusMessage="Заявката за услуга е подготвена локално за Bohemcars"
 		submitLabel={form.submitLabel}
 	/>
 </div>

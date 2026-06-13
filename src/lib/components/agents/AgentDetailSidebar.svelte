@@ -30,7 +30,7 @@
 					<div class="flex flex-col gap-4">
 						<a href={resolve('/contact')}>{sidebar.address}</a>
 						<a href={resolve('/contact')} class="text-highlight text-underline text-sm"
-							>Plan Appointment</a
+							>Запази час за оглед</a
 						>
 					</div>
 				</li>
@@ -63,12 +63,12 @@
 	</div>
 
 	<div class="listing-details--sidebar-box">
-		<p class="h5 mb-16 capitalize">{sidebar.formTitle}</p>
+		<p class="h5 mb-16">{sidebar.formTitle}</p>
 
 		<form action="#" class="send-inquiry">
 			<div class="mb-8 grid grid-cols-1 gap-18">
 				<div>
-					<p class="mb-8">Name</p>
+					<p class="mb-8">Име</p>
 					<input
 						class="active input-large"
 						id="SendInquiryname"
@@ -79,7 +79,7 @@
 					/>
 				</div>
 				<div>
-					<p class="mb-8">Email</p>
+					<p class="mb-8">Имейл</p>
 					<input
 						class="input-large"
 						name="SendInquiryemail"
@@ -90,9 +90,9 @@
 					/>
 				</div>
 				<div>
-					<p class="mb-8">Phone</p>
+					<p class="mb-8">Телефон</p>
 					<input
-						placeholder="Phone (optional)"
+						placeholder="Телефон (по избор)"
 						class="input-large"
 						name="SendInquiryphone"
 						id="SendInquiryphone"
@@ -103,7 +103,7 @@
 				</div>
 
 				<div>
-					<p class="mb-8">Subject</p>
+					<p class="mb-8">Тема</p>
 					<select>
 						{#each sidebar.subjectOptions as option (option)}
 							<option>{option}</option>
@@ -112,7 +112,7 @@
 				</div>
 
 				<div class="padding-0">
-					<p class="mb-6">Message</p>
+					<p class="mb-6">Съобщение</p>
 					<textarea
 						placeholder={sidebar.messagePlaceholder}
 						rows="3"
@@ -132,7 +132,7 @@
 			</label>
 
 			<p class="text-secondary text-xs">
-				By using this service, you accept our
+				Използвайки тази услуга, приемате нашите
 				<a href={resolve('/terms')} class="text-highlight text-underline text-xs"
 					>{sidebar.termsLabel}</a
 				>

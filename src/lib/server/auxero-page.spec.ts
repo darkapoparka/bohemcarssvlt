@@ -38,12 +38,12 @@ describe('splitAuxeroDocument', () => {
 		expect(runtimeHtml).toContain('window.__BOHEMCARS_RUNTIME__');
 		expect(runtimeHtml).toContain("form.matches('.bohemcars-blog-comment-form')");
 		expect(runtimeHtml).toContain("url: '/api/messages'");
-		expect(runtimeHtml).toContain('Comment saved locally for Bohemcars review');
+		expect(runtimeHtml).toContain('Коментарът е запазен локално за преглед от Bohemcars');
 		expect(runtimeHtml).toContain("form.matches('.bohemcars-sell-form')");
 		expect(runtimeHtml).toContain("url: '/api/inventory/submissions'");
 		expect(runtimeHtml).toContain('Заявката е подготвена. Bohemcars ще се свърже с вас.');
 		expect(runtimeHtml).toContain("form.matches('.bohemcars-service-form')");
-		expect(runtimeHtml).toContain('Service request queued locally for Bohemcars');
+		expect(runtimeHtml).toContain('Заявката за услуга е подготвена локално за Bohemcars');
 		expect(runtimeHtml).not.toContain('/assets/js/jquery.min.js');
 		expect(runtimeHtml).not.toContain('<script src=');
 	});
@@ -805,8 +805,8 @@ describe('splitAuxeroDocument', () => {
 		expect(split?.beforeHtml).toContain('Terms of use');
 		expect(split?.sectionHtml).toContain('Условия за използване на Bohemcars');
 		expect(split?.sectionHtml).toContain('term-page--nav');
-		expect(split?.sectionHtml).toContain('1. Vehicle Information');
-		expect(split?.sectionHtml).toContain('6. Contact And Data');
+		expect(split?.sectionHtml).toContain('1. Информация за автомобилите');
+		expect(split?.sectionHtml).toContain('6. Контакт и данни');
 		expect(split?.afterHtml).toContain('footer');
 		expect(split?.afterHtml).toContain('LoginModal');
 	});

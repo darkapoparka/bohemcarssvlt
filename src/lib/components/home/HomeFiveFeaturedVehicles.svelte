@@ -739,7 +739,8 @@
 
 	.bohemcars-quick-filter-shell {
 		display: grid;
-		grid-template-columns: repeat(11, minmax(max-content, 1fr));
+		grid-auto-flow: column;
+			grid-auto-columns: minmax(max-content, 1fr);
 		align-items: stretch;
 		gap: 10px;
 		border: 0;

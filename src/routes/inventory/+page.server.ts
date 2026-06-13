@@ -2,7 +2,11 @@ import type { PageServerLoad } from './$types';
 import { inventoryCardsFromVehicles } from '$lib/auxero/inventory';
 import { inventoryDesktopDataFromState } from '$lib/auxero/inventory-desktop';
 import { inventoryMobileDataFromState } from '$lib/auxero/inventory-mobile';
-import { parseAuxeroHeadAssets, type AuxeroPageDocument } from '$lib/auxero/page-document';
+import {
+	ensureDescriptionMeta,
+	parseAuxeroHeadAssets,
+	type AuxeroPageDocument
+} from '$lib/auxero/page-document';
 import { getMessages, resolveLocale } from '$lib/i18n/messages';
 import {
 	constrainInventoryViewForLayout,
@@ -61,6 +65,12 @@ export const load: PageServerLoad = ({ request, url }) => {
 	};
 	const seoTitle = locale === 'bg' ? 'Автомобили — Bohemcars' : 'Cars — Bohemcars';
 	const pageDocument = inventoryPageDocument(templateFile, seoTitle);
+	pageDocument.headAssets = ensureDescriptionMeta(
+		pageDocument.headAssets,
+		locale === 'bg'
+			? 'Разгледай наличните автомобили на Bohemcars — филтрирай по марка, тип, цена и пробег. Внос от Канада и съдействие при регистрация.'
+			: 'Browse Bohemcars inventory — filter by brand, type, price and mileage. Canada import and registration support.'
+	);
 	const inventoryState = getInventoryState(templateFile, renderOptions);
 
 	return {

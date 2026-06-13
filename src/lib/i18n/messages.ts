@@ -82,6 +82,10 @@ export type DetailCopy = {
 	playVideo: string;
 	price: string;
 	priceIntro: string;
+	monthlyTitle: string;
+	priceInBgn: string;
+	priceInBgnAria: string;
+	bgnRateNote: string;
 	savePrefix: string;
 	sendInquiry: string;
 	subject: string;
@@ -301,6 +305,11 @@ export const messages: Record<Locale, PublicMessages> = {
 			price: 'Price:',
 			priceIntro:
 				'Listed vehicle price. Final taxes and registration costs confirmed before purchase.',
+			monthlyTitle: 'Est. monthly:',
+			priceInBgn: 'Price in BGN',
+			priceInBgnAria: 'Show the price in Bulgarian lev',
+			bgnRateNote:
+				'At the fixed BNB rate (1 EUR = 1.95583 BGN). Final taxes and registration are confirmed before purchase.',
 			savePrefix: 'Save',
 			sendInquiry: 'Send Inquiry',
 			subject: 'Subject',
@@ -452,6 +461,11 @@ export const messages: Record<Locale, PublicMessages> = {
 			price: 'Цена:',
 			priceIntro:
 				'Обявена цена на автомобила. Финалните данъци и регистрационни разходи се потвърждават преди покупка.',
+			monthlyTitle: 'Ориентировъчна вноска:',
+			priceInBgn: 'Цена в лева',
+			priceInBgnAria: 'Покажи цената в лева',
+			bgnRateNote:
+				'По фиксирания курс на БНБ (1 EUR = 1.95583 лв.). Крайните данъци и регистрация се потвърждават преди покупка.',
 			savePrefix: 'Запази',
 			sendInquiry: 'Изпрати запитване',
 			subject: 'Тема',

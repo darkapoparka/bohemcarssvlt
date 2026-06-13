@@ -26,6 +26,10 @@ export type AuxeroCompareRow = {
 	icon: string;
 	label: string;
 	values: string[];
+	/** Column indexes that hold the winning value for this row (empty = no winner). */
+	bestIndexes?: number[];
+	/** Short pill shown on the winning cell(s), e.g. "Най-добра цена". */
+	badge?: string;
 };
 
 export type AuxeroCompareRowGroup = {
@@ -83,6 +87,24 @@ export const compareVehiclesFromVehicles = (
 		year: vehicle.year
 	}));
 
+// Pull a comparable integer out of a formatted label ("140 000 km" -> 140000).
+const numericFromLabel = (value: string): number | null => {
+	const digits = String(value).replace(/[^\d]/g, '');
+	if (!digits) return null;
+	const parsed = Number(digits);
+	return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+};
+
+// Indexes of the winning value(s) for a row. Empty when there is no meaningful
+// winner: fewer than two real values, or every value ties.
+const bestValueIndexes = (numbers: (number | null)[], direction: 'min' | 'max'): number[] => {
+	const valid = numbers.filter((value): value is number => value !== null);
+	if (valid.length < 2) return [];
+	const target = direction === 'min' ? Math.min(...valid) : Math.max(...valid);
+	if (valid.every((value) => value === target)) return [];
+	return numbers.flatMap((value, index) => (value === target ? [index] : []));
+};
+
 export const compareRowsFromVehicles = (
 	vehicles: AuxeroCompareVehicle[],
 	locale: Locale = 'en'
@@ -91,13 +113,23 @@ export const compareRowsFromVehicles = (
 		alt: locale === 'bg' ? 'пробег' : 'mileage',
 		icon: 'mileage.svg',
 		label: locale === 'bg' ? 'Пробег' : 'Mileage',
-		values: vehicles.map((vehicle) => vehicle.mileageLabel)
+		values: vehicles.map((vehicle) => vehicle.mileageLabel),
+		bestIndexes: bestValueIndexes(
+			vehicles.map((vehicle) => numericFromLabel(vehicle.mileageLabel)),
+			'min'
+		),
+		badge: locale === 'bg' ? 'Най-малко км' : 'Lowest km'
 	},
 	{
 		alt: locale === 'bg' ? 'година' : 'year',
 		icon: 'years.svg',
 		label: locale === 'bg' ? 'Година' : 'Years',
-		values: vehicles.map((vehicle) => String(vehicle.year))
+		values: vehicles.map((vehicle) => String(vehicle.year)),
+		bestIndexes: bestValueIndexes(
+			vehicles.map((vehicle) => vehicle.year),
+			'max'
+		),
+		badge: locale === 'bg' ? 'Най-нова' : 'Newest'
 	},
 	{
 		alt: locale === 'bg' ? 'гориво' : 'fuel',
@@ -151,7 +183,12 @@ export const compareRowsFromVehicles = (
 		alt: locale === 'bg' ? 'цена' : 'price',
 		icon: 'Payment.png',
 		label: locale === 'bg' ? 'Цена' : 'Price',
-		values: vehicles.map((vehicle) => vehicle.priceLabel)
+		values: vehicles.map((vehicle) => vehicle.priceLabel),
+		bestIndexes: bestValueIndexes(
+			vehicles.map((vehicle) => numericFromLabel(vehicle.priceLabel)),
+			'min'
+		),
+		badge: locale === 'bg' ? 'Най-добра цена' : 'Best price'
 	}
 ];
 

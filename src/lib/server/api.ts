@@ -6,9 +6,18 @@ export const readApiPayload = async (request: Request): Promise<ApiPayload> => {
 	const contentType = request.headers.get('content-type') ?? '';
 
 	if (contentType.includes('application/json')) {
-		const body = await request.json();
+		let body: unknown;
 
-		return typeof body === 'object' && body ? body : {};
+		try {
+			body = await request.json();
+		} catch {
+			// Malformed JSON → treat as an empty payload (downstream returns a clean 400)
+			// instead of surfacing an unhandled 500.
+			return {};
+		}
+
+		// Reject arrays (typeof [] === 'object') so payloadString reads named keys, not indices.
+		return body && typeof body === 'object' && !Array.isArray(body) ? (body as ApiPayload) : {};
 	}
 
 	const formData = await request.formData();
