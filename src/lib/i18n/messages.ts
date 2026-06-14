@@ -556,6 +556,13 @@ export const localizeVehicleTermsInText = (locale: Locale, value: string) => {
 export const localizeCount = (locale: Locale, count: string) =>
 	locale === 'bg' ? count.replace(/\bVehicles\b/g, 'автомобила') : count;
 
+/**
+ * Bulgarian count noun for "автомобил": singular for counts ending in 1 (but not 11),
+ * paucal/plural form otherwise. Avoids ungrammatical strings like "1 автомобила".
+ */
+export const bgVehicleCountNoun = (count: number) =>
+	count % 10 === 1 && count % 100 !== 11 ? 'автомобил' : 'автомобила';
+
 const auxeroBgReplacements: Array<[RegExp, string]> = [
 	// Inventory + detail template strings. Multi-word/compound phrases are listed
 	// before the generic single-word rules below (e.g. /Price/) so they match first.

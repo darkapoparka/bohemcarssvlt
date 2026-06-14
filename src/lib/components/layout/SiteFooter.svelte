@@ -106,7 +106,9 @@
 	}
 
 	.site-footer p,
-	.site-footer a {
+	.site-footer a,
+	.site-footer span,
+	.site-footer li {
 		color: rgb(255 255 255 / 0.68);
 	}
 

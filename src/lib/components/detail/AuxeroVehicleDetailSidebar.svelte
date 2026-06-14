@@ -14,7 +14,7 @@
 	// WAI-ARIA tabs pattern: roving focus + activation via arrow/Home/End keys.
 	const handleBuyboxKeydown = async (event: KeyboardEvent) => {
 		const current = paymentMode === 'cash' ? 0 : 1;
-		let next = current;
+		let next: number;
 
 		if (event.key === 'ArrowRight') next = current >= 1 ? 0 : current + 1;
 		else if (event.key === 'ArrowLeft') next = current <= 0 ? 1 : current - 1;

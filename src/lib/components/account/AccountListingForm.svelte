@@ -7,8 +7,6 @@
 
 	let { form }: { form: AuxeroAccountListingFormData } = $props();
 
-	let listingStatus = $state<'draft' | 'published' | 'submitted'>('draft');
-
 	const isSubmissionForm = $derived(
 		form.hiddenFields.some(
 			(field) => field.name === 'routePath' && field.value.startsWith('account/listings')
@@ -16,9 +14,6 @@
 	);
 	const primaryListingStatus = $derived(isSubmissionForm ? 'submitted' : 'published');
 	const primaryActionLabel = $derived(isSubmissionForm ? 'Submit for Review' : 'Publish Listing');
-	const setListingStatus = (nextStatus: 'draft' | 'published' | 'submitted') => {
-		listingStatus = nextStatus;
-	};
 
 	const selectedDropdownValue = (field: AuxeroListingFormDropdownField) =>
 		field.options.find((option) => option.checked)?.value ?? '';
@@ -37,7 +32,8 @@
 	{#each form.hiddenFields as field (field.name)}
 		<input type="hidden" name={field.name} value={field.value} />
 	{/each}
-	<input type="hidden" name="listingStatus" value={listingStatus} />
+	<!-- listingStatus is carried by the submit buttons' name/value (below), so the posted
+	     value is the actual button clicked — no async $state flush race on submit. -->
 
 	<section class="dash-card">
 		<div class="dash-card__head">
@@ -290,14 +286,15 @@
 	</section>
 
 	<div class="flex flex-wrap justify-end gap-3">
-		<button type="submit" class="dash-secondary-button" onclick={() => setListingStatus('draft')}>
+		<button type="submit" name="listingStatus" value="draft" class="dash-secondary-button">
 			<Save size={17} strokeWidth={2.1} aria-hidden="true" />
 			Save Draft
 		</button>
 		<button
 			type="submit"
+			name="listingStatus"
+			value={primaryListingStatus}
 			class="dash-primary-button"
-			onclick={() => setListingStatus(primaryListingStatus)}
 		>
 			<Send size={17} strokeWidth={2.1} aria-hidden="true" />
 			{primaryActionLabel}

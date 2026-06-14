@@ -18,4 +18,10 @@
 	/>
 </svelte:head>
 
-<CompareCleanPage allVehicles={data.allVehicles} locale={data.locale} vehicles={data.vehicles} />
+<CompareCleanPage
+	allVehicles={data.allVehicles}
+	footer={data.footer}
+	header={data.header}
+	locale={data.locale}
+	vehicles={data.vehicles}
+/>

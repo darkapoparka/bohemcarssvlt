@@ -1,17 +1,23 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { ArrowLeft, Plus, Repeat2, X } from '@lucide/svelte';
+	import { Plus, Repeat2, X } from '@lucide/svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { compareRowsFromVehicles, type AuxeroCompareVehicle } from '$lib/auxero/compare';
+	import type { HomeFiveFooterData, HomeFiveHeaderData } from '$lib/auxero/home-five';
 	import type { Locale } from '$lib/i18n/messages';
-	import { bohemcarsAssets } from '$lib/data/bohemcars';
+	import CleanSiteFooter from '$lib/components/layout/CleanSiteFooter.svelte';
+	import CleanSiteHeader from '$lib/components/layout/CleanSiteHeader.svelte';
 
 	let {
 		allVehicles,
+		footer,
+		header,
 		locale,
 		vehicles
 	}: {
 		allVehicles: AuxeroCompareVehicle[];
+		footer: HomeFiveFooterData;
+		header: HomeFiveHeaderData;
 		locale: Locale;
 		vehicles: AuxeroCompareVehicle[];
 	} = $props();
@@ -42,24 +48,7 @@
 </script>
 
 <div class="min-h-screen bg-bc-bg font-bc-body text-bc-ink antialiased">
-	<header class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-4">
-		<a href={resolve('/')} class="flex items-center gap-2 no-underline">
-			<img
-				src={bohemcarsAssets.logoLight}
-				alt="Bohemcars"
-				width="1285"
-				height="235"
-				class="h-7 w-auto [filter:brightness(0)]"
-			/>
-		</a>
-		<a
-			href={resolve('/')}
-			class="inline-flex items-center gap-1.5 rounded-bc-pill border border-bc-border bg-white px-3.5 py-2 text-sm font-semibold text-bc-ink-soft no-underline transition-colors hover:border-bc-accent hover:text-bc-accent-contrast"
-		>
-			<ArrowLeft size={16} strokeWidth={2.2} aria-hidden="true" />
-			{t('Към сайта', 'Back to site')}
-		</a>
-	</header>
+	<CleanSiteHeader {header} />
 
 	<main class="mx-auto w-full max-w-[1200px] px-4 pb-24">
 		<!-- Hero -->
@@ -292,4 +281,6 @@
 			{t('Чист Svelte 5 + Tailwind v4 — без Auxero тема, без !important', 'Clean Svelte 5 + Tailwind v4 — no Auxero theme, zero !important')}
 		</p>
 	</main>
+
+	<CleanSiteFooter {footer} />
 </div>

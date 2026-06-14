@@ -8,6 +8,7 @@ import type { BlogPost } from '$lib/data/blog';
 import { vehicles as inventoryVehicles } from '$lib/data/vehicles';
 import type { Vehicle } from '$lib/data/vehicles';
 import {
+	bgVehicleCountNoun,
 	getMessages,
 	localizeVehicleTermsInText,
 	translateVehicleTerm,
@@ -1380,7 +1381,8 @@ export function homeFiveHeroDataFromVehicles(
 			}
 		],
 		searchSubmitPrefix: t.searchSubmitPrefix,
-		searchSubmitSuffix: t.searchSubmitSuffix,
+		searchSubmitSuffix:
+			locale === 'bg' ? bgVehicleCountNoun(vehicles.length) : t.searchSubmitSuffix,
 		tabs: t.tabs,
 		textSlides: orderedTextSlides,
 		totalMatches: vehicles.length,

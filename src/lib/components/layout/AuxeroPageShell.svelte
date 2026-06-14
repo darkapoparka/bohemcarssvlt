@@ -23,7 +23,6 @@
 	let { afterHtml, beforeHtml, children, pageDocument, title }: Props = $props();
 
 	const wrapperOpenTag = '<div id="wrapper">';
-	const divTagPattern = /<\/?div\b[^>]*>/gi;
 	const resolvedTitle = $derived(
 		title ?? pageDocument.headHtml.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim()
 	);
@@ -33,7 +32,8 @@
 	const scriptSourceHtml = $derived(`${beforeHtml}\n${afterHtml}`);
 
 	const findWrapperCloseIndex = (html: string) => {
-		divTagPattern.lastIndex = 0;
+		// Local regex (not module-shared) so the derived has no shared mutable lastIndex state.
+		const divTagPattern = /<\/?div\b[^>]*>/gi;
 
 		let depth = 1;
 		let match: RegExpExecArray | null;

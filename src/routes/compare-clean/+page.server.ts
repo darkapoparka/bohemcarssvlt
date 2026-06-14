@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { compareVehiclesFromVehicles } from '$lib/auxero/compare';
+import { homeFiveFooterDataForLocale, homeFiveHeaderDataForLocale } from '$lib/auxero/home-five';
 import { vehicles } from '$lib/data/vehicles';
 import { resolveLocale } from '$lib/i18n/messages';
 import { getCompareVehicles } from '$lib/server/compare-state';
@@ -13,6 +14,8 @@ export const load: PageServerLoad = ({ request, url }) => {
 	return {
 		auxeroFullPage: true,
 		allVehicles: compareVehiclesFromVehicles(vehicles, locale),
+		footer: homeFiveFooterDataForLocale(locale),
+		header: homeFiveHeaderDataForLocale(locale, '/compare'),
 		locale,
 		vehicles: compareVehiclesFromVehicles(getCompareVehicles(renderOptions), locale)
 	};

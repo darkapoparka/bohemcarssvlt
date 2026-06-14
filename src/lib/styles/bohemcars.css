@@ -1,3 +1,15 @@
+/*
+ * Icon-color footgun fix: static/assets/app.css declares a global `* { color:#1c1c1c }`
+ * that paints SVG icons (and their <path>s drawing with currentColor) dark — invisible on
+ * dark surfaces. SVG selectors outspecify `*`, so this lets icons inherit their parent's
+ * text colour instead. It is a no-op on light surfaces (parent is already #1c1c1c) and only
+ * rescues icons on dark/green surfaces. Component/guard `!important` overrides still win.
+ */
+svg,
+svg * {
+	color: inherit;
+}
+
 :root {
 	color-scheme: light;
 

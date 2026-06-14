@@ -82,6 +82,10 @@
 	};
 
 	const openInquiry = () => {
+		// Start each inquiry session clean so a previous success message doesn't linger
+		// under a fresh, empty form when the drawer is reopened.
+		inquiryStatus = '';
+		inquirySubmitting = false;
 		inquiryOpen = true;
 	};
 

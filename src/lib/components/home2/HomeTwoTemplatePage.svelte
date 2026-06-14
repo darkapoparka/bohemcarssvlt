@@ -51,9 +51,10 @@
 		`document.body.className = ${JSON.stringify(pageDocument.bodyClass)};`
 	);
 
+	// Title is handled declaratively by <AuxeroHead> (<svelte:head><title>), so the effect
+	// only syncs the body class to the document (body is outside the component tree).
 	$effect(() => {
 		document.body.className = pageDocument.bodyClass;
-		document.title = 'Bohemcars Marketplace | Home2';
 	});
 </script>
 
