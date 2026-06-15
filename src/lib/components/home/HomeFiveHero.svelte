@@ -1983,7 +1983,7 @@
 			border: 0;
 			border-radius: inherit;
 			background: transparent;
-			box-shadow: inset 0 0 0 1px var(--bc-hero-control-border);
+			box-shadow: none;
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
@@ -1993,8 +1993,8 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
 			position: relative;
 			z-index: 1;
-			width: 20px;
-			height: 20px;
+			width: 23px;
+			height: 23px;
 			color: var(--bc-accent-contrast) !important;
 			fill: none;
 			stroke: var(--bc-accent-contrast) !important;
