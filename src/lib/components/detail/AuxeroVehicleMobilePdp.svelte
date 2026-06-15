@@ -878,7 +878,6 @@
 		}
 
 		.bohemcars-mobile-pdp__tab.active,
-		.bohemcars-mobile-pdp__tab:hover,
 		.bohemcars-mobile-pdp__tab:focus-visible {
 			background: transparent;
 			color: #1c1c1c;
@@ -897,9 +896,20 @@
 		}
 
 		.bohemcars-mobile-pdp__tab.active::after,
-		.bohemcars-mobile-pdp__tab:hover::after,
 		.bohemcars-mobile-pdp__tab:focus-visible::after {
 			background: #98bc2a;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-pdp__tab:hover {
+				background: transparent;
+				color: #1c1c1c;
+				outline: 0;
+			}
+
+			.bohemcars-mobile-pdp__tab:hover::after {
+				background: #98bc2a;
+			}
 		}
 
 		.bohemcars-mobile-pdp__panel {

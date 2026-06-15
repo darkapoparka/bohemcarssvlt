@@ -1993,8 +1993,8 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
 			position: relative;
 			z-index: 1;
-			width: 23px;
-			height: 23px;
+			width: 26px;
+			height: 26px;
 			color: var(--bc-accent-contrast) !important;
 			fill: none;
 			stroke: var(--bc-accent-contrast) !important;
