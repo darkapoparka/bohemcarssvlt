@@ -1276,20 +1276,20 @@
 		}
 
 		.bohemcars-mobile-hero__all {
-			display: flex;
-			width: 100%;
-			min-height: 42px;
+			display: inline-flex;
+			min-height: 38px;
 			min-width: 0;
+			max-width: 100%;
 			align-items: center;
 			justify-content: center;
 			gap: 6px;
-			border-radius: 11px;
-			background: rgba(255, 255, 255, 0.16);
-			border: 1px solid rgba(255, 255, 255, 0.55);
+			border-radius: 999px;
+			background: var(--bc-surface-raised);
+			border: 0;
 			box-shadow: none;
-			padding: 0 14px;
-			color: #14210f !important;
-			font-size: 14px;
+			padding: 0 16px;
+			color: var(--bc-accent-contrast) !important;
+			font-size: 13px;
 			font-weight: 700;
 			line-height: 16px;
 			text-decoration: none;
