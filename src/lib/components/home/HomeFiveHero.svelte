@@ -1140,29 +1140,29 @@
 		.bohemcars-mobile-hero__tabs {
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 4px;
+			gap: 3px;
 			min-height: 0;
 			border: 0;
-			border-radius: 14px;
+			border-radius: 11px;
 			background: rgba(20, 33, 15, 0.1);
 			box-shadow: none;
-			padding: 4px;
+			padding: 3px;
 		}
 
 		.bohemcars-mobile-hero__tabs button {
 			display: flex;
-			min-height: 42px;
+			min-height: 34px;
 			width: 100%;
 			align-items: center;
 			justify-content: center;
 			border: 0;
-			border-radius: 10px;
+			border-radius: 8px;
 			background: transparent;
 			color: rgba(20, 33, 15, 0.66);
-			font-size: 15px;
+			font-size: 13px;
 			font-weight: 700;
 			letter-spacing: 0;
-			line-height: 20px;
+			line-height: 18px;
 			text-align: center;
 			text-decoration: none;
 			cursor: pointer;
