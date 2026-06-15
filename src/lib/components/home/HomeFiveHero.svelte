@@ -1668,6 +1668,14 @@
 			display: none;
 		}
 
+		/* While the search input is focused the keyboard is up; collapse the quick-filter
+		   chip body so the input + submit CTA dock just above the keyboard instead of the
+		   tall chip list floating the input far up and leaving a gap below it. */
+		:global(.bohemcars-home-search-drawer__sheet[data-vaul-drawer]:focus-within)
+			.bohemcars-home-search-drawer__body {
+			display: none;
+		}
+
 		:global(.bohemcars-home-search-drawer__handle[data-vaul-handle]) {
 			position: relative;
 			display: block;

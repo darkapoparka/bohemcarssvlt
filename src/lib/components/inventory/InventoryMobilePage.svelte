@@ -1462,6 +1462,17 @@
 		max-height: min(calc(76dvh - var(--bc-kb-inset, 0px)), 640px);
 	}
 
+	/* When the search input is focused the keyboard is up; collapse the quick-filter
+	   chips + show-all link so the input docks flush above the keyboard instead of the
+	   whole (taller) sheet floating up and leaving a gap below the input. The submit
+	   button lives inside the input row, so search stays reachable while typing. */
+	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]:focus-within)
+		.bohemcars-inventory-mobile-drawer__group,
+	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]:focus-within)
+		.bohemcars-inventory-mobile-drawer__clear--search {
+		display: none;
+	}
+
 	:global(.bohemcars-inventory-mobile-drawer__sheet--filters[data-vaul-drawer]) {
 		max-height: min(calc(90dvh - var(--bc-kb-inset, 0px)), 760px);
 		padding-bottom: 0;
