@@ -15,9 +15,7 @@
 		SlidersHorizontal,
 		X
 	} from '@lucide/svelte';
-	import { onMount } from 'svelte';
-	import { Drawer } from 'vaul-svelte';
-	import { trackKeyboardInset } from '$lib/utils/keyboard-inset';
+	import { onMount, tick } from 'svelte';
 	import HeroFilterPopover from './HeroFilterPopover.svelte';
 
 	let { hero }: { hero?: HomeFiveHeroData } = $props();
@@ -100,9 +98,6 @@
 	const mobileSearchDrawerTitle = $derived(
 		activeMobileAction?.drawerTitle ?? (isEnglish ? 'Find a car' : 'Намери автомобил')
 	);
-	const mobileSearchDrawerKicker = $derived(
-		activeMobileAction?.drawerKicker ?? (isEnglish ? 'Search' : 'Търсене')
-	);
 	const mobileSearchDrawerClose = $derived(isEnglish ? 'Close search' : 'Затвори търсенето');
 	const mobileAllLabel = $derived(
 		activeMobileAction?.secondaryLabel ?? (isEnglish ? 'Browse all' : 'Разгледай всички')
@@ -172,24 +167,33 @@
 		return mobileQuickFilters;
 	};
 	const activeMobileQuickLinks = $derived.by(() => quickLinksForMode(mobileMode));
-	// The search sheet is a vaul drawer (Drawer.Root bind:open below): vaul owns its
-	// open/close animation, drag-to-dismiss, focus trap, Escape and scroll lock. We turn
-	// OFF vaul's `repositionInputs`, though — it fights the global
-	// `interactive-widget=resizes-content` viewport meta (both try to handle the keyboard
-	// and the sheet collapses). Instead we lift the sheet ourselves via --bc-kb-inset:
-	// ~0 on Android (the meta already shrinks the layout), = keyboard height on iOS.
+	// The search UI is a full-screen overlay (not a bottom drawer): the input is pinned to
+	// the top, so the on-screen keyboard opens beneath it and never fights the panel. This
+	// removes the whole drawer-vs-keyboard problem and the open animation entirely.
 	let mobileSearchOpen = $state(false);
+	let mobileSearchInput = $state<HTMLInputElement | null>(null);
 	const openMobileSearch = () => {
 		mobileSearchOpen = true;
 	};
 	const closeMobileSearch = () => {
 		mobileSearchOpen = false;
 	};
-	// Track the keyboard height on the document root while the search sheet is open, so the
-	// portaled vaul sheet (outside this component tree) can read --bc-kb-inset and lift.
+	// While the overlay is open: focus the input (ready to type), lock background scroll,
+	// and close on Escape. Cleanup restores everything when it closes.
 	$effect(() => {
 		if (!mobileSearchOpen) return;
-		return trackKeyboardInset();
+		const { body } = document;
+		const prevOverflow = body.style.overflow;
+		body.style.overflow = 'hidden';
+		tick().then(() => mobileSearchInput?.focus());
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') closeMobileSearch();
+		};
+		window.addEventListener('keydown', onKey);
+		return () => {
+			body.style.overflow = prevOverflow;
+			window.removeEventListener('keydown', onKey);
+		};
 	});
 
 	// The location sheet stays hand-rolled (no input → no keyboard problem). Keep its
@@ -455,123 +459,110 @@
 			</div>
 		</div>
 
-		<Drawer.Root
-			bind:open={mobileSearchOpen}
-			direction="bottom"
-			fixed={true}
-			repositionInputs={false}
-		>
-			<Drawer.Overlay class="bohemcars-home-search-drawer__backdrop" />
-			<Drawer.Content
+		{#if mobileSearchOpen && activeMobileAction}
+			<!-- Full-screen search overlay (replaces the old bottom drawer): the input is
+			     pinned to the top so the on-screen keyboard opens beneath it and never
+			     fights the panel — the whole class of drawer-vs-keyboard bugs is gone.
+			     Appears instantly (no slide), chips scroll below. -->
+			<div
 				id="bohemcars-mobile-search-panel"
-				class="bohemcars-home-search-drawer__sheet"
+				class="bohemcars-home-search-overlay bc-drawer bc-drawer--{activeMobileAction.mode}"
+				role="dialog"
+				aria-modal="true"
+				aria-label={activeMobileAction.drawerTitle ?? mobileSearchDrawerTitle}
 			>
-				<Drawer.Handle class="bohemcars-home-search-drawer__handle" />
-				{#if activeMobileAction}
-					<div class="bc-drawer bc-drawer--{activeMobileAction.mode}">
-						<header class="bohemcars-home-search-drawer__header">
-							<div>
-								<p class="bohemcars-home-search-drawer__kicker">
-									{activeMobileAction.drawerKicker ?? mobileSearchDrawerKicker}
-								</p>
-								<Drawer.Title>
-									<span class="bohemcars-home-search-drawer__title"
-										>{activeMobileAction.drawerTitle ?? mobileSearchDrawerTitle}</span
+				<header class="bohemcars-home-search-overlay__bar">
+					<span class="bohemcars-home-search-drawer__title"
+						>{activeMobileAction.drawerTitle ?? mobileSearchDrawerTitle}</span
+					>
+					<button
+						type="button"
+						class="bohemcars-home-search-overlay__close"
+						aria-label={mobileSearchDrawerClose}
+						onclick={closeMobileSearch}
+					>
+						<X size={20} strokeWidth={2.4} aria-hidden="true" />
+					</button>
+				</header>
+				<form
+					class="bohemcars-home-search-drawer__form"
+					action={resolve(activeMobileAction.actionHref)}
+					method="get"
+				>
+					<div class="bohemcars-home-search-drawer__field">
+						<Search size={20} strokeWidth={2.15} aria-hidden="true" />
+						<input
+							bind:this={mobileSearchInput}
+							name={activeMobileAction.inputName ?? 'q'}
+							type="search"
+							placeholder={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
+							autocomplete="off"
+							enterkeyhint="search"
+							aria-label={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
+						/>
+					</div>
+					<div class="bohemcars-home-search-overlay__scroll">
+						<div class="bohemcars-home-search-drawer__body">
+							{#if activeMobileAction.mode === 'buy'}
+								{#each hero.primaryFilters.slice(0, 3) as select (select.id)}
+									<section
+										class={`bohemcars-home-search-drawer__group ${select.name === 'brand' ? 'bohemcars-home-search-drawer__group--logos' : ''}`}
 									>
-								</Drawer.Title>
-								<Drawer.Description>
-									<span class="bohemcars-home-search-drawer__sr"
-										>{activeMobileAction.placeholder ?? mobileSearchPlaceholder}</span
-									>
-								</Drawer.Description>
-							</div>
-							<button
-								type="button"
-								class="bohemcars-home-search-drawer__close"
-								aria-label={mobileSearchDrawerClose}
-								onclick={closeMobileSearch}
-							>
-								<X size={20} strokeWidth={2.2} aria-hidden="true" />
-							</button>
-						</header>
-						<form
-							class="bohemcars-home-search-drawer__form"
-							action={resolve(activeMobileAction.actionHref)}
-							method="get"
-							data-vaul-no-drag
-						>
-							<div class="bohemcars-home-search-drawer__field">
-								<Search size={20} strokeWidth={2.15} aria-hidden="true" />
-								<input
-									name={activeMobileAction.inputName ?? 'q'}
-									type="search"
-									placeholder={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
-									autocomplete="off"
-									aria-label={activeMobileAction.placeholder ?? mobileSearchPlaceholder}
-								/>
-							</div>
-							<div class="bohemcars-home-search-drawer__body">
-								{#if activeMobileAction.mode === 'buy'}
-									{#each hero.primaryFilters.slice(0, 3) as select (select.id)}
-										<section
-											class={`bohemcars-home-search-drawer__group ${select.name === 'brand' ? 'bohemcars-home-search-drawer__group--logos' : ''}`}
-										>
-											<p>{select.title}</p>
-											<div>
-												{#each select.options.slice(0, 8) as option (option.value)}
-													<a
-														href={resolve(
-															inventoryFilterHref(select.name, option.value) as '/inventory'
-														)}
-													>
-														{#if select.name === 'brand' && option.image}
-															<span class="bohemcars-mobile-brand-chip__logo">
-																<img
-																	src={option.image}
-																	alt=""
-																	aria-hidden="true"
-																	loading="lazy"
-																	decoding="async"
-																/>
-															</span>
-															<span>{option.shortLabel ?? option.label}</span>
-														{:else}
-															{option.label}
-														{/if}
-													</a>
-												{/each}
-											</div>
-										</section>
-									{/each}
-									<section class="bohemcars-home-search-drawer__group">
-										<p>{isEnglish ? 'Fuel' : 'Гориво'}</p>
+										<p>{select.title}</p>
 										<div>
-											{#each hero.advancedFilters[0]?.options.slice(0, 6) ?? [] as option (option.value)}
+											{#each select.options.slice(0, 8) as option (option.value)}
 												<a
-													href={resolve(inventoryFilterHref('fuel', option.value) as '/inventory')}
+													href={resolve(
+														inventoryFilterHref(select.name, option.value) as '/inventory'
+													)}
 												>
-													{option.label}
+													{#if select.name === 'brand' && option.image}
+														<span class="bohemcars-mobile-brand-chip__logo">
+															<img
+																src={option.image}
+																alt=""
+																aria-hidden="true"
+																loading="lazy"
+																decoding="async"
+															/>
+														</span>
+														<span>{option.shortLabel ?? option.label}</span>
+													{:else}
+														{option.label}
+													{/if}
 												</a>
 											{/each}
 										</div>
 									</section>
-								{:else}
-									<p class="bohemcars-home-search-drawer__hint">{activeMobileAction.helper}</p>
-								{/if}
-							</div>
-							<div class="bohemcars-home-search-drawer__actions">
-								<a href={resolve((activeMobileAction.secondaryHref ?? '/inventory') as '/')}
-									>{activeMobileAction.secondaryLabel ?? mobileAllLabel}</a
-								>
-								<button type="submit" aria-label={drawerSubmitAriaLabel(activeMobileAction)}>
-									{drawerSubmitLabel(activeMobileAction)}
-								</button>
-							</div>
-						</form>
+								{/each}
+								<section class="bohemcars-home-search-drawer__group">
+									<p>{isEnglish ? 'Fuel' : 'Гориво'}</p>
+									<div>
+										{#each hero.advancedFilters[0]?.options.slice(0, 6) ?? [] as option (option.value)}
+											<a
+												href={resolve(inventoryFilterHref('fuel', option.value) as '/inventory')}
+											>
+												{option.label}
+											</a>
+										{/each}
+									</div>
+								</section>
+							{:else}
+								<p class="bohemcars-home-search-drawer__hint">{activeMobileAction.helper}</p>
+							{/if}
+						</div>
 					</div>
-				{/if}
-			</Drawer.Content>
-		</Drawer.Root>
+					<div class="bohemcars-home-search-drawer__actions">
+						<a href={resolve((activeMobileAction.secondaryHref ?? '/inventory') as '/')}
+							>{activeMobileAction.secondaryLabel ?? mobileAllLabel}</a
+						>
+						<button type="submit" aria-label={drawerSubmitAriaLabel(activeMobileAction)}>
+							{drawerSubmitLabel(activeMobileAction)}
+						</button>
+					</div>
+				</form>
+			</div>
+		{/if}
 	</div>
 
 	{#if mobileActionTabs.length}
@@ -1628,139 +1619,34 @@
 			stroke: currentColor;
 		}
 
-		/* Homepage mobile search = vaul bottom sheet. vaul renders/portals the sheet,
-		   overlay and handle, so those are targeted globally via their data attributes;
-		   vaul owns the open animation, drag, focus trap and scroll lock. Keyboard handling
-		   is ours (repositionInputs is off — it conflicts with the resizes-content meta):
-		   the sheet lifts via bottom/max-height: var(--bc-kb-inset). The authored inner
-		   markup keeps normal scoped styles. */
-		:global(.bohemcars-home-search-drawer__backdrop[data-vaul-overlay]) {
+		/* Homepage mobile search = full-screen overlay. Input pinned top, chips scroll
+		   below; the keyboard opens beneath the input and never fights the panel. Appears
+		   instantly (no slide). The authored inner markup keeps normal scoped styles. */
+		.bohemcars-home-search-overlay {
 			position: fixed;
 			inset: 0;
-			z-index: 1200;
-			background: rgba(0, 0, 0, 0.34);
-		}
-
-		:global(.bohemcars-home-search-drawer__sheet[data-vaul-drawer]) {
-			position: fixed;
-			right: 0;
-			/* Lifted above the on-screen keyboard on iOS; --bc-kb-inset stays ~0 on Android,
-			   where interactive-widget=resizes-content already lifts the layout. */
-			bottom: var(--bc-kb-inset, 0px);
-			left: 0;
+			z-index: 1300;
 			display: grid;
-			z-index: 1201;
-			height: auto;
-			max-height: min(calc(88dvh - var(--bc-kb-inset, 0px)), 680px);
-			gap: 13px;
 			grid-template-rows: max-content minmax(0, 1fr);
-			align-content: start;
-			overflow: hidden;
-			border-radius: 22px 22px 0 0;
 			background: var(--bc-bg);
-			outline: 0;
-			padding: 10px 16px max(20px, env(safe-area-inset-bottom));
-			box-shadow: 0 -18px 34px rgba(17, 24, 39, 0.18);
 			color: #111111;
 		}
 
-		:global(.bohemcars-home-search-drawer__sheet[data-vaul-drawer]::-webkit-scrollbar) {
-			display: none;
-		}
-
-		/* While the search input is focused the keyboard is up; collapse the quick-filter
-		   chip body so the input + submit CTA dock just above the keyboard instead of the
-		   tall chip list floating the input far up and leaving a gap below it. */
-		:global(.bohemcars-home-search-drawer__sheet[data-vaul-drawer]:focus-within)
-			.bohemcars-home-search-drawer__body {
-			display: none;
-		}
-
-		:global(.bohemcars-home-search-drawer__handle[data-vaul-handle]) {
-			position: relative;
-			display: block;
-			width: 56px;
-			height: 18px;
-			justify-self: center;
-			border-radius: 0;
-			background: transparent;
-			opacity: 1;
-		}
-
-		:global(.bohemcars-home-search-drawer__handle[data-vaul-handle])::after {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			width: 42px;
-			height: 4px;
-			transform: translate(-50%, -50%);
-			border-radius: 999px;
-			background: var(--bc-border);
-			content: '';
-		}
-
-		:global(.bohemcars-home-search-drawer__handle [data-vaul-handle-hitarea]) {
-			position: absolute;
-			inset: 0;
-			width: 100%;
-			height: 100%;
-			background: transparent;
-			transform: none;
-		}
-
-		/* Lock background scroll while the location sheet is open (vaul handles the
-		   search drawer's own scroll lock). */
-		:global(body:has(.bohemcars-mobile-location-toggle:checked)) {
-			overflow: hidden;
-		}
-
-		.bohemcars-home-search-drawer__header {
+		.bohemcars-home-search-overlay__bar {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: 14px;
+			gap: 12px;
+			padding: max(12px, env(safe-area-inset-top)) 16px 12px;
 		}
 
-		.bohemcars-home-search-drawer__header > div {
-			min-width: 0;
-		}
-
-		.bohemcars-home-search-drawer__kicker {
-			margin: 0 0 1px;
-			color: #8fbd24;
-			font-size: 12px;
-			font-weight: 700;
-			letter-spacing: 0;
-			line-height: 14px;
-			text-transform: uppercase;
-		}
-
-		.bohemcars-home-search-drawer__title {
-			display: block;
-			margin: 0;
-			color: #111111;
-			font-size: 20px;
-			font-weight: 700;
-			letter-spacing: 0;
-			line-height: 26px;
-		}
-
-		.bohemcars-home-search-drawer__sr {
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			overflow: hidden;
-			clip: rect(0 0 0 0);
-			white-space: nowrap;
-		}
-
-		.bohemcars-home-search-drawer__close {
+		.bohemcars-home-search-overlay__close {
 			display: flex;
-			width: 44px;
-			height: 44px;
+			width: 40px;
+			height: 40px;
 			align-items: center;
 			justify-content: center;
-			flex: 0 0 44px;
+			flex: 0 0 40px;
 			border: 0;
 			border-radius: 999px;
 			background: var(--bc-surface);
@@ -1769,17 +1655,52 @@
 			padding: 0;
 		}
 
-		.bohemcars-home-search-drawer__form {
+		.bohemcars-home-search-overlay__scroll {
 			display: grid;
 			min-height: 0;
 			gap: 13px;
+			align-content: start;
+			overflow-y: auto;
+			padding: 13px 16px max(20px, env(safe-area-inset-bottom));
+			-webkit-overflow-scrolling: touch;
+			scrollbar-width: none;
+		}
+
+		.bohemcars-home-search-overlay__scroll::-webkit-scrollbar {
+			display: none;
+		}
+
+		/* Lock background scroll while the location sheet is open (the search overlay
+		   locks body scroll from script). */
+		:global(body:has(.bohemcars-mobile-location-toggle:checked)) {
+			overflow: hidden;
+		}
+
+		.bohemcars-home-search-drawer__title {
+			display: block;
+			margin: 0;
+			color: #111111;
+			font-size: 19px;
+			font-weight: 800;
+			letter-spacing: 0;
+			line-height: 24px;
+		}
+
+		.bohemcars-home-search-drawer__form {
+			display: grid;
+			min-height: 0;
+			gap: 0;
 			grid-template-rows: max-content minmax(0, 1fr) max-content;
 			overflow: hidden;
 		}
 
+		.bohemcars-home-search-drawer__form > .bohemcars-home-search-drawer__field {
+			margin: 13px 16px 0;
+		}
+
 		.bohemcars-home-search-drawer__field {
 			display: flex;
-			min-height: 52px;
+			min-height: 46px;
 			align-items: center;
 			gap: 10px;
 			border-radius: 999px;
@@ -1791,7 +1712,7 @@
 		.bohemcars-home-search-drawer__field input {
 			min-width: 0;
 			width: 100%;
-			height: 50px;
+			height: 44px;
 			flex: 1 1 auto;
 			border: 0 !important;
 			border-radius: 0 !important;
@@ -1923,25 +1844,30 @@
 			line-height: 20px;
 		}
 
+		/* Pinned footer bar: the form's last grid row, so it sits flush at the bottom of
+		   the screen (the 1fr scroll above absorbs the slack) instead of floating. */
 		.bohemcars-home-search-drawer__actions {
 			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-			gap: 9px;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+			gap: 10px;
+			padding: 12px 16px max(14px, env(safe-area-inset-bottom));
+			border-top: 1px solid var(--bc-border);
+			background: var(--bc-bg);
 		}
 
 		.bohemcars-home-search-drawer__actions a,
 		.bohemcars-home-search-drawer__actions button {
 			display: flex;
-			min-height: 48px;
+			min-height: 50px;
 			align-items: center;
 			justify-content: center;
 			border: 0;
-			border-radius: 8px;
+			border-radius: 12px;
 			background: var(--bc-surface);
 			padding: 0 12px;
-			color: #111111;
-			font-size: 14px;
-			font-weight: 700;
+			color: #14210a;
+			font-size: 15px;
+			font-weight: 800;
 			line-height: 18px;
 			text-align: center;
 			text-decoration: none;
@@ -1949,8 +1875,8 @@
 		}
 
 		.bohemcars-home-search-drawer__actions button {
-			background: #111111;
-			color: #ffffff;
+			background: #b9ee39;
+			color: #14210a;
 			cursor: pointer;
 		}
 

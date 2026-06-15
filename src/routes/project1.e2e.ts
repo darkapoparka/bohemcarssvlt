@@ -1073,11 +1073,11 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 
 	await mobileHero.locator('.bohemcars-mobile-hero__search-label').click();
 
-	// The search sheet is a vaul drawer, portaled to <body> — locate it at page level.
+	// The search UI is a full-screen overlay (input pinned top, keyboard-safe by design).
 	const panel = page.locator('#bohemcars-mobile-search-panel');
 	await expect(panel).toBeVisible();
-	await expect(panel.locator('.bc-drawer')).toHaveCount(1);
-	await expect(panel.locator('.bc-drawer--import')).toBeVisible();
+	await expect(panel).toHaveClass(/bc-drawer/);
+	await expect(panel).toHaveClass(/bc-drawer--import/);
 	await expect(panel.locator('.bohemcars-home-search-drawer__title')).toContainText(
 		'Изпрати линк за проверка'
 	);
@@ -1086,21 +1086,24 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 		'border-radius',
 		'999px'
 	);
-	// The drawer carries its own GET form so the input submits natively to the mode's route.
+	// The overlay carries its own GET form so the input submits natively to the mode's route.
 	await expect(panel.locator('form.bohemcars-home-search-drawer__form')).toHaveAttribute(
 		'action',
 		/\/import$/
 	);
 	await expect(panel.getByRole('button', { name: 'Провери линка' })).toBeVisible();
 
-	// vaul anchors the sheet flush to the viewport bottom (no gap) once the open
-	// animation settles — the keyboard-safe behaviour we migrated to.
+	// The overlay covers the viewport (fixed inset:0): its bottom sits at the viewport
+	// bottom and its top at 0 — input pinned to the top, so the keyboard never fights it.
 	await expect
 		.poll(async () =>
 			panel.evaluate((element) =>
 				Math.round(element.getBoundingClientRect().bottom - window.innerHeight)
 			)
 		)
+		.toBeLessThanOrEqual(1);
+	await expect
+		.poll(async () => panel.evaluate((element) => Math.round(element.getBoundingClientRect().top)))
 		.toBeLessThanOrEqual(1);
 
 	await expect

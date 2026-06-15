@@ -13,6 +13,7 @@
 		SlidersHorizontal,
 		X
 	} from '@lucide/svelte';
+	import { tick } from 'svelte';
 	import type { AuxeroInventoryVehicleCard } from '$lib/auxero/inventory';
 	import type { InventoryMobileData } from '$lib/auxero/inventory-mobile';
 	import type { InventoryCopy } from '$lib/i18n/messages';
@@ -136,12 +137,28 @@
 
 	let searchDrawerOpen = $state(false);
 	let filterDrawerOpen = $state(false);
-	// While either vaul sheet is open, expose the on-screen keyboard height as
-	// --bc-kb-inset on the document root so the portaled sheet can lift above the keyboard.
-	// vaul's own repositionInputs is disabled (see the Drawer.Root props) because it fights
-	// the global interactive-widget=resizes-content meta and collapses the sheet.
+	let searchInput = $state<HTMLInputElement | null>(null);
+	// Search is a full-screen overlay (input pinned top → keyboard never fights it). While
+	// it's open, focus the input, lock background scroll, and close on Escape.
 	$effect(() => {
-		if (!searchDrawerOpen && !filterDrawerOpen) return;
+		if (!searchDrawerOpen) return;
+		const { body } = document;
+		const prevOverflow = body.style.overflow;
+		body.style.overflow = 'hidden';
+		tick().then(() => searchInput?.focus());
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') closeSearchDrawer();
+		};
+		window.addEventListener('keydown', onKey);
+		return () => {
+			body.style.overflow = prevOverflow;
+			window.removeEventListener('keydown', onKey);
+		};
+	});
+	// The filters drawer is still a vaul bottom sheet; expose the keyboard height as
+	// --bc-kb-inset on the document root so its inputs can lift above the keyboard.
+	$effect(() => {
+		if (!filterDrawerOpen) return;
 		return trackKeyboardInset();
 	});
 	let filterDrawerMode = $state<FilterDrawerMode>('all');
@@ -640,38 +657,33 @@
 		</section>
 	</main>
 
-	<Drawer.Root bind:open={searchDrawerOpen} direction="bottom" fixed={true} repositionInputs={false}>
-		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
-			<span>{mobile.closeLabel}</span>
-		</Drawer.Overlay>
-		<Drawer.Content
+	{#if searchDrawerOpen}
+		<!-- Full-screen search overlay (replaces the old bottom drawer): input pinned top so
+		     the keyboard opens beneath it and never fights the panel. Appears instantly. -->
+		<div
 			id="bohemcars-inventory-mobile-search-drawer"
-			class="bohemcars-inventory-mobile-drawer__sheet bohemcars-inventory-mobile-drawer__sheet--search"
+			class="bohemcars-inventory-mobile-search-overlay"
+			role="dialog"
+			aria-modal="true"
+			aria-label={mobile.searchDrawerTitle}
 		>
-			<Drawer.Handle class="bohemcars-inventory-mobile-drawer__handle" />
-			<header>
-				<div>
-					<p>{mobile.searchLabel}</p>
-					<Drawer.Title>
-						<span class="bohemcars-inventory-mobile-drawer__title">
-							{mobile.searchDrawerTitle}
-						</span>
-					</Drawer.Title>
-				</div>
-				<button type="button" aria-label={mobile.closeLabel} onclick={closeSearchDrawer}>
-					<X size={20} strokeWidth={2.25} aria-hidden="true" />
+			<header class="bohemcars-inventory-mobile-search-overlay__bar">
+				<span class="bohemcars-inventory-mobile-drawer__title">
+					{mobile.searchDrawerTitle}
+				</span>
+				<button
+					type="button"
+					class="bohemcars-inventory-mobile-search-overlay__close"
+					aria-label={mobile.closeLabel}
+					onclick={closeSearchDrawer}
+				>
+					<X size={20} strokeWidth={2.4} aria-hidden="true" />
 				</button>
 			</header>
-			<Drawer.Description>
-				<span class="bohemcars-inventory-mobile-drawer__description">
-					{mobile.searchPlaceholder}
-				</span>
-			</Drawer.Description>
 			<form
 				class="bohemcars-inventory-mobile-drawer__search-form"
 				action={resolve('/inventory')}
 				method="get"
-				data-vaul-no-drag
 			>
 				{#each mobile.hiddenInputs as input (`${input.name}-${input.value}`)}
 					<input type="hidden" name={input.name} value={input.value} />
@@ -680,11 +692,13 @@
 					class="bohemcars-inventory-mobile-drawer__search-box bohemcars-inventory-mobile-drawer__search-box--submit"
 				>
 					<input
+						bind:this={searchInput}
 						name="q"
 						type="search"
 						value={mobile.searchValue}
 						placeholder={mobile.searchPlaceholder}
 						autocomplete="off"
+						enterkeyhint="search"
 						aria-label={mobile.searchPlaceholder}
 					/>
 					<button
@@ -695,63 +709,65 @@
 						<Search size={18} strokeWidth={2.25} aria-hidden="true" />
 					</button>
 				</div>
+				<div class="bohemcars-inventory-mobile-search-overlay__scroll">
+					<div
+						class="bohemcars-inventory-mobile-drawer__group bohemcars-inventory-mobile-drawer__group--logos"
+					>
+						<p>{mobile.brandLabel}</p>
+						<div>
+							{#each mobile.brandOptions.slice(1, 7) as option (option.value)}
+								<a
+									class:active={option.active}
+									href={resolve(option.href as '/inventory')}
+									aria-current={option.active ? 'page' : undefined}
+								>
+									{#if option.image}
+										<span class="bohemcars-inventory-mobile-drawer__brand-logo-frame">
+											<img
+												class="bohemcars-inventory-mobile-drawer__brand-logo"
+												src={option.image}
+												alt=""
+												aria-hidden="true"
+												width="96"
+												height="64"
+												loading="lazy"
+												decoding="async"
+											/>
+										</span>
+									{/if}
+									<span>{option.label}</span>
+								</a>
+							{/each}
+						</div>
+					</div>
+					<div class="bohemcars-inventory-mobile-drawer__group">
+						<p>{mobile.bodyLabel}</p>
+						<div>
+							{#each mobile.bodyOptions.slice(1, 7) as option (option.value)}
+								<a
+									class:active={option.active}
+									href={resolve(option.href as '/inventory')}
+									aria-current={option.active ? 'page' : undefined}
+								>
+									{option.label}
+								</a>
+							{/each}
+						</div>
+					</div>
+				</div>
+				<a
+					class="bohemcars-inventory-mobile-drawer__clear bohemcars-inventory-mobile-drawer__clear--search bohemcars-inventory-mobile-search-overlay__cta"
+					href={resolve('/inventory')}
+					aria-label={mobile.countLabel}
+				>
+					<span>{mobileSearchShowAllLabel}</span>
+					{#if mobileSearchCount}
+						<small>{mobileSearchCount}</small>
+					{/if}
+				</a>
 			</form>
-			<div
-				class="bohemcars-inventory-mobile-drawer__group bohemcars-inventory-mobile-drawer__group--logos"
-			>
-				<p>{mobile.brandLabel}</p>
-				<div>
-					{#each mobile.brandOptions.slice(1, 7) as option (option.value)}
-						<a
-							class:active={option.active}
-							href={resolve(option.href as '/inventory')}
-							aria-current={option.active ? 'page' : undefined}
-						>
-							{#if option.image}
-								<span class="bohemcars-inventory-mobile-drawer__brand-logo-frame">
-									<img
-										class="bohemcars-inventory-mobile-drawer__brand-logo"
-										src={option.image}
-										alt=""
-										aria-hidden="true"
-										width="96"
-										height="64"
-										loading="lazy"
-										decoding="async"
-									/>
-								</span>
-							{/if}
-							<span>{option.label}</span>
-						</a>
-					{/each}
-				</div>
-			</div>
-			<div class="bohemcars-inventory-mobile-drawer__group">
-				<p>{mobile.bodyLabel}</p>
-				<div>
-					{#each mobile.bodyOptions.slice(1, 7) as option (option.value)}
-						<a
-							class:active={option.active}
-							href={resolve(option.href as '/inventory')}
-							aria-current={option.active ? 'page' : undefined}
-						>
-							{option.label}
-						</a>
-					{/each}
-				</div>
-			</div>
-			<a
-				class="bohemcars-inventory-mobile-drawer__clear bohemcars-inventory-mobile-drawer__clear--search"
-				href={resolve('/inventory')}
-				aria-label={mobile.countLabel}
-			>
-				<span>{mobileSearchShowAllLabel}</span>
-				{#if mobileSearchCount}
-					<small>{mobileSearchCount}</small>
-				{/if}
-			</a>
-		</Drawer.Content>
-	</Drawer.Root>
+		</div>
+	{/if}
 
 	<Drawer.Root bind:open={filterDrawerOpen} direction="bottom" fixed={true} repositionInputs={false}>
 		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
@@ -1458,19 +1474,73 @@
 		scrollbar-width: none;
 	}
 
-	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]) {
-		max-height: min(calc(76dvh - var(--bc-kb-inset, 0px)), 640px);
+	/* Inventory search = full-screen overlay. Input pinned top; chips scroll below; the
+	   keyboard opens beneath the input and never fights the panel. Appears instantly. */
+	.bohemcars-inventory-mobile-search-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 1300;
+		display: grid;
+		grid-template-rows: max-content minmax(0, 1fr);
+		background: var(--bc-bg);
+		color: var(--bc-ink, #111111);
 	}
 
-	/* When the search input is focused the keyboard is up; collapse the quick-filter
-	   chips + show-all link so the input docks flush above the keyboard instead of the
-	   whole (taller) sheet floating up and leaving a gap below the input. The submit
-	   button lives inside the input row, so search stays reachable while typing. */
-	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]:focus-within)
-		.bohemcars-inventory-mobile-drawer__group,
-	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]:focus-within)
-		.bohemcars-inventory-mobile-drawer__clear--search {
+	.bohemcars-inventory-mobile-search-overlay__bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+	}
+
+	.bohemcars-inventory-mobile-search-overlay__close {
+		display: flex;
+		width: 40px;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 40px;
+		border: 0;
+		border-radius: 999px;
+		background: var(--bc-surface);
+		color: inherit;
+		cursor: pointer;
+		padding: 0;
+	}
+
+	.bohemcars-inventory-mobile-search-overlay__scroll {
+		display: grid;
+		min-height: 0;
+		gap: 16px;
+		align-content: start;
+		grid-auto-rows: max-content;
+		overflow-y: auto;
+		padding: 16px;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.bohemcars-inventory-mobile-search-overlay__scroll::-webkit-scrollbar {
 		display: none;
+	}
+
+	.bohemcars-inventory-mobile-search-overlay .bohemcars-inventory-mobile-drawer__search-form {
+		min-height: 0;
+		grid-template-rows: max-content minmax(0, 1fr) max-content;
+		overflow: hidden;
+	}
+
+	.bohemcars-inventory-mobile-search-overlay
+		.bohemcars-inventory-mobile-drawer__search-box {
+		margin: 16px 16px 0;
+	}
+
+	/* Pinned footer CTA: the form's last grid row, flush at the bottom of the screen. */
+	.bohemcars-inventory-mobile-search-overlay__cta {
+		border-radius: 12px;
+		margin: 12px 16px max(14px, env(safe-area-inset-bottom));
+		min-height: 52px;
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet--filters[data-vaul-drawer]) {
