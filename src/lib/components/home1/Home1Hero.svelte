@@ -1184,59 +1184,28 @@
 
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs {
 			position: relative;
-			gap: 0;
-			min-height: 48px;
-			border-radius: 0;
+			gap: 6px;
+			min-height: 44px;
+			border-radius: 999px;
 			background: transparent;
 			padding: 0;
 		}
 
-		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs::after {
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			height: 2px;
-			background: rgba(20, 33, 15, 0.16);
-			content: '';
-			pointer-events: none;
-		}
-
-		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs::before {
-			position: absolute;
-			bottom: 0;
-			left: calc(var(--bohemcars-tab-index, 0) * 33.333%);
-			z-index: 1;
-			width: 33.333%;
-			height: 3px;
-			border-radius: 999px 999px 0 0;
-			background: #14210f;
-			content: '';
-			pointer-events: none;
-			transition: left 180ms ease;
-		}
-
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs button {
 			position: relative;
-			min-height: 48px;
-			border-radius: 0;
-			color: rgba(20, 33, 15, 0.72);
+			min-height: 42px;
+			border-radius: 999px;
+			color: rgba(20, 33, 15, 0.78);
 			font-size: 15px;
 			font-weight: 800;
 			line-height: 20px;
 		}
 
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tab.active {
-			background: transparent;
-			box-shadow: none;
-			color: #111111;
+			background: rgba(255, 255, 255, 0.74);
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.44);
+			color: #14210f;
 			font-weight: 900;
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs::before {
-				transition: none;
-			}
 		}
 
 		/* Showroom intent modes = boxed segmented control (best mobile pattern for a
