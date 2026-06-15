@@ -1439,10 +1439,8 @@
 			z-index: 0;
 			border: 0;
 			border-radius: inherit;
-			background: #ffffff;
-			/* Hairline keeps the white disc from reading as a flat sticker on the
-			   green hero (box-shadow, not border — the e2e ring contract pins 0px). */
-			box-shadow: inset 0 0 0 1px rgba(20, 33, 15, 0.14);
+			background: transparent;
+			box-shadow: inset 0 0 0 1px var(--bc-hero-control-border);
 			box-sizing: border-box;
 			content: '';
 			pointer-events: none;
@@ -1479,15 +1477,15 @@
 			z-index: 1;
 			width: 19px !important;
 			height: 19px !important;
-			color: #20350f !important;
+			color: var(--bc-accent-contrast) !important;
 			fill: none !important;
-			stroke: #20350f !important;
+			stroke: var(--bc-accent-contrast) !important;
 		}
 
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg *),
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg *) {
 			fill: none !important;
-			stroke: #20350f !important;
+			stroke: var(--bc-accent-contrast) !important;
 		}
 	}
 </style>
