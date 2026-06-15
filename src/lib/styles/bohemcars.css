@@ -56,6 +56,8 @@ svg * {
 	--bc-border: #dde5d8;
 	--bc-border-strong: #c8d3bd;
 	--bc-hero-control-border: rgba(20, 33, 15, 0.42);
+	--bc-hero-action-surface: rgba(255, 255, 255, 0.85);
+	--bc-hero-action-border: rgba(255, 255, 255, 0.62);
 
 	--bc-control: #eef1ed;
 	--bc-control-hover: #e4eadf;

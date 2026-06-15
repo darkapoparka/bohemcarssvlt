@@ -333,6 +333,7 @@
 									title={header.contact.addressLabel}
 								>
 									<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
+									<span class="bohemcars-mobile-action__label">Карта</span>
 								</label>
 							{:else}
 								<a
@@ -342,6 +343,7 @@
 									title={header.contact.addressLabel}
 								>
 									<MapPin size={18} strokeWidth={2.35} aria-hidden="true" />
+									<span class="bohemcars-mobile-action__label">Карта</span>
 								</a>
 							{/if}
 							<a
@@ -351,6 +353,7 @@
 								title={header.contact.phoneLabel}
 							>
 								<Phone size={18} strokeWidth={2.35} aria-hidden="true" />
+								<span class="bohemcars-mobile-action__label">Обади се</span>
 							</a>
 							<div class="header-search-wrapper">
 								<span class="header-action-btn relative" id="searchToggle">
@@ -1297,6 +1300,18 @@
 		}
 	}
 
+	.bohemcars-mobile-action__label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		border: 0;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+
 	@media (max-width: 767px) {
 		:global(.header-wrapper-style-4 .header-top-bar),
 		:global(.header-wrapper-style-4 .header-button),
@@ -1330,7 +1345,9 @@
 		:global(.header-wrapper-style-4 .logo) {
 			display: flex !important;
 			align-items: center;
-			width: 176px;
+			flex: 0 1 auto;
+			width: auto;
+			min-width: 0;
 		}
 
 		:global(.header-wrapper-style-4 .logo-mobile) {
@@ -1359,9 +1376,11 @@
 			justify-content: flex-end !important;
 		}
 
+		/* Anchored to the right edge so the labeled pills grow leftward and can
+		   never clip off the right of the viewport. */
 		:global(.header-wrapper-style-4 .header-actions) {
 			position: absolute;
-			top: 13px;
+			top: 10px;
 			right: 12px;
 			display: flex;
 			align-items: center;
@@ -1372,36 +1391,35 @@
 
 		.bohemcars-mobile-call,
 		.bohemcars-mobile-map {
-			display: flex;
+			display: inline-flex;
 			width: 44px;
 			height: 44px;
 			align-items: center;
 			justify-content: center;
-			border: 0;
+			gap: 0;
+			border: 1px solid var(--bc-hero-action-border);
 			border-radius: 999px;
-			background: #ffffff;
+			background: var(--bc-hero-action-surface);
 			box-shadow: none;
-			color: #1c1c1c;
+			color: var(--bc-accent-contrast);
 			cursor: pointer;
-			font: inherit;
 			line-height: 1;
 			padding: 0;
 			text-decoration: none;
+			white-space: nowrap;
 		}
 
 		.bohemcars-mobile-call:focus-visible,
 		.bohemcars-mobile-map:focus-visible {
-			border-color: #1c1c1c;
-			background: #1c1c1c;
-			color: #ffffff;
-			outline: 2px solid rgba(255, 255, 255, 0.92);
+			outline: 2px solid var(--bc-accent-contrast);
 			outline-offset: 2px;
 		}
 
 		.bohemcars-mobile-call :global(svg),
 		.bohemcars-mobile-map :global(svg) {
-			width: 18px;
-			height: 18px;
+			width: 24px;
+			height: 24px;
+			flex: 0 0 24px;
 			color: currentColor;
 			fill: none;
 			stroke: currentColor;
@@ -1411,81 +1429,8 @@
 			top: 8px;
 		}
 
-		/* The wordmark's green "CARS" sinks into the green hero — force solid ink. */
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .logo img) {
 			filter: brightness(0);
-		}
-
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call),
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map) {
-			position: relative;
-			width: 44px !important;
-			height: 44px !important;
-			border: 0 !important;
-			background: transparent !important;
-			box-sizing: border-box;
-			box-shadow: none;
-			color: #20350f !important;
-		}
-
-		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call::before
-		),
-		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map::before
-		) {
-			position: absolute;
-			inset: 2px;
-			z-index: 0;
-			border: 0;
-			border-radius: inherit;
-			background: transparent;
-			box-shadow: inset 0 0 0 1px var(--bc-hero-control-border);
-			box-sizing: border-box;
-			content: '';
-			pointer-events: none;
-		}
-
-		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call:focus-visible
-		),
-		:global(
-			body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map:focus-visible
-		) {
-			background: transparent !important;
-			color: #20350f !important;
-			outline: 0;
-		}
-
-		:global(
-			body.auxero-template-home-05-html
-				.header-wrapper-style-4
-				.bohemcars-mobile-call:focus-visible::before
-		),
-		:global(
-			body.auxero-template-home-05-html
-				.header-wrapper-style-4
-				.bohemcars-mobile-map:focus-visible::before
-		) {
-			background: #ffffff;
-			box-shadow: none;
-		}
-
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg),
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
-			position: relative;
-			z-index: 1;
-			width: 20px !important;
-			height: 20px !important;
-			color: var(--bc-accent-contrast) !important;
-			fill: none !important;
-			stroke: var(--bc-accent-contrast) !important;
-		}
-
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-call svg *),
-		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg *) {
-			fill: none !important;
-			stroke: var(--bc-accent-contrast) !important;
 		}
 	}
 </style>
