@@ -1134,80 +1134,47 @@
 			padding: 0;
 		}
 
+		/* Showroom intent modes = boxed segmented control (best mobile pattern for a
+		   small mutually-exclusive set): active segment is filled white, the rest are
+		   transparent. Instant — no sliding/animation. */
 		.bohemcars-mobile-hero__tabs {
-			position: relative;
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 0;
-			min-height: 48px;
+			gap: 4px;
+			min-height: 0;
 			border: 0;
-			border-radius: 0;
-			background: transparent;
+			border-radius: 14px;
+			background: rgba(20, 33, 15, 0.1);
 			box-shadow: none;
-			padding: 0;
+			padding: 4px;
 		}
 
 		.bohemcars-mobile-hero__tabs button {
-			position: relative;
 			display: flex;
-			min-height: 48px;
+			min-height: 42px;
 			width: 100%;
 			align-items: center;
 			justify-content: center;
 			border: 0;
-			border-radius: 0;
+			border-radius: 10px;
 			background: transparent;
-			color: rgba(20, 33, 15, 0.72);
-			font-size: 16px;
+			color: rgba(20, 33, 15, 0.66);
+			font-size: 15px;
 			font-weight: 700;
 			letter-spacing: 0;
-			line-height: 22px;
+			line-height: 20px;
 			text-align: center;
 			text-decoration: none;
 			cursor: pointer;
 			user-select: none;
 			-webkit-user-select: none;
-			z-index: 1;
 		}
 
 		.bohemcars-mobile-hero__tab.active {
-			background: transparent;
-			box-shadow: none;
-			color: #111111;
-			font-weight: 700;
-		}
-
-		/* Showroom intent tabs: one full hairline rail with an indicator that spans
-		   the FULL active third (edge-to-edge, no side gaps) and slides between tabs. */
-		.bohemcars-mobile-hero__tabs::after {
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			height: 2px;
-			background: rgba(20, 33, 15, 0.16);
-			content: '';
-			pointer-events: none;
-		}
-
-		.bohemcars-mobile-hero__tabs::before {
-			position: absolute;
-			bottom: 0;
-			left: calc(var(--bohemcars-tab-index, 0) * 33.333%);
-			z-index: 1;
-			width: 33.333%;
-			height: 3px;
-			border-radius: 999px 999px 0 0;
-			background: #14210f;
-			content: '';
-			pointer-events: none;
-			transition: left 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			.bohemcars-mobile-hero__tabs::before {
-				transition: none;
-			}
+			background: #ffffff;
+			box-shadow: 0 1px 2px rgba(20, 33, 15, 0.18);
+			color: #14210f;
+			font-weight: 800;
 		}
 
 		.bohemcars-mobile-hero__tab:focus-visible {
