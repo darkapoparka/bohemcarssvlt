@@ -5,7 +5,7 @@
 		HomeFiveHeaderNavigationItem,
 		HomeFiveHeaderSocial
 	} from '$lib/auxero/home-five';
-	import { MapPin, PhoneCall } from '@lucide/svelte';
+	import { MapPin, Phone } from '@lucide/svelte';
 
 	let {
 		header,
@@ -95,7 +95,7 @@
 									class="bohemcars-top-contact-icon bohemcars-top-contact-icon--accent"
 									aria-hidden="true"
 								>
-									<PhoneCall size={18} strokeWidth={2.2} aria-hidden="true" />
+									<Phone size={18} strokeWidth={2.2} aria-hidden="true" />
 								</span>
 								{header.contact.phoneLabel}
 							</a>
@@ -350,7 +350,7 @@
 								aria-label={header.contact.phoneLabel}
 								title={header.contact.phoneLabel}
 							>
-								<PhoneCall size={18} strokeWidth={2.35} aria-hidden="true" />
+								<Phone size={18} strokeWidth={2.35} aria-hidden="true" />
 							</a>
 							<div class="header-search-wrapper">
 								<span class="header-action-btn relative" id="searchToggle">
@@ -1475,8 +1475,8 @@
 		:global(body.auxero-template-home-05-html .header-wrapper-style-4 .bohemcars-mobile-map svg) {
 			position: relative;
 			z-index: 1;
-			width: 19px !important;
-			height: 19px !important;
+			width: 20px !important;
+			height: 20px !important;
 			color: var(--bc-accent-contrast) !important;
 			fill: none !important;
 			stroke: var(--bc-accent-contrast) !important;
