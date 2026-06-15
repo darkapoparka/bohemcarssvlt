@@ -18,6 +18,7 @@
 	import type { InventoryCopy } from '$lib/i18n/messages';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Drawer } from 'vaul-svelte';
+	import { trackKeyboardInset } from '$lib/utils/keyboard-inset';
 
 	type FilterDrawerMode =
 		| 'all'
@@ -135,6 +136,14 @@
 
 	let searchDrawerOpen = $state(false);
 	let filterDrawerOpen = $state(false);
+	// While either vaul sheet is open, expose the on-screen keyboard height as
+	// --bc-kb-inset on the document root so the portaled sheet can lift above the keyboard.
+	// vaul's own repositionInputs is disabled (see the Drawer.Root props) because it fights
+	// the global interactive-widget=resizes-content meta and collapses the sheet.
+	$effect(() => {
+		if (!searchDrawerOpen && !filterDrawerOpen) return;
+		return trackKeyboardInset();
+	});
 	let filterDrawerMode = $state<FilterDrawerMode>('all');
 	let filterDraft = $state<FilterDraft>(currentFilterDraft());
 	let brandDrawerQuery = $state('');
@@ -631,7 +640,7 @@
 		</section>
 	</main>
 
-	<Drawer.Root bind:open={searchDrawerOpen} direction="bottom" fixed={true}>
+	<Drawer.Root bind:open={searchDrawerOpen} direction="bottom" fixed={true} repositionInputs={false}>
 		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
 			<span>{mobile.closeLabel}</span>
 		</Drawer.Overlay>
@@ -744,7 +753,7 @@
 		</Drawer.Content>
 	</Drawer.Root>
 
-	<Drawer.Root bind:open={filterDrawerOpen} direction="bottom" fixed={true}>
+	<Drawer.Root bind:open={filterDrawerOpen} direction="bottom" fixed={true} repositionInputs={false}>
 		<Drawer.Overlay class="bohemcars-inventory-mobile-drawer__backdrop">
 			<span>{mobile.closeLabel}</span>
 		</Drawer.Overlay>
@@ -1428,12 +1437,15 @@
 	:global(.bohemcars-inventory-mobile-drawer__sheet[data-vaul-drawer]) {
 		position: fixed;
 		right: 0;
-		bottom: 0;
+		/* Lifted above the on-screen keyboard on iOS; --bc-kb-inset stays ~0 on Android,
+		   where interactive-widget=resizes-content already lifts the layout. vaul's own
+		   repositionInputs is disabled (it conflicts with that meta and collapses the sheet). */
+		bottom: var(--bc-kb-inset, 0px);
 		left: 0;
 		display: grid;
 		z-index: 1201;
 		height: auto;
-		max-height: min(86dvh, 720px);
+		max-height: min(calc(86dvh - var(--bc-kb-inset, 0px)), 720px);
 		align-content: start;
 		gap: 16px;
 		grid-auto-rows: max-content;
@@ -1447,16 +1459,16 @@
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet--search[data-vaul-drawer]) {
-		max-height: min(76dvh, 640px);
+		max-height: min(calc(76dvh - var(--bc-kb-inset, 0px)), 640px);
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet--filters[data-vaul-drawer]) {
-		max-height: min(90dvh, 760px);
+		max-height: min(calc(90dvh - var(--bc-kb-inset, 0px)), 760px);
 		padding-bottom: 0;
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet--full[data-vaul-drawer]) {
-		height: min(90dvh, 760px);
+		height: min(calc(90dvh - var(--bc-kb-inset, 0px)), 760px);
 	}
 
 	:global(.bohemcars-inventory-mobile-drawer__sheet--with-actions[data-vaul-drawer]) {

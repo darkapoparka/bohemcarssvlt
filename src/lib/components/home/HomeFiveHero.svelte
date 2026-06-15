@@ -17,6 +17,7 @@
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { Drawer } from 'vaul-svelte';
+	import { trackKeyboardInset } from '$lib/utils/keyboard-inset';
 	import HeroFilterPopover from './HeroFilterPopover.svelte';
 
 	let { hero }: { hero?: HomeFiveHeroData } = $props();
@@ -171,9 +172,12 @@
 		return mobileQuickFilters;
 	};
 	const activeMobileQuickLinks = $derived.by(() => quickLinksForMode(mobileMode));
-	// The search sheet is now a vaul drawer (Drawer.Root bind:open below), so vaul owns
-	// its open/close animation, drag-to-dismiss, focus trap, Escape, scroll lock and —
-	// crucially — the on-screen-keyboard repositioning that the hand-rolled sheet got wrong.
+	// The search sheet is a vaul drawer (Drawer.Root bind:open below): vaul owns its
+	// open/close animation, drag-to-dismiss, focus trap, Escape and scroll lock. We turn
+	// OFF vaul's `repositionInputs`, though — it fights the global
+	// `interactive-widget=resizes-content` viewport meta (both try to handle the keyboard
+	// and the sheet collapses). Instead we lift the sheet ourselves via --bc-kb-inset:
+	// ~0 on Android (the meta already shrinks the layout), = keyboard height on iOS.
 	let mobileSearchOpen = $state(false);
 	const openMobileSearch = () => {
 		mobileSearchOpen = true;
@@ -181,6 +185,12 @@
 	const closeMobileSearch = () => {
 		mobileSearchOpen = false;
 	};
+	// Track the keyboard height on the document root while the search sheet is open, so the
+	// portaled vaul sheet (outside this component tree) can read --bc-kb-inset and lift.
+	$effect(() => {
+		if (!mobileSearchOpen) return;
+		return trackKeyboardInset();
+	});
 
 	// The location sheet stays hand-rolled (no input → no keyboard problem). Keep its
 	// drag-to-dismiss; it no longer shares state with the search sheet.
@@ -445,7 +455,12 @@
 			</div>
 		</div>
 
-		<Drawer.Root bind:open={mobileSearchOpen} direction="bottom" fixed={true}>
+		<Drawer.Root
+			bind:open={mobileSearchOpen}
+			direction="bottom"
+			fixed={true}
+			repositionInputs={false}
+		>
 			<Drawer.Overlay class="bohemcars-home-search-drawer__backdrop" />
 			<Drawer.Content
 				id="bohemcars-mobile-search-panel"
@@ -1615,9 +1630,10 @@
 
 		/* Homepage mobile search = vaul bottom sheet. vaul renders/portals the sheet,
 		   overlay and handle, so those are targeted globally via their data attributes;
-		   vaul also owns the open animation, drag, focus trap, scroll lock and — crucially —
-		   the on-screen-keyboard repositioning (repositionInputs) the old hand-rolled sheet
-		   got wrong. The authored inner markup keeps normal scoped styles. */
+		   vaul owns the open animation, drag, focus trap and scroll lock. Keyboard handling
+		   is ours (repositionInputs is off — it conflicts with the resizes-content meta):
+		   the sheet lifts via bottom/max-height: var(--bc-kb-inset). The authored inner
+		   markup keeps normal scoped styles. */
 		:global(.bohemcars-home-search-drawer__backdrop[data-vaul-overlay]) {
 			position: fixed;
 			inset: 0;
@@ -1628,12 +1644,14 @@
 		:global(.bohemcars-home-search-drawer__sheet[data-vaul-drawer]) {
 			position: fixed;
 			right: 0;
-			bottom: 0;
+			/* Lifted above the on-screen keyboard on iOS; --bc-kb-inset stays ~0 on Android,
+			   where interactive-widget=resizes-content already lifts the layout. */
+			bottom: var(--bc-kb-inset, 0px);
 			left: 0;
 			display: grid;
 			z-index: 1201;
 			height: auto;
-			max-height: min(88dvh, 680px);
+			max-height: min(calc(88dvh - var(--bc-kb-inset, 0px)), 680px);
 			gap: 13px;
 			grid-template-rows: max-content minmax(0, 1fr);
 			align-content: start;
