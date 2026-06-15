@@ -154,34 +154,14 @@
 		border-color: #cde85c;
 	}
 
-	:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle:hover) {
-		background: var(--bc-hover-accent);
-		border-color: var(--bc-hover-accent);
-		color: var(--bc-hover-accent-ink);
-	}
-
-	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover) {
-		background: var(--bc-hover-accent);
-		border-color: var(--bc-hover-accent);
-		color: var(--bc-hover-accent-ink);
-	}
-
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare svg path) {
 		fill: none !important;
 		stroke: #1c1c1c !important;
 	}
 
-	:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover svg path) {
-		stroke: var(--bc-hover-accent-ink) !important;
-	}
-
 	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite svg path) {
 		fill: none !important;
 		stroke: #1c1c1c !important;
-	}
-
-	:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite:hover svg path) {
-		stroke: var(--bc-hover-accent-ink) !important;
 	}
 
 	:global(
@@ -194,14 +174,36 @@
 		fill: #1c1c1c !important;
 	}
 
-	:global(
-		.bohemcars-pdp-desktop
-			.title-section
-			.btn-icon-circle:not(.bohemcars-favorite):not(.bohemcars-pdp-compare):hover
-			svg
-			path
-	) {
-		fill: var(--bc-hover-accent-ink) !important;
+	@media (hover: hover) and (pointer: fine) {
+		:global(.bohemcars-pdp-desktop .title-section .btn-icon-circle:hover) {
+			background: var(--bc-hover-accent);
+			border-color: var(--bc-hover-accent);
+			color: var(--bc-hover-accent-ink);
+		}
+
+		:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover) {
+			background: var(--bc-hover-accent);
+			border-color: var(--bc-hover-accent);
+			color: var(--bc-hover-accent-ink);
+		}
+
+		:global(.bohemcars-pdp-desktop .title-section .bohemcars-pdp-compare:hover svg path) {
+			stroke: var(--bc-hover-accent-ink) !important;
+		}
+
+		:global(.bohemcars-pdp-desktop .title-section .bohemcars-favorite:hover svg path) {
+			stroke: var(--bc-hover-accent-ink) !important;
+		}
+
+		:global(
+			.bohemcars-pdp-desktop
+				.title-section
+				.btn-icon-circle:not(.bohemcars-favorite):not(.bohemcars-pdp-compare):hover
+				svg
+				path
+		) {
+			fill: var(--bc-hover-accent-ink) !important;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .bohemcars-pdp-gallery-main) {
@@ -241,9 +243,11 @@
 		border-radius: 8px;
 	}
 
-	:global(.bohemcars-pdp-desktop .listing-details-item--button:hover) {
-		background: #d9f275;
-		color: #1c1c1c;
+	@media (hover: hover) and (pointer: fine) {
+		:global(.bohemcars-pdp-desktop .listing-details-item--button:hover) {
+			background: #d9f275;
+			color: #1c1c1c;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .listing-details--content > .h4),
@@ -353,14 +357,21 @@
 	}
 
 	:global(
-		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child:hover
-	),
-	:global(
 		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child:focus-visible
 	) {
 		background: #14210f;
 		border-color: #14210f;
 		color: #ffffff;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		:global(
+			.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:first-child:hover
+		) {
+			background: #14210f;
+			border-color: #14210f;
+			color: #ffffff;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child) {
@@ -370,14 +381,21 @@
 	}
 
 	:global(
-		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child:hover
-	),
-	:global(
 		.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child:focus-visible
 	) {
 		background: #14210f;
 		border-color: #14210f;
 		color: #ffffff;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		:global(
+			.bohemcars-pdp-desktop .bohemcars-buybox-actions .bohemcars-buybox-action:last-child:hover
+		) {
+			background: #14210f;
+			border-color: #14210f;
+			color: #ffffff;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .listing-details--sidebar-box),
@@ -452,9 +470,11 @@
 		border-color: #98bc2a;
 	}
 
-	:global(.bohemcars-pdp-desktop .listing-details--contact .btn-primary-3:hover) {
-		background: #1c1c1c;
-		border-color: #1c1c1c;
+	@media (hover: hover) and (pointer: fine) {
+		:global(.bohemcars-pdp-desktop .listing-details--contact .btn-primary-3:hover) {
+			background: #1c1c1c;
+			border-color: #1c1c1c;
+		}
 	}
 
 	:global(.bohemcars-pdp-desktop .flat-tabs .menu-tab-style4) {

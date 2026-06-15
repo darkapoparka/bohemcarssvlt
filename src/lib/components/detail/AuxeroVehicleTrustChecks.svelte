@@ -95,8 +95,10 @@
 		height: 17px;
 	}
 
-	.bohemcars-pdp-trustbar__link:hover {
-		color: #14210f;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-pdp-trustbar__link:hover {
+			color: #14210f;
+		}
 	}
 
 	.bohemcars-pdp-trustbar__link:focus-visible {

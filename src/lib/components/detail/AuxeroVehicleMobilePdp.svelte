@@ -263,7 +263,6 @@
 		bind:activeSnapPoint={activeDrawerSnapPoint}
 		direction="bottom"
 		dismissible={false}
-		handleOnly={true}
 		modal={false}
 		snapPoints={drawerSnapPoints}
 		snapToSequentialPoint={true}
@@ -615,12 +614,18 @@
 			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 		}
 
-		.bohemcars-mobile-pdp__topbar button:hover,
 		.bohemcars-mobile-pdp__topbar button:focus-visible,
-		.bohemcars-mobile-pdp__topbar a:hover,
 		.bohemcars-mobile-pdp__topbar a:focus-visible {
 			background: #d9f275;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-pdp__topbar button:hover,
+			.bohemcars-mobile-pdp__topbar a:hover {
+				background: #d9f275;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-mobile-pdp__topbar-actions {
@@ -1105,7 +1110,6 @@
 			color: #14210a;
 		}
 
-		.bohemcars-mobile-pdp__cta--primary:hover,
 		.bohemcars-mobile-pdp__cta--primary:focus-visible {
 			background: #a6dd1f;
 			outline: 0;
@@ -1116,10 +1120,21 @@
 			color: #ffffff;
 		}
 
-		.bohemcars-mobile-pdp__cta--call:hover,
 		.bohemcars-mobile-pdp__cta--call:focus-visible {
 			background: #000000;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-pdp__cta--primary:hover {
+				background: #a6dd1f;
+				outline: 0;
+			}
+
+			.bohemcars-mobile-pdp__cta--call:hover {
+				background: #000000;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-mobile-pdp :global(.bohemcars-mobile-pdp__inquiry[data-vaul-drawer]) {
@@ -1321,10 +1336,16 @@
 			transition: background-color 0.18s ease;
 		}
 
-		.bohemcars-mobile-pdp__inquiry-submit:hover,
 		.bohemcars-mobile-pdp__inquiry-submit:focus-visible {
 			background: #a6dd1f;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-pdp__inquiry-submit:hover {
+				background: #a6dd1f;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-mobile-pdp__inquiry-submit:disabled {
@@ -1364,10 +1385,16 @@
 			text-decoration: none;
 		}
 
-		.bohemcars-mobile-pdp__inquiry-call:hover,
 		.bohemcars-mobile-pdp__inquiry-call:focus-visible {
 			border-color: #1c1c1c;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-pdp__inquiry-call:hover {
+				border-color: #1c1c1c;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-mobile-pdp__viewer {

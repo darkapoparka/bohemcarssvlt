@@ -181,9 +181,15 @@
 			color 0.2s ease;
 	}
 
-	.bohemcars-pdp-closing__btn:hover,
 	.bohemcars-pdp-closing__btn:focus-visible {
 		background: #ffffff;
 		color: #14210f !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-pdp-closing__btn:hover {
+			background: #ffffff;
+			color: #14210f !important;
+		}
 	}
 </style>

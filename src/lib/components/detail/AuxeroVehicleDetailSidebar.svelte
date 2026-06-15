@@ -405,12 +405,20 @@
 		pointer-events: none;
 	}
 
-	.bohemcars-price-info:hover .bohemcars-price-info__pop,
 	.bohemcars-price-info:focus-within .bohemcars-price-info__pop {
 		opacity: 1;
 		visibility: visible;
 		transform: translateY(0);
 		pointer-events: auto;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-price-info:hover .bohemcars-price-info__pop {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+			pointer-events: auto;
+		}
 	}
 
 	.bohemcars-price-info__pop::after {
