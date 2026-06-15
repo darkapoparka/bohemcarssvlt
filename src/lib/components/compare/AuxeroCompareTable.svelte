@@ -1009,12 +1009,20 @@
 			stroke: currentcolor;
 		}
 
-		.bohemcars-compare-manager__primary:hover,
 		.bohemcars-compare-manager__primary:focus-visible {
 			border-color: #14210f !important;
 			background: #14210f !important;
 			color: #ffffff !important;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-manager__primary:hover {
+				border-color: #14210f !important;
+				background: #14210f !important;
+				color: #ffffff !important;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-manager__secondary:disabled {
@@ -1028,12 +1036,20 @@
 			color: #303a2b;
 		}
 
-		.bohemcars-compare-manager__secondary:hover,
 		.bohemcars-compare-manager__secondary:focus-visible {
 			border-color: #eef3e9;
 			background: #eef3e9;
 			color: #14210f;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-manager__secondary:hover {
+				border-color: #eef3e9;
+				background: #eef3e9;
+				color: #14210f;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-desktop-picker {
@@ -1127,10 +1143,16 @@
 			padding: 0;
 		}
 
-		.bohemcars-compare-desktop-picker__close:hover,
 		.bohemcars-compare-desktop-picker__close:focus-visible {
 			background: #eef3e9;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-desktop-picker__close:hover {
+				background: #eef3e9;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-desktop-picker__tools {
@@ -1203,10 +1225,16 @@
 		}
 
 		.bohemcars-compare-desktop-picker__brands button.active,
-		.bohemcars-compare-desktop-picker__brands button:hover,
 		.bohemcars-compare-desktop-picker__brands button:focus-visible {
 			background: #eef3e9;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-desktop-picker__brands button:hover {
+				background: #eef3e9;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-desktop-picker__brands small {
@@ -1246,11 +1274,18 @@
 			text-align: left;
 		}
 
-		.bohemcars-compare-desktop-picker__list > button:hover,
 		.bohemcars-compare-desktop-picker__list > button:focus-visible {
 			border-color: #dfe6d8;
 			background: #eef3e9;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-desktop-picker__list > button:hover {
+				border-color: #dfe6d8;
+				background: #eef3e9;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-desktop-picker__list > button.active {
@@ -1415,8 +1450,10 @@
 			opacity: 0.72;
 		}
 
-		.bohemcars-compare-table tr:not(.bohemcars-compare-headrow):hover td {
-			background: #ffffff;
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-table tr:not(.bohemcars-compare-headrow):hover td {
+				background: #ffffff;
+			}
 		}
 
 		/* Rows where every car reads the same carry no comparison signal —
@@ -1487,16 +1524,26 @@
 			color: #14210f !important;
 		}
 
-		.bohemcars-compare-verdict__btn:hover,
 		.bohemcars-compare-verdict__btn:focus-visible {
 			border-color: #14210f !important;
 			background: #14210f !important;
 			color: #ffffff !important;
 		}
 
-		.bohemcars-compare-verdict__btn:hover span,
 		.bohemcars-compare-verdict__btn:focus-visible span {
 			color: #ffffff !important;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-verdict__btn:hover {
+				border-color: #14210f !important;
+				background: #14210f !important;
+				color: #ffffff !important;
+			}
+
+			.bohemcars-compare-verdict__btn:hover span {
+				color: #ffffff !important;
+			}
 		}
 
 		.bohemcars-compare-verdict__arrow {
@@ -1609,12 +1656,20 @@
 			stroke: currentcolor;
 		}
 
-		.bohemcars-compare-empty__cta:hover,
 		.bohemcars-compare-empty__cta:focus-visible {
 			border-color: #14210f;
 			background: #14210f;
 			color: #ffffff;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-empty__cta:hover {
+				border-color: #14210f;
+				background: #14210f;
+				color: #ffffff;
+				outline: 0;
+			}
 		}
 
 		/* Car header cells: framed media boxes so cutouts and photos present
@@ -1643,10 +1698,16 @@
 				border-color 0.18s ease;
 		}
 
-		.bohemcars-compare-car__media:hover,
 		.bohemcars-compare-car__media:focus-visible {
 			border-color: #98bc2a;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car__media:hover {
+				border-color: #98bc2a;
+				outline: 0;
+			}
 		}
 
 		/* Hover/focus the image to swap the car for another from the picker. */
@@ -1665,9 +1726,14 @@
 			transition: opacity 0.18s ease;
 		}
 
-		.bohemcars-compare-car__media:hover .bohemcars-compare-car__swap-overlay,
 		.bohemcars-compare-car__media:focus-visible .bohemcars-compare-car__swap-overlay {
 			opacity: 1;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car__media:hover .bohemcars-compare-car__swap-overlay {
+				opacity: 1;
+			}
 		}
 
 		.bohemcars-compare-car__swap-icon {
@@ -1714,8 +1780,10 @@
 			object-fit: contain;
 		}
 
-		.bohemcars-compare-car:hover .bohemcars-compare-car__media--cutout {
-			background: #ffffff;
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car:hover .bohemcars-compare-car__media--cutout {
+				background: #ffffff;
+			}
 		}
 
 		.bohemcars-compare-corner {
@@ -1769,9 +1837,14 @@
 			color: #14210f;
 		}
 
-		.bohemcars-compare-car__title a:hover,
 		.bohemcars-compare-car__title a:focus-visible {
 			color: #3a540e;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car__title a:hover {
+				color: #3a540e;
+			}
 		}
 
 		.bohemcars-compare-car__swap {
@@ -1806,12 +1879,20 @@
 			stroke: currentcolor;
 		}
 
-		.bohemcars-compare-car__swap:hover,
 		.bohemcars-compare-car__swap:focus-visible {
 			border-color: #98bc2a;
 			background: #eef3e9;
 			color: #14210f;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car__swap:hover {
+				border-color: #98bc2a;
+				background: #eef3e9;
+				color: #14210f;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-car__remove {
@@ -1845,15 +1926,24 @@
 			object-fit: contain !important;
 		}
 
-		.bohemcars-compare-car__remove:hover,
 		.bohemcars-compare-car__remove:focus-visible {
 			border-color: #1c1c1c;
 			background: #1c1c1c;
 		}
 
-		.bohemcars-compare-car__remove:hover img,
 		.bohemcars-compare-car__remove:focus-visible img {
 			filter: brightness(0) invert(1);
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-car__remove:hover {
+				border-color: #1c1c1c;
+				background: #1c1c1c;
+			}
+
+			.bohemcars-compare-car__remove:hover img {
+				filter: brightness(0) invert(1);
+			}
 		}
 	}
 
@@ -1929,10 +2019,16 @@
 			padding: 0;
 		}
 
-		.bohemcars-compare-mobile__appbar-add:hover,
 		.bohemcars-compare-mobile__appbar-add:focus-visible {
 			background: #f0f6e2;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-mobile__appbar-add:hover {
+				background: #f0f6e2;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-mobile__appbar-add :global(svg),
@@ -2058,10 +2154,16 @@
 			cursor: pointer;
 		}
 
-		.bohemcars-compare-mobile__add-card:hover,
 		.bohemcars-compare-mobile__add-card:focus-visible {
 			background: var(--bc-accent-bright-soft);
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-mobile__add-card:hover {
+				background: var(--bc-accent-bright-soft);
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-mobile__add-card strong {
@@ -2138,12 +2240,20 @@
 		}
 
 		.bohemcars-compare-mobile__selected-rail button.active,
-		.bohemcars-compare-mobile__selected-rail button:hover,
 		.bohemcars-compare-mobile__selected-rail button:focus-visible {
 			border-color: var(--bc-accent-bright-soft);
 			background: var(--bc-accent-bright-soft);
 			color: #111111;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-compare-mobile__selected-rail button:hover {
+				border-color: var(--bc-accent-bright-soft);
+				background: var(--bc-accent-bright-soft);
+				color: #111111;
+				outline: 0;
+			}
 		}
 
 		.bohemcars-compare-mobile__selected-rail span,
@@ -2619,10 +2729,16 @@
 		}
 
 		:global(.bohemcars-compare-mobile-drawer__brands button.active),
-		:global(.bohemcars-compare-mobile-drawer__brands button:hover),
 		:global(.bohemcars-compare-mobile-drawer__brands button:focus-visible) {
 			background: var(--bc-accent-bright-soft);
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			:global(.bohemcars-compare-mobile-drawer__brands button:hover) {
+				background: var(--bc-accent-bright-soft);
+				outline: 0;
+			}
 		}
 
 		:global(.bohemcars-compare-mobile-drawer__brands small) {
@@ -2668,10 +2784,16 @@
 			text-align: left;
 		}
 
-		:global(.bohemcars-compare-mobile-drawer__list > button:hover),
 		:global(.bohemcars-compare-mobile-drawer__list > button:focus-visible) {
 			background: #eef3e9;
 			outline: 0;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			:global(.bohemcars-compare-mobile-drawer__list > button:hover) {
+				background: #eef3e9;
+				outline: 0;
+			}
 		}
 
 		:global(.bohemcars-compare-mobile-drawer__list > button.active) {

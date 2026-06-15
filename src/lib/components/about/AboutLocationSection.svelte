@@ -206,9 +206,11 @@
 			border-color 0.18s ease;
 	}
 
-	.bohemcars-about-location-card:hover {
-		border-color: #cbdcbc;
-		background: #fbfcf8;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-about-location-card:hover {
+			border-color: #cbdcbc;
+			background: #fbfcf8;
+		}
 	}
 
 	.bohemcars-about-location-card span {
@@ -252,8 +254,10 @@
 		line-height: 1.38;
 	}
 
-	.bohemcars-about-location-card a:hover {
-		color: #5f7d18;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-about-location-card a:hover {
+			color: #5f7d18;
+		}
 	}
 
 	.bohemcars-about-location__actions {
@@ -280,10 +284,16 @@
 			color 0.16s ease;
 	}
 
-	.bohemcars-about-location__action:hover,
 	.bohemcars-about-location__action:focus-visible {
 		background: #98bc2a;
 		color: #1c1c1c;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-about-location__action:hover {
+			background: #98bc2a;
+			color: #1c1c1c;
+		}
 	}
 
 	.bohemcars-about-location__map {
@@ -377,9 +387,11 @@
 		transition: background-color 0.18s ease;
 	}
 
-	.bohemcars-about-location__map-link:hover {
-		color: #ffffff;
-		background: #20330f;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-about-location__map-link:hover {
+			color: #ffffff;
+			background: #20330f;
+		}
 	}
 
 	@media (max-width: 991px) {

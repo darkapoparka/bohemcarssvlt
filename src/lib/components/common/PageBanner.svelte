@@ -128,7 +128,6 @@
 		color: #1c1c1c !important;
 	}
 
-	.bohemcars-page-banner__actions :global(.btn.btn-primary:hover),
 	.bohemcars-page-banner__actions :global(.btn.btn-primary:focus-visible) {
 		border-color: var(--bc-hover-accent) !important;
 		background: var(--bc-hover-accent) !important;
@@ -140,10 +139,18 @@
 		color: #ffffff !important;
 	}
 
-	.bohemcars-page-banner__secondary:hover {
-		border-color: #ffffff !important;
-		background: #ffffff !important;
-		color: #1c1c1c !important;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-page-banner__actions :global(.btn.btn-primary:hover) {
+			border-color: var(--bc-hover-accent) !important;
+			background: var(--bc-hover-accent) !important;
+			color: var(--bc-hover-accent-ink) !important;
+		}
+
+		.bohemcars-page-banner__secondary:hover {
+			border-color: #ffffff !important;
+			background: #ffffff !important;
+			color: #1c1c1c !important;
+		}
 	}
 
 	@media (max-width: 767px) {

@@ -287,12 +287,19 @@
 		line-height: 19px;
 	}
 
-	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__submit:hover),
 	.bohemcars-import-mobile__form-section
 		:global(.bohemcars-import-mobile-form__submit:focus-visible) {
 		background: var(--bc-accent-bright-soft) !important;
 		color: #111111 !important;
 		outline: 0;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__submit:hover) {
+			background: var(--bc-accent-bright-soft) !important;
+			color: #111111 !important;
+			outline: 0;
+		}
 	}
 
 	.bohemcars-import-mobile__form-section :global(.bohemcars-import-mobile-form__status) {

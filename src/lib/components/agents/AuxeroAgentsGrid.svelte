@@ -21,9 +21,11 @@
 		text-decoration: none;
 	}
 
-	:global(.bohemcars-agent-grid .sale-agent-social li a:hover),
-	:global(.bohemcars-agent-grid .sale-agent-box .card-bottom .contact li a:hover) {
-		border-color: #d6dbd1 !important;
-		background-color: #eef0ec !important;
+	@media (hover: hover) and (pointer: fine) {
+		:global(.bohemcars-agent-grid .sale-agent-social li a:hover),
+		:global(.bohemcars-agent-grid .sale-agent-box .card-bottom .contact li a:hover) {
+			border-color: #d6dbd1 !important;
+			background-color: #eef0ec !important;
+		}
 	}
 </style>

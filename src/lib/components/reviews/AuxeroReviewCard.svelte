@@ -29,10 +29,15 @@
 	}
 
 	.testimonior-box:hover {
-		background: var(--bc-surface-hover);
-		border-color: var(--bc-hover-border);
 		transform: none;
 		box-shadow: none;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.testimonior-box:hover {
+			background: var(--bc-surface-hover);
+			border-color: var(--bc-hover-border);
+		}
 	}
 
 	@media (max-width: 767.98px) {

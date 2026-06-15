@@ -387,23 +387,25 @@
 			pointer-events: none;
 		}
 
-		.mobile-bottom-nav a:hover,
-		.mobile-bottom-nav__menu-trigger:hover {
-			background: transparent;
-			color: #17280b;
-		}
+		@media (hover: hover) and (pointer: fine) {
+			.mobile-bottom-nav a:hover,
+			.mobile-bottom-nav__menu-trigger:hover {
+				background: transparent;
+				color: #17280b;
+			}
 
-		.mobile-bottom-nav a:hover .mobile-bottom-nav__icon,
-		.mobile-bottom-nav__menu-trigger:hover .mobile-bottom-nav__icon {
-			background: var(--bc-surface-soft);
-		}
+			.mobile-bottom-nav a:hover .mobile-bottom-nav__icon,
+			.mobile-bottom-nav__menu-trigger:hover .mobile-bottom-nav__icon {
+				background: var(--bc-surface-soft);
+			}
 
-		.mobile-bottom-nav a.active:hover .mobile-bottom-nav__icon,
-		#mobile-bottom-menu-toggle:checked
-			~ .mobile-bottom-nav
-			.mobile-bottom-nav__menu-trigger:hover
-			.mobile-bottom-nav__icon {
-			background: #d9f275;
+			.mobile-bottom-nav a.active:hover .mobile-bottom-nav__icon,
+			#mobile-bottom-menu-toggle:checked
+				~ .mobile-bottom-nav
+				.mobile-bottom-nav__menu-trigger:hover
+				.mobile-bottom-nav__icon {
+				background: #d9f275;
+			}
 		}
 
 		.mobile-bottom-nav :global(svg) {
@@ -547,10 +549,16 @@
 			content: '';
 		}
 
-		.mobile-menu-sheet__sell:hover,
 		.mobile-menu-sheet__sell:focus-visible {
 			background: #111111;
 			color: #ffffff;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.mobile-menu-sheet__sell:hover {
+				background: #111111;
+				color: #ffffff;
+			}
 		}
 
 		.mobile-menu-sheet__sell-copy {
@@ -647,10 +655,16 @@
 			background: #d9f275;
 		}
 
-		.mobile-menu-sheet__actions a:hover,
 		.mobile-menu-sheet__actions a:focus-visible {
 			background: #1c1c1c;
 			color: #ffffff;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.mobile-menu-sheet__actions a:hover {
+				background: #1c1c1c;
+				color: #ffffff;
+			}
 		}
 
 		.mobile-menu-sheet__sections {
@@ -693,10 +707,16 @@
 		}
 
 		.mobile-menu-sheet__links a.active,
-		.mobile-menu-sheet__links a:hover,
 		.mobile-menu-sheet__links a:focus-visible {
 			background: #d9f275;
 			color: #1c1c1c;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.mobile-menu-sheet__links a:hover {
+				background: #d9f275;
+				color: #1c1c1c;
+			}
 		}
 	}
 </style>

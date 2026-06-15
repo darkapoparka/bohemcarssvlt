@@ -615,10 +615,16 @@
 		text-decoration: none;
 	}
 
-	.bohemcars-calculator-mobile__budget > div > a:hover,
 	.bohemcars-calculator-mobile__budget > div > a:focus-visible {
 		background: var(--bc-surface-hover);
 		color: #111111;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-calculator-mobile__budget > div > a:hover {
+			background: var(--bc-surface-hover);
+			color: #111111;
+		}
 	}
 
 	.bohemcars-calculator-mobile__budget span,

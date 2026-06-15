@@ -557,6 +557,14 @@
 			padding-block: 9px;
 		}
 
+		/* Auxero app.css underlines the title/brand link on tap (.active fake-hover
+		   and sticky :hover). Kill it in every state on touch — the whole card is the
+		   tap target, so an animated underline reads as a broken half-press. The
+		   intentional finance-link underline is a different element, untouched. */
+		.card-box-style-1 .content .card-box__title a {
+			text-decoration: none !important;
+		}
+
 		/* Mobile: title → spec chips → price anchored at the bottom (price as the bold conclusion). */
 		.bohemcars-card-specs {
 			display: grid !important;

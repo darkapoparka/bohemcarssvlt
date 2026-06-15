@@ -72,10 +72,12 @@
 		width: 92px !important;
 	}
 
-	.bohemcars-about-brand-card:hover {
-		border-color: #cbd8c1;
-		background: var(--bc-surface-hover) !important;
-		box-shadow: none !important;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-about-brand-card:hover {
+			border-color: #cbd8c1;
+			background: var(--bc-surface-hover) !important;
+			box-shadow: none !important;
+		}
 	}
 
 	.bohemcars-about-brand-card :global(.text-muted) {

@@ -269,11 +269,18 @@
 		color: #ffffff;
 	}
 
-	.bohemcars-contact-mobile__icon-action:hover,
 	.bohemcars-contact-mobile__icon-action:focus-visible {
 		background: var(--bc-accent-bright-soft);
 		color: #14210f;
 		outline: 0;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-contact-mobile__icon-action:hover {
+			background: var(--bc-accent-bright-soft);
+			color: #14210f;
+			outline: 0;
+		}
 	}
 
 	.bohemcars-contact-mobile__icon-action :global(svg),
@@ -370,13 +377,20 @@
 		color: #14210f;
 	}
 
-	.bohemcars-contact-mobile__actions label:hover,
-	.bohemcars-contact-mobile__actions a:hover,
 	.bohemcars-contact-mobile__actions label:focus-visible,
 	.bohemcars-contact-mobile__actions a:focus-visible {
 		background: var(--bc-surface-hover);
 		color: #111111;
 		outline: 0;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-contact-mobile__actions label:hover,
+		.bohemcars-contact-mobile__actions a:hover {
+			background: var(--bc-surface-hover);
+			color: #111111;
+			outline: 0;
+		}
 	}
 
 	.bohemcars-contact-mobile__info {
@@ -783,12 +797,19 @@
 		line-height: 20px;
 	}
 
-	.bohemcars-contact-mobile-sheet__body :global(.bohemcars-contact-mobile-form__submit:hover),
 	.bohemcars-contact-mobile-sheet__body
 		:global(.bohemcars-contact-mobile-form__submit:focus-visible) {
 		background: #d9f275 !important;
 		color: #111111 !important;
 		outline: 0;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-contact-mobile-sheet__body :global(.bohemcars-contact-mobile-form__submit:hover) {
+			background: #d9f275 !important;
+			color: #111111 !important;
+			outline: 0;
+		}
 	}
 
 	.bohemcars-contact-mobile-sheet__body :global(.bohemcars-contact-mobile-form__status) {

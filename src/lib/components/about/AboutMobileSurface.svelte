@@ -258,14 +258,20 @@
 			padding: 0;
 		}
 
-		.bohemcars-about-mobile__icon-button:hover,
 		.bohemcars-about-mobile__icon-button:focus-visible,
-		.bohemcars-about-mobile__pills a:hover,
 		.bohemcars-about-mobile__pills a:focus-visible,
-		.bohemcars-about-mobile__pills label:hover,
 		.bohemcars-about-mobile__pills label:focus-visible {
 			background: #dfe9c7;
 			color: #17220f;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-about-mobile__icon-button:hover,
+			.bohemcars-about-mobile__pills a:hover,
+			.bohemcars-about-mobile__pills label:hover {
+				background: #dfe9c7;
+				color: #17220f;
+			}
 		}
 
 		.bohemcars-about-mobile__icon-button:focus-visible,
@@ -526,10 +532,16 @@
 			text-decoration: none;
 		}
 
-		.bohemcars-about-mobile-drawer__actions a:hover,
 		.bohemcars-about-mobile-drawer__actions a:focus-visible {
 			background: #98bc2a;
 			color: #14210f;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-about-mobile-drawer__actions a:hover {
+				background: #98bc2a;
+				color: #14210f;
+			}
 		}
 	}
 </style>

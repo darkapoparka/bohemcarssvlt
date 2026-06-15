@@ -104,9 +104,11 @@
 			background-color 0.2s ease;
 	}
 
-	.bc-team-card:hover {
-		border-color: #cbd8c1;
-		background: #ffffff;
+	@media (hover: hover) and (pointer: fine) {
+		.bc-team-card:hover {
+			border-color: #cbd8c1;
+			background: #ffffff;
+		}
 	}
 
 	.bc-team-card__media {
@@ -129,9 +131,20 @@
 		transition: opacity 0.16s ease;
 	}
 
-	.bc-team-card:hover .bc-team-card__media::after,
 	.bc-team-card:focus-within .bc-team-card__media::after {
 		opacity: 1;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bc-team-card:hover .bc-team-card__media::after {
+			opacity: 1;
+		}
+	}
+
+	@media (hover: none) {
+		.bc-team-card__media::after {
+			opacity: 1;
+		}
 	}
 
 	.bc-team-card__image-link {
@@ -164,10 +177,16 @@
 		transition: color 0.2s ease;
 	}
 
-	.bc-team-card__name:hover,
 	.bc-team-card__name:focus-visible {
 		color: #5f7d18;
 		text-decoration: none !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bc-team-card__name:hover {
+			color: #5f7d18;
+			text-decoration: none !important;
+		}
 	}
 
 	.bc-team-card__role {
@@ -195,11 +214,26 @@
 			transform 0.16s ease;
 	}
 
-	.bc-team-card:hover .bc-team-card__actions,
 	.bc-team-card:focus-within .bc-team-card__actions {
 		opacity: 1;
 		pointer-events: auto;
 		transform: translateY(0);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bc-team-card:hover .bc-team-card__actions {
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateY(0);
+		}
+	}
+
+	@media (hover: none) {
+		.bc-team-card__actions {
+			opacity: 1;
+			pointer-events: auto;
+			transform: none;
+		}
 	}
 
 	.bc-team-card__chip {
@@ -224,13 +258,15 @@
 		transition: opacity 0.2s ease;
 	}
 
-	.bc-team-card__chip:hover {
-		border-color: #84a928;
-		background: #eef4e2;
-	}
+	@media (hover: hover) and (pointer: fine) {
+		.bc-team-card__chip:hover {
+			border-color: #84a928;
+			background: #eef4e2;
+		}
 
-	.bc-team-card__chip:hover img {
-		opacity: 1;
+		.bc-team-card__chip:hover img {
+			opacity: 1;
+		}
 	}
 
 	@media (max-width: 991px) {
