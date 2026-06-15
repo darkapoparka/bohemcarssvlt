@@ -264,11 +264,18 @@
 		color: inherit !important;
 	}
 
-	.bohemcars-card-actions .view-details:hover,
 	.bohemcars-card-actions .view-details:focus-visible {
 		border-color: #98bc2a !important;
 		background: #98bc2a !important;
 		color: #14210f !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-card-actions .view-details:hover {
+			border-color: #98bc2a !important;
+			background: #98bc2a !important;
+			color: #14210f !important;
+		}
 	}
 
 	.view-details__arrow {
@@ -336,39 +343,41 @@
 			color: #14210f !important;
 		}
 
-		.bohemcars-card-soft-hover:hover,
-		.bohemcars-card-soft-hover:focus-within {
-			background-color: #ffffff;
-			border-color: #cfdcc8 !important;
-			box-shadow: inset 0 0 0 1px rgba(152, 188, 42, 0.2) !important;
-			transform: none;
-		}
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-card-soft-hover:hover,
+			.bohemcars-card-soft-hover:focus-within {
+				background-color: #ffffff;
+				border-color: #cfdcc8 !important;
+				box-shadow: inset 0 0 0 1px rgba(152, 188, 42, 0.2) !important;
+				transform: none;
+			}
 
-		.bohemcars-card-soft-hover:hover .content,
-		.bohemcars-card-soft-hover:focus-within .content {
-			background-color: #ffffff;
-		}
+			.bohemcars-card-soft-hover:hover .content,
+			.bohemcars-card-soft-hover:focus-within .content {
+				background-color: #ffffff;
+			}
 
-		.bohemcars-card-soft-hover:hover .card-box__price,
-		.bohemcars-card-soft-hover:focus-within .card-box__price,
-		.bohemcars-card-soft-hover:hover .card-box__title a,
-		.bohemcars-card-soft-hover:focus-within .card-box__title a,
-		.bohemcars-card-soft-hover:hover .bottom .category a,
-		.bohemcars-card-soft-hover:focus-within .bottom .category a {
-			color: #14210f !important;
-			text-decoration: none !important;
-		}
+			.bohemcars-card-soft-hover:hover .card-box__price,
+			.bohemcars-card-soft-hover:focus-within .card-box__price,
+			.bohemcars-card-soft-hover:hover .card-box__title a,
+			.bohemcars-card-soft-hover:focus-within .card-box__title a,
+			.bohemcars-card-soft-hover:hover .bottom .category a,
+			.bohemcars-card-soft-hover:focus-within .bottom .category a {
+				color: #14210f !important;
+				text-decoration: none !important;
+			}
 
-		.bohemcars-card-soft-hover:hover .bottom .category,
-		.bohemcars-card-soft-hover:focus-within .bottom .category {
-			background-color: rgba(217, 242, 117, 0.94);
-			border-color: rgba(152, 188, 42, 0.56);
-		}
+			.bohemcars-card-soft-hover:hover .bottom .category,
+			.bohemcars-card-soft-hover:focus-within .bottom .category {
+				background-color: rgba(217, 242, 117, 0.94);
+				border-color: rgba(152, 188, 42, 0.56);
+			}
 
-		.bohemcars-card-soft-hover:hover .bohemcars-card-price__amount,
-		.bohemcars-card-soft-hover:focus-within .bohemcars-card-price__amount {
-			background-color: rgba(152, 188, 42, 0.2);
-			color: #14210f;
+			.bohemcars-card-soft-hover:hover .bohemcars-card-price__amount,
+			.bohemcars-card-soft-hover:focus-within .bohemcars-card-price__amount {
+				background-color: rgba(152, 188, 42, 0.2);
+				color: #14210f;
+			}
 		}
 	}
 
@@ -409,49 +418,55 @@
 			color: var(--bc-card-ink, #171a15) !important;
 		}
 
-		.bohemcars-card-soft-hover:hover,
-		.bohemcars-card-soft-hover:focus-within {
-			background-color: var(--bc-card-hover, #e4eadf);
-			border-color: transparent !important;
-			box-shadow: none !important;
-			transform: none;
-		}
-
-		.bohemcars-card-soft-hover:hover .content,
-		.bohemcars-card-soft-hover:focus-within .content {
-			background-color: var(--bc-card-hover, #e4eadf);
-		}
-
-		.bohemcars-card-soft-hover:hover .card-box__price,
-		.bohemcars-card-soft-hover:focus-within .card-box__price,
-		.bohemcars-card-soft-hover:hover .card-box__title a,
-		.bohemcars-card-soft-hover:focus-within .card-box__title a {
-			color: var(--bc-card-ink, #171a15) !important;
-			text-decoration: none !important;
-		}
-
-		.bohemcars-card-soft-hover:hover .bottom .category a,
-		.bohemcars-card-soft-hover:focus-within .bottom .category a {
-			color: #ffffff !important;
-			text-decoration: none !important;
-		}
-
-		.bohemcars-card-soft-hover:hover .bottom .category,
-		.bohemcars-card-soft-hover:focus-within .bottom .category {
-			background-color: var(--bc-card-pill-hover, rgba(28, 28, 28, 0.88));
-			border-color: rgba(255, 255, 255, 0.24);
-		}
-
-		.bohemcars-card-soft-hover:hover .bohemcars-card-price__amount,
-		.bohemcars-card-soft-hover:focus-within .bohemcars-card-price__amount {
-			background-color: transparent;
-			color: var(--bc-card-ink, #171a15);
-		}
-
-		.bohemcars-card-soft-hover .bohemcars-card-price__finance-link:hover,
 		.bohemcars-card-soft-hover .bohemcars-card-price__finance-link:focus-visible {
 			color: var(--bc-hover-accent) !important;
 			text-decoration: none !important;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-card-soft-hover:hover,
+			.bohemcars-card-soft-hover:focus-within {
+				background-color: var(--bc-card-hover, #e4eadf);
+				border-color: transparent !important;
+				box-shadow: none !important;
+				transform: none;
+			}
+
+			.bohemcars-card-soft-hover:hover .content,
+			.bohemcars-card-soft-hover:focus-within .content {
+				background-color: var(--bc-card-hover, #e4eadf);
+			}
+
+			.bohemcars-card-soft-hover:hover .card-box__price,
+			.bohemcars-card-soft-hover:focus-within .card-box__price,
+			.bohemcars-card-soft-hover:hover .card-box__title a,
+			.bohemcars-card-soft-hover:focus-within .card-box__title a {
+				color: var(--bc-card-ink, #171a15) !important;
+				text-decoration: none !important;
+			}
+
+			.bohemcars-card-soft-hover:hover .bottom .category a,
+			.bohemcars-card-soft-hover:focus-within .bottom .category a {
+				color: #ffffff !important;
+				text-decoration: none !important;
+			}
+
+			.bohemcars-card-soft-hover:hover .bottom .category,
+			.bohemcars-card-soft-hover:focus-within .bottom .category {
+				background-color: var(--bc-card-pill-hover, rgba(28, 28, 28, 0.88));
+				border-color: rgba(255, 255, 255, 0.24);
+			}
+
+			.bohemcars-card-soft-hover:hover .bohemcars-card-price__amount,
+			.bohemcars-card-soft-hover:focus-within .bohemcars-card-price__amount {
+				background-color: transparent;
+				color: var(--bc-card-ink, #171a15);
+			}
+
+			.bohemcars-card-soft-hover .bohemcars-card-price__finance-link:hover {
+				color: var(--bc-hover-accent) !important;
+				text-decoration: none !important;
+			}
 		}
 	}
 
@@ -477,9 +492,14 @@
 			display: none;
 		}
 
-		.bohemcars-card-soft-hover .content,
-		.bohemcars-card-soft-hover:hover .content {
+		.bohemcars-card-soft-hover .content {
 			background: var(--bc-surface);
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-card-soft-hover:hover .content {
+				background: var(--bc-surface);
+			}
 		}
 
 		.card-box-style-1 .image {

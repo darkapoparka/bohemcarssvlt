@@ -721,12 +721,19 @@
 		color: #14210f !important;
 	}
 
-	.bohemcars-newest-heading :global(.bohemcars-section-cta:hover),
 	.bohemcars-newest-heading :global(.bohemcars-section-cta:focus-visible),
 	.bohemcars-newest-heading :global(.bohemcars-section-cta:active) {
 		border-color: #ffffff !important;
 		background: #ffffff !important;
 		color: #14210f !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-newest-heading :global(.bohemcars-section-cta:hover) {
+			border-color: #ffffff !important;
+			background: #ffffff !important;
+			color: #14210f !important;
+		}
 	}
 
 	.bohemcars-newest-controls {
@@ -803,29 +810,39 @@
 		background: #f6f7f3 !important;
 	}
 
-	.bohemcars-filter-pill:hover,
 	.bohemcars-filter-pill.active {
 		border-color: #98bc2a !important;
 	}
 
-	.bohemcars-filter-pill:hover:not(.active),
-	.bohemcars-filter-pill:focus-within:not(.active) {
-		background: #d9f275 !important;
-		border-color: #d9f275 !important;
-		color: #14210f !important;
-	}
-
-	.bohemcars-filter-pill.active,
-	.bohemcars-filter-pill.active:focus-within {
+	.bohemcars-filter-pill.active {
 		background: #d9f275 !important;
 		border-color: #c6e759 !important;
 		color: #14210f !important;
 	}
 
-	.bohemcars-filter-pill.active:hover {
-		background: #ffffff !important;
-		border-color: #ffffff !important;
-		color: #14210f !important;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-filter-pill:hover {
+			border-color: #98bc2a !important;
+		}
+
+		.bohemcars-filter-pill:hover:not(.active),
+		.bohemcars-filter-pill:focus-within:not(.active) {
+			background: #d9f275 !important;
+			border-color: #d9f275 !important;
+			color: #14210f !important;
+		}
+
+		.bohemcars-filter-pill.active:focus-within {
+			background: #d9f275 !important;
+			border-color: #c6e759 !important;
+			color: #14210f !important;
+		}
+
+		.bohemcars-filter-pill.active:hover {
+			background: #ffffff !important;
+			border-color: #ffffff !important;
+			color: #14210f !important;
+		}
 	}
 
 	.bohemcars-filter-pill a {
@@ -1083,10 +1100,16 @@
 			scroll-snap-align: start;
 		}
 
-		.bohemcars-mobile-view-all-card:hover,
 		.bohemcars-mobile-view-all-card:focus-visible {
 			background: var(--bc-surface-hover);
 			color: #14210f;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-mobile-view-all-card:hover {
+				background: var(--bc-surface-hover);
+				color: #14210f;
+			}
 		}
 
 		.bohemcars-mobile-view-all-card__logo {

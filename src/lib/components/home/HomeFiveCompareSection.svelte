@@ -133,9 +133,14 @@
 		text-align: center;
 	}
 
-	.bohemcars-home-compare__vehicle:hover,
 	.bohemcars-home-compare__vehicle:focus-visible {
 		color: #1c1c1c;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-home-compare__vehicle:hover {
+			color: #1c1c1c;
+		}
 	}
 
 	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */
@@ -156,9 +161,14 @@
 		transition: background-color 0.18s ease;
 	}
 
-	.bohemcars-home-compare__vehicle:hover .bohemcars-home-compare__image,
 	.bohemcars-home-compare__vehicle:focus-visible .bohemcars-home-compare__image {
 		background: #e7f4c6;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-home-compare__vehicle:hover .bohemcars-home-compare__image {
+			background: #e7f4c6;
+		}
 	}
 
 	.bohemcars-home-compare__image img {

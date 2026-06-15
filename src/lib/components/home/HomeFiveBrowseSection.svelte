@@ -275,7 +275,6 @@
 		color: #5a6356 !important;
 	}
 
-	.bohemcars-browse-section :global(.out-brand-2:hover),
 	.bohemcars-browse-section :global(.out-brand-2.active) {
 		background-color: #e7f4c6 !important;
 		border-color: #abc86f !important;
@@ -287,14 +286,28 @@
 		transform: translateY(1px);
 	}
 
-	.bohemcars-browse-section :global(.out-brand-2:hover .h5),
 	.bohemcars-browse-section :global(.out-brand-2:focus-visible .h5) {
 		color: #1c1c1c !important;
 	}
 
-	.bohemcars-browse-section :global(.out-brand-2:hover .text-muted),
 	.bohemcars-browse-section :global(.out-brand-2:focus-visible .text-muted) {
 		color: #4f5c48 !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-browse-section :global(.out-brand-2:hover) {
+			background-color: #e7f4c6 !important;
+			border-color: #abc86f !important;
+			box-shadow: none !important;
+		}
+
+		.bohemcars-browse-section :global(.out-brand-2:hover .h5) {
+			color: #1c1c1c !important;
+		}
+
+		.bohemcars-browse-section :global(.out-brand-2:hover .text-muted) {
+			color: #4f5c48 !important;
+		}
 	}
 
 	.bohemcars-browse-section :global(.pagination-swiper-outbrand-3) {
@@ -313,12 +326,20 @@
 		gap: 8px;
 	}
 
-	.bohemcars-type-gallery__cta:hover,
 	.bohemcars-type-gallery__cta:focus-visible {
 		background: #ffffff !important;
 		border-color: #ffffff !important;
 		color: #14210f !important;
 		transform: none !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-type-gallery__cta:hover {
+			background: #ffffff !important;
+			border-color: #ffffff !important;
+			color: #14210f !important;
+			transform: none !important;
+		}
 	}
 
 	.bohemcars-type-gallery__cta:active {
@@ -367,16 +388,26 @@
 			box-shadow 0.2s ease;
 	}
 
-	.bohemcars-type-card:hover,
 	.bohemcars-type-card:focus-visible {
 		background-color: #e7f4c6;
 		color: #1c1c1c;
 		transform: none;
 	}
 
-	.bohemcars-type-card:hover .bohemcars-type-card__label,
 	.bohemcars-type-card:focus-visible .bohemcars-type-card__label {
 		color: #1c1c1c;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-type-card:hover {
+			background-color: #e7f4c6;
+			color: #1c1c1c;
+			transform: none;
+		}
+
+		.bohemcars-type-card:hover .bohemcars-type-card__label {
+			color: #1c1c1c;
+		}
 	}
 
 	.bohemcars-type-card:active {

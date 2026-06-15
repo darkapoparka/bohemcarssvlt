@@ -164,10 +164,16 @@
 		line-height: 1 !important;
 	}
 
-	.bohemcars-promo__cta:hover,
 	.bohemcars-promo__cta:focus-visible {
 		background: #ffffff !important;
 		color: #071206 !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-promo__cta:hover {
+			background: #ffffff !important;
+			color: #071206 !important;
+		}
 	}
 
 	.bohemcars-promo__ghost {
@@ -185,10 +191,16 @@
 		line-height: 1 !important;
 	}
 
-	.bohemcars-promo__ghost:hover,
 	.bohemcars-promo__ghost:focus-visible {
 		border-color: rgba(216, 255, 69, 0.5) !important;
 		background: rgba(216, 255, 69, 0.11) !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-promo__ghost:hover {
+			border-color: rgba(216, 255, 69, 0.5) !important;
+			background: rgba(216, 255, 69, 0.11) !important;
+		}
 	}
 
 	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */

@@ -329,14 +329,16 @@
 		flex-direction: column;
 	}
 
-	:global(body.bohemcars-inventory-template) .card-box-style-1:hover,
-	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within {
-		background: #ffffff !important;
-	}
+	@media (hover: hover) and (pointer: fine) {
+		:global(body.bohemcars-inventory-template) .card-box-style-1:hover,
+		:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within {
+			background: #ffffff !important;
+		}
 
-	:global(body.bohemcars-inventory-template) .card-box-style-1:hover .content,
-	:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within .content {
-		background: #fbfcf8 !important;
+		:global(body.bohemcars-inventory-template) .card-box-style-1:hover .content,
+		:global(body.bohemcars-inventory-template) .card-box-style-1:focus-within .content {
+			background: #fbfcf8 !important;
+		}
 	}
 
 	.card-box-style-1 .content .tag li {

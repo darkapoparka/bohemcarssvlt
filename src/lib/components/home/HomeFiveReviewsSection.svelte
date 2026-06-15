@@ -227,14 +227,19 @@
 		margin-top: auto;
 	}
 
-	.bohemcars-home-reviews :global(.testimonior-box),
-	.bohemcars-home-reviews :global(.testimonior-box:hover) {
+	.bohemcars-home-reviews :global(.testimonior-box) {
 		transform: none !important;
 	}
 
-	.bohemcars-home-reviews :global(.testimonior-box:hover) {
-		background: var(--bc-surface-hover);
-		box-shadow: none;
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-home-reviews :global(.testimonior-box:hover) {
+			transform: none !important;
+		}
+
+		.bohemcars-home-reviews :global(.testimonior-box:hover) {
+			background: var(--bc-surface-hover);
+			box-shadow: none;
+		}
 	}
 
 	.bohemcars-review-stars {
@@ -282,10 +287,16 @@
 	}
 
 	.bohemcars-review-more-card,
-	.bohemcars-review-more-card:hover,
 	.bohemcars-review-more-card:focus-visible {
 		color: #ffffff;
 		transform: none !important;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.bohemcars-review-more-card:hover {
+			color: #ffffff;
+			transform: none !important;
+		}
 	}
 
 	.bohemcars-review-more-card__eyebrow {
@@ -464,9 +475,14 @@
 		}
 
 		.bohemcars-review-more-card,
-		.bohemcars-review-more-card:hover,
 		.bohemcars-review-more-card:focus-visible {
 			color: #ffffff;
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			.bohemcars-review-more-card:hover {
+				color: #ffffff;
+			}
 		}
 
 		.bohemcars-review-more-card__eyebrow {
