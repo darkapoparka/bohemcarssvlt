@@ -1,27 +1,20 @@
 import type { PageServerLoad } from './$types';
 import { contactFormData, contactPageInfo } from '$lib/auxero/contact';
+import { homeFiveFooterDataForLocale, homeFiveHeaderDataForLocale } from '$lib/auxero/home-five';
 import { resolveLocale } from '$lib/i18n/messages';
-import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
-import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
-export const load: PageServerLoad = ({ request, url }) => {
+// Clean route: NO pageDocument → the Auxero app.css / guards never load.
+// Renders the redesigned /contact in clean Svelte 5 + Tailwind v4 with the shared
+// clean chrome. auxeroFullPage stays true so the page owns its own header/footer.
+export const load: PageServerLoad = ({ url }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
-	const renderOptions = {
-		request,
-		routePath: 'contact',
-		searchParams: url.searchParams
-	};
-	const pageDocument = renderAuxeroPageDocument(
-		'contact-us.html',
-		renderOptions,
-		'Contact template could not be rendered'
-	);
 
 	return {
 		auxeroFullPage: true,
 		form: contactFormData,
 		info: contactPageInfo,
-		pageDocument,
-		...auxeroPublicShellData(pageDocument, locale, '/contact')
+		header: homeFiveHeaderDataForLocale(locale, '/contact'),
+		footer: homeFiveFooterDataForLocale(locale),
+		locale
 	};
 };

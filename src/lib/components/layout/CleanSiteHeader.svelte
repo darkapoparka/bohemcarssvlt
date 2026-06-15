@@ -1,149 +1,525 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { ChevronDown, Heart, Mail, MapPin, Menu, Phone, Scale, Search, X } from '@lucide/svelte';
-	import type { HomeFiveHeaderData } from '$lib/auxero/home-five';
+	import { ChevronDown, Mail, MapPin, PhoneCall } from '@lucide/svelte';
+	import type { HomeFiveHeaderData, HomeFiveHeaderSocial } from '$lib/auxero/home-five';
+	import SiteMegaMenu from './SiteMegaMenu.svelte';
+	import SiteSearchModal from './SiteSearchModal.svelte';
 
-	// Clean Svelte 5 + Tailwind v4 public header — topbar + main nav, no Auxero
-	// theme classes / no app.css. Mega-menu items navigate (rich dropdown panels
-	// are the next layer); nav stays fully functional in the meantime.
-	let { header }: { header: HomeFiveHeaderData } = $props();
+	// Clean Svelte 5 + Tailwind v4 public header — the keystone shared header for the
+	// Auxero → clean migration. Reproduces the live themed HomeFiveHeader 1:1:
+	//   • green topbar (#98bc2a = bc-accent), white text, #d9f275 (= bc-accent-bright-soft)
+	//     contact icons, language dropdown + 5 social icons
+	//   • 145px desktop main row / 94px sticky / 64px mobile appbar
+	//   • hover/focus mega-menu panels (SiteMegaMenu = inner content)
+	//   • search modal wired to the search glyph
+	// Off-token visible colors that have no matching bc token are kept as exact hex
+	// (and commented). Zero !important, no app.css / theme-class dependency.
+	let {
+		header,
+		variant = 'light',
+		pathname
+	}: {
+		header: HomeFiveHeaderData;
+		/** `home` = transparent bar over the dark hero; `light` = white bar (/compare-clean). */
+		variant?: 'home' | 'light';
+		/** Current path used to mark the active nav item (falls back to `item.active`). */
+		pathname?: string;
+	} = $props();
 
-	const externalHref = (href: string) => ({ href });
-	let mobileOpen = $state(false);
+	const isHome = $derived(variant === 'home');
+
+	// External (tel:/mailto:/https:) hrefs bypass `resolve`; internal start with `/`.
+	const linkHref = (href: string) => (href.startsWith('/') ? resolve(href as '/') : href);
+	const isActive = (href: string, fallback: boolean) =>
+		pathname ? pathname === href || (href !== '/' && pathname.startsWith(`${href}/`)) : fallback;
+
+	let searchOpen = $state(false);
+	let langOpen = $state(false);
+
+	function closeLanguage() {
+		langOpen = false;
+	}
+	// Outside-click / Escape close for the language menu. Reacts to `langOpen` and
+	// touches the live document — the one acceptable $effect here.
+	$effect(() => {
+		if (!langOpen) return;
+		const onPointerDown = (event: PointerEvent) => {
+			const target = event.target;
+			if (target instanceof Element && target.closest('[data-language-switch]')) return;
+			langOpen = false;
+		};
+		const onKeydown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') langOpen = false;
+		};
+		document.addEventListener('pointerdown', onPointerDown);
+		document.addEventListener('keydown', onKeydown);
+		return () => {
+			document.removeEventListener('pointerdown', onPointerDown);
+			document.removeEventListener('keydown', onKeydown);
+		};
+	});
 </script>
 
-<header class="sticky top-0 z-50 font-bc-body">
-	<!-- Topbar -->
-	<div class="hidden border-b border-bc-border bg-bc-surface-soft md:block">
-		<div class="mx-auto flex h-10 w-full max-w-[1440px] items-center justify-between px-4 text-[13px] text-bc-ink-soft">
-			<div class="flex items-center gap-5">
-				<a href={resolve(header.contact.addressHref as '/')} class="flex items-center gap-1.5 transition-colors hover:text-bc-accent-contrast">
-					<MapPin size={15} strokeWidth={2} class="text-bc-accent" aria-hidden="true" />
-					{header.contact.addressLabel}
-				</a>
-				<a {...externalHref(header.contact.phoneHref)} class="flex items-center gap-1.5 font-semibold transition-colors hover:text-bc-accent-contrast">
-					<Phone size={15} strokeWidth={2} class="text-bc-accent" aria-hidden="true" />
-					{header.contact.phoneLabel}
-				</a>
+<!-- ===== inline SVG glyphs (themed paths, currentColor) ===== -->
+{#snippet searchIcon()}
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M10.5 18C14.6421 18 18 14.6421 18 10.5C18 6.35786 14.6421 3 10.5 3C6.35786 3 3 6.35786 3 10.5C3 14.6421 6.35786 18 10.5 18Z"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M15.8047 15.8047L21.0012 21.0012"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet compareIcon()}
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M16.5 13.5L19.5 16.5L16.5 19.5"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M4.5 16.5H19.5"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M7.5 10.5L4.5 7.5L7.5 4.5"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M19.5 7.5H4.5"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet heartIcon()}
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M12 21C12 21 2.25 15.75 2.25 9.5625C2.25 8.21984 2.78337 6.93217 3.73277 5.98277C4.68217 5.03337 5.96984 4.5 7.3125 4.5C9.43031 4.5 11.2444 5.65406 12 7.5C12.7556 5.65406 14.5697 4.5 16.6875 4.5C18.0302 4.5 19.3178 5.03337 20.2672 5.98277C21.2166 6.93217 21.75 8.21984 21.75 9.5625C21.75 15.75 12 21 12 21Z"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet userIcon()}
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M3 20.25C4.81594 17.1122 8.11406 15 12 15C15.8859 15 19.1841 17.1122 21 20.25"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+{/snippet}
+
+{#snippet socialIcon(link: HomeFiveHeaderSocial)}
+	{#if link.icon === 'x'}
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+			<path
+				d="M3.75 3.125H7.5L16.25 16.875H12.5L3.75 3.125Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M8.89687 11.2129L3.75 16.8746"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M16.2484 3.125L11.1016 8.78672"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	{:else if link.icon === 'instagram'}
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+			<path
+				d="M10 13.125C11.7259 13.125 13.125 11.7259 13.125 10C13.125 8.27411 11.7259 6.875 10 6.875C8.27411 6.875 6.875 8.27411 6.875 10C6.875 11.7259 8.27411 13.125 10 13.125Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+			/>
+			<path
+				d="M13.75 2.5H6.25C4.17893 2.5 2.5 4.17893 2.5 6.25V13.75C2.5 15.8211 4.17893 17.5 6.25 17.5H13.75C15.8211 17.5 17.5 15.8211 17.5 13.75V6.25C17.5 4.17893 15.8211 2.5 13.75 2.5Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+			/>
+			<path
+				d="M14.0625 6.71875C14.494 6.71875 14.8438 6.36897 14.8438 5.9375C14.8438 5.50603 14.494 5.15625 14.0625 5.15625C13.631 5.15625 13.2812 5.50603 13.2812 5.9375C13.2812 6.36897 13.631 6.71875 14.0625 6.71875Z"
+				fill="currentColor"
+			/>
+		</svg>
+	{:else if link.icon === 'youtube'}
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+			<path
+				d="M17.5 7.5C17.5 6.39543 16.6046 5.5 15.5 5.5H4.5C3.39543 5.5 2.5 6.39543 2.5 7.5V12.5C2.5 13.6046 3.39543 14.5 4.5 14.5H15.5C16.6046 14.5 17.5 13.6046 17.5 12.5V7.5Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+			/>
+			<path d="M8.75 7.75L12.5 10L8.75 12.25V7.75Z" fill="currentColor" />
+		</svg>
+	{:else if link.icon === 'telegram'}
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+			<path
+				d="M6.24939 10.5366L13.301 16.7186C13.3822 16.7903 13.4806 16.8396 13.5867 16.8618C13.6927 16.8839 13.8027 16.8781 13.9058 16.845C14.0089 16.8118 14.1016 16.7524 14.1749 16.6726C14.2481 16.5928 14.2994 16.4953 14.3236 16.3897L17.4994 2.59521C17.5025 2.58138 17.5018 2.56696 17.4973 2.55351C17.4928 2.54006 17.4848 2.52807 17.474 2.51884C17.4633 2.50961 17.4502 2.50348 17.4362 2.5011C17.4223 2.49873 17.4079 2.5002 17.3947 2.50537L1.56189 8.70146C1.4636 8.73929 1.38023 8.80798 1.3243 8.89722C1.26837 8.98646 1.2429 9.09143 1.2517 9.19638C1.26051 9.30133 1.30312 9.4006 1.37313 9.47927C1.44315 9.55794 1.5368 9.61178 1.64001 9.63271L6.24939 10.5366Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M6.25 10.5375L17.4539 2.50781"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	{:else}
+		<!-- chat / facebook fallback bubble -->
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+			<path
+				d="M6.25 11.25L8.75 8.75L11.25 11.25L13.75 8.75"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				d="M6.24382 16.4932C7.81923 17.405 9.67248 17.7127 11.458 17.359C13.2436 17.0053 14.8396 16.0143 15.9484 14.5708C17.0573 13.1273 17.6033 11.3298 17.4847 9.51341C17.3662 7.69704 16.5911 5.98577 15.304 4.69866C14.0169 3.41156 12.3056 2.63646 10.4892 2.51789C8.67284 2.39932 6.87533 2.94537 5.43182 4.05422C3.98831 5.16308 2.99733 6.75906 2.64363 8.54461C2.28993 10.3302 2.59766 12.1834 3.50944 13.7588L2.5321 16.6768C2.49538 16.7869 2.49005 16.9051 2.51671 17.0181C2.54337 17.131 2.60097 17.2344 2.68306 17.3165C2.76514 17.3985 2.86847 17.4561 2.98145 17.4828C3.09443 17.5095 3.2126 17.5041 3.32273 17.4674L6.24382 16.4932Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	{/if}
+{/snippet}
+
+<header class={['font-bc-body', isHome ? 'absolute inset-x-0 top-0 z-50' : 'sticky top-0 z-50']}>
+	<!-- ============================= TOP BAR (desktop) =============================
+	     Brand green (#98bc2a = bc-accent), white text, 50px tall. -->
+	<div class={['hidden md:block', isHome ? 'bg-bc-accent/0' : 'bg-bc-accent']}>
+		<div
+			class="mx-auto flex h-[50px] w-full max-w-[1920px] items-center justify-between px-4 lg:px-[60px]"
+		>
+			<!-- Left: address + phone (#d9f275 icons) | divider | language -->
+			<div class="flex items-center gap-6">
+				<div class="flex items-center gap-6">
+					<a
+						href={linkHref(header.contact.addressHref)}
+						class="group/contact flex items-center gap-2 text-sm text-white transition-colors hover:text-white"
+					>
+						<!-- #d9f275 = bc-accent-bright-soft; turns white on hover -->
+						<span
+							class="text-bc-accent-bright-soft transition-colors group-hover/contact:text-white"
+						>
+							<MapPin size={20} strokeWidth={2.25} aria-hidden="true" />
+						</span>
+						{header.contact.addressLabel}
+					</a>
+					<a
+						href={linkHref(header.contact.phoneHref)}
+						class="group/contact flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-white"
+					>
+						<span
+							class="text-bc-accent-bright-soft transition-colors group-hover/contact:text-white"
+						>
+							<PhoneCall size={18} strokeWidth={2.2} aria-hidden="true" />
+						</span>
+						{header.contact.phoneLabel}
+					</a>
+				</div>
+
+				<!-- vertical divider (hidden on large per themed lg-hidden) -->
+				<span class="h-6 w-px bg-white/25 lg:hidden" aria-hidden="true"></span>
+
+				<!-- language dropdown -->
+				<div class="relative" data-language-switch>
+					<button
+						type="button"
+						aria-haspopup="menu"
+						aria-expanded={langOpen}
+						onclick={() => (langOpen = !langOpen)}
+						class="flex items-center gap-1.5 text-sm text-white transition-opacity hover:opacity-90"
+					>
+						{header.language.current}
+						<ChevronDown
+							size={14}
+							strokeWidth={2}
+							aria-hidden="true"
+							class="transition-transform {langOpen ? 'rotate-180' : ''}"
+						/>
+					</button>
+					{#if langOpen}
+						<div
+							role="menu"
+							class="absolute top-full left-0 z-30 mt-2 min-w-[140px] overflow-hidden rounded-bc-md border border-bc-border bg-white py-1 text-bc-ink shadow-bc-panel"
+						>
+							{#each header.language.options as option (option)}
+								<button
+									type="button"
+									role="menuitem"
+									onclick={closeLanguage}
+									class={[
+										'flex w-full items-center px-4 py-2 text-left text-sm transition-colors hover:bg-bc-surface-soft hover:text-bc-accent-contrast',
+										option === header.language.current
+											? 'font-bold text-bc-accent-contrast'
+											: 'text-bc-ink-soft'
+									]}
+								>
+									{option}
+								</button>
+							{/each}
+						</div>
+					{/if}
+				</div>
 			</div>
-			<div class="flex items-center gap-5">
-				<a href={resolve(header.contact.emailHref as '/')} class="flex items-center gap-1.5 transition-colors hover:text-bc-accent-contrast">
-					<Mail size={15} strokeWidth={2} class="text-bc-accent" aria-hidden="true" />
+
+			<!-- Right: email + social icons -->
+			<div class="flex items-center gap-6">
+				<a
+					href={linkHref(header.contact.emailHref)}
+					class="flex items-center gap-2 text-sm text-white transition-opacity hover:opacity-90"
+				>
+					<Mail size={16} strokeWidth={2} aria-hidden="true" />
 					{header.contact.emailLabel}
 				</a>
-				<span class="flex items-center gap-1 font-semibold">
-					{header.language.current}
-					<ChevronDown size={13} strokeWidth={2.4} aria-hidden="true" />
-				</span>
-			</div>
-		</div>
-	</div>
-
-	<!-- Main nav -->
-	<div class="border-b border-bc-border bg-white">
-		<div class="mx-auto flex h-[84px] w-full max-w-[1440px] items-center justify-between gap-6 px-4">
-			<a href={resolve(header.logo.href as '/')} class="shrink-0">
-				<img src={header.logo.src} alt={header.logo.alt} width="1285" height="235" class="h-12 w-auto" />
-			</a>
-
-			<nav class="hidden items-center gap-1 lg:flex" aria-label="Bohemcars">
-				{#each header.navigation as item (item.href)}
-					<a
-						href={resolve(item.href as '/')}
-						aria-current={item.active ? 'page' : undefined}
-						class={[
-							'flex items-center gap-1 rounded-bc-sm px-3 py-2 text-base font-semibold transition-colors hover:text-bc-accent-contrast',
-							item.active ? 'text-bc-accent-contrast' : 'text-bc-ink'
-						]}
-					>
-						{item.label}
-						{#if item.megaMenu}
-							<ChevronDown size={15} strokeWidth={2.4} class="text-bc-muted" aria-hidden="true" />
-						{/if}
-					</a>
-				{/each}
-			</nav>
-
-			<div class="flex items-center gap-2">
-				<button
-					type="button"
-					aria-label={header.ui.searchPlaceholder}
-					class="hidden h-11 w-11 items-center justify-center rounded-full border border-bc-border text-bc-ink transition-colors hover:border-bc-accent hover:text-bc-accent-contrast sm:flex"
-				>
-					<Search size={19} strokeWidth={2} aria-hidden="true" />
-				</button>
-				<a
-					href={resolve('/compare')}
-					aria-label={header.ui.compare}
-					class="relative hidden h-11 w-11 items-center justify-center rounded-full border border-bc-border text-bc-ink transition-colors hover:border-bc-accent hover:text-bc-accent-contrast sm:flex"
-				>
-					<Scale size={19} strokeWidth={2} aria-hidden="true" />
-					{#if header.actionBadges.compare > 0}
-						<span class="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-bc-accent px-1 text-[10px] font-bold text-bc-accent-contrast">
-							{header.actionBadges.compare}
-						</span>
-					{/if}
-				</a>
-				<a
-					href={resolve('/account/favorites')}
-					aria-label={header.ui.wishlist}
-					class="relative hidden h-11 w-11 items-center justify-center rounded-full border border-bc-border text-bc-ink transition-colors hover:border-bc-accent hover:text-bc-accent-contrast sm:flex"
-				>
-					<Heart size={19} strokeWidth={2} aria-hidden="true" />
-					{#if header.actionBadges.wishlist > 0}
-						<span class="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-bc-accent px-1 text-[10px] font-bold text-bc-accent-contrast">
-							{header.actionBadges.wishlist}
-						</span>
-					{/if}
-				</a>
-				<a
-					href={resolve('/account')}
-					class="hidden h-12 items-center rounded-bc-md bg-bc-accent px-5 text-[15px] font-bold text-bc-accent-contrast transition-colors hover:bg-bc-accent-contrast hover:text-white sm:flex"
-				>
-					{header.ui.signIn}
-				</a>
-				<button
-					type="button"
-					aria-label="Menu"
-					aria-expanded={mobileOpen}
-					onclick={() => (mobileOpen = !mobileOpen)}
-					class="flex h-11 w-11 items-center justify-center rounded-full border border-bc-border text-bc-ink transition-colors hover:border-bc-accent lg:hidden"
-				>
-					{#if mobileOpen}
-						<X size={20} strokeWidth={2.2} aria-hidden="true" />
-					{:else}
-						<Menu size={20} strokeWidth={2.2} aria-hidden="true" />
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<!-- Mobile nav -->
-		{#if mobileOpen}
-			<nav class="border-t border-bc-border bg-white px-4 py-3 lg:hidden" aria-label="Bohemcars mobile">
-				<ul class="flex flex-col">
-					{#each header.navigation as item (item.href)}
+				<ul class="flex items-center gap-4 border-l border-white/25 pl-6">
+					{#each header.socialLinks as link (link.label)}
 						<li>
 							<a
-								href={resolve(item.href as '/')}
-								aria-current={item.active ? 'page' : undefined}
-								class={[
-									'flex min-h-12 items-center text-base font-semibold transition-colors hover:text-bc-accent-contrast',
-									item.active ? 'text-bc-accent-contrast' : 'text-bc-ink'
-								]}
+								href={linkHref(link.href)}
+								target={link.target}
+								rel={link.target === '_blank' ? 'noreferrer' : undefined}
+								aria-label={link.label}
+								class="flex text-white transition-opacity hover:opacity-80"
 							>
-								{item.label}
+								{@render socialIcon(link)}
 							</a>
 						</li>
 					{/each}
 				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- ============================= MAIN NAV (desktop) ============================
+	     145px tall on desktop; collapses to the 64px mobile appbar below md. -->
+	<div
+		class={['border-b', isHome ? 'border-transparent bg-transparent' : 'border-bc-border bg-white']}
+	>
+		<div
+			class="mx-auto flex h-16 w-full max-w-[1920px] items-center justify-between gap-5 px-3 md:h-[95px] md:px-4 lg:px-[60px]"
+		>
+			<!-- Logo -->
+			<a href={linkHref(header.logo.href)} class="flex shrink-0 items-center">
+				<img
+					src={header.logo.src}
+					alt={header.logo.alt}
+					width="1285"
+					height="235"
+					decoding="async"
+					class={[
+						'block w-auto',
+						// mobile: 142px wide appbar wordmark; desktop: capped 58px tall
+						'h-auto max-w-[142px] md:max-h-[58px] md:max-w-[360px]',
+						// home treatment forces solid ink so the green "CARS" survives the hero
+						isHome && 'brightness-0'
+					]}
+				/>
+			</a>
+
+			<!-- Primary nav with mega-menu panels -->
+			<nav class="hidden flex-1 items-center justify-center md:flex" aria-label="Bohemcars">
+				<ul class="flex items-center gap-9">
+					{#each header.navigation as item (item.href)}
+						{@const active = isActive(item.href, item.active)}
+						<li class={[item.megaMenu && 'group/nav', 'flex items-center']}>
+							<a
+								href={linkHref(item.href)}
+								aria-current={active ? 'page' : undefined}
+								aria-haspopup={item.megaMenu ? 'true' : undefined}
+								class={[
+									'flex items-center gap-1 text-base font-semibold transition-colors',
+									isHome
+										? active
+											? 'text-white'
+											: 'text-white/85 hover:text-white'
+										: active
+											? 'text-bc-accent'
+											: 'text-bc-ink hover:text-bc-accent'
+								]}
+							>
+								{item.label}
+								{#if item.megaMenu}
+									<ChevronDown
+										size={15}
+										strokeWidth={2.2}
+										aria-hidden="true"
+										class="transition-transform group-hover/nav:rotate-180"
+									/>
+								{/if}
+							</a>
+
+							{#if item.megaMenu}
+								{#if item.megaMenu.variant === 'inventory'}
+									<!-- Inventory mega: wide fixed panel dropped under the header, hover/focus revealed -->
+									<div
+										class="invisible fixed inset-x-0 top-[145px] z-30 mx-auto w-[min(1410px,calc(100vw-60px))] max-w-[1410px] translate-y-[15px] overflow-hidden rounded-b-[18px] border border-[#eceff3] bg-white opacity-0 shadow-[0_18px_36px_rgba(17,24,39,0.08)] transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
+									>
+										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
+									</div>
+								{:else}
+									<!-- Container mega: smaller centered dropdown -->
+									<div
+										class="invisible absolute top-full left-1/2 z-30 mt-3 w-[min(280px,90vw)] -translate-x-1/2 translate-y-[15px] overflow-hidden rounded-bc-md border border-[#eceff3] bg-white opacity-0 shadow-[0_18px_36px_rgba(17,24,39,0.08)] transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
+									>
+										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
+									</div>
+								{/if}
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</nav>
+
+			<!-- Desktop actions -->
+			<div class="hidden items-center gap-5 md:flex">
+				<button
+					type="button"
+					aria-label={header.ui.searchPlaceholder}
+					onclick={() => (searchOpen = true)}
+					class={[
+						'flex h-6 w-6 items-center justify-center transition-colors',
+						isHome
+							? 'text-white hover:text-bc-accent-bright-soft'
+							: 'text-bc-ink hover:text-bc-accent'
+					]}
+				>
+					{@render searchIcon()}
+				</button>
+
+				<a
+					href={resolve('/compare')}
+					aria-label={header.ui.compare}
+					class={[
+						'relative flex h-6 w-6 items-center justify-center transition-colors',
+						isHome
+							? 'text-white hover:text-bc-accent-bright-soft'
+							: 'text-bc-ink hover:text-bc-accent'
+					]}
+				>
+					{@render compareIcon()}
+					{#if header.actionBadges.compare > 0}
+						<!-- action badge = #d9f275 (bc-accent-bright-soft), white ring, dark ink -->
+						<span
+							class="absolute -top-1.5 -right-2.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-white bg-bc-accent-bright-soft px-1 text-[10px] font-bold text-bc-ink shadow-[0_4px_12px_rgba(28,28,28,0.14)]"
+						>
+							{header.actionBadges.compare}
+						</span>
+					{/if}
+				</a>
+
+				<a
+					href={resolve('/account/favorites')}
+					aria-label={header.ui.wishlist}
+					class={[
+						'relative flex h-6 w-6 items-center justify-center transition-colors',
+						isHome
+							? 'text-white hover:text-bc-accent-bright-soft'
+							: 'text-bc-ink hover:text-bc-accent'
+					]}
+				>
+					{@render heartIcon()}
+					{#if header.actionBadges.wishlist > 0}
+						<span
+							class="absolute -top-1.5 -right-2.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-white bg-bc-accent-bright-soft px-1 text-[10px] font-bold text-bc-ink shadow-[0_4px_12px_rgba(28,28,28,0.14)]"
+						>
+							{header.actionBadges.wishlist}
+						</span>
+					{/if}
+				</a>
+
 				<a
 					href={resolve('/account')}
-					class="mt-2 flex h-12 items-center justify-center rounded-bc-md bg-bc-accent text-[15px] font-bold text-bc-accent-contrast"
+					class="ml-1 flex h-[50px] items-center gap-2 rounded-bc-md bg-bc-accent px-6 text-[15px] font-semibold text-white transition-colors hover:bg-bc-hover-accent"
 				>
+					{@render userIcon()}
 					{header.ui.signIn}
 				</a>
-			</nav>
-		{/if}
+			</div>
+
+			<!-- Mobile appbar: two 44px round white discs (map → address, call → phone) -->
+			<div class="flex items-center gap-2 md:hidden">
+				<a
+					href={linkHref(header.contact.addressHref)}
+					aria-label={header.contact.addressLabel}
+					title={header.contact.addressLabel}
+					class={[
+						'flex h-11 w-11 items-center justify-center rounded-full transition-colors',
+						isHome
+							? // home: white disc w/ inset hairline + #20350f icon over the green hero
+								'bg-white text-[#20350f] shadow-[inset_0_0_0_1px_rgba(20,33,15,0.14)]'
+							: 'bg-white text-bc-ink hover:bg-bc-surface-soft'
+					]}
+				>
+					<MapPin size={isHome ? 19 : 18} strokeWidth={2.35} aria-hidden="true" />
+				</a>
+				<a
+					href={linkHref(header.contact.phoneHref)}
+					aria-label={header.contact.phoneLabel}
+					title={header.contact.phoneLabel}
+					class={[
+						'flex h-11 w-11 items-center justify-center rounded-full transition-colors',
+						isHome
+							? 'text-[#20350f] shadow-[inset_0_0_0_1px_rgba(20,33,15,0.14)]'
+							: 'bg-white text-bc-ink hover:bg-bc-surface-soft'
+					]}
+				>
+					<PhoneCall size={isHome ? 19 : 18} strokeWidth={2.35} aria-hidden="true" />
+				</a>
+			</div>
+		</div>
 	</div>
 </header>
+
+<!-- Search modal — opened from the search glyph -->
+<SiteSearchModal bind:open={searchOpen} placeholder={header.ui.searchPlaceholder} />

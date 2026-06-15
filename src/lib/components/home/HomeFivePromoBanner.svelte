@@ -6,43 +6,48 @@
 <section class="bohemcars-promo-band" aria-labelledby="bohemcars-promo-title">
 	<div class="container">
 		<div class="bohemcars-promo">
+			<img
+				class="bohemcars-promo__background"
+				src="/assets/bohemcars/promo/premium-history-banner-v1.png"
+				alt=""
+				width="1672"
+				height="941"
+				loading="lazy"
+				decoding="async"
+				aria-hidden="true"
+			/>
 			<div class="bohemcars-promo__copy">
 				<span class="bohemcars-promo__eyebrow">Внос от Канада</span>
 				<h2 class="bohemcars-promo__title" id="bohemcars-promo-title">
-					Премиум автомобили <span class="bohemcars-promo__accent">с изрядна история</span>
+					Премиум автомобили с изрядна история
 				</h2>
 				<p class="bohemcars-promo__text">
 					Карфакс, сервизна история и личен оглед — потвърдени преди да платиш.
 				</p>
 
 				<div class="bohemcars-promo__actions">
-					<a href={resolve('/inventory')} class="bohemcars-promo__cta">
+					<a href={resolve('/inventory')} class="btn btn-small btn-primary-3 bohemcars-promo__cta">
 						Виж наличните
 						<ArrowRight size={17} aria-hidden="true" />
 					</a>
-					<a href={resolve('/calculator')} class="bohemcars-promo__ghost">Калкулатор за внос</a>
+					<a
+						href={resolve('/calculator')}
+						class="btn btn-small btn-line-style-2 bohemcars-promo__ghost">Калкулатор за внос</a
+					>
 				</div>
-			</div>
-
-			<div class="bohemcars-promo__visual">
-				<img
-					class="bohemcars-promo__car"
-					src="/assets/bohemcars/megamenu/inventory-audi-a7-cutout.webp"
-					alt="Audi A7 от наличността на Bohemcars"
-					width="1180"
-					height="560"
-					loading="lazy"
-					decoding="async"
-				/>
+				<ul class="bohemcars-promo__proof" aria-label="Bohemcars предимства">
+					<li><strong>4.8</strong> · 157 отзива</li>
+					<li>Карфакс + история</li>
+					<li>Оглед в Пловдив</li>
+				</ul>
 			</div>
 		</div>
 	</div>
 </section>
 
 <style>
-	/* Desktop-only feature banner. Light premium card so it CONTRASTS with the
-	   dark section-header cards (Newest/Browse/…) instead of duplicating them.
-	   Hidden under 768px — the mobile home is untouched. */
+	/* Desktop-only image-backed feature banner. The generated asset contains no
+	   text or UI; all copy remains real DOM for crisp Bulgarian typography. */
 	.bohemcars-promo-band {
 		display: none;
 	}
@@ -51,38 +56,68 @@
 		.bohemcars-promo-band {
 			display: block;
 			background: var(--bc-bg);
-			padding: 16px 0;
+			padding: 18px 0;
 		}
 	}
 
 	.bohemcars-promo {
 		position: relative;
 		overflow: hidden;
-		display: grid;
-		grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-		align-items: center;
-		gap: 16px;
-		min-height: 210px;
+		min-height: 360px;
 		border-radius: 8px;
-		border: 1px solid #e3e8d6;
-		box-shadow: 0 12px 32px rgba(20, 33, 15, 0.07);
+		border: 1px solid rgba(208, 238, 117, 0.13);
+		box-shadow: 0 18px 44px rgba(6, 18, 8, 0.16);
+		background: #081307;
+	}
+
+	.bohemcars-promo::before {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		content: '';
 		background:
-			radial-gradient(120% 150% at 84% 60%, rgba(152, 188, 42, 0.16), rgba(152, 188, 42, 0) 52%),
-			linear-gradient(115deg, #f3f8e5 0%, #ffffff 56%),
-			#ffffff;
+			linear-gradient(
+				90deg,
+				rgba(5, 13, 5, 0.98) 0%,
+				rgba(5, 13, 5, 0.9) 34%,
+				rgba(5, 13, 5, 0.28) 62%,
+				rgba(5, 13, 5, 0.06) 100%
+			),
+			linear-gradient(180deg, rgba(5, 13, 5, 0.08), rgba(5, 13, 5, 0.18));
+		pointer-events: none;
+	}
+
+	.bohemcars-promo__background {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	.bohemcars-promo__copy {
 		position: relative;
-		z-index: 1;
-		padding: 28px 0 28px 38px;
+		z-index: 2;
+		display: flex;
+		min-height: 360px;
+		width: min(48%, 560px);
+		flex-direction: column;
+		justify-content: center;
+		padding: 34px 0 34px 40px;
 		min-width: 0;
 	}
 
 	.bohemcars-promo__eyebrow {
-		display: block;
-		margin-bottom: 9px;
-		color: #5a7a16;
+		display: inline-flex;
+		align-items: center;
+		width: fit-content;
+		min-height: 31px;
+		margin-bottom: 20px;
+		padding: 0 15px;
+		border: 1px solid rgba(208, 238, 117, 0.34);
+		border-radius: 999px;
+		color: #d8ff45;
 		font-size: 12px;
 		font-weight: 700;
 		letter-spacing: 0.14em;
@@ -90,25 +125,21 @@
 	}
 
 	.bohemcars-promo__title {
-		margin: 0 0 9px;
-		max-width: 520px;
-		color: #14210f;
-		font-size: clamp(24px, 2.3vw, 33px);
+		margin: 0 0 16px;
+		max-width: 540px;
+		color: #ffffff;
+		font-size: clamp(34px, 4.4vw, 55px);
 		font-weight: 800;
-		line-height: 1.12;
-		letter-spacing: -0.01em;
-	}
-
-	.bohemcars-promo__accent {
-		color: #4f7012;
+		line-height: 1.04;
+		letter-spacing: 0;
 	}
 
 	.bohemcars-promo__text {
-		margin: 0 0 18px;
-		max-width: 400px;
-		color: #4b4b4b;
-		font-size: 14.5px;
-		line-height: 1.5;
+		margin: 0 0 28px;
+		max-width: 440px;
+		color: rgba(255, 255, 255, 0.82);
+		font-size: 17px;
+		line-height: 1.48;
 	}
 
 	.bohemcars-promo__actions {
@@ -119,70 +150,122 @@
 	}
 
 	.bohemcars-promo__cta {
-		display: inline-flex;
+		display: inline-flex !important;
 		align-items: center;
-		gap: 8px;
-		min-height: 46px;
-		padding: 0 22px;
-		border-radius: 8px;
-		background: #98bc2a;
-		color: #14210f !important;
-		font-size: 15px;
-		font-weight: 700;
-		transition:
-			background-color 0.18s ease,
-			transform 0.18s ease,
-			color 0.18s ease;
+		justify-content: center;
+		gap: 9px;
+		min-height: 52px;
+		padding: 0 25px !important;
+		border-radius: 8px !important;
+		background: #d8ff45 !important;
+		color: #071206 !important;
+		font-size: 15px !important;
+		font-weight: 700 !important;
+		line-height: 1 !important;
 	}
 
 	.bohemcars-promo__cta:hover,
 	.bohemcars-promo__cta:focus-visible {
-		background: #14210f;
-		color: #ffffff !important;
-		transform: translateY(-1px);
+		background: #ffffff !important;
+		color: #071206 !important;
 	}
 
 	.bohemcars-promo__ghost {
-		display: inline-flex;
+		display: inline-flex !important;
 		align-items: center;
-		min-height: 46px;
-		padding: 0 16px;
-		border-radius: 8px;
-		border: 1px solid #cdd6bd;
-		color: #14210f !important;
-		font-size: 14px;
-		font-weight: 600;
-		transition:
-			border-color 0.18s ease,
-			background-color 0.18s ease;
+		justify-content: center;
+		min-height: 52px;
+		padding: 0 20px !important;
+		border-color: rgba(255, 255, 255, 0.26) !important;
+		border-radius: 8px !important;
+		background: rgba(255, 255, 255, 0.03) !important;
+		color: #ffffff !important;
+		font-size: 15px !important;
+		font-weight: 700 !important;
+		line-height: 1 !important;
 	}
 
 	.bohemcars-promo__ghost:hover,
 	.bohemcars-promo__ghost:focus-visible {
-		border-color: #98bc2a;
-		background: rgba(152, 188, 42, 0.1);
+		border-color: rgba(216, 255, 69, 0.5) !important;
+		background: rgba(216, 255, 69, 0.11) !important;
 	}
 
-	.bohemcars-promo__visual {
+	.bohemcars-promo__proof {
+		display: flex;
+		flex-wrap: wrap;
+		max-width: 430px;
+		column-gap: 14px;
+		row-gap: 9px;
+		margin: 28px 0 0;
+		padding: 0;
+		color: rgba(255, 255, 255, 0.9);
+		font-size: 13px;
+		font-weight: 600;
+		list-style: none;
+	}
+
+	.bohemcars-promo__proof li {
 		position: relative;
-		align-self: stretch;
-		min-width: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		color: rgba(255, 255, 255, 0.9);
 	}
 
-	.bohemcars-promo__car {
-		position: absolute;
-		right: 0;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 112%;
-		max-width: none;
-		height: auto;
-		filter: drop-shadow(0 24px 26px rgba(20, 33, 15, 0.32));
+	.bohemcars-promo__proof li::before {
+		width: 7px;
+		height: 7px;
+		border-radius: 999px;
+		background: #d8ff45;
+		content: '';
+	}
+
+	.bohemcars-promo__proof strong {
+		color: #ffffff;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.bohemcars-promo__cta {
 			transition: none;
+		}
+	}
+
+	@media (max-width: 1199px) {
+		.bohemcars-promo__copy {
+			width: min(52%, 520px);
+			padding-left: 32px;
+		}
+	}
+
+	@media (max-width: 991px) {
+		.bohemcars-promo {
+			min-height: 330px;
+		}
+
+		.bohemcars-promo::before {
+			background:
+				linear-gradient(
+					90deg,
+					rgba(5, 13, 5, 0.98) 0%,
+					rgba(5, 13, 5, 0.88) 42%,
+					rgba(5, 13, 5, 0.26) 72%,
+					rgba(5, 13, 5, 0.08) 100%
+				),
+				linear-gradient(180deg, rgba(5, 13, 5, 0.06), rgba(5, 13, 5, 0.2));
+		}
+
+		.bohemcars-promo__background {
+			object-position: 61% center;
+		}
+
+		.bohemcars-promo__copy {
+			min-height: 330px;
+			width: min(62%, 500px);
+		}
+
+		.bohemcars-promo__text {
+			max-width: 390px;
 		}
 	}
 </style>

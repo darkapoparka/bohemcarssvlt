@@ -1,16 +1,30 @@
 <script lang="ts">
-	import TermsTemplatePage from '$lib/components/terms/TermsTemplatePage.svelte';
+	// Tailwind v4 (with the bc @theme tokens) — scoped to this route's CSS chunk,
+	// the proven per-route pattern (Preflight stays off the Auxero pages until Phase 6).
+	import '$lib/styles/bohemcars.tailwind-entry.css';
+	import TermsCleanPage from '$lib/components/terms/TermsCleanPage.svelte';
+	import type { PageProps } from './$types';
 
-	let { data } = $props();
+	let { data }: PageProps = $props();
 </script>
 
-<TermsTemplatePage
-	pageDocument={data.pageDocument}
-	sections={data.sections}
+<svelte:head>
+	<title>Общи условия — Bohemcars</title>
+	<meta
+		name="description"
+		content="Условия за използване на Bohemcars — информация за автомобилите, процес на внос, разходи и калкулатор, огледи, клиентски автомобили и контакт."
+	/>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap"
+	/>
+</svelte:head>
+
+<TermsCleanPage
 	title={data.title}
-	shellCopy={data.shellCopy}
-	shellFooter={data.shellFooter}
-	shellHeader={data.shellHeader}
-	shellModals={data.shellModals}
-	shellRuntimeHtml={data.shellRuntimeHtml}
+	sections={data.sections}
+	header={data.header}
+	footer={data.footer}
 />

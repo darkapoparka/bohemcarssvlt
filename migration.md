@@ -197,6 +197,42 @@ reference these and nothing else.
 
 ---
 
+## 5a. Tailwind v4 CSS architecture (and the `app.css` naming trap)
+
+> Grounded in the official v4 docs (CSS-first config: `@import "tailwindcss"` + `@theme`). The project is
+> **already idiomatic v4** — this section exists so the migration *consumes* it correctly, not re-invents it.
+
+**Naming trap — two unrelated "app.css" files; never confuse them:**
+
+| File | What it is | Fate |
+|---|---|---|
+| [static/assets/app.css](static/assets/app.css) | The **Auxero theme** (397 KB vendored framework). **Not Tailwind.** | Deleted (Phase 6) |
+| [bohemcars.tailwind-entry.css](src/lib/styles/bohemcars.tailwind-entry.css) | The **Tailwind v4 entry** (`@import 'tailwindcss'`) | Kept, extended to every page |
+
+"Drop app.css" **always** means the Auxero one. The Tailwind entry is what we standardize on.
+
+**The token stack is already correct v4 — keep it, don't "modernize" it.** It mirrors Tailwind Labs' own
+`globals.css` (`@theme inline` pointing at `:root` vars). No `tailwind.config.js`; config lives in CSS:
+- [bohemcars.css](src/lib/styles/bohemcars.css) — raw `--bc-*` token **values** on `:root` (themeable layer).
+- [bohemcars.tailwind.css](src/lib/styles/bohemcars.tailwind.css) — `@theme inline { --color-bc-accent: var(--bc-accent); … }`
+  maps tokens → utilities (`bg-bc-accent`, `rounded-bc-pill`, `text-bc-h2`).
+- [bohemcars.tailwind-entry.css](src/lib/styles/bohemcars.tailwind-entry.css) — `@import 'tailwindcss'` + the map = the entry.
+
+**Entry-import strategy — transitional vs end-state (this is the one real decision):**
+- **During migration (Auxero still coexists):** keep importing the Tailwind entry **per clean route** (exactly as
+  [`/compare-clean`](src/routes/compare-clean/+page.svelte) does). Reason: `@import "tailwindcss"` ships
+  **Preflight** (a base reset) that would collide with the Auxero `app.css` on un-migrated pages. Scoping the
+  entry to clean routes keeps the two worlds isolated — **do not** make it global while `app.css` still loads.
+- **End-state (Phase 6, after `app.css` is deleted):** **promote the entry to ONE global import** in the root
+  layout (beside `bohemcars.css`) and delete the per-route imports. Single stylesheet, Preflight as the only
+  reset — the textbook v4 structure.
+
+**Svelte scoped-style rule:** a `.svelte` `<style>` block that uses `@apply` must start with
+`@reference "$lib/styles/bohemcars.tailwind-entry.css";` so it sees the theme without duplicating CSS. **Prefer
+utility classes in markup** (no `@reference` needed); reach for `@apply` only when a scoped style genuinely needs it.
+
+---
+
 ## 6. Phase 0 — Foundation (split: 0a safety · 0b atoms · 0c dogfood)
 
 No live route behavior changes in this phase. Stand up a safety harness, then the **minimal** shared substrate,
@@ -238,7 +274,8 @@ then prove it on the known-good POC. **Build only what the next phase needs — 
 
 Build just what the early pages need, on the already-proven `tailwind-variants` + `cn()` toolchain (used in
 admin today), bound to `bc-*` tokens. Each atom: references only `bc-*` utilities; bakes in its own responsive
-rules; ships a short usage example.
+rules; ships a short usage example. Components consume the **existing** Tailwind entry (§5a) — never add a second
+`@import 'tailwindcss'`, and keep that entry per-route until Phase 6 (Preflight-vs-`app.css` isolation).
 
 - `Container`, `Button` (`variant: primary|ghost|neutral`, `size`, `pill?`, disabled, `min-h-[44px]`),
   `Pill`/`Badge` (`tone: brand|solid|eyebrow`), `Card` (`variant: default|soft`, `media?` = the `.bc-card`
@@ -353,8 +390,10 @@ the `[...templatePath]` catch-all proxy, `auxeroBgReplacements` + `localizeAuxer
 > *server* `pageDocument` wrappers above die. Confirm each target's importers are zero before removing it.
 
 **Then:** remove the `bohemcars:hydrated` / `bohemcars:svelte-mounted` hydration-gate plumbing from
-[+layout.svelte](src/routes/+layout.svelte), and move/delete the `auxero-guards.css` import (line 3).
-**Acceptance test:** clean build + bundle-size drop + full test suite green.
+[+layout.svelte](src/routes/+layout.svelte); delete the `auxero-guards.css` import (line 3); and **promote the
+Tailwind entry to a single global import** in the root layout — `@import "tailwindcss"` now owns the only
+Preflight reset, so drop the per-route entry imports (§5a). **Acceptance test:** clean build + bundle-size drop
++ full test suite green.
 
 ### Phase 7 — Harmonize & polish
 - Strip any residual `!important` that survived in migrated component `<style>` blocks (most are already gone
@@ -411,6 +450,8 @@ Non-negotiable for all `bc/` primitives and rebuilt page views (matches the proj
 - **Native HTML on SSR-only routes** — `<details>/<summary>` accordions, `<form>` POST, CSS scroll-snap; set
   `csr=true` only where client interactivity is essential (compare remove, PDP gallery, inventory toggles).
 - **No `{@html}`** for app content; tokens-only styling (`bc-*`); zero `!important`.
+- **Scoped `<style>` + `@apply` needs `@reference`** to the Tailwind entry (§5a) — prefer utilities in markup;
+  use `@apply` only when a scoped style genuinely needs it.
 - **Autofix every edit:** after editing any `.svelte` file, run it through the **Svelte MCP autofixer** (via the
   `svelte-file-editor` agent / `svelte-code-writer` skill — e.g. `npx @sveltejs/mcp svelte-autofixer <file>`) and
   resolve what it flags before committing.

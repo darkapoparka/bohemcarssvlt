@@ -379,7 +379,7 @@
 			</div>
 		{:else}
 			{@render utilityToolbar(desktop.layout !== 'dashboard')}
-			{@render viewControls()}
+			{@render viewControls(true)}
 		{/if}
 	</div>
 {/snippet}

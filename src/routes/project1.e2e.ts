@@ -1058,7 +1058,6 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 
 	await expect(importTab).toHaveAttribute('aria-selected', 'true');
 	await expect(mobileHero).toHaveAttribute('data-bohemcars-search-form', 'import');
-	await expect(mobileHero).toHaveAttribute('action', /\/import$/);
 	await expect(mobileHero.locator('.bohemcars-mobile-hero__search-label')).toContainText(
 		'Линк към обява или VIN...'
 	);
@@ -1074,40 +1073,42 @@ test('mobile homepage intent tabs keep form, quick links, and drawer in sync', a
 
 	await mobileHero.locator('.bohemcars-mobile-hero__search-label').click();
 
-	const panel = mobileHero.locator('.bohemcars-mobile-search-sheet__panel');
-	await expect(mobileHero.locator('.bohemcars-mobile-search-sheet')).toHaveClass(/is-open/);
+	// The search sheet is a vaul drawer, portaled to <body> — locate it at page level.
+	const panel = page.locator('#bohemcars-mobile-search-panel');
 	await expect(panel).toBeVisible();
 	await expect(panel.locator('.bc-drawer')).toHaveCount(1);
 	await expect(panel.locator('.bc-drawer--import')).toBeVisible();
-	await expect(panel.locator('h2')).toContainText('Изпрати линк за проверка');
+	await expect(panel.locator('.bohemcars-home-search-drawer__title')).toContainText(
+		'Изпрати линк за проверка'
+	);
 	await expect(panel.locator('input[name="vehicle"]')).toHaveCount(1);
-	await expect(panel.locator('.bohemcars-mobile-search-sheet__field')).toHaveCSS(
+	await expect(panel.locator('.bohemcars-home-search-drawer__field')).toHaveCSS(
 		'border-radius',
 		'999px'
 	);
+	// The drawer carries its own GET form so the input submits natively to the mode's route.
+	await expect(panel.locator('form.bohemcars-home-search-drawer__form')).toHaveAttribute(
+		'action',
+		/\/import$/
+	);
 	await expect(panel.getByRole('button', { name: 'Провери линка' })).toBeVisible();
 
+	// vaul anchors the sheet flush to the viewport bottom (no gap) once the open
+	// animation settles — the keyboard-safe behaviour we migrated to.
 	await expect
-		.poll(async () => {
-			return panel.evaluate((element) => {
-				const rect = element.getBoundingClientRect();
-				const styles = window.getComputedStyle(element);
-
-				return {
-					top: rect.top,
-					transform: styles.transform,
-					viewportHeight: window.innerHeight
-				};
-			});
-		})
-		.toMatchObject({ top: expect.any(Number), transform: 'matrix(1, 0, 0, 1, 0, 0)' });
+		.poll(async () =>
+			panel.evaluate((element) =>
+				Math.round(element.getBoundingClientRect().bottom - window.innerHeight)
+			)
+		)
+		.toBeLessThanOrEqual(1);
 
 	await expect
 		.poll(async () =>
 			panel.evaluate((element) => {
 				const rect = element.getBoundingClientRect();
 
-				return rect.top < window.innerHeight;
+				return rect.top >= 0 && rect.top < window.innerHeight;
 			})
 		)
 		.toBe(true);

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import '$lib/styles/bohemcars.css';
-	import './auxero-guards.css';
+	// auxero-guards.css is the theme-override sheet. It is only needed where the Auxero
+	// app.css loads, so it is emitted as a gated <link> (below) instead of a global import —
+	// clean (non-pageDocument) routes never receive it. Final deletion is Phase 6.
+	import auxeroGuardsCssHref from './auxero-guards.css?url';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
@@ -83,6 +86,8 @@
 		{#each auxeroStableStylesheetHrefs as href (href)}
 			<link rel="stylesheet" {href} data-bohemcars-auxero-stable />
 		{/each}
+		<!-- Override sheet: must load AFTER app.css so its guards win the cascade. -->
+		<link rel="stylesheet" href={auxeroGuardsCssHref} data-bohemcars-auxero-stable />
 	{/if}
 </svelte:head>
 {#if isAuxeroFullPage}

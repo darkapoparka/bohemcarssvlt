@@ -1,26 +1,20 @@
 import type { PageServerLoad } from './$types';
 import { auxeroReviewCards, auxeroReviewsPage } from '$lib/auxero/reviews';
+import { homeFiveFooterDataForLocale, homeFiveHeaderDataForLocale } from '$lib/auxero/home-five';
 import { resolveLocale } from '$lib/i18n/messages';
-import { renderAuxeroPageDocument } from '$lib/server/auxero-page';
-import { auxeroPublicShellData } from '$lib/server/auxero-public-shell';
 
-export const load: PageServerLoad = ({ request, url }) => {
+// Clean route: NO pageDocument → the Auxero app.css / guards never load.
+// Renders the redesigned /reviews in clean Svelte 5 + Tailwind v4 with the shared
+// clean chrome. auxeroFullPage stays true so the page owns its own header/footer.
+export const load: PageServerLoad = ({ url }) => {
 	const locale = resolveLocale(url.searchParams.get('lang'));
-	const pageDocument = renderAuxeroPageDocument(
-		'clients-reviews.html',
-		{
-			request,
-			routePath: 'reviews',
-			searchParams: url.searchParams
-		},
-		'Reviews template could not be rendered'
-	);
 
 	return {
 		auxeroFullPage: true,
 		cards: auxeroReviewCards,
-		pageDocument,
 		reviewsPage: auxeroReviewsPage,
-		...auxeroPublicShellData(pageDocument, locale, '/reviews')
+		header: homeFiveHeaderDataForLocale(locale, '/reviews'),
+		footer: homeFiveFooterDataForLocale(locale),
+		locale
 	};
 };

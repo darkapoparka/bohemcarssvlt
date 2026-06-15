@@ -60,3 +60,6 @@ tmp-vite*.log
 /*.jpeg
 dev*.log
 .claude/
+
+# Local preview/demo render artifacts (not used by the app)
+static/_previews/
