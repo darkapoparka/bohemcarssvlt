@@ -48,6 +48,15 @@ body[class*='auxero-template-'] {
 	transform: none !important;
 }
 
+html .card-box.active .content .card-box__title a,
+html .card-box.active .card-box__title a,
+html .card-box.active .content .bottom .category a,
+html .card-box.active .bottom .category a,
+html .card-box .card-box__title a:hover,
+html .card-box .bottom .category a:hover {
+	text-decoration: none !important;
+}
+
 .bohemcars-no-image-zoom.post-style-2:hover .post--img,
 .bohemcars-no-image-zoom.post-style-3:hover .post--img img,
 .bohemcars-no-image-zoom.post-style-6:hover .post--img {
