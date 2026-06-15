@@ -151,7 +151,7 @@
 								target="_blank"
 								rel="noreferrer"
 								aria-label={social.label}
-								class="bc-contact-social flex h-11 w-11 items-center justify-center rounded-bc-md border border-white/25 bg-white/10 transition-colors hover:border-bc-accent hover:bg-bc-accent"
+								class="bc-contact-social flex h-11 w-11 items-center justify-center rounded-bc-md border border-white/25 bg-white/10 transition-colors hover:border-bc-accent hover:bg-bc-accent bc-press"
 							>
 								<img
 									src={`/assets/icons/${social.icon}`}
@@ -192,14 +192,14 @@
 		<div class="grid gap-3 sm:grid-cols-3">
 			<a
 				href={linkHref(info.phoneHref)}
-				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md bg-bc-accent px-5 font-semibold text-bc-accent-contrast hover:bg-bc-hover-accent hover:text-white"
+				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md bg-bc-accent px-5 font-semibold text-bc-accent-contrast hover:bg-bc-hover-accent hover:text-white bc-press"
 			>
 				<PhoneCall size={18} strokeWidth={2.25} aria-hidden="true" />
 				Обади се
 			</a>
 			<a
 				href={linkHref(info.emailHref)}
-				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink"
+				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink bc-press"
 			>
 				<Mail size={18} strokeWidth={2.25} aria-hidden="true" />
 				Пиши ни
@@ -208,7 +208,7 @@
 				href={mapHref}
 				target="_blank"
 				rel="noreferrer"
-				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink"
+				class="bc-calm-hover flex min-h-[56px] items-center justify-center gap-2.5 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink bc-press"
 			>
 				<Navigation size={18} strokeWidth={2.25} aria-hidden="true" />
 				Отвори карта
@@ -357,6 +357,12 @@
 		background: var(--bc-hover-accent);
 		color: #ffffff;
 		outline: 0;
+	}
+
+	/* Instant tactile press — transform is outside the button's transition list,
+	   so the nudge fires immediately (no animated half-tap). */
+	.bc-contact-card :global(.bc-contact-submit:active) {
+		transform: translateY(1px);
 	}
 
 	.bc-contact-card :global(.bc-contact-status) {

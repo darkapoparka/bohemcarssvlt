@@ -282,6 +282,11 @@
 		box-shadow: none !important;
 	}
 
+	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */
+	.bohemcars-browse-section :global(.out-brand-2:active) {
+		transform: translateY(1px);
+	}
+
 	.bohemcars-browse-section :global(.out-brand-2:hover .h5),
 	.bohemcars-browse-section :global(.out-brand-2:focus-visible .h5) {
 		color: #1c1c1c !important;
@@ -314,6 +319,10 @@
 		border-color: #ffffff !important;
 		color: #14210f !important;
 		transform: none !important;
+	}
+
+	.bohemcars-type-gallery__cta:active {
+		transform: translateY(1px);
 	}
 
 	.bohemcars-type-gallery__cta::before,
@@ -368,6 +377,10 @@
 	.bohemcars-type-card:hover .bohemcars-type-card__label,
 	.bohemcars-type-card:focus-visible .bohemcars-type-card__label {
 		color: #1c1c1c;
+	}
+
+	.bohemcars-type-card:active {
+		transform: translateY(1px);
 	}
 
 	.bohemcars-type-card__image {

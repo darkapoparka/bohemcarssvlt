@@ -1165,15 +1165,14 @@
 			font-weight: 700;
 		}
 
-		/* Showroom intent tabs: one full rail with a short indicator that slides
-		   to the active third (centered under the label). */
+		/* Showroom intent tabs: one full hairline rail with an indicator that spans
+		   the FULL active third (edge-to-edge, no side gaps) and slides between tabs. */
 		.bohemcars-mobile-hero__tabs::after {
 			position: absolute;
 			right: 0;
 			bottom: 0;
 			left: 0;
-			height: 1px;
-			border-radius: 999px;
+			height: 2px;
 			background: rgba(20, 33, 15, 0.16);
 			content: '';
 			pointer-events: none;
@@ -1182,11 +1181,11 @@
 		.bohemcars-mobile-hero__tabs::before {
 			position: absolute;
 			bottom: 0;
-			left: calc(var(--bohemcars-tab-index, 0) * 33.333% + 18px);
+			left: calc(var(--bohemcars-tab-index, 0) * 33.333%);
 			z-index: 1;
-			width: calc(33.333% - 36px);
+			width: 33.333%;
 			height: 3px;
-			border-radius: 999px;
+			border-radius: 999px 999px 0 0;
 			background: #14210f;
 			content: '';
 			pointer-events: none;
@@ -1202,6 +1201,18 @@
 		.bohemcars-mobile-hero__tab:focus-visible {
 			outline: 2px solid rgba(28, 28, 28, 0.64);
 			outline-offset: 3px;
+		}
+
+		/* Tactile press feedback for surfaces you "push" to navigate (CTA, search,
+		   quick chips) — matches the PDP CTA idiom (instant translateY, not scale).
+		   The Купи/Внос/Продай tabs are deliberately excluded: they're in-place
+		   toggles whose feedback is the sliding underline + ink change, so a press
+		   nudge would be redundant, off-idiom motion. */
+		.bohemcars-mobile-hero__all:active,
+		.bohemcars-mobile-hero__search:has(:active),
+		.bohemcars-mobile-home-quick__scroller a:active,
+		.bohemcars-mobile-home-quick__scroller button:active {
+			transform: translateY(1px);
 		}
 
 		.bc-drawer {

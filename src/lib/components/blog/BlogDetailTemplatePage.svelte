@@ -130,5 +130,27 @@
 			font-size: 30px !important;
 			line-height: 38px !important;
 		}
+
+		/* The white hero title sits directly on the photo with no scrim, so it washes
+		   out over the light (garage) top of the image. Lay a bottom-up gradient behind
+		   the title block (.content is z:3) and add a faint shadow for insurance. */
+		:global([data-bohemcars-blog-detail-page] .blog-details-banner::after) {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			pointer-events: none;
+			background: linear-gradient(
+				to top,
+				rgba(13, 20, 8, 0.8) 0%,
+				rgba(13, 20, 8, 0.45) 32%,
+				rgba(13, 20, 8, 0) 62%
+			);
+		}
+
+		:global([data-bohemcars-blog-detail-page] .blog-details-banner .content h1),
+		:global([data-bohemcars-blog-detail-page] .blog-details-banner .content ul) {
+			text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+		}
 	}
 </style>

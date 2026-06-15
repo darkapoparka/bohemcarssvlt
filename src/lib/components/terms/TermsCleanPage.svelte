@@ -74,7 +74,7 @@
 							onclick={() => (active = section.id)}
 							aria-current={activeId === section.id ? 'true' : undefined}
 							class={[
-								'border-l-[3px] py-2.5 pl-4 text-[15px] leading-snug font-semibold transition-colors',
+								'border-l-[3px] py-2.5 pl-4 text-[15px] leading-snug font-semibold transition-colors bc-press',
 								activeId === section.id
 									? 'border-bc-accent text-bc-ink'
 									: 'border-transparent text-bc-muted hover:text-bc-ink'
@@ -124,7 +124,7 @@
 					</div>
 					<a
 						href={resolve('/contact')}
-						class="bc-calm-hover inline-flex h-12 shrink-0 items-center gap-2 rounded-bc-md bg-bc-accent px-7 font-semibold text-bc-accent-contrast hover:bg-bc-accent-contrast hover:text-white"
+						class="bc-calm-hover inline-flex h-12 shrink-0 items-center gap-2 rounded-bc-md bg-bc-accent px-7 font-semibold text-bc-accent-contrast hover:bg-bc-accent-contrast hover:text-white bc-press"
 					>
 						Свържи се <ArrowRight class="h-4 w-4" />
 					</a>

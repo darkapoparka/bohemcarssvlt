@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { ChevronDown, Mail, MapPin, PhoneCall } from '@lucide/svelte';
+	import { bohemcarsAssets } from '$lib/data/bohemcars';
 	import type { HomeFiveHeaderData, HomeFiveHeaderSocial } from '$lib/auxero/home-five';
 	import SiteMegaMenu from './SiteMegaMenu.svelte';
 	import SiteSearchModal from './SiteSearchModal.svelte';
@@ -236,7 +237,7 @@
 <header class={['font-bc-body', isHome ? 'absolute inset-x-0 top-0 z-50' : 'sticky top-0 z-50']}>
 	<!-- ============================= TOP BAR (desktop) =============================
 	     Brand green (#98bc2a = bc-accent), white text, 50px tall. -->
-	<div class={['hidden md:block', isHome ? 'bg-bc-accent/0' : 'bg-bc-accent']}>
+	<div class={['hidden md:block', isHome ? 'bg-bc-ink' : 'bg-bc-accent']}>
 		<div
 			class="mx-auto flex h-[50px] w-full max-w-[1920px] items-center justify-between px-4 lg:px-[60px]"
 		>
@@ -352,7 +353,7 @@
 			<!-- Logo -->
 			<a href={linkHref(header.logo.href)} class="flex shrink-0 items-center">
 				<img
-					src={header.logo.src}
+					src={isHome ? bohemcarsAssets.logoDark : header.logo.src}
 					alt={header.logo.alt}
 					width="1285"
 					height="235"
@@ -360,32 +361,35 @@
 					class={[
 						'block w-auto',
 						// mobile: 142px wide appbar wordmark; desktop: capped 58px tall
-						'h-auto max-w-[142px] md:max-h-[58px] md:max-w-[360px]',
-						// home treatment forces solid ink so the green "CARS" survives the hero
-						isHome && 'brightness-0'
+						'h-auto max-w-[142px] md:max-h-[58px] md:max-w-[360px]'
 					]}
 				/>
 			</a>
 
 			<!-- Primary nav with mega-menu panels -->
-			<nav class="hidden flex-1 items-center justify-center md:flex" aria-label="Bohemcars">
-				<ul class="flex items-center gap-9">
+			<nav
+				class="hidden flex-1 items-center justify-center md:flex md:self-stretch"
+				aria-label="Bohemcars"
+			>
+				<ul class="flex h-full items-center gap-9">
 					{#each header.navigation as item (item.href)}
 						{@const active = isActive(item.href, item.active)}
-						<li class={[item.megaMenu && 'group/nav', 'flex items-center']}>
+						<li class={[item.megaMenu && 'group/nav', 'relative flex h-full items-center']}>
 							<a
 								href={linkHref(item.href)}
 								aria-current={active ? 'page' : undefined}
 								aria-haspopup={item.megaMenu ? 'true' : undefined}
 								class={[
-									'flex items-center gap-1 text-base font-semibold transition-colors',
+									'relative flex items-center gap-1 text-base font-semibold transition-colors',
+									// active item gets a green underline indicator
+									"after:absolute after:-bottom-2 after:left-0 after:h-[2px] after:rounded-full after:bg-bc-accent after:transition-all after:content-['']",
 									isHome
 										? active
-											? 'text-white'
-											: 'text-white/85 hover:text-white'
+											? 'text-white after:w-full'
+											: 'text-white/85 after:w-0 hover:text-white'
 										: active
-											? 'text-bc-accent'
-											: 'text-bc-ink hover:text-bc-accent'
+											? 'text-bc-accent after:w-full'
+											: 'text-bc-ink after:w-0 hover:text-bc-accent'
 								]}
 							>
 								{item.label}
@@ -403,14 +407,14 @@
 								{#if item.megaMenu.variant === 'inventory'}
 									<!-- Inventory mega: wide fixed panel dropped under the header, hover/focus revealed -->
 									<div
-										class="invisible fixed inset-x-0 top-[145px] z-30 mx-auto w-[min(1410px,calc(100vw-60px))] max-w-[1410px] translate-y-[15px] overflow-hidden rounded-b-[18px] border border-[#eceff3] bg-white opacity-0 shadow-[0_18px_36px_rgba(17,24,39,0.08)] transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
+										class="invisible fixed inset-x-0 top-[145px] z-30 mx-auto w-[min(1410px,calc(100vw-60px))] max-w-[1410px] translate-y-[14px] overflow-hidden rounded-[18px] border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
 									>
 										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
 									</div>
 								{:else}
 									<!-- Container mega: smaller centered dropdown -->
 									<div
-										class="invisible absolute top-full left-1/2 z-30 mt-3 w-[min(280px,90vw)] -translate-x-1/2 translate-y-[15px] overflow-hidden rounded-bc-md border border-[#eceff3] bg-white opacity-0 shadow-[0_18px_36px_rgba(17,24,39,0.08)] transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
+										class="invisible absolute top-full left-1/2 z-30 mt-3 w-[min(280px,90vw)] -translate-x-1/2 translate-y-[10px] rounded-bc-lg border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100 before:absolute before:bottom-full before:left-0 before:h-3 before:w-full before:content-['']"
 									>
 										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
 									</div>

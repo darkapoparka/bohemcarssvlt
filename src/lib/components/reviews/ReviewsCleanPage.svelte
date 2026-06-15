@@ -79,7 +79,7 @@
 				href={reviewsPage.facebookHref}
 				target="_blank"
 				rel="noreferrer"
-				class="bc-calm-hover inline-flex h-11 items-center gap-2 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink hover:text-bc-accent-contrast"
+				class="bc-calm-hover inline-flex h-11 items-center gap-2 rounded-bc-md border border-bc-border bg-white px-5 font-semibold text-bc-ink hover:text-bc-accent-contrast bc-press"
 			>
 				{reviewsPage.facebookLabel}
 				<ArrowRight class="h-4 w-4" aria-hidden="true" />

@@ -200,6 +200,12 @@
 		color: #ffffff;
 	}
 
+	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */
+	.bohemcars-news-card:active,
+	.bohemcars-news-all-card:active {
+		transform: translateY(1px);
+	}
+
 	.bohemcars-news-card__img {
 		height: 100%;
 		left: 0;

@@ -191,6 +191,12 @@
 		background: rgba(216, 255, 69, 0.11) !important;
 	}
 
+	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */
+	.bohemcars-promo__cta:active,
+	.bohemcars-promo__ghost:active {
+		transform: translateY(1px);
+	}
+
 	.bohemcars-promo__proof {
 		display: flex;
 		flex-wrap: wrap;

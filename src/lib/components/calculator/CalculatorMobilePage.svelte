@@ -667,6 +667,16 @@
 		color: #111111;
 	}
 
+	/* Tactile press feedback — instant Y-nudge on push-to-navigate surfaces only
+	   (the two action CTAs, the "Всички" link and the budget preset links, which
+	   all navigate to /inventory). Sheet-opening icon buttons are intentionally
+	   excluded: the drawer slide is their feedback. */
+	.bohemcars-calculator-mobile__actions a:active,
+	.bohemcars-calculator-mobile__budget header > a:active,
+	.bohemcars-calculator-mobile__budget > div > a:active {
+		transform: translateY(1px);
+	}
+
 	:global(.bohemcars-calculator-mobile-drawer__backdrop) {
 		position: fixed;
 		inset: 0;

@@ -464,6 +464,12 @@
 			box-shadow: none !important;
 		}
 
+		/* The whole card is the tap target on mobile — press it as one unit
+		   (instant translateY, matching the hero/PDP idiom). */
+		.card-box-style-1:has(a:active) {
+			transform: translateY(1px);
+		}
+
 		/* Mobile card is finalized as title → chips → price; the details-arrow
 		   row is a desktop-only affordance (the whole card is tappable). */
 		.card-box-style-1 .divider,

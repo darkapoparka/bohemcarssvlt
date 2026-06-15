@@ -138,6 +138,11 @@
 		color: #1c1c1c;
 	}
 
+	/* Tactile press feedback (instant translateY, matching the hero/PDP idiom). */
+	.bohemcars-home-compare__vehicle:active {
+		transform: translateY(1px);
+	}
+
 	.bohemcars-home-compare__image {
 		align-items: center;
 		aspect-ratio: 16 / 10;
