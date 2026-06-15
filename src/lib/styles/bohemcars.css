@@ -255,11 +255,13 @@ body:not([class*='auxero-template-']):not(.bohemcars-inventory-template) .h6 {
 	color: var(--bc-hover-quiet-ink);
 }
 
-/* Instant tactile press for push-to-navigate surfaces (cards, CTAs, links) on the
-   clean Tailwind pages — the same idiom the Auxero components use in scoped CSS.
-   No transition on transform: the nudge must register on touch, not animate. */
-.bc-press:active {
-	transform: translateY(1px);
+/* Instant tactile press for push-to-navigate surfaces (cards, CTAs, links).
+   Pointer devices only — on touch the nudge reads as unwanted "everything moves
+   when I tap it", so it's gated to mice/trackpads via the hover/pointer query. */
+@media (hover: hover) and (pointer: fine) {
+	.bc-press:active {
+		transform: translateY(1px);
+	}
 }
 
 .bc-focus-ring {

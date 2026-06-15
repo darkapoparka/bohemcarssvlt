@@ -145,6 +145,10 @@
 		const { body } = document;
 		const prevOverflow = body.style.overflow;
 		body.style.overflow = 'hidden';
+		// Recolour the iOS status-bar/browser chrome to the overlay's white while open.
+		const themeMeta = document.querySelector('meta[name="theme-color"]');
+		const prevTheme = themeMeta?.getAttribute('content') ?? null;
+		themeMeta?.setAttribute('content', '#ffffff');
 		tick().then(() => searchInput?.focus());
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') closeSearchDrawer();
@@ -152,6 +156,7 @@
 		window.addEventListener('keydown', onKey);
 		return () => {
 			body.style.overflow = prevOverflow;
+			if (themeMeta && prevTheme !== null) themeMeta.setAttribute('content', prevTheme);
 			window.removeEventListener('keydown', onKey);
 		};
 	});

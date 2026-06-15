@@ -185,6 +185,11 @@
 		const { body } = document;
 		const prevOverflow = body.style.overflow;
 		body.style.overflow = 'hidden';
+		// The overlay is white, so recolour the iOS status-bar/browser chrome to match
+		// (it's green from the hero theme-color otherwise) and restore it on close.
+		const themeMeta = document.querySelector('meta[name="theme-color"]');
+		const prevTheme = themeMeta?.getAttribute('content') ?? null;
+		themeMeta?.setAttribute('content', '#ffffff');
 		tick().then(() => mobileSearchInput?.focus());
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') closeMobileSearch();
@@ -192,6 +197,7 @@
 		window.addEventListener('keydown', onKey);
 		return () => {
 			body.style.overflow = prevOverflow;
+			if (themeMeta && prevTheme !== null) themeMeta.setAttribute('content', prevTheme);
 			window.removeEventListener('keydown', onKey);
 		};
 	});
@@ -1209,17 +1215,7 @@
 			outline-offset: 3px;
 		}
 
-		/* Tactile press feedback for surfaces you "push" to navigate (CTA, search,
-		   quick chips) — matches the PDP CTA idiom (instant translateY, not scale).
-		   The Купи/Внос/Продай tabs are deliberately excluded: they're in-place
-		   toggles whose feedback is the sliding underline + ink change, so a press
-		   nudge would be redundant, off-idiom motion. */
-		.bohemcars-mobile-hero__all:active,
-		.bohemcars-mobile-hero__search:has(:active),
-		.bohemcars-mobile-home-quick__scroller a:active,
-		.bohemcars-mobile-home-quick__scroller button:active {
-			transform: translateY(1px);
-		}
+		/* No press-move on mobile: tapping must not nudge the search bar, CTAs or chips. */
 
 		.bc-drawer {
 			display: grid;
