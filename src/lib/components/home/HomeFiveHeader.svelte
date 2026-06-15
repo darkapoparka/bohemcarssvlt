@@ -1300,6 +1300,8 @@
 		}
 	}
 
+	/* Mobile call/map are icon-only buttons; the text stays as screen-reader-only
+	   so the controls remain accessible without showing a visible label. */
 	.bohemcars-mobile-action__label {
 		position: absolute;
 		width: 1px;
@@ -1376,8 +1378,8 @@
 			justify-content: flex-end !important;
 		}
 
-		/* Anchored to the right edge so the labeled pills grow leftward and can
-		   never clip off the right of the viewport. */
+		/* Anchored to the right edge so the icon discs stay perfectly round
+		   without squeezing the logo on narrow mobile screens. */
 		:global(.header-wrapper-style-4 .header-actions) {
 			position: absolute;
 			top: 10px;
@@ -1392,8 +1394,8 @@
 		.bohemcars-mobile-call,
 		.bohemcars-mobile-map {
 			display: inline-flex;
-			width: 44px;
-			height: 44px;
+			width: 40px;
+			height: 40px;
 			align-items: center;
 			justify-content: center;
 			gap: 0;
@@ -1417,9 +1419,9 @@
 
 		.bohemcars-mobile-call :global(svg),
 		.bohemcars-mobile-map :global(svg) {
-			width: 24px;
-			height: 24px;
-			flex: 0 0 24px;
+			width: 22px;
+			height: 22px;
+			flex: 0 0 22px;
 			color: currentColor;
 			fill: none;
 			stroke: currentColor;
