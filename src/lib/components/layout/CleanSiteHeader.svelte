@@ -380,16 +380,14 @@
 								aria-current={active ? 'page' : undefined}
 								aria-haspopup={item.megaMenu ? 'true' : undefined}
 								class={[
-									'relative flex items-center gap-1 text-base font-semibold transition-colors',
-									// active item gets a green underline indicator
-									"after:absolute after:-bottom-2 after:left-0 after:h-[2px] after:rounded-full after:bg-bc-accent after:transition-all after:content-['']",
+									'flex items-center gap-1 text-base font-semibold transition-colors',
 									isHome
 										? active
-											? 'text-white after:w-full'
-											: 'text-white/85 after:w-0 hover:text-white'
+											? 'text-white'
+											: 'text-white/85 hover:text-white'
 										: active
-											? 'text-bc-accent after:w-full'
-											: 'text-bc-ink after:w-0 hover:text-bc-accent'
+											? 'text-bc-accent'
+											: 'text-bc-ink hover:text-bc-accent'
 								]}
 							>
 								{item.label}
@@ -407,14 +405,14 @@
 								{#if item.megaMenu.variant === 'inventory'}
 									<!-- Inventory mega: wide fixed panel dropped under the header, hover/focus revealed -->
 									<div
-										class="invisible fixed inset-x-0 top-[145px] z-30 mx-auto w-[min(1410px,calc(100vw-60px))] max-w-[1410px] translate-y-[14px] overflow-hidden rounded-[18px] border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100"
+										class="invisible fixed inset-x-0 top-[124px] z-30 mx-auto w-[min(1410px,calc(100vw-60px))] max-w-[1410px] overflow-hidden rounded-[18px] border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,visibility] duration-150 ease-out group-focus-within/nav:visible group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:opacity-100"
 									>
 										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
 									</div>
 								{:else}
 									<!-- Container mega: smaller centered dropdown -->
 									<div
-										class="invisible absolute top-full left-1/2 z-30 mt-3 w-[min(280px,90vw)] -translate-x-1/2 translate-y-[10px] rounded-bc-lg border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100 before:absolute before:bottom-full before:left-0 before:h-3 before:w-full before:content-['']"
+										class="invisible absolute top-[72px] left-1/2 z-30 w-[min(280px,90vw)] -translate-x-1/2 rounded-bc-lg border border-[#eceff3] bg-white opacity-0 shadow-[0_30px_70px_rgba(0,0,0,0.34)] ring-1 ring-black/5 transition-[opacity,visibility] duration-150 ease-out group-focus-within/nav:visible group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:opacity-100"
 									>
 										<SiteMegaMenu menu={item.megaMenu} ui={header.ui} />
 									</div>

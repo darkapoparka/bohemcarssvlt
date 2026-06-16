@@ -1202,8 +1202,8 @@ const heroActionsForLocale = (locale: Locale): HomeFiveHeroAction[] =>
 					mode: 'import',
 					placeholder: 'Линк към обява или VIN...',
 					secondaryHref: '/import',
-					secondaryLabel: 'Пълна заявка за внос',
-					submitLabel: 'Провери линка',
+					secondaryLabel: 'Пълна заявка',
+					submitLabel: 'Провери',
 					tabHref: '/?intent=import'
 				},
 				{
@@ -1251,8 +1251,8 @@ const heroActionsForLocale = (locale: Locale): HomeFiveHeroAction[] =>
 					mode: 'import',
 					placeholder: 'Listing URL or VIN...',
 					secondaryHref: '/import',
-					secondaryLabel: 'Full import request',
-					submitLabel: 'Check the link',
+					secondaryLabel: 'Full request',
+					submitLabel: 'Check',
 					tabHref: '/?lang=en&intent=import'
 				},
 				{
