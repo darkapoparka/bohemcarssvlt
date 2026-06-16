@@ -132,6 +132,23 @@
 					{ href: '/inventory?status=Available', label: 'Налични' }
 				]
 	);
+	// Price quick-picks for the Buy search overlay (low ranges buyers actually use).
+	const overlayPriceOptions = $derived(
+		isEnglish
+			? [
+					{ value: '10000', label: 'Up to 10k' },
+					{ value: '20000', label: 'Up to 20k' },
+					{ value: '30000', label: 'Up to 30k' },
+					{ value: '50000', label: 'Up to 50k' }
+				]
+			: [
+					{ value: '10000', label: 'До 10 000' },
+					{ value: '20000', label: 'До 20 000' },
+					{ value: '30000', label: 'До 30 000' },
+					{ value: '50000', label: 'До 50 000' }
+				]
+	);
+
 	const quickLinksForMode = (mode: string) => {
 		if (mode === 'import') {
 			return isEnglish
@@ -339,10 +356,19 @@
 			tabindex="-1"
 			aria-hidden="true"
 		/>
-		<section class="bohemcars-mobile-hero" aria-label={mobileHeading}>
+		<section
+			class={`bohemcars-mobile-hero bohemcars-mobile-hero--${mobileTabsVariant}`}
+			aria-label={mobileHeading}
+		>
 			<div class="container">
 				<div class="bohemcars-mobile-hero__copy">
-					<h1>{mobileModeHeading}</h1>
+					<h1>
+						{mobileTabsVariant === 'underline'
+							? isEnglish
+								? 'Find your car.'
+								: 'Намери автомобила си.'
+							: mobileModeHeading}
+					</h1>
 				</div>
 
 				<div
@@ -560,8 +586,28 @@
 										{/each}
 									</div>
 								</section>
+								<section class="bohemcars-home-search-drawer__group">
+									<p>{isEnglish ? 'Price' : 'Цена'}</p>
+									<div>
+										{#each overlayPriceOptions as option (option.value)}
+											<a
+												href={resolve(inventoryFilterHref('maxPrice', option.value) as '/inventory')}
+											>
+												{option.label}
+											</a>
+										{/each}
+									</div>
+								</section>
 							{:else}
 								<p class="bohemcars-home-search-drawer__hint">{activeMobileAction.helper}</p>
+								<section class="bohemcars-home-search-drawer__group">
+									<p>{isEnglish ? 'Quick links' : 'Бързи връзки'}</p>
+									<div>
+										{#each quickLinksForMode(activeMobileAction.mode) as link (link.href)}
+											<a href={resolve(link.href as '/')}>{link.label}</a>
+										{/each}
+									</div>
+								</section>
 							{/if}
 						</div>
 					</div>
@@ -1134,6 +1180,13 @@
 			border: 0;
 		}
 
+		/* Underline variant: no visible headline — the tab row leads the hero. The
+		   <h1> stays in the DOM (sr-only, via the base rule) for SEO/a11y. The tabs
+		   get a little top breathing room since nothing sits above them now. */
+		.bohemcars-mobile-hero--underline .bohemcars-mobile-hero__search-module {
+			margin-top: 6px;
+		}
+
 		.bohemcars-mobile-hero__search-module {
 			display: grid;
 			gap: 10px;
@@ -1182,30 +1235,73 @@
 			box-shadow: none;
 		}
 
+		/* Underline tabs (SPARTAK-style): full-width, each label takes an equal share
+		   and the active indicator spans its whole tab, riding a faint full-width
+		   baseline. Inactive labels muted, active bright/bold. 44px tap targets. */
+		/* Full-width tabs: each label takes an equal share; the active tab's indicator
+		   spans its whole segment (like the reference), riding a thin faint track. */
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs {
 			position: relative;
-			gap: 6px;
-			min-height: 44px;
-			border-radius: 999px;
+			display: flex;
+			align-items: stretch;
+			gap: 0;
+			min-height: 0;
+			border: 0;
+			border-radius: 0;
 			background: transparent;
+			box-shadow: none;
 			padding: 0;
+			margin-bottom: 2px;
+		}
+
+		/* thin faint track line under the whole row */
+		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs::after {
+			content: '';
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			background: rgba(255, 255, 255, 0.22);
 		}
 
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tabs button {
 			position: relative;
+			flex: 1 1 0;
+			width: auto;
 			min-height: 42px;
-			border-radius: 999px;
-			color: rgba(20, 33, 15, 0.78);
-			font-size: 15px;
-			font-weight: 800;
-			line-height: 20px;
+			align-items: center;
+			justify-content: center;
+			white-space: nowrap;
+			border-radius: 0;
+			background: transparent;
+			padding: 0 4px 7px;
+			color: rgba(255, 255, 255, 0.62);
+			font-size: 19px;
+			font-weight: 700;
+			letter-spacing: -0.1px;
+			line-height: 24px;
+			transition: color 0.16s ease;
 		}
 
 		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tab.active {
-			background: rgba(255, 255, 255, 0.74);
-			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.44);
-			color: #14210f;
-			font-weight: 900;
+			background: transparent;
+			box-shadow: none;
+			color: #ffffff;
+			font-weight: 800;
+		}
+
+		/* indicator spans the whole active tab segment */
+		.bohemcars-mobile-hero__search-module--underline .bohemcars-mobile-hero__tab.active::after {
+			content: '';
+			position: absolute;
+			right: 4px;
+			bottom: -1px;
+			left: 4px;
+			height: 3px;
+			border-radius: 999px;
+			background: #ffffff;
+			box-shadow: 0 1px 7px rgba(255, 255, 255, 0.4);
 		}
 
 		/* Showroom intent modes = boxed segmented control (best mobile pattern for a
