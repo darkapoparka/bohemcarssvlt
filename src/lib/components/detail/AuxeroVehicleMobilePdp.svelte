@@ -18,6 +18,7 @@
 	let activeTab = $state<AuxeroVehicleDetailDrawerTabId>('info');
 	let activeDrawerSnapPoint = $state<number | string | null>(drawerSnapPoints[0]);
 	let drawerOpen = $state(true);
+	let drawerContentEl = $state<HTMLElement | null>(null);
 	let selectedImageIndex = $state(0);
 	let shareStatus = $state('');
 	let viewerOpen = $state(false);
@@ -37,6 +38,64 @@
 		const snap =
 			typeof activeDrawerSnapPoint === 'number' ? activeDrawerSnapPoint : drawerRestingSnapPoint;
 		return `${Math.round((1 - snap) * 100)}dvh`;
+	});
+
+	// vaul only updates `activeDrawerSnapPoint` once a drag *settles*, so the snap-based
+	// bottom padding (which keeps the scroll panel flush with the visible fold) lags behind
+	// the live drag — exposing the sheet's empty padding as a white strip that only fills in
+	// on release. While the sheet is being dragged or is animating to its snap point, mirror
+	// its real on-screen position into the padding var each frame so content tracks the drag.
+	// On settle we drop the inline override and let the reactive `drawerSnapOffset` govern again.
+	$effect(() => {
+		const el = drawerContentEl;
+		if (!el || !browser) return;
+
+		const offsetVar = '--bohemcars-mobile-pdp-snap-offset';
+		let rafId = 0;
+		let settleTimer = 0;
+		let running = false;
+
+		const syncOffset = () => {
+			const offset = Math.max(0, el.getBoundingClientRect().bottom - window.innerHeight);
+			el.style.setProperty(offsetVar, `${offset}px`);
+		};
+
+		const tick = () => {
+			syncOffset();
+			if (running) rafId = requestAnimationFrame(tick);
+		};
+
+		const start = () => {
+			window.clearTimeout(settleTimer);
+			if (running) return;
+			running = true;
+			rafId = requestAnimationFrame(tick);
+		};
+
+		const stop = () => {
+			running = false;
+			cancelAnimationFrame(rafId);
+			// Hand control back to the reactive (settled) value.
+			el.style.removeProperty(offsetVar);
+		};
+
+		const endAfterSettle = () => {
+			window.clearTimeout(settleTimer);
+			// Keep mirroring through vaul's snap animation (~0.5s) before releasing.
+			settleTimer = window.setTimeout(stop, 600);
+		};
+
+		el.addEventListener('pointerdown', start);
+		window.addEventListener('pointerup', endAfterSettle);
+		window.addEventListener('pointercancel', endAfterSettle);
+
+		return () => {
+			el.removeEventListener('pointerdown', start);
+			window.removeEventListener('pointerup', endAfterSettle);
+			window.removeEventListener('pointercancel', endAfterSettle);
+			window.clearTimeout(settleTimer);
+			cancelAnimationFrame(rafId);
+		};
 	});
 
 	const useFallbackImage = (event: Event) => {
@@ -267,7 +326,11 @@
 		snapPoints={drawerSnapPoints}
 		snapToSequentialPoint={true}
 	>
-		<Drawer.Content class="bohemcars-mobile-pdp__drawer" data-mobile-pdp-drawer>
+		<Drawer.Content
+			class="bohemcars-mobile-pdp__drawer"
+			data-mobile-pdp-drawer
+			bind:ref={drawerContentEl}
+		>
 			<Drawer.Handle class="bohemcars-mobile-pdp__handle" preventCycle={true} />
 
 			<div class="bohemcars-mobile-pdp__drawer-heading">
